@@ -1,0 +1,102 @@
+{
+  "nav": {
+    "home": "Home",
+    "articles": "Articles",
+    "about": "About",
+    "newsletter": "Newsletter",
+    "contact": "Contact",
+    "search": "Search",
+    "admin": "Admin"
+  },
+  "home": {
+    "hero": {
+      "title": "The Notebook of a Tech Woman",
+      "tagline": "Notes on technology, ideas, challenges, and the journey of becoming.",
+      "cta": "Read Articles"
+    },
+    "featured": {
+      "label": "Featured Article"
+    },
+    "latest": {
+      "title": "Latest Notes",
+      "empty": "No articles published yet. Check back soon."
+    },
+    "categories": {
+      "title": "Browse by Topic",
+      "technology": "Technology",
+      "leadership": "Leadership",
+      "learning": "Learning",
+      "community": "Community",
+      "reflections": "Reflections"
+    },
+    "newsletter": {
+      "title": "Get new notes in your inbox",
+      "description": "Receive new articles directly. No spam, unsubscribe anytime.",
+      "placeholder": "your@email.com",
+      "cta": "Subscribe",
+      "success": "You're subscribed! Welcome to the notebook.",
+      "error": "Something went wrong. Please try again."
+    }
+  },
+  "articles": {
+    "title": "All Articles",
+    "readMore": "Read more",
+    "readingTime": "{minutes} min read",
+    "publishedOn": "Published {date}",
+    "backToArticles": "← Back to Articles",
+    "share": "Share this article",
+    "related": "Related Articles",
+    "noArticles": "No articles found.",
+    "filterBy": "Filter by topic"
+  },
+  "about": {
+    "title": "About",
+    "subtitle": "The author behind the notebook"
+  },
+  "newsletter": {
+    "title": "The Notebook",
+    "description": "A newsletter about technology, leadership, and the journey of becoming — written by a woman in tech.",
+    "subscribe": "Subscribe",
+    "placeholder": "your@email.com",
+    "success": "You're in! Expect something thoughtful in your inbox soon.",
+    "error": "Something went wrong. Please try again."
+  },
+  "contact": {
+    "title": "Contact",
+    "description": "Have a question, collaboration idea, or just want to say hello?",
+    "namePlaceholder": "Your name",
+    "emailPlaceholder": "your@email.com",
+    "messagePlaceholder": "Your message...",
+    "submit": "Send Message",
+    "success": "Message sent! I'll get back to you soon.",
+    "error": "Something went wrong. Please try again."
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search articles...",
+    "results": "{count} results for \"{query}\"",
+    "noResults": "No articles found for \"{query}\"",
+    "empty": "Start typing to search articles."
+  },
+  "footer": {
+    "tagline": "Notes on technology, ideas, challenges, and the journey of becoming.",
+    "links": {
+      "about": "About",
+      "contact": "Contact",
+      "newsletter": "Newsletter",
+      "articles": "Articles"
+    },
+    "social": {
+      "github": "GitHub",
+      "linkedin": "LinkedIn"
+    },
+    "copyright": "© {year} The Notebook of a Tech Woman. All rights reserved."
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Try again",
+    "notFound": "Page not found",
+    "backHome": "Go back home"
+  }
+}

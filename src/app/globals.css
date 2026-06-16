@@ -1,26 +1,256 @@
 @import "tailwindcss";
 
 :root {
+  /* Core Palette (Framer-Style White & Shades of Black) */
+  --charcoal-black: #09090b;      /* Zinc-950 */
+  --soft-white: #ffffff;
+  --deep-navy: #09090b;
+  --muted-gold: #71717a;          /* Zinc-500 for secondary text */
+  --gray-border: #e4e4e7;         /* Zinc-200 */
+  --text-primary: #18181b;        /* Zinc-900 */
+  --text-muted: #71717a;          /* Zinc-500 */
+
+  /* Theme mappings (Light Mode) */
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #09090b;
+  --card: #fafafa;                /* Zinc-50 for subtle container backgrounds */
+  --card-foreground: #18181b;
+  --popover: #ffffff;
+  --popover-foreground: #09090b;
+  --primary: #09090b;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f4f5;           /* Zinc-100 */
+  --secondary-foreground: #18181b;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  --accent: #18181b;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #e4e4e7;              /* Thin clean gray borders */
+  --input: #e4e4e7;
+  --ring: #09090b;
+
+  --radius: 8px; /* Framer standard rounded corner for a soft premium feel */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Theme mappings (Dark Mode) */
+    --background: #09090b;
+    --foreground: #fafafa;
+    --card: #18181b;              /* Zinc-900 */
+    --card-foreground: #f4f4f5;
+    --popover: #18181b;
+    --popover-foreground: #fafafa;
+    --primary: #fafafa;
+    --primary-foreground: #09090b;
+    --secondary: #27272a;         /* Zinc-800 */
+    --secondary-foreground: #f4f4f5;
+    --muted: #27272a;
+    --muted-foreground: #a1a1aa;  /* Zinc-400 */
+    --accent: #fafafa;
+    --accent-foreground: #09090b;
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
+    --border: #27272a;            /* Zinc-800 */
+    --input: #27272a;
+    --ring: #fafafa;
+    
+    /* Core palette re-mappings for dark mode components */
+    --deep-navy: #fafafa;
+    --muted-gold: #a1a1aa;
+    --charcoal-black: #fafafa;
+    --soft-white: #09090b;
+    --gray-border: #27272a;
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-charcoal-black: var(--charcoal-black);
+  --color-soft-white: var(--soft-white);
+  --color-deep-navy: var(--deep-navy);
+  --color-muted-gold: var(--muted-gold);
+
+  --font-serif: var(--font-serif);
+  --font-sans: var(--font-sans);
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--border);
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Premium Typography Styles */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif), Georgia, serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Custom animations and micro-interactions */
+.transition-all-premium {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hover-lift {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* Article Reading Max Width Container */
+.reading-container {
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Framer-Style Soft Animations */
+@keyframes drawLine {
+  from {
+    stroke-dashoffset: 1200;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes softFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes softFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-draw {
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+  animation: drawLine 3.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-up {
+  animation: softFadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: softFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Soft transition for theme properties */
+.transition-theme {
+  transition: background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1), 
+              border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1), 
+              color 0.5s cubic-bezier(0.16, 1, 0.3, 1), 
+              opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Scroll-Reveal System ────────────────────────────────────────────────────
+   Elements start invisible and slightly below. JavaScript adds .in-view
+   when the IntersectionObserver fires, triggering the transition.
+   This gives a quality "elements slide into existence" feel on scroll.
+*/
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger delays — apply to children so they cascade one by one */
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-stagger.in-view > *:nth-child(1) { opacity: 1; transform: none; transition-delay: 0ms; }
+.reveal-stagger.in-view > *:nth-child(2) { opacity: 1; transform: none; transition-delay: 80ms; }
+.reveal-stagger.in-view > *:nth-child(3) { opacity: 1; transform: none; transition-delay: 160ms; }
+.reveal-stagger.in-view > *:nth-child(4) { opacity: 1; transform: none; transition-delay: 240ms; }
+.reveal-stagger.in-view > *:nth-child(5) { opacity: 1; transform: none; transition-delay: 320ms; }
+
+/* ── Skeleton Loader ─────────────────────────────────────────────────────────
+   A shimmer effect for image placeholders that signals "loading" gracefully.
+*/
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position: 600px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--muted) 25%,
+    color-mix(in srgb, var(--muted) 60%, var(--background)) 50%,
+    var(--muted) 75%
+  );
+  background-size: 600px 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+  border-radius: var(--radius);
+}
+
+/* ── Hero Carousel Transitions ───────────────────────────────────────────────
+   Cross-fade between rotating featured articles in the hero.
+*/
+@keyframes heroFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hero-slide-enter {
+  animation: heroFadeIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
