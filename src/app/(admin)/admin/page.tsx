@@ -1,7 +1,7 @@
 import { getAllArticlesAdmin } from "@/lib/services/articles";
 import { getAllSubscribersAdmin } from "@/lib/services/subscribers";
+import { ArrowLeft, BookOpen, ChevronRight, FileText, PenSquare, Users } from "lucide-react";
 import Link from "next/link";
-import { BookOpen, Users, FileText, ChevronRight, PenSquare, ArrowLeft } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -77,7 +77,10 @@ export default async function AdminDashboardPage() {
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
-            <div key={stat.label} className="p-6 rounded-xl border border-border bg-card text-card-foreground shadow-xs flex items-center justify-between">
+            <div
+              key={stat.label}
+              className="p-6 rounded-xl border border-border bg-card text-card-foreground shadow-xs flex items-center justify-between"
+            >
               <div>
                 <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   {stat.label}
@@ -114,7 +117,9 @@ export default async function AdminDashboardPage() {
         >
           <div>
             <h3 className="font-bold text-sm text-foreground mb-1">Manage Articles</h3>
-            <p className="text-xs text-muted-foreground">Edit metadata, change categories, delete notes.</p>
+            <p className="text-xs text-muted-foreground">
+              Edit metadata, change categories, delete notes.
+            </p>
           </div>
           <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-muted-gold group-hover:translate-x-0.5 transition-all" />
         </Link>
@@ -125,7 +130,9 @@ export default async function AdminDashboardPage() {
         >
           <div>
             <h3 className="font-bold text-sm text-foreground mb-1">View Newsletter Subscribers</h3>
-            <p className="text-xs text-muted-foreground">Export subscriber emails and inspect connections.</p>
+            <p className="text-xs text-muted-foreground">
+              Export subscriber emails and inspect connections.
+            </p>
           </div>
           <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-muted-gold group-hover:translate-x-0.5 transition-all" />
         </Link>

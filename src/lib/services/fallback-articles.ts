@@ -5,7 +5,8 @@ export const FALLBACK_ARTICLES: Article[] = [
     id: "f1",
     title: "The Architecture of Scale: Redefining Tech Ecosystems",
     slug: "architecture-of-scale-redefining-tech-ecosystems",
-    excerpt: "Exploring the fundamentals of software architecture, engineering standards, and scaling digital frameworks for sustainable high-traffic operations.",
+    excerpt:
+      "Exploring the fundamentals of software architecture, engineering standards, and scaling digital frameworks for sustainable high-traffic operations.",
     content: `
       <h2>The Foundation of Modern Scaling</h2>
       <p>Building high-performance software systems requires moving beyond simple compute scaling. It demands a structured approach to modular services, caching strategies, and robust data persistence. When we look at modern web systems, the bottleneck is rarely CPU or memory—it is almost always data access, state transitions, and connection pooling.</p>
@@ -32,7 +33,8 @@ export const FALLBACK_ARTICLES: Article[] = [
     id: "f2",
     title: "Mentorship Beyond Code: Nurturing the Next Generation",
     slug: "mentorship-beyond-code-nurturing-next-generation",
-    excerpt: "True leadership in engineering isn't about writing the most lines of code. It's about coaching teams, building trust, and creating space for developers to excel.",
+    excerpt:
+      "True leadership in engineering isn't about writing the most lines of code. It's about coaching teams, building trust, and creating space for developers to excel.",
     content: `
       <h2>The Shift from Maker to Manager</h2>
       <p>The journey from individual contributor (IC) to tech lead involves a fundamental shift in perspective. Your success is no longer measured by your direct code output, but by the force multiplier effect you have on your team. Mentorship is the primary vehicle for this leverage.</p>
@@ -55,7 +57,8 @@ export const FALLBACK_ARTICLES: Article[] = [
     id: "f3",
     title: "Continuous Growth: The Life of a Lifelong Learner",
     slug: "continuous-growth-life-of-lifelong-learner",
-    excerpt: "In the rapidly evolving world of technology, learning is not a phase—it is a perpetual state. Exploring tools, reading resources, and retaining tech concepts.",
+    excerpt:
+      "In the rapidly evolving world of technology, learning is not a phase—it is a perpetual state. Exploring tools, reading resources, and retaining tech concepts.",
     content: `
       <h2>Embracing the Growth Mindset</h2>
       <p>The tech stack you use today will likely look different in five years. If you rely solely on your current knowledge, you risk obsolescence. Embracing a growth mindset means viewing new technologies not as obstacles, but as opportunities to expand your analytical toolbox.</p>
@@ -78,7 +81,8 @@ export const FALLBACK_ARTICLES: Article[] = [
     id: "f4",
     title: "Collaborative Code: Building Open Source Communities",
     slug: "collaborative-code-building-open-source-communities",
-    excerpt: "A deep dive into why open source contribution is the ultimate collaborative workspace, and how tech groups create global, inclusive ecosystems.",
+    excerpt:
+      "A deep dive into why open source contribution is the ultimate collaborative workspace, and how tech groups create global, inclusive ecosystems.",
     content: `
       <h2>The Global Tech Commons</h2>
       <p>Open source software is the foundation of the modern internet. Contributing to public codebases is not just a way to build a portfolio—it is an exercise in global collaboration, code standard compliance, and distributed team synchronization.</p>
@@ -101,7 +105,8 @@ export const FALLBACK_ARTICLES: Article[] = [
     id: "f5",
     title: "Reflections on Tech, Society, and African Engineering",
     slug: "reflections-on-tech-society-and-african-engineering",
-    excerpt: "Analysing the unique constraints and high-impact solutions emerging from the African developer landscape, and the intersection of code and culture.",
+    excerpt:
+      "Analysing the unique constraints and high-impact solutions emerging from the African developer landscape, and the intersection of code and culture.",
     content: `
       <h2>Building under Unique Constraints</h2>
       <p>African developers regularly build for environments with high data costs, intermittent electrical grids, and variable device capabilities. These constraints force engineers to prioritize lightweight assets, efficient caching, offline capabilities, and high-performance APIs. It is engineering at its purest.</p>
@@ -124,7 +129,8 @@ export const FALLBACK_ARTICLES: Article[] = [
     id: "f6",
     title: "Demystifying React Server Components",
     slug: "demystifying-react-server-components",
-    excerpt: "A deep technical look into React Server Components (RSC): why they exist, how they differ from SSR, and how they optimize next-gen rendering streams.",
+    excerpt:
+      "A deep technical look into React Server Components (RSC): why they exist, how they differ from SSR, and how they optimize next-gen rendering streams.",
     content: `
       <h2>The Client-Side Bundle Problem</h2>
       <p>Traditional React apps ship massive bundles of JavaScript to the browser, forcing the client to download, parse, and execute code before rendering the UI. React Server Components address this by executing rendering code on the server, sending only lightweight static markup to the browser.</p>
@@ -147,7 +153,8 @@ export const FALLBACK_ARTICLES: Article[] = [
     id: "f7",
     title: "Engineering Leadership: Empowering Teams with Autonomy",
     slug: "engineering-leadership-empowering-teams-with-autonomy",
-    excerpt: "How to build high-trust engineering cultures that prioritize developer alignment over rigid process compliance.",
+    excerpt:
+      "How to build high-trust engineering cultures that prioritize developer alignment over rigid process compliance.",
     content: `
       <h2>The Pitfalls of Micro-Management</h2>
       <p>Micro-management is a trust tax. When engineering leads dictate every implementation detail, developers disengage and treat code as simple ticketing tasks. High-impact engineering cultures define the 'what' and 'why', but leave the 'how' to the teams.</p>
@@ -170,7 +177,8 @@ export const FALLBACK_ARTICLES: Article[] = [
     id: "f8",
     title: "Why Everyone Should Learn Technical Writing",
     slug: "why-everyone-should-learn-technical-writing",
-    excerpt: "Clear writing is clear thinking. Why documenting architecture, API designs, and code habits is the key to scaling engineering teams.",
+    excerpt:
+      "Clear writing is clear thinking. Why documenting architecture, API designs, and code habits is the key to scaling engineering teams.",
     content: `
       <h2>Writing as a Diagnostic Tool</h2>
       <p>If you cannot write a simple, structured description of your software design, you probably do not fully understand it yet. Forcing yourself to write RFCs or READMEs reveals hidden complexity, boundary errors, and logical gaps early in the design cycle.</p>
@@ -193,7 +201,8 @@ export const FALLBACK_ARTICLES: Article[] = [
     id: "f9",
     title: "Fostering Diversity in Local Developer Groups",
     slug: "fostering-diversity-in-local-developer-groups",
-    excerpt: "Practical strategies for tech community organizers to build safe, welcoming, and inclusive spaces for underrepresented voices.",
+    excerpt:
+      "Practical strategies for tech community organizers to build safe, welcoming, and inclusive spaces for underrepresented voices.",
     content: `
       <h2>The Importance of Diverse Teams</h2>
       <p>Tech solutions built by homogeneous teams reflect their blind spots. Fostering diverse communities is not just about ethics—it is about bringing varied cognitive styles and problem-solving perspectives to build better products for everyone.</p>
@@ -216,7 +225,8 @@ export const FALLBACK_ARTICLES: Article[] = [
     id: "f10",
     title: "Navigating Imposter Syndrome as a Tech Lead",
     slug: "navigating-imposter-syndrome-as-a-tech-lead",
-    excerpt: "Feeling like a fraud does not mean you lack capability. Strategies for tech leads to normalize self-doubt and focus on skill leverage.",
+    excerpt:
+      "Feeling like a fraud does not mean you lack capability. Strategies for tech leads to normalize self-doubt and focus on skill leverage.",
     content: `
       <h2>The Imposter Epidemic</h2>
       <p>As you grow into leadership roles, the scope of what you do not know expands. This gap between responsibilities and personal certainty is the breeding ground for imposter syndrome. Normalizing self-doubt is the first step to conquering it.</p>

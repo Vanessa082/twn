@@ -15,9 +15,9 @@
  *  - The component is predictable: same input → same output, every time.
  */
 import type { Article } from "@/types";
-import ArticleCard from "./ArticleCard";
-import { useTranslations } from "next-intl";
 import { BookOpen } from "lucide-react";
+import { useTranslations } from "next-intl";
+import ArticleCard from "./ArticleCard";
 
 interface ArticleGridProps {
   articles: Article[];
@@ -41,9 +41,7 @@ export default function ArticleGrid({ articles }: ArticleGridProps) {
         <div className="p-4 rounded-[var(--radius)] bg-muted text-muted-foreground mb-4">
           <BookOpen className="h-8 w-8" />
         </div>
-        <p className="text-muted-foreground text-sm max-w-xs leading-relaxed">
-          {t("empty")}
-        </p>
+        <p className="text-muted-foreground text-sm max-w-xs leading-relaxed">{t("empty")}</p>
       </div>
     );
   }

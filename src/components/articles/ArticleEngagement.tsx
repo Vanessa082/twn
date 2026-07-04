@@ -13,8 +13,8 @@
  * Share uses the Web Share API (mobile) or copies the URL to clipboard (desktop).
  */
 
-import { useState, useEffect } from "react";
-import { Heart, Bookmark, Share2, MessageCircle, Check } from "lucide-react";
+import { Bookmark, Check, Heart, MessageCircle, Share2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface ArticleEngagementProps {
   slug: string;
@@ -34,7 +34,9 @@ export default function ArticleEngagement({ slug, title }: ArticleEngagementProp
     const storedCount = localStorage.getItem(`twn-like-count-${slug}`);
     if (storedLike === "1") setLiked(true);
     if (storedBookmark === "1") setBookmarked(true);
-    setLikeCount(storedCount ? parseInt(storedCount, 10) : Math.floor(Math.random() * 80) + 12);
+    setLikeCount(
+      storedCount ? Number.parseInt(storedCount, 10) : Math.floor(Math.random() * 80) + 12
+    );
   }, [slug]);
 
   const handleLike = () => {
@@ -78,6 +80,7 @@ export default function ArticleEngagement({ slug, title }: ArticleEngagementProp
       {/* ── Desktop: Sticky floating sidebar (left of reading area) ── */}
       <div className="hidden lg:flex fixed left-[max(1rem,calc(50vw-480px-80px))] top-1/2 -translate-y-1/2 flex-col items-center gap-5 z-20">
         <button
+          type="button"
           onClick={handleLike}
           aria-label={liked ? "Unlike" : "Like"}
           className="group flex flex-col items-center gap-1.5"
@@ -97,6 +100,7 @@ export default function ArticleEngagement({ slug, title }: ArticleEngagementProp
         </button>
 
         <button
+          type="button"
           onClick={scrollToComments}
           aria-label="Jump to comments"
           className="flex flex-col items-center gap-1.5"
@@ -108,6 +112,7 @@ export default function ArticleEngagement({ slug, title }: ArticleEngagementProp
         </button>
 
         <button
+          type="button"
           onClick={handleBookmark}
           aria-label={bookmarked ? "Remove bookmark" : "Bookmark"}
           className="flex flex-col items-center gap-1.5"
@@ -125,6 +130,7 @@ export default function ArticleEngagement({ slug, title }: ArticleEngagementProp
         </button>
 
         <button
+          type="button"
           onClick={handleShare}
           aria-label="Share"
           className="flex flex-col items-center gap-1.5"
@@ -142,6 +148,7 @@ export default function ArticleEngagement({ slug, title }: ArticleEngagementProp
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 border-t border-border bg-background/95 backdrop-blur-sm">
         <div className="flex items-center justify-around px-4 py-3 max-w-lg mx-auto">
           <button
+            type="button"
             onClick={handleLike}
             aria-label={liked ? "Unlike" : "Like"}
             className={`flex flex-col items-center gap-1 transition-colors duration-200 ${
@@ -153,6 +160,7 @@ export default function ArticleEngagement({ slug, title }: ArticleEngagementProp
           </button>
 
           <button
+            type="button"
             onClick={scrollToComments}
             aria-label="Comments"
             className="flex flex-col items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
@@ -162,6 +170,7 @@ export default function ArticleEngagement({ slug, title }: ArticleEngagementProp
           </button>
 
           <button
+            type="button"
             onClick={handleBookmark}
             aria-label="Bookmark"
             className={`flex flex-col items-center gap-1 transition-colors duration-200 ${
@@ -173,6 +182,7 @@ export default function ArticleEngagement({ slug, title }: ArticleEngagementProp
           </button>
 
           <button
+            type="button"
             onClick={handleShare}
             aria-label="Share"
             className="flex flex-col items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"

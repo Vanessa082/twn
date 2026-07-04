@@ -1,5 +1,5 @@
-import { getLatestArticles } from "@/lib/services/articles";
 import SearchClient from "@/components/search/SearchClient";
+import { getLatestArticles } from "@/lib/services/articles";
 import { getTranslations } from "next-intl/server";
 
 export const metadata = {

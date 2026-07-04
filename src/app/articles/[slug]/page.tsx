@@ -1,13 +1,13 @@
-import { getArticleBySlug, getLatestArticles } from "@/lib/services/articles";
-import { notFound } from "next/navigation";
-import Link from "next/link";
-import { getTranslations } from "next-intl/server";
-import NewsletterSection from "@/components/home/NewsletterSection";
 import ArticleEngagement from "@/components/articles/ArticleEngagement";
 import ReadingProgress from "@/components/articles/ReadingProgress";
+import NewsletterSection from "@/components/home/NewsletterSection";
 import ImageWithSkeleton from "@/components/ui/ImageWithSkeleton";
+import { getArticleBySlug } from "@/lib/services/articles";
 import { Calendar, Clock } from "lucide-react";
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 interface ArticleDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -54,7 +54,6 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
 
   return (
     <div className="bg-background text-foreground min-h-screen flex flex-col">
-
       {/* Thin reading progress bar — sits above the sticky Navbar */}
       <ReadingProgress />
 
@@ -62,11 +61,9 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
       <ArticleEngagement slug={article.slug} title={article.title} />
 
       <article className="flex-1">
-
         {/* ── Article Header ─────────────────────────────────────────────── */}
         <div className="border-b border-border">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-12 pb-14 sm:pt-20 sm:pb-20">
-
             {/* Publication byline — Medium-style context, not a back button */}
             <div className="flex items-center gap-2 mb-10">
               <Link
@@ -168,6 +165,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
               /* Horizontal rule */
               "[&_hr]:border-border [&_hr]:my-12",
             ].join(" ")}
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: Article content is admin-authored HTML, not user input
             dangerouslySetInnerHTML={{ __html: article.content }}
           />
         </div>
@@ -176,7 +174,9 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
         <div className="max-w-[680px] mx-auto px-4 sm:px-6 pb-10">
           <div className="flex items-center gap-4">
             <div className="flex-1 h-px bg-border" />
-            <span className="font-serif text-xl font-black text-foreground/20 tracking-widest">TWN</span>
+            <span className="font-serif text-xl font-black text-foreground/20 tracking-widest">
+              TWN
+            </span>
             <div className="flex-1 h-px bg-border" />
           </div>
         </div>
@@ -184,13 +184,14 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
         {/* ── Comments placeholder ────────────────────────────────────────── */}
         <div id="comments" className="max-w-[680px] mx-auto px-4 sm:px-6 pb-20 scroll-mt-8">
           <div className="border border-dashed border-border rounded-[var(--radius)] p-10 text-center">
-            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">Discussion</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
+              Discussion
+            </p>
             <p className="text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
               Comments are coming soon. Share your thoughts via the share button above.
             </p>
           </div>
         </div>
-
       </article>
 
       {/* Newsletter CTA */}

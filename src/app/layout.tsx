@@ -2,9 +2,9 @@
  * ─────────────────────────────────────────────────────────────────────────────
  * ROOT LAYOUT COMPONENT
  * ─────────────────────────────────────────────────────────────────────────────
- * In Next.js App Router, layout.tsx acts as the wrapper for all pages. It defines 
+ * In Next.js App Router, layout.tsx acts as the wrapper for all pages. It defines
  * the top-level HTML, handles fonts, and manages global context providers.
- * 
+ *
  * 🧠 LEARNING POINT: Server Component by Default
  * This file is a React Server Component (RSC). It executes exclusively on the server.
  * This is highly beneficial because:
@@ -13,19 +13,19 @@
  *  2. The generated HTML is streamed directly to the browser, offering rapid First Contentful Paint.
  */
 
+import Footer from "@/components/layout/Footer";
+import Navbar from "@/components/layout/Navbar";
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
+import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 /**
  * 🧠 LEARNING POINT: Font Optimization (next/font)
  * Instead of loading fonts via external CDN links (e.g. Google Fonts tags) which slows down
- * page load and triggers FOIT (Flash of Unstyled Text), Next.js downloads font files at build 
- * time and self-hosts them. 
+ * page load and triggers FOIT (Flash of Unstyled Text), Next.js downloads font files at build
+ * time and self-hosts them.
  * - `display: "swap"` instructs the browser to show a fallback system font while loading the main font.
  * - `variable` exposes the font as a CSS Custom Property (variable) which we map in Tailwind.
  */
@@ -52,7 +52,8 @@ export const metadata: Metadata = {
     default: "The Notebook of a Tech Woman | TWN",
     template: "%s | The Notebook of a Tech Woman",
   },
-  description: "Notes on technology, ideas, challenges, and the journey of becoming. Reflections on leadership, learning, society, and life by a tech woman.",
+  description:
+    "Notes on technology, ideas, challenges, and the journey of becoming. Reflections on leadership, learning, society, and life by a tech woman.",
   metadataBase: new URL("https://twnotebook.com"),
   openGraph: {
     title: "The Notebook of a Tech Woman",
@@ -81,25 +82,22 @@ export default async function RootLayout({
   /**
    * 🧠 LEARNING POINT: Internationalization (i18n) Hydration
    * `getLocale()` and `getMessages()` read the translation files on the server.
-   * We wrap children inside `NextIntlClientProvider` which transmits the messages dictionary 
+   * We wrap children inside `NextIntlClientProvider` which transmits the messages dictionary
    * to Client Components down the tree, allowing client-side hooks like `useTranslations` to work.
    */
   const locale = await getLocale();
   const messages = await getMessages();
 
   return (
-    <html
-      lang={locale}
-      className={`${inter.variable} ${playfair.variable} h-full antialiased`}
-    >
+    <html lang={locale} className={`${inter.variable} ${playfair.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-300">
         <NextIntlClientProvider locale={locale} messages={messages}>
           {/* Shared Header Navigation */}
           <Navbar />
-          
+
           {/* Main workspace container where child routes (e.g. /articles, /about) inject their HTML */}
           <main className="flex-1 flex flex-col">{children}</main>
-          
+
           {/* Shared Footer Navigation */}
           <Footer />
         </NextIntlClientProvider>
@@ -107,4 +105,3 @@ export default async function RootLayout({
     </html>
   );
 }
-

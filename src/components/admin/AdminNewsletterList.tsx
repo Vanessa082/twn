@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import type { Subscriber } from "@/types";
-import { Search, Mail, Download } from "lucide-react";
+import { Download, Mail, Search } from "lucide-react";
+import { useState } from "react";
 
 interface AdminNewsletterListProps {
   subscribers: Subscriber[];
@@ -57,6 +57,7 @@ export default function AdminNewsletterList({ subscribers }: AdminNewsletterList
         </div>
 
         <button
+          type="button"
           onClick={handleExport}
           className="inline-flex h-10 items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-4 text-sm font-semibold text-foreground hover:bg-muted transition-colors cursor-pointer"
         >

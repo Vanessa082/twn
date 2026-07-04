@@ -1,7 +1,7 @@
-import { getAllArticlesAdmin } from "@/lib/services/articles";
 import AdminArticlesList from "@/components/admin/AdminArticlesList";
-import Link from "next/link";
+import { getAllArticlesAdmin } from "@/lib/services/articles";
 import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 

@@ -1,6 +1,6 @@
-import Link from "next/link";
-import { getTranslations } from "next-intl/server";
 import { HelpCircle } from "lucide-react";
+import { getTranslations } from "next-intl/server";
+import Link from "next/link";
 
 export const metadata = {
   title: "Page Not Found",

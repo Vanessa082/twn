@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
-import { useTranslations } from "next-intl";
 import { AlertTriangle } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useEffect } from "react";
 
 export default function GlobalError({
   error,
@@ -28,18 +28,23 @@ export default function GlobalError({
       </h1>
 
       <p className="text-muted-foreground text-sm sm:text-base leading-relaxed max-w-xs sm:max-w-sm mb-8">
-        We encountered a unexpected error rendering this view. Please try reloading or check back shortly.
+        We encountered a unexpected error rendering this view. Please try reloading or check back
+        shortly.
       </p>
 
       <div className="flex gap-4">
         <button
+          type="button"
           onClick={() => reset()}
           className="inline-flex h-12 items-center justify-center rounded-lg bg-deep-navy px-6 text-sm font-semibold text-white hover:bg-deep-navy/90 dark:bg-muted-gold dark:text-charcoal-black dark:hover:bg-muted-gold/90 shadow-md hover-lift transition-all cursor-pointer"
         >
           {t("retry")}
         </button>
         <button
-          onClick={() => (window.location.href = "/")}
+          type="button"
+          onClick={() => {
+            window.location.href = "/";
+          }}
           className="inline-flex h-12 items-center justify-center rounded-lg border border-border bg-card px-6 text-sm font-semibold text-foreground hover:bg-muted transition-colors cursor-pointer"
         >
           {t("backHome")}

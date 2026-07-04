@@ -1,7 +1,7 @@
-import { getAllSubscribersAdmin } from "@/lib/services/subscribers";
 import AdminNewsletterList from "@/components/admin/AdminNewsletterList";
-import Link from "next/link";
+import { getAllSubscribersAdmin } from "@/lib/services/subscribers";
 import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 

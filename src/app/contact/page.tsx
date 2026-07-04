@@ -1,9 +1,9 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
 import { contactAction } from "@/app/actions/contact";
+import { AlertCircle, CheckCircle2, Loader2, Send } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Send, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { useActionState, useEffect, useRef } from "react";
 
 const initialState = {
   success: false,
@@ -24,7 +24,6 @@ export default function ContactPage() {
   return (
     <div className="py-16 sm:py-24 bg-background transition-colors duration-300 min-h-screen">
       <div className="max-w-2xl mx-auto px-4 sm:px-6">
-        
         {/* Header */}
         <div className="text-center mb-12">
           <span className="text-xs font-bold uppercase tracking-widest text-muted-gold mb-4 inline-block">
@@ -43,7 +42,10 @@ export default function ContactPage() {
           <form ref={formRef} action={formAction} className="space-y-6">
             {/* Name Input */}
             <div className="flex flex-col gap-2">
-              <label htmlFor="name" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              <label
+                htmlFor="name"
+                className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+              >
                 Name
               </label>
               <input
@@ -59,7 +61,10 @@ export default function ContactPage() {
 
             {/* Email Input */}
             <div className="flex flex-col gap-2">
-              <label htmlFor="email" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              <label
+                htmlFor="email"
+                className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+              >
                 Email Address
               </label>
               <input
@@ -75,7 +80,10 @@ export default function ContactPage() {
 
             {/* Message Input */}
             <div className="flex flex-col gap-2">
-              <label htmlFor="message" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              <label
+                htmlFor="message"
+                className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+              >
                 Message
               </label>
               <textarea
@@ -126,7 +134,6 @@ export default function ContactPage() {
             )}
           </div>
         </div>
-
       </div>
     </div>
   );

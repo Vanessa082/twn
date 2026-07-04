@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { useTranslations } from "next-intl";
+import Link from "next/link";
 
 export default function Footer() {
   const t = useTranslations("footer");
@@ -64,6 +64,7 @@ export default function Footer() {
                 aria-label={t("social.linkedin")}
                 className="p-2 rounded-full border border-border hover:border-muted-gold text-muted-foreground hover:text-muted-gold transition-all duration-200 hover:-translate-y-0.5 bg-background"
               >
+                <span className="sr-only">LinkedIn</span>
                 <svg
                   className="h-5 w-5"
                   viewBox="0 0 24 24"
@@ -86,6 +87,7 @@ export default function Footer() {
                 aria-label={t("social.github")}
                 className="p-2 rounded-full border border-border hover:border-muted-gold text-muted-foreground hover:text-muted-gold transition-all duration-200 hover:-translate-y-0.5 bg-background"
               >
+                <span className="sr-only">GitHub</span>
                 <svg
                   className="h-5 w-5"
                   viewBox="0 0 24 24"

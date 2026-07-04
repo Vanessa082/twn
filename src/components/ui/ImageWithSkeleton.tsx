@@ -52,8 +52,8 @@ function optimizeImageUrl(src: string, width?: number): string {
     // Cloudinary URLs look like: https://res.cloudinary.com/cloud/image/upload/v123/path.jpg
     // We inject transformations: f_auto (best format), q_auto:good (smart quality), w_<n>
     const transforms = [
-      "f_auto",        // Auto-select best format (WebP, AVIF, etc.)
-      "q_auto:good",   // Smart quality — balances file size and visual fidelity
+      "f_auto", // Auto-select best format (WebP, AVIF, etc.)
+      "q_auto:good", // Smart quality — balances file size and visual fidelity
       width ? `w_${width}` : null,
       width ? "c_fill" : null, // Crop to exact width maintaining aspect ratio
     ]
@@ -69,7 +69,7 @@ function optimizeImageUrl(src: string, width?: number): string {
     const url = new URL(src);
     url.searchParams.set("auto", "format"); // Auto format (WebP, etc.)
     url.searchParams.set("fit", "crop");
-    url.searchParams.set("q", "80");        // Quality 80 — good balance
+    url.searchParams.set("q", "80"); // Quality 80 — good balance
     if (width) url.searchParams.set("w", String(width));
     return url.toString();
   }
@@ -109,9 +109,7 @@ export default function ImageWithSkeleton({
   return (
     <>
       {/* Shimmer skeleton — visible while image is loading */}
-      {isLoading && (
-        <div className="absolute inset-0 skeleton z-10" aria-hidden="true" />
-      )}
+      {isLoading && <div className="absolute inset-0 skeleton z-10" aria-hidden="true" />}
 
       <Image
         src={optimizedSrc}

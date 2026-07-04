@@ -1,6 +1,6 @@
 import NewsletterSection from "@/components/home/NewsletterSection";
+import { Calendar, Heart, Sparkles } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { Sparkles, Calendar, Heart } from "lucide-react";
 
 export const metadata = {
   title: "Newsletter",
@@ -45,19 +45,17 @@ export default async function NewsletterPage() {
 
           {/* Highlights Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mt-12 text-left">
-            {highlights.map((item, idx) => {
+            {highlights.map((item) => {
               const Icon = item.icon;
               return (
-                <div key={idx} className="p-5 rounded-xl border border-border bg-card">
+                <div key={item.title} className="p-5 rounded-xl border border-border bg-card">
                   <div className="p-2 rounded-lg bg-deep-navy/5 dark:bg-muted-gold/10 text-deep-navy dark:text-muted-gold w-fit mb-3">
                     <Icon className="h-4.5 w-4.5" />
                   </div>
                   <h3 className="font-serif font-bold text-sm text-foreground mb-1">
                     {item.title}
                   </h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    {item.desc}
-                  </p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
                 </div>
               );
             })}

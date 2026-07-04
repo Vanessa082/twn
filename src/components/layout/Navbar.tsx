@@ -1,10 +1,10 @@
 "use client";
 
+import { Menu, Search, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { Menu, X, Search, BookOpen } from "lucide-react";
 
 export default function Navbar() {
   const t = useTranslations("nav");
@@ -50,9 +50,7 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={`text-xs font-semibold uppercase tracking-wider transition-colors duration-200 hover:text-foreground ${
-                  isActive(link.href)
-                    ? "text-foreground"
-                    : "text-muted-foreground"
+                  isActive(link.href) ? "text-foreground" : "text-muted-foreground"
                 }`}
               >
                 {link.label}
@@ -74,6 +72,7 @@ export default function Navbar() {
 
             {/* Mobile Hamburger Menu Toggle */}
             <button
+              type="button"
               onClick={() => setIsOpen(!isOpen)}
               className="inline-flex items-center justify-center p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted focus:outline-none transition-all duration-200 md:hidden"
               aria-expanded={isOpen}

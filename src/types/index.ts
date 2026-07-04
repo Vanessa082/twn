@@ -33,10 +33,7 @@ export interface Article {
 export type ArticleCard = Omit<Article, "content">;
 
 /** Payload for creating a new article */
-export type CreateArticleInput = Omit<
-  Article,
-  "id" | "created_at" | "updated_at" | "reading_time"
->;
+export type CreateArticleInput = Omit<Article, "id" | "created_at" | "updated_at" | "reading_time">;
 
 /** Payload for updating an existing article */
 export type UpdateArticleInput = Partial<CreateArticleInput>;

@@ -1,9 +1,10 @@
+import { Award, BookOpen, Heart } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { BookOpen, Award, ShieldAlert, Heart } from "lucide-react";
 
 export const metadata = {
   title: "About",
-  description: "Learn more about the author and the inspiration behind The Notebook of a Tech Woman.",
+  description:
+    "Learn more about the author and the inspiration behind The Notebook of a Tech Woman.",
 };
 
 export default async function AboutPage() {
@@ -12,15 +13,12 @@ export default async function AboutPage() {
   return (
     <div className="py-16 sm:py-24 bg-background transition-colors duration-300 min-h-screen">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        
         {/* Header */}
         <div className="border-b border-border pb-10 mb-12">
           <h1 className="text-4xl sm:text-5xl font-serif font-black tracking-tight text-foreground mb-4">
             {t("title")}
           </h1>
-          <p className="text-lg text-muted-foreground font-serif italic">
-            {t("subtitle")}
-          </p>
+          <p className="text-lg text-muted-foreground font-serif italic">{t("subtitle")}</p>
         </div>
 
         {/* Content Section */}
@@ -28,17 +26,20 @@ export default async function AboutPage() {
           {/* Main Story */}
           <div className="md:col-span-8 space-y-6 text-foreground/90 font-sans text-base sm:text-lg leading-relaxed">
             <p>
-              Welcome to the Notebook. I'm Vanessa, a software engineer, technical writer, and community builder. 
-              Here, technical concepts meet personal observations on leadership, learning, and the journey of building a career in tech.
+              Welcome to the Notebook. I'm Vanessa, a software engineer, technical writer, and
+              community builder. Here, technical concepts meet personal observations on leadership,
+              learning, and the journey of building a career in tech.
             </p>
             <p>
-              I created this space as an intellectual logbook. A permanent archive of ideas, mistakes made, 
-              problems solved, and lessons gathered while working in technical spaces and contributing to open-source environments.
+              I created this space as an intellectual logbook. A permanent archive of ideas,
+              mistakes made, problems solved, and lessons gathered while working in technical spaces
+              and contributing to open-source environments.
             </p>
             <p>
-              My focus spans across distributed systems, web architectures, community initiatives, and the African tech ecosystem. 
-              Whether analyzing the complexities of security protocols or reflecting on the nuances of managing engineering teams, 
-              this notebook records it all.
+              My focus spans across distributed systems, web architectures, community initiatives,
+              and the African tech ecosystem. Whether analyzing the complexities of security
+              protocols or reflecting on the nuances of managing engineering teams, this notebook
+              records it all.
             </p>
 
             {/* Core Values / Themes */}
@@ -51,7 +52,8 @@ export default async function AboutPage() {
                     <span className="text-sm uppercase tracking-wider">Education</span>
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Teaching in a way that simplifies complex systems, supporting students and contributors.
+                    Teaching in a way that simplifies complex systems, supporting students and
+                    contributors.
                   </p>
                 </div>
 
@@ -61,7 +63,8 @@ export default async function AboutPage() {
                     <span className="text-sm uppercase tracking-wider">Leadership</span>
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Sharing methods on leading with empathy, building tech communities, and mentoring.
+                    Sharing methods on leading with empathy, building tech communities, and
+                    mentoring.
                   </p>
                 </div>
               </div>
@@ -93,12 +96,12 @@ export default async function AboutPage() {
             <div className="p-5 rounded-2xl bg-muted text-muted-foreground text-xs leading-relaxed flex items-start gap-3">
               <Heart className="h-5 w-5 text-muted-gold shrink-0 mt-0.5" />
               <p>
-                Thank you for being here and taking time to read. I hope you find something that sparks curiosity or helps you on your own path.
+                Thank you for being here and taking time to read. I hope you find something that
+                sparks curiosity or helps you on your own path.
               </p>
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );

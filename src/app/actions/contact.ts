@@ -4,7 +4,7 @@
  * Server Action to handle Contact form submissions.
  * Validates inputs and returns success/error status.
  */
-export async function contactAction(prevState: any, formData: FormData) {
+export async function contactAction(_prevState: unknown, formData: FormData) {
   // 1. Validate inputs
   const name = formData.get("name")?.toString().trim();
   const email = formData.get("email")?.toString().trim().toLowerCase();

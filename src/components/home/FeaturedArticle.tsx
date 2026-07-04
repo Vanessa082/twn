@@ -1,7 +1,7 @@
-import Link from "next/link";
+import ImageWithSkeleton from "@/components/ui/ImageWithSkeleton";
 import type { Article } from "@/types";
 import { useTranslations } from "next-intl";
-import ImageWithSkeleton from "@/components/ui/ImageWithSkeleton";
+import Link from "next/link";
 
 interface FeaturedArticleProps {
   article: Article;
@@ -65,14 +65,10 @@ export default function FeaturedArticle({ article }: FeaturedArticleProps) {
             </div>
 
             <h2 className="text-3xl sm:text-4xl font-serif font-black tracking-tight leading-tight text-foreground transition-all duration-300 group-hover:opacity-75">
-              <Link href={`/articles/${article.slug}`}>
-                {article.title}
-              </Link>
+              <Link href={`/articles/${article.slug}`}>{article.title}</Link>
             </h2>
 
-            <p className="text-base text-muted-foreground leading-relaxed">
-              {article.excerpt}
-            </p>
+            <p className="text-base text-muted-foreground leading-relaxed">{article.excerpt}</p>
 
             <div className="flex items-center justify-between pt-5 mt-2 border-t border-border">
               <span className="text-xs text-muted-foreground">
@@ -83,7 +79,9 @@ export default function FeaturedArticle({ article }: FeaturedArticleProps) {
                 className="text-xs font-bold uppercase tracking-wider text-foreground hover:opacity-85 flex items-center gap-1.5 group"
               >
                 {artT("readMore")}
-                <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
+                <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                  →
+                </span>
               </Link>
             </div>
           </div>

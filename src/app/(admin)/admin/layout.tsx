@@ -1,5 +1,5 @@
+import { FileText, Home, LayoutDashboard, Users } from "lucide-react";
 import Link from "next/link";
-import { LayoutDashboard, FileText, Users, Home } from "lucide-react";
 
 export default function AdminLayout({
   children,

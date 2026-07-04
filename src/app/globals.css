@@ -2,24 +2,24 @@
 
 :root {
   /* Core Palette (Framer-Style White & Shades of Black) */
-  --charcoal-black: #09090b;      /* Zinc-950 */
+  --charcoal-black: #09090b; /* Zinc-950 */
   --soft-white: #ffffff;
   --deep-navy: #09090b;
-  --muted-gold: #71717a;          /* Zinc-500 for secondary text */
-  --gray-border: #e4e4e7;         /* Zinc-200 */
-  --text-primary: #18181b;        /* Zinc-900 */
-  --text-muted: #71717a;          /* Zinc-500 */
+  --muted-gold: #71717a; /* Zinc-500 for secondary text */
+  --gray-border: #e4e4e7; /* Zinc-200 */
+  --text-primary: #18181b; /* Zinc-900 */
+  --text-muted: #71717a; /* Zinc-500 */
 
   /* Theme mappings (Light Mode) */
   --background: #ffffff;
   --foreground: #09090b;
-  --card: #fafafa;                /* Zinc-50 for subtle container backgrounds */
+  --card: #fafafa; /* Zinc-50 for subtle container backgrounds */
   --card-foreground: #18181b;
   --popover: #ffffff;
   --popover-foreground: #09090b;
   --primary: #09090b;
   --primary-foreground: #ffffff;
-  --secondary: #f4f4f5;           /* Zinc-100 */
+  --secondary: #f4f4f5; /* Zinc-100 */
   --secondary-foreground: #18181b;
   --muted: #f4f4f5;
   --muted-foreground: #71717a;
@@ -27,7 +27,7 @@
   --accent-foreground: #ffffff;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #e4e4e7;              /* Thin clean gray borders */
+  --border: #e4e4e7; /* Thin clean gray borders */
   --input: #e4e4e7;
   --ring: #09090b;
 
@@ -39,24 +39,24 @@
     /* Theme mappings (Dark Mode) */
     --background: #09090b;
     --foreground: #fafafa;
-    --card: #18181b;              /* Zinc-900 */
+    --card: #18181b; /* Zinc-900 */
     --card-foreground: #f4f4f5;
     --popover: #18181b;
     --popover-foreground: #fafafa;
     --primary: #fafafa;
     --primary-foreground: #09090b;
-    --secondary: #27272a;         /* Zinc-800 */
+    --secondary: #27272a; /* Zinc-800 */
     --secondary-foreground: #f4f4f5;
     --muted: #27272a;
-    --muted-foreground: #a1a1aa;  /* Zinc-400 */
+    --muted-foreground: #a1a1aa; /* Zinc-400 */
     --accent: #fafafa;
     --accent-foreground: #09090b;
     --destructive: #ef4444;
     --destructive-foreground: #ffffff;
-    --border: #27272a;            /* Zinc-800 */
+    --border: #27272a; /* Zinc-800 */
     --input: #27272a;
     --ring: #fafafa;
-    
+
     /* Core palette re-mappings for dark mode components */
     --deep-navy: #fafafa;
     --muted-gold: #a1a1aa;
@@ -112,7 +112,12 @@ body {
 }
 
 /* Premium Typography Styles */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-serif), Georgia, serif;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -124,7 +129,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .hover-lift {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s
+    cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hover-lift:hover {
@@ -186,10 +192,9 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Soft transition for theme properties */
 .transition-theme {
-  transition: background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1), 
-              border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1), 
-              color 0.5s cubic-bezier(0.16, 1, 0.3, 1), 
-              opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.5s
+    cubic-bezier(0.16, 1, 0.3, 1), color 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s
+    cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ── Scroll-Reveal System ────────────────────────────────────────────────────
@@ -200,8 +205,8 @@ h1, h2, h3, h4, h5, h6 {
 .reveal {
   opacity: 0;
   transform: translateY(24px);
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s
+    cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .reveal.in-view {
@@ -213,22 +218,46 @@ h1, h2, h3, h4, h5, h6 {
 .reveal-stagger > * {
   opacity: 0;
   transform: translateY(20px);
-  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s
+    cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.reveal-stagger.in-view > *:nth-child(1) { opacity: 1; transform: none; transition-delay: 0ms; }
-.reveal-stagger.in-view > *:nth-child(2) { opacity: 1; transform: none; transition-delay: 80ms; }
-.reveal-stagger.in-view > *:nth-child(3) { opacity: 1; transform: none; transition-delay: 160ms; }
-.reveal-stagger.in-view > *:nth-child(4) { opacity: 1; transform: none; transition-delay: 240ms; }
-.reveal-stagger.in-view > *:nth-child(5) { opacity: 1; transform: none; transition-delay: 320ms; }
+.reveal-stagger.in-view > *:nth-child(1) {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0ms;
+}
+.reveal-stagger.in-view > *:nth-child(2) {
+  opacity: 1;
+  transform: none;
+  transition-delay: 80ms;
+}
+.reveal-stagger.in-view > *:nth-child(3) {
+  opacity: 1;
+  transform: none;
+  transition-delay: 160ms;
+}
+.reveal-stagger.in-view > *:nth-child(4) {
+  opacity: 1;
+  transform: none;
+  transition-delay: 240ms;
+}
+.reveal-stagger.in-view > *:nth-child(5) {
+  opacity: 1;
+  transform: none;
+  transition-delay: 320ms;
+}
 
 /* ── Skeleton Loader ─────────────────────────────────────────────────────────
    A shimmer effect for image placeholders that signals "loading" gracefully.
 */
 @keyframes shimmer {
-  0%   { background-position: -600px 0; }
-  100% { background-position: 600px 0; }
+  0% {
+    background-position: -600px 0;
+  }
+  100% {
+    background-position: 600px 0;
+  }
 }
 
 .skeleton {
@@ -247,8 +276,14 @@ h1, h2, h3, h4, h5, h6 {
    Cross-fade between rotating featured articles in the hero.
 */
 @keyframes heroFadeIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .hero-slide-enter {

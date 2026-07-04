@@ -1,8 +1,8 @@
-import { getLatestArticles, getArticlesByCategory } from "@/lib/services/articles";
 import ArticleGrid from "@/components/articles/ArticleGrid";
-import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { getArticlesByCategory, getLatestArticles } from "@/lib/services/articles";
 import type { ArticleCategory } from "@/types";
+import { getTranslations } from "next-intl/server";
+import Link from "next/link";
 
 interface ArticlesPageProps {
   searchParams: Promise<{ category?: string }>;
@@ -47,8 +47,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
         {/* Category Filters */}
         <div className="flex flex-wrap items-center justify-center gap-2.5 mb-16">
           {categories.map((cat) => {
-            const isActive =
-              (cat.value === "" && !activeCategory) || cat.value === activeCategory;
+            const isActive = (cat.value === "" && !activeCategory) || cat.value === activeCategory;
             return (
               <Link
                 key={cat.label}
@@ -70,9 +69,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
           <ArticleGrid articles={articles} />
         ) : (
           <div className="text-center py-20 border border-dashed border-border rounded-2xl max-w-md mx-auto">
-            <p className="text-muted-foreground text-sm mb-4">
-              {t("noArticles")}
-            </p>
+            <p className="text-muted-foreground text-sm mb-4">{t("noArticles")}</p>
             <Link
               href="/articles"
               className="text-xs font-bold text-deep-navy dark:text-muted-gold hover:underline"

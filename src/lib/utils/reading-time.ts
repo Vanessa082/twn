@@ -14,7 +14,10 @@ export function calculateReadingTime(content: string | null | undefined): number
   // 2. Core logic
   // Strip HTML tags if any (basic clean up for reading time calculation)
   const plainText = content.replace(/<[^>]*>/g, "");
-  const words = plainText.trim().split(/\s+/).filter((word) => word.length > 0).length;
+  const words = plainText
+    .trim()
+    .split(/\s+/)
+    .filter((word) => word.length > 0).length;
   const minutes = Math.ceil(words / 200);
 
   // 3. Return predictable output

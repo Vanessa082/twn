@@ -2,11 +2,11 @@
 
 import {
   createArticleAdmin,
-  updateArticleAdmin,
   deleteArticleAdmin,
+  updateArticleAdmin,
 } from "@/lib/services/articles";
-import { revalidatePath } from "next/cache";
 import type { CreateArticleInput, UpdateArticleInput } from "@/types";
+import { revalidatePath } from "next/cache";
 
 /**
  * Server Action to handle article creation.
@@ -18,9 +18,10 @@ export async function createArticleAction(input: CreateArticleInput) {
     revalidatePath("/articles");
     revalidatePath("/admin/articles");
     return { success: true, data: article, error: null };
-  } catch (error: any) {
-    console.error("[createArticleAction] Error:", error.message);
-    return { success: false, data: null, error: error.message || "Failed to create article" };
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error("[createArticleAction] Error:", err.message);
+    return { success: false, data: null, error: err.message || "Failed to create article" };
   }
 }
 
@@ -35,9 +36,10 @@ export async function updateArticleAction(id: string, input: UpdateArticleInput)
     revalidatePath(`/articles/${article.slug}`);
     revalidatePath("/admin/articles");
     return { success: true, data: article, error: null };
-  } catch (error: any) {
-    console.error("[updateArticleAction] Error:", error.message);
-    return { success: false, data: null, error: error.message || "Failed to update article" };
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error("[updateArticleAction] Error:", err.message);
+    return { success: false, data: null, error: err.message || "Failed to update article" };
   }
 }
 
@@ -51,8 +53,9 @@ export async function deleteArticleAction(id: string) {
     revalidatePath("/articles");
     revalidatePath("/admin/articles");
     return { success: true, error: null };
-  } catch (error: any) {
-    console.error("[deleteArticleAction] Error:", error.message);
-    return { success: false, error: error.message || "Failed to delete article" };
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error("[deleteArticleAction] Error:", err.message);
+    return { success: false, error: err.message || "Failed to delete article" };
   }
 }

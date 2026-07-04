@@ -1,7 +1,7 @@
-import Hero from "@/components/home/Hero";
-import FeaturedArticle from "@/components/home/FeaturedArticle";
 import ArticleGrid from "@/components/articles/ArticleGrid";
 import CategoryCards from "@/components/home/CategoryCards";
+import FeaturedArticle from "@/components/home/FeaturedArticle";
+import Hero from "@/components/home/Hero";
 import NewsletterSection from "@/components/home/NewsletterSection";
 import { getLatestArticles } from "@/lib/services/articles";
 import { getTranslations } from "next-intl/server";

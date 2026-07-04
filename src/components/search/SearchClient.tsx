@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import type { Article } from "@/types";
 import ArticleCard from "@/components/articles/ArticleCard";
-import { Search, BookOpen } from "lucide-react";
+import type { Article } from "@/types";
+import { BookOpen, Search } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useMemo, useState } from "react";
 
 interface SearchClientProps {
   articles: Article[];
@@ -41,7 +41,6 @@ export default function SearchClient({ articles }: SearchClientProps) {
           onChange={(e) => setQuery(e.target.value)}
           placeholder={t("placeholder")}
           className="w-full h-14 pl-12 pr-4 rounded-xl border border-border bg-card text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all text-base shadow-sm"
-          autoFocus
         />
       </div>
 
@@ -73,9 +72,7 @@ export default function SearchClient({ articles }: SearchClientProps) {
             <div className="p-4 rounded-full bg-muted text-muted-foreground w-fit mx-auto mb-4">
               <BookOpen className="h-6 w-6" />
             </div>
-            <p className="text-sm">
-              {t("noResults", { query })}
-            </p>
+            <p className="text-sm">{t("noResults", { query })}</p>
           </div>
         )}
       </div>

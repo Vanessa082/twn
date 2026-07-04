@@ -13,9 +13,9 @@
  * feels far more intentional than a shadow or color change.
  */
 
-import Link from "next/link";
-import { useTranslations } from "next-intl";
 import ScrollReveal from "@/components/ui/ScrollReveal";
+import { useTranslations } from "next-intl";
+import Link from "next/link";
 
 const categories = [
   {
@@ -51,7 +51,6 @@ export default function CategoryCards() {
   return (
     <section className="py-20 bg-background border-b border-border">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-
         {/* Section header */}
         <ScrollReveal className="mb-0">
           <div className="flex items-end justify-between pb-6 mb-0">
@@ -68,7 +67,9 @@ export default function CategoryCards() {
               className="hidden sm:inline-flex text-[11px] font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors items-center gap-1.5"
             >
               All articles
-              <span className="inline-block transition-transform duration-300 group-hover:translate-x-0.5">→</span>
+              <span className="inline-block transition-transform duration-300 group-hover:translate-x-0.5">
+                →
+              </span>
             </Link>
           </div>
         </ScrollReveal>
@@ -100,7 +101,13 @@ export default function CategoryCards() {
                 <div className="shrink-0 flex items-center">
                   <span className="flex h-9 w-9 items-center justify-center rounded-full border border-foreground/15 group-hover:border-background/25 text-muted-foreground group-hover:text-background transition-all duration-300 group-hover:translate-x-1">
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                      <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path
+                        d="M1 7h12M8 2l5 5-5 5"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
                     </svg>
                   </span>
                 </div>
@@ -108,7 +115,6 @@ export default function CategoryCards() {
             </ScrollReveal>
           ))}
         </div>
-
       </div>
     </section>
   );

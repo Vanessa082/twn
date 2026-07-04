@@ -2,17 +2,17 @@
 
 /**
  * 🧠 LEARNING POINT: Client Component ("use client")
- * We declare this file with "use client" at the very top. 
- * Why? Because it handles user interactions, maintains component state (via useRef/useEffect), 
+ * We declare this file with "use client" at the very top.
+ * Why? Because it handles user interactions, maintains component state (via useRef/useEffect),
  * and relies on browser APIs.
- * Next.js pre-renders this component to HTML on the server (SSR), and then "hydrates" it 
+ * Next.js pre-renders this component to HTML on the server (SSR), and then "hydrates" it
  * in the browser with interactive JavaScript events.
  */
 
-import { useActionState, useEffect, useRef } from "react";
 import { subscribeAction } from "@/app/actions/newsletter";
+import { AlertCircle, CheckCircle2, Loader2, Mail } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Mail, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { useActionState, useEffect, useRef } from "react";
 
 const initialState = {
   success: false,
@@ -28,19 +28,19 @@ export default function NewsletterSection() {
    * - `subscribeAction` is the Server Action that executes on the server when the form is submitted.
    * - `state` holds the outcome returned by the Server Action (e.g., success status, error messages).
    * - `formAction` is the function we pass to the HTML <form action={...}> attribute.
-   * - `isPending` is a boolean automatically managed by React that becomes `true` while the 
+   * - `isPending` is a boolean automatically managed by React that becomes `true` while the
    *   asynchronous server request is in-flight, allowing us to display loading indicators.
    */
   const [state, formAction, isPending] = useActionState(subscribeAction, initialState);
-  
+
   // We use a React Ref to hold a direct pointer to the HTML Form element in the DOM
   const formRef = useRef<HTMLFormElement>(null);
 
   /**
    * 🧠 LEARNING POINT: Side Effects (useEffect)
-   * The server operation completes asynchronously. When `state.success` toggles to `true`, 
-   * we want to clear the input field in the browser. 
-   * Checking `state.success` as a dependency triggers this callback, resetting the form 
+   * The server operation completes asynchronously. When `state.success` toggles to `true`,
+   * we want to clear the input field in the browser.
+   * Checking `state.success` as a dependency triggers this callback, resetting the form
    * safely only after verification.
    */
   useEffect(() => {

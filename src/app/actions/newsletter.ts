@@ -33,7 +33,7 @@ import { addSubscriber } from "@/lib/services/subscribers";
  *                    that contains all form field values by name attribute.
  *                    We access values with formData.get("fieldName").
  */
-export async function subscribeAction(prevState: unknown, formData: FormData) {
+export async function subscribeAction(_prevState: unknown, formData: FormData) {
   // 1. VALIDATE: Extract and validate the email field
   //    .get("email") fetches the value of the <input name="email"> field
   //    .toString() converts it from FormDataEntryValue to a plain string

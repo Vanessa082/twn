@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import type { Article } from "@/types";
-import Link from "next/link";
 import { deleteArticleAction } from "@/app/actions/articles";
-import { Edit, Trash2, Plus, Search } from "lucide-react";
+import type { Article } from "@/types";
+import { Edit, Plus, Search, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { useState, useTransition } from "react";
 
 interface AdminArticlesListProps {
   initialArticles: Article[];
@@ -95,8 +95,8 @@ export default function AdminArticlesList({ initialArticles }: AdminArticlesList
                         article.status === "published"
                           ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
                           : article.status === "scheduled"
-                          ? "bg-blue-500/10 text-blue-600 dark:text-blue-400"
-                          : "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                            ? "bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                            : "bg-amber-500/10 text-amber-600 dark:text-amber-400"
                       }`}
                     >
                       {article.status}
@@ -114,6 +114,7 @@ export default function AdminArticlesList({ initialArticles }: AdminArticlesList
                       <Edit className="h-4 w-4" />
                     </Link>
                     <button
+                      type="button"
                       onClick={() => handleDelete(article.id, article.title)}
                       disabled={isPending}
                       className="inline-flex p-1.5 rounded-lg border border-border text-muted-foreground hover:text-destructive hover:border-destructive transition-colors disabled:opacity-50 cursor-pointer"

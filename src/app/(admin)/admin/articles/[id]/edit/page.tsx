@@ -1,6 +1,6 @@
+import ArticleForm from "@/components/admin/ArticleForm";
 import { getArticleByIdAdmin } from "@/lib/services/articles";
 import { notFound } from "next/navigation";
-import ArticleForm from "@/components/admin/ArticleForm";
 
 interface EditArticlePageProps {
   params: Promise<{ id: string }>;

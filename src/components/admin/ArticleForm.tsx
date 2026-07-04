@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import type { Article, ArticleCategory, ArticleStatus } from "@/types";
 import { createArticleAction, updateArticleAction } from "@/app/actions/articles";
-import { ArrowLeft, Save, Eye, Edit2, Loader2 } from "lucide-react";
+import type { Article, ArticleCategory, ArticleStatus } from "@/types";
+import { ArrowLeft, Edit2, Eye, Loader2, Save } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 
 interface ArticleFormProps {
   initialData?: Article;
@@ -51,7 +51,7 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
     };
 
     startTransition(async () => {
-      let result;
+      let result: { success: boolean; error: string | null; data?: unknown };
       if (initialData?.id) {
         result = await updateArticleAction(initialData.id, payload);
       } else {
@@ -146,6 +146,7 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
           )}
           <div
             className="prose prose-sm dark:prose-invert text-foreground/90 max-w-none pt-6 border-t border-border"
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: Preview renders admin-authored HTML content, not user input
             dangerouslySetInnerHTML={{ __html: content || "<p>Content goes here...</p>" }}
           />
         </div>
@@ -156,8 +157,14 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
           <div className="lg:col-span-8 space-y-6">
             {/* Title */}
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Title</label>
+              <label
+                htmlFor="article-title"
+                className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+              >
+                Title
+              </label>
               <input
+                id="article-title"
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -168,8 +175,14 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
 
             {/* Excerpt */}
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Excerpt</label>
+              <label
+                htmlFor="article-excerpt"
+                className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+              >
+                Excerpt
+              </label>
               <textarea
+                id="article-excerpt"
                 value={excerpt}
                 onChange={(e) => setExcerpt(e.target.value)}
                 placeholder="Write a short summary (excerpt) for listing cards..."
@@ -180,8 +193,14 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
 
             {/* Content editor */}
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Content (HTML allowed)</label>
+              <label
+                htmlFor="article-content"
+                className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+              >
+                Content (HTML allowed)
+              </label>
               <textarea
+                id="article-content"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 placeholder="Write the body of the article here..."
@@ -193,12 +212,20 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
 
           {/* Sidebar Settings Column */}
           <div className="lg:col-span-4 space-y-6 p-6 rounded-xl border border-border bg-card">
-            <h3 className="font-bold text-sm text-foreground border-b border-border pb-3">Publishing Settings</h3>
+            <h3 className="font-bold text-sm text-foreground border-b border-border pb-3">
+              Publishing Settings
+            </h3>
 
             {/* Category selection */}
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Category</label>
+              <label
+                htmlFor="article-category"
+                className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+              >
+                Category
+              </label>
               <select
+                id="article-category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value as ArticleCategory)}
                 className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
@@ -213,8 +240,14 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
 
             {/* Custom Slug */}
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Slug (Optional)</label>
+              <label
+                htmlFor="article-slug"
+                className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+              >
+                Slug (Optional)
+              </label>
               <input
+                id="article-slug"
                 type="text"
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
@@ -225,8 +258,14 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
 
             {/* Cover Image URL */}
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Cover Image URL</label>
+              <label
+                htmlFor="article-cover"
+                className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+              >
+                Cover Image URL
+              </label>
               <input
+                id="article-cover"
                 type="text"
                 value={coverImage}
                 onChange={(e) => setCoverImage(e.target.value)}
@@ -237,8 +276,14 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
 
             {/* Status */}
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Status</label>
+              <label
+                htmlFor="article-status"
+                className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+              >
+                Status
+              </label>
               <select
+                id="article-status"
                 value={status}
                 onChange={(e) => setStatus(e.target.value as ArticleStatus)}
                 className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
@@ -251,8 +296,14 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
 
             {/* Scheduled Date */}
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Publish Date (Optional)</label>
+              <label
+                htmlFor="article-published-at"
+                className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+              >
+                Publish Date (Optional)
+              </label>
               <input
+                id="article-published-at"
                 type="datetime-local"
                 value={publishedAt}
                 onChange={(e) => setPublishedAt(e.target.value)}

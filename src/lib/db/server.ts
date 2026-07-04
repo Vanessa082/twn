@@ -1,7 +1,7 @@
+import { env } from "@/lib/env";
 import { createServerClient } from "@supabase/ssr";
 import { createClient as createBaseClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
-import { env } from "@/lib/env";
 
 /**
  * Creates a Supabase client for use in Server Components, Server Actions, or API Routes.
@@ -10,26 +10,22 @@ import { env } from "@/lib/env";
 export const createClient = async () => {
   const cookieStore = await cookies();
 
-  return createServerClient(
-    env.NEXT_PUBLIC_SUPABASE_URL,
-    env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            for (const { name, value, options } of cookiesToSet) {
-              cookieStore.set(name, value, options);
-            }
-          } catch {
-            // Ignored if called in a server component (read-only context)
-          }
-        },
+  return createServerClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll();
       },
-    }
-  );
+      setAll(cookiesToSet) {
+        try {
+          for (const { name, value, options } of cookiesToSet) {
+            cookieStore.set(name, value, options);
+          }
+        } catch {
+          // Ignored if called in a server component (read-only context)
+        }
+      },
+    },
+  });
 };
 
 /**
@@ -37,14 +33,10 @@ export const createClient = async () => {
  * MUST only be used on the server for admin operations (e.g. creating/editing articles, reading subscriber lists).
  */
 export const createAdminClient = () => {
-  return createBaseClient(
-    env.NEXT_PUBLIC_SUPABASE_URL,
-    env.SUPABASE_SERVICE_ROLE_KEY,
-    {
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false,
-      },
-    }
-  );
+  return createBaseClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  });
 };

@@ -1,8 +1,8 @@
-import Link from "next/link";
-import type { Article } from "@/types";
-import { useTranslations } from "next-intl";
 import ImageWithSkeleton from "@/components/ui/ImageWithSkeleton";
 import ScrollReveal from "@/components/ui/ScrollReveal";
+import type { Article } from "@/types";
+import { useTranslations } from "next-intl";
+import Link from "next/link";
 
 interface ArticleCardProps {
   article: Article;
@@ -54,9 +54,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
 
           {/* Title */}
           <h3 className="text-lg sm:text-xl font-bold font-serif leading-snug text-foreground transition-all duration-300 group-hover:opacity-70">
-            <Link href={`/articles/${article.slug}`}>
-              {article.title}
-            </Link>
+            <Link href={`/articles/${article.slug}`}>{article.title}</Link>
           </h3>
 
           {/* Excerpt */}

@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { useTranslations } from "next-intl";
+import Link from "next/link";
 
 export default function Hero() {
   const t = useTranslations("home.hero");
@@ -16,6 +16,7 @@ export default function Hero() {
           xmlns="http://www.w3.org/2000/svg"
           className="w-full max-w-[500px]"
         >
+          <title>Decorative organic line drawing representing tech journeys</title>
           <path
             d="M50 350 C 120 200, 200 480, 320 300 C 440 120, 520 400, 580 220"
             stroke="currentColor"

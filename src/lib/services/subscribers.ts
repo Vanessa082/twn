@@ -1,4 +1,4 @@
-import { createClient, createAdminClient } from "@/lib/db/server";
+import { createAdminClient, createClient } from "@/lib/db/server";
 import type { Subscriber } from "@/types";
 
 /**
@@ -13,7 +13,9 @@ function isValidEmail(email: string): boolean {
  * Subscribes a new email address to the newsletter.
  * Allowed for public users.
  */
-export async function addSubscriber(email: string): Promise<{ success: boolean; error: string | null }> {
+export async function addSubscriber(
+  email: string
+): Promise<{ success: boolean; error: string | null }> {
   // 1. Validate input
   if (!email || typeof email !== "string") {
     return { success: false, error: "Email address is required." };
@@ -27,11 +29,9 @@ export async function addSubscriber(email: string): Promise<{ success: boolean; 
 
   try {
     const supabase = await createClient();
-    
+
     // Attempt insert (RLS allows inserts)
-    const { error } = await supabase
-      .from("subscribers")
-      .insert({ email: cleanEmail });
+    const { error } = await supabase.from("subscribers").insert({ email: cleanEmail });
 
     if (error) {
       // Handle unique constraint violation (duplicate email)
@@ -67,8 +67,9 @@ export async function getAllSubscribersAdmin(): Promise<Subscriber[]> {
     }
 
     return data || [];
-  } catch (error: any) {
-    console.error("[getAllSubscribersAdmin] Service error:", error.message);
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error("[getAllSubscribersAdmin] Service error:", err.message);
     throw error;
   }
 }
