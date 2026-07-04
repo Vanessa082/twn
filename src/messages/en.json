@@ -12,7 +12,12 @@
     "hero": {
       "title": "The Notebook of a Tech Woman",
       "tagline": "Notes on technology, ideas, challenges, and the journey of becoming.",
-      "cta": "Read Articles"
+      "cta": "Read Articles",
+      "fallbackThought": "A notebook for women building the future."
+    },
+    "todaysPage": {
+      "label": "Today's Page",
+      "readMore": "Read more →"
     },
     "featured": {
       "label": "Featured Article"

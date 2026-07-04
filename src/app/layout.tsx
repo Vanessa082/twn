@@ -90,7 +90,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} className={`${inter.variable} ${playfair.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-300">
+      <body className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-300" suppressHydrationWarning>
         <NextIntlClientProvider locale={locale} messages={messages}>
           {/* Shared Header Navigation */}
           <Navbar />

@@ -1,4 +1,4 @@
-import { FileText, Home, LayoutDashboard, Users } from "lucide-react";
+import { FileText, Home, LayoutDashboard, Users, BookOpen, Share2, MessageSquare } from "lucide-react";
 import Link from "next/link";
 
 export default function AdminLayout({
@@ -9,6 +9,9 @@ export default function AdminLayout({
   const navItems = [
     { label: "Overview", href: "/admin", icon: LayoutDashboard },
     { label: "Articles", href: "/admin/articles", icon: FileText },
+    { label: "Notebook", href: "/admin/content/notebook", icon: BookOpen },
+    { label: "Shared Pages", href: "/admin/content/shared-pages", icon: Share2 },
+    { label: "Margin Notes", href: "/admin/content/margin-notes", icon: MessageSquare },
     { label: "Subscribers", href: "/admin/newsletter", icon: Users },
   ];
 

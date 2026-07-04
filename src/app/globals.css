@@ -289,3 +289,32 @@ h6 {
 .hero-slide-enter {
   animation: heroFadeIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* ── Living Notebook: Ink-Drying Reveal ──────────────────────────────────────
+   The hero thought materialises like ink absorbing into paper.
+   Starts blurred and transparent, resolves to sharp and opaque.
+*/
+@keyframes twn-ink-reveal {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+/* ── Living Notebook: Cursor Blink ──────────────────────────────────────────
+   Slow, calm blink — editorial, not terminal.
+   The cursor rests visible longer than it hides.
+*/
+@keyframes twn-blink {
+  0%, 70% { opacity: 1; }
+  71%, 100% { opacity: 0; }
+}
+
+.animate-twn-blink {
+  animation: twn-blink 1.1s ease-in-out infinite;
+}
+

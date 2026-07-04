@@ -1,8 +1,10 @@
 import ArticleEngagement from "@/components/articles/ArticleEngagement";
 import ReadingProgress from "@/components/articles/ReadingProgress";
+import MarginNotesList from "@/components/articles/MarginNotesList";
 import NewsletterSection from "@/components/home/NewsletterSection";
 import ImageWithSkeleton from "@/components/ui/ImageWithSkeleton";
 import { getArticleBySlug } from "@/lib/services/articles";
+import { getApprovedMarginNotesForArticle } from "@/lib/services/margin-notes";
 import { Calendar, Clock } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -40,6 +42,9 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
   const article = await getArticleBySlug(resolvedParams.slug);
 
   if (!article) notFound();
+
+  // Fetch approved margin notes for this article
+  const marginNotes = await getApprovedMarginNotesForArticle(article.id);
 
   const t = await getTranslations("articles");
 
@@ -181,16 +186,9 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
           </div>
         </div>
 
-        {/* ── Comments placeholder ────────────────────────────────────────── */}
+        {/* ── Margin Reflections Section ────────────────────────────────── */}
         <div id="comments" className="max-w-[680px] mx-auto px-4 sm:px-6 pb-20 scroll-mt-8">
-          <div className="border border-dashed border-border rounded-[var(--radius)] p-10 text-center">
-            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
-              Discussion
-            </p>
-            <p className="text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
-              Comments are coming soon. Share your thoughts via the share button above.
-            </p>
-          </div>
+          <MarginNotesList articleId={article.id} notes={marginNotes} />
         </div>
       </article>
 

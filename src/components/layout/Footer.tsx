@@ -110,10 +110,11 @@ export default function Footer() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 text-xs text-muted-foreground">
           <p>{t("copyright", { year: currentYear })}</p>
           <div className="flex gap-6">
-            <Link href="/privacy" className="hover:text-muted-gold transition-colors">
+            {/* TODO: Create /privacy and /terms pages */}
+            <Link href="/about" className="hover:text-muted-gold transition-colors">
               Privacy Policy
             </Link>
-            <Link href="/terms" className="hover:text-muted-gold transition-colors">
+            <Link href="/about" className="hover:text-muted-gold transition-colors">
               Terms of Use
             </Link>
           </div>

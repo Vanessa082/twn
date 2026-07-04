@@ -3,15 +3,23 @@ import CategoryCards from "@/components/home/CategoryCards";
 import FeaturedArticle from "@/components/home/FeaturedArticle";
 import Hero from "@/components/home/Hero";
 import NewsletterSection from "@/components/home/NewsletterSection";
+import TodaysPage from "@/components/home/TodaysPage";
+import SharedPagesSection from "@/components/home/SharedPagesSection";
 import { getLatestArticles } from "@/lib/services/articles";
+import { getTodaysEntry } from "@/lib/services/notebook-entries";
+import { getApprovedSharedPages } from "@/lib/services/shared-pages";
 import { getTranslations } from "next-intl/server";
 
 export const revalidate = 60; // Revalidate homepage every 60 seconds (ISR)
 
 export default async function HomePage() {
-  // 1. Fetch latest articles on the server
-  const articles = await getLatestArticles(7); // Fetch 7 articles: 1 featured + 6 grid
-  const t = await getTranslations("home.latest");
+  // Fetch articles, today's notebook entry, and shared community pages in parallel
+  const [articles, todaysEntry, sharedPages, t] = await Promise.all([
+    getLatestArticles(7),
+    getTodaysEntry(),
+    getApprovedSharedPages(),
+    getTranslations("home.latest"),
+  ]);
 
   // 2. Identify featured vs latest
   const featuredArticle = articles.length > 0 ? articles[0] : null;
@@ -21,6 +29,9 @@ export default async function HomePage() {
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
       <Hero />
+
+      {/* Today's Page — only shown when admin has scheduled an entry for today */}
+      {todaysEntry && <TodaysPage entry={todaysEntry} />}
 
       {/* Featured Article Section */}
       {featuredArticle && <FeaturedArticle article={featuredArticle} />}
@@ -40,6 +51,9 @@ export default async function HomePage() {
 
       {/* Browse by Category Section */}
       <CategoryCards />
+
+      {/* Shared Pages (Community Journal) Section */}
+      <SharedPagesSection initialPages={sharedPages} />
 
       {/* Newsletter Section */}
       <NewsletterSection />
