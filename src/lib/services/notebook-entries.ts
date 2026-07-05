@@ -31,7 +31,7 @@ export const FALLBACK_ENTRIES: NotebookEntry[] = [
     id: "fe2",
     notebook_id: NOTEBOOK_ID_PLACEHOLDER,
     title: "Today I learned...",
-    thought: "Curiosity scales better than certainty.",
+    thought: "Today I learned that *curiosity* scales better than certainty.",
     slug: null,
     source_article_id: null,
     is_active: true,
@@ -96,7 +96,7 @@ export const FALLBACK_ENTRIES: NotebookEntry[] = [
     id: "fe7",
     notebook_id: NOTEBOOK_ID_PLACEHOLDER,
     title: null,
-    thought: "There are questions that no search engine can answer.",
+    thought: "There are questions no search engine can answer.",
     slug: null,
     source_article_id: null,
     is_active: true,
@@ -195,13 +195,30 @@ export async function getTodaysEntry(): Promise<NotebookEntry | null> {
       .maybeSingle();
 
     if (error) {
-      console.warn("[getTodaysEntry] DB error:", error.message);
+      console.warn("[getTodaysEntry] DB error, using fallback:", error.message);
+      const fallback = FALLBACK_ENTRIES.find((e) => e.id === "fe7");
+      if (fallback) {
+        return { ...fallback, display_date: today };
+      }
       return null;
     }
 
-    return data ? (data as NotebookEntry) : null;
+    if (data) {
+      return data as NotebookEntry;
+    }
+
+    // Default fallback so the homepage section is populated
+    const fallback = FALLBACK_ENTRIES.find((e) => e.id === "fe7");
+    if (fallback) {
+      return { ...fallback, display_date: today };
+    }
+    return null;
   } catch (error) {
-    console.warn("[getTodaysEntry] Service error:", error);
+    console.warn("[getTodaysEntry] Service error, using fallback:", error);
+    const fallback = FALLBACK_ENTRIES.find((e) => e.id === "fe7");
+    if (fallback) {
+      return { ...fallback, display_date: today };
+    }
     return null;
   }
 }

@@ -1,8 +1,26 @@
 "use client";
 
+/**
+ * SharedPagesSection — "Pages from the Community" section.
+ * Matches design image exactly:
+ *
+ * Layout: 2-column
+ *   Left (col-span-4): "PAGES FROM THE COMMUNITY" label | "Voices from our community" (large serif)
+ *                       | short description | "LEAVE A PAGE →"
+ *   Right (col-span-8): Carousel of 3 white quote cards with large amber " and navigation arrows
+ *
+ * Cards: white, 16px radius, faint shadow, no avatars, no likes
+ *        Large " quotation mark (Cormorant, amber #AE8D64)
+ *        Quote text in Cormorant, ~20px
+ *        "— Name" author line, tiny date
+ *
+ * Carousel arrows: top-right, circular border-only buttons, hover fills black
+ */
+
 import type { SharedPage } from "@/types";
-import { BookOpen, FileText, PenTool, X } from "lucide-react";
-import { useState } from "react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import LeaveAPageForm from "./LeaveAPageForm";
 
 interface SharedPagesSectionProps {
@@ -10,162 +28,179 @@ interface SharedPagesSectionProps {
 }
 
 export default function SharedPagesSection({ initialPages }: SharedPagesSectionProps) {
-  const [pages, setPages] = useState<SharedPage[]>(initialPages);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activePage, setActivePage] = useState<SharedPage | null>(null);
+  const [cardsInView, setCardsInView] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const sliderRef = useRef<HTMLDivElement>(null);
 
-  // Format date helper
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
+  const pages = initialPages;
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setCardsInView(true); observer.disconnect(); } },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.location.search.includes("leave-page=true")) {
+      setIsModalOpen(true);
+      const url = new URL(window.location.href);
+      url.searchParams.delete("leave-page");
+      window.history.replaceState({}, "", url.pathname + url.search);
+    }
+  }, []);
+
+  const formatDate = (d: string) =>
+    new Date(d).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+
+  const scroll = (dir: "left" | "right") => {
+    sliderRef.current?.scrollBy({ left: dir === "left" ? -370 : 370, behavior: "smooth" });
   };
 
   return (
     <section
+      id="community"
       aria-label="Pages from the Community"
-      className="py-20 sm:py-28 bg-muted/30 border-b border-border transition-colors duration-300 relative overflow-hidden"
+      className="py-16 sm:py-24 bg-background border-b border-[#ECECEC]"
     >
-      {/* ── Ruled journal style background effect ── */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(0deg, transparent, transparent 23px, color-mix(in srgb, var(--border) 10%, transparent) 24px)",
-          backgroundSize: "100% 24px",
-        }}
-        aria-hidden="true"
-      />
+      <div className="mx-auto max-w-7xl px-5 sm:px-10 lg:px-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start" ref={sectionRef}>
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 border-b border-border pb-8 mb-12">
-          <div className="max-w-xl">
-            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground block mb-2">
-              Community Journal
+          {/* ── LEFT: intro panel ── */}
+          <div className="lg:col-span-4 flex flex-col gap-5">
+            <span className="text-[9px] font-sans font-bold uppercase tracking-[0.28em] text-[#9B9B9B]">
+              Pages from the Community
             </span>
-            <h2 className="text-3xl sm:text-4xl font-serif font-black tracking-tight text-foreground">
-              Shared Pages
+            <h2 className="font-serif font-bold text-foreground leading-[1.1] tracking-tight text-[2rem] sm:text-[2.4rem]">
+              Voices<br />from our<br />community
             </h2>
-            <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-              Open notes from women building, learning, and failing in tech. Click a page to read the full reflection, or add your own voice.
+            <p className="text-sm text-[#6B6B6B] leading-[1.7] max-w-[280px]">
+              Real reflections from women in technology.
             </p>
+            <Link
+              href="#"
+              onClick={(e) => { e.preventDefault(); setIsModalOpen(true); }}
+              data-cursor="link"
+              className="group inline-flex items-center gap-2 text-[10px] font-sans font-semibold uppercase tracking-[0.22em] text-foreground hover:opacity-60 transition-opacity mt-2"
+            >
+              <span>Leave a Page</span>
+              <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
+            </Link>
           </div>
 
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="self-start md:self-auto inline-flex h-11 items-center gap-2 border-2 border-foreground bg-foreground px-5 text-xs font-bold uppercase tracking-wider text-background hover:bg-background hover:text-foreground transition-all-premium cursor-pointer rounded-md"
-          >
-            <PenTool className="h-4 w-4" /> Share Your Page
-          </button>
-        </div>
-
-        {/* Notebook Cards Grid */}
-        {pages.length === 0 ? (
-          <div className="py-16 text-center border border-dashed border-border rounded-xl bg-card">
-            <p className="text-sm text-muted-foreground">The journal is blank. Be the first to write a page.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {pages.map((page) => (
-              <div
-                key={page.id}
-                onClick={() => setActivePage(page)}
-                className="group relative bg-card p-6 sm:p-8 border border-border hover:border-foreground transition-all duration-300 rounded-[2px] shadow-xs cursor-pointer hover:shadow-md flex flex-col justify-between min-h-[220px]"
-                style={{
-                  backgroundImage: "linear-gradient(to right, rgba(220, 38, 38, 0.08) 1px, transparent 1px)",
-                  backgroundSize: "40px 100%",
-                  backgroundPosition: "left",
-                }}
+          {/* ── RIGHT: carousel ── */}
+          <div className="lg:col-span-8 relative">
+            {/* Carousel arrows — top right */}
+            <div className="flex justify-end gap-2 mb-5">
+              <button
+                onClick={() => scroll("left")}
+                aria-label="Previous pages"
+                data-cursor="button"
+                className="w-9 h-9 rounded-full border border-[#CCCCCC] flex items-center justify-center text-[#6B6B6B]
+                  hover:bg-foreground hover:border-foreground hover:text-background
+                  transition-all duration-200"
               >
-                {/* Left Margin Accent Rule */}
-                <div className="absolute left-[39px] inset-y-0 w-[1px] bg-red-500/15" />
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => scroll("right")}
+                aria-label="Next pages"
+                data-cursor="button"
+                className="w-9 h-9 rounded-full border border-[#CCCCCC] flex items-center justify-center text-[#6B6B6B]
+                  hover:bg-foreground hover:border-foreground hover:text-background
+                  transition-all duration-200"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
 
-                {/* Content */}
-                <div className="pl-6 space-y-4">
-                  {page.title && (
-                    <h3 className="font-serif font-bold text-base text-foreground group-hover:text-muted-gold transition-colors line-clamp-1">
-                      {page.title}
-                    </h3>
-                  )}
-                  <p className="font-serif text-sm text-muted-foreground leading-relaxed line-clamp-5 italic">
-                    &ldquo;{page.content}&rdquo;
+            {/* Cards slider */}
+            <div
+              ref={sliderRef}
+              className="flex gap-5 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2"
+              style={{ scrollbarWidth: "none" }}
+            >
+              {pages.map((page, i) => (
+                <div
+                  key={page.id}
+                  className={[
+                    "flex-shrink-0 w-[300px] sm:w-[320px] snap-start",
+                    "bg-white border border-[#ECECEC] rounded-[16px] p-7",
+                    "shadow-[0_2px_16px_rgba(0,0,0,0.04)]",
+                    "flex flex-col justify-between gap-5",
+                    "twn-paper-place",
+                    cardsInView ? "in-view" : "",
+                  ].join(" ")}
+                  style={{
+                    animationDelay: `${i * 80}ms`,
+                    minHeight: "200px",
+                  }}
+                >
+                  {/* Large amber quotation mark */}
+                  <div>
+                    <span
+                      className="font-quote font-medium leading-none block mb-3"
+                      style={{ fontSize: "4.5rem", color: "#AE8D64", lineHeight: 0.8 }}
+                      aria-hidden="true"
+                    >
+                      &ldquo;
+                    </span>
+                    {/* Quote text */}
+                    <p className="font-quote font-medium text-foreground leading-[1.55]" style={{ fontSize: "1.15rem" }}>
+                      {page.content}
+                    </p>
+                  </div>
+
+                  {/* Author + date */}
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-[13px] font-sans font-semibold text-foreground">
+                      — {page.author_name}
+                    </span>
+                    <span className="text-[11px] text-[#9B9B9B]">
+                      {formatDate(page.submitted_at)}
+                    </span>
+                  </div>
+                </div>
+              ))}
+
+              {/* Fallback if empty */}
+              {pages.length === 0 && (
+                <div className="flex-shrink-0 w-[300px] bg-white border border-[#ECECEC] rounded-[16px] p-7 flex items-center justify-center min-h-[200px]">
+                  <p className="text-sm text-[#9B9B9B] text-center">
+                    Be the first to leave a page.
                   </p>
                 </div>
-
-                {/* Footer Signature */}
-                <div className="pl-6 mt-6 pt-4 border-t border-border/60 flex items-center justify-between text-[11px] text-muted-foreground font-sans">
-                  <span className="font-semibold text-foreground">— {page.author_name}</span>
-                  <span>{formatDate(page.published_at || page.submitted_at)}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* ── Lightbox Modal for Reading Full Page ── */}
-      {activePage && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-xs animate-fade-in">
-          <div className="relative w-full max-w-xl bg-card border border-border rounded-[2px] shadow-xl p-8 sm:p-10 md:p-12 overflow-y-auto max-h-[85vh] transition-colors"
-               style={{
-                 backgroundImage: "linear-gradient(to right, rgba(220, 38, 38, 0.08) 1px, transparent 1px)",
-                 backgroundSize: "40px 100%",
-                 backgroundPosition: "left",
-               }}>
-            <div className="absolute left-[39px] inset-y-0 w-[1px] bg-red-500/15" />
-
-            <button
-              onClick={() => setActivePage(null)}
-              className="absolute right-6 top-6 p-1 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-            >
-              <X className="h-5 w-5" />
-            </button>
-
-            <div className="pl-6 space-y-6">
-              <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground bg-muted/65 px-2 py-0.5 rounded-sm">
-                Community Note #{activePage.id.substring(0, 4)}
-              </span>
-
-              {activePage.title && (
-                <h3 className="font-serif text-2xl font-black leading-tight text-foreground">
-                  {activePage.title}
-                </h3>
               )}
-
-              <p className="font-serif text-base sm:text-lg text-foreground leading-relaxed italic whitespace-pre-wrap">
-                &ldquo;{activePage.content}&rdquo;
-              </p>
-
-              <div className="pt-6 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
-                <span className="font-semibold text-foreground">— {activePage.author_name}</span>
-                <span>Published on {formatDate(activePage.published_at || activePage.submitted_at)}</span>
-              </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
 
-      {/* ── Modal overlay for Share Form ── */}
+      {/* ── Leave a Page Modal ── */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-xs animate-fade-in">
-          <div className="relative w-full max-w-lg bg-card border border-border rounded-xl shadow-xl p-6 sm:p-8 overflow-y-auto max-h-[90vh]">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Leave a Page form"
+        >
+          <div
+            className="absolute inset-0 bg-foreground/20 backdrop-blur-sm"
+            onClick={() => setIsModalOpen(false)}
+          />
+          <div className="relative bg-background border border-[#ECECEC] rounded-[18px] shadow-[0_20px_60px_rgba(0,0,0,0.12)] w-full max-w-lg p-8 z-10">
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute right-5 top-5 p-1 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              className="absolute top-5 right-5 text-[#9B9B9B] hover:text-foreground transition-colors"
+              aria-label="Close"
             >
               <X className="h-5 w-5" />
             </button>
-
-            <div className="mb-6">
-              <h3 className="text-xl font-serif font-black text-foreground">Write a notebook page</h3>
-              <p className="text-xs text-muted-foreground mt-1">
-                Share a slice of your technology journey with other readers.
-              </p>
-            </div>
-
             <LeaveAPageForm onSuccess={() => setIsModalOpen(false)} />
           </div>
         </div>

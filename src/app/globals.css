@@ -1,37 +1,43 @@
 @import "tailwindcss";
 
 :root {
-  /* Core Palette (Framer-Style White & Shades of Black) */
-  --charcoal-black: #09090b; /* Zinc-950 */
+  /* ── Core Palette ────────────────────────────────────────────────────────── */
+  --charcoal-black: #09090b;
   --soft-white: #ffffff;
   --deep-navy: #09090b;
-  --muted-gold: #71717a; /* Zinc-500 for secondary text */
-  --gray-border: #e4e4e7; /* Zinc-200 */
-  --text-primary: #18181b; /* Zinc-900 */
-  --text-muted: #71717a; /* Zinc-500 */
+  --muted-gold: #6B6B6B;
+  --gray-border: #ECECEC;
+  --text-primary: #111111;
+  --text-muted: #6B6B6B;
 
-  /* Theme mappings (Light Mode) */
-  --background: #ffffff;
-  --foreground: #09090b;
-  --card: #fafafa; /* Zinc-50 for subtle container backgrounds */
-  --card-foreground: #18181b;
+  /* ── Ink Accent: the warm amber used for emphasized notebook words ─────── */
+  --ink-accent: #AE8D64;
+
+  /* ── Theme mappings (Light Mode) ─────────────────────────────────────────  */
+  /* Background: premium paper — not pure white, warmer */
+  --background: #FCFBF8;
+  --foreground: #111111;
+  /* Cards sit ON the paper, so they are pure white */
+  --card: #ffffff;
+  --card-foreground: #111111;
   --popover: #ffffff;
-  --popover-foreground: #09090b;
-  --primary: #09090b;
+  --popover-foreground: #111111;
+  --primary: #111111;
   --primary-foreground: #ffffff;
-  --secondary: #f4f4f5; /* Zinc-100 */
-  --secondary-foreground: #18181b;
-  --muted: #f4f4f5;
-  --muted-foreground: #71717a;
-  --accent: #18181b;
+  --secondary: #F5F5F3;
+  --secondary-foreground: #111111;
+  --muted: #F5F5F3;
+  --muted-foreground: #6B6B6B;
+  --accent: #111111;
   --accent-foreground: #ffffff;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #e4e4e7; /* Thin clean gray borders */
-  --input: #e4e4e7;
-  --ring: #09090b;
+  /* Borders: very light, almost paper crease */
+  --border: #ECECEC;
+  --input: #ECECEC;
+  --ring: #111111;
 
-  --radius: 8px; /* Framer standard rounded corner for a soft premium feel */
+  --radius: 8px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -91,9 +97,11 @@
   --color-soft-white: var(--soft-white);
   --color-deep-navy: var(--deep-navy);
   --color-muted-gold: var(--muted-gold);
+  --color-ink-accent: var(--ink-accent);
 
   --font-serif: var(--font-serif);
   --font-sans: var(--font-sans);
+  --font-quote: var(--font-quote);
 
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
@@ -272,49 +280,330 @@ h6 {
   border-radius: var(--radius);
 }
 
-/* ── Hero Carousel Transitions ───────────────────────────────────────────────
-   Cross-fade between rotating featured articles in the hero.
-*/
+/* ── Hero Carousel Transitions ───────────────────────────────────────────────*/
 @keyframes heroFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-
 .hero-slide-enter {
   animation: heroFadeIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* ── Living Notebook: Ink-Drying Reveal ──────────────────────────────────────
-   The hero thought materialises like ink absorbing into paper.
-   Starts blurred and transparent, resolves to sharp and opaque.
-*/
+/* ── Living Notebook: Ink-Drying Reveal ──────────────────────────────────────*/
 @keyframes twn-ink-reveal {
+  from { opacity: 0; filter: blur(8px); }
+  to   { opacity: 1; filter: blur(0);   }
+}
+
+/* ── Cursor Blink ─────────────────────────────────────────────────────────────*/
+@keyframes twn-blink {
+  0%, 70%  { opacity: 1; }
+  71%, 100% { opacity: 0; }
+}
+.animate-twn-blink {
+  animation: twn-blink 1.1s ease-in-out infinite;
+}
+
+/* ── Navbar Entrance ──────────────────────────────────────────────────────────
+   Navbar quietly fades down from above on page load.
+*/
+@keyframes twn-nav-enter {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0);     }
+}
+.twn-nav-enter {
+  animation: twn-nav-enter 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Navbar: Ink Underline on Menu Links ─────────────────────────────────────
+   A hand-drawn ink line that grows left-to-right on hover.
+*/
+.nav-ink-link {
+  position: relative;
+  display: inline-block;
+}
+.nav-ink-link::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.nav-ink-link:hover::after,
+.nav-ink-link[data-active="true"]::after {
+  transform: scaleX(1);
+}
+
+/* ── TodaysPage: Sequential Border Draw ──────────────────────────────────────
+   Left border of the Today's Page card grows top-to-bottom like ink.
+*/
+@keyframes twn-border-grow {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+.twn-border-draw {
+  transform-origin: top center;
+  transform: scaleY(0);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.twn-border-draw.in-view {
+  transform: scaleY(1);
+}
+
+/* ── Card Paper Placement ─────────────────────────────────────────────────────
+   Community cards enter as if being laid on a desk:
+   slight rotation → 0, rise from below, fade in.
+*/
+@keyframes twn-paper-place {
   from {
     opacity: 0;
-    filter: blur(8px);
+    transform: translateY(16px) rotate(1deg);
   }
   to {
     opacity: 1;
-    filter: blur(0);
+    transform: translateY(0) rotate(0deg);
   }
 }
-
-/* ── Living Notebook: Cursor Blink ──────────────────────────────────────────
-   Slow, calm blink — editorial, not terminal.
-   The cursor rests visible longer than it hides.
-*/
-@keyframes twn-blink {
-  0%, 70% { opacity: 1; }
-  71%, 100% { opacity: 0; }
+.twn-paper-place {
+  opacity: 0;
+}
+.twn-paper-place.in-view {
+  animation: twn-paper-place 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.animate-twn-blink {
-  animation: twn-blink 1.1s ease-in-out infinite;
+/* ── Article Card Stagger Reveal ─────────────────────────────────────────────
+   Latest notes cards cascade in one after another (80ms apart).
+*/
+.reveal-cards > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-cards.in-view > *:nth-child(1) { opacity: 1; transform: none; transition-delay: 0ms;   }
+.reveal-cards.in-view > *:nth-child(2) { opacity: 1; transform: none; transition-delay: 80ms;  }
+.reveal-cards.in-view > *:nth-child(3) { opacity: 1; transform: none; transition-delay: 160ms; }
+.reveal-cards.in-view > *:nth-child(4) { opacity: 1; transform: none; transition-delay: 240ms; }
+.reveal-cards.in-view > *:nth-child(5) { opacity: 1; transform: none; transition-delay: 320ms; }
+.reveal-cards.in-view > *:nth-child(6) { opacity: 1; transform: none; transition-delay: 400ms; }
+
+/* ── SVG Icon Draw-On Animation ──────────────────────────────────────────────
+   Category icons "draw themselves" on hover via stroke animation.
+*/
+@keyframes twn-icon-draw {
+  from { stroke-dashoffset: 100; }
+  to   { stroke-dashoffset: 0;   }
+}
+.twn-icon-draw path,
+.twn-icon-draw circle,
+.twn-icon-draw rect,
+.twn-icon-draw polyline,
+.twn-icon-draw line {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+}
+.group:hover .twn-icon-draw path,
+.group:hover .twn-icon-draw circle,
+.group:hover .twn-icon-draw rect,
+.group:hover .twn-icon-draw polyline,
+.group:hover .twn-icon-draw line {
+  animation: twn-icon-draw 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Reading Line Bookmark ────────────────────────────────────────────────────
+   A thin vertical line on the left edge that grows with scroll depth.
+   Communicates "you're moving through a notebook, one page at a time."
+*/
+.twn-reading-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 2px;
+  background: var(--foreground);
+  opacity: 0.12;
+  z-index: 40;
+  pointer-events: none;
+  transform-origin: top center;
+  transition: height 0.1s linear;
+  border-radius: 0 0 2px 2px;
+}
+
+/* ── Custom Cursor ────────────────────────────────────────────────────────────
+   Tiny black dot that expands on interactive elements.
+   Only visible on devices with fine pointer (mouse/trackpad).
+*/
+@media (pointer: fine) {
+  * { cursor: none !important; }
+}
+.twn-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--foreground);
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              height 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              border-radius 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.25s ease;
+  will-change: transform;
+}
+.twn-cursor.is-button {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: 1.5px solid var(--foreground);
+}
+.twn-cursor.is-link {
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: 1.5px solid var(--foreground);
+  mix-blend-mode: multiply;
+}
+
+/* ── Page Transition Overlay ─────────────────────────────────────────────────
+   White sheet slides in, then out — like turning a notebook page.
+*/
+@keyframes twn-page-in {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0);    }
+}
+@keyframes twn-page-out {
+  from { transform: translateY(0);    }
+  to   { transform: translateY(-100%); }
+}
+.twn-page-wipe {
+  position: fixed;
+  inset: 0;
+  background: var(--background);
+  z-index: 9998;
+  pointer-events: none;
+  transform: translateY(100%);
+}
+.twn-page-wipe.entering {
+  animation: twn-page-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.twn-page-wipe.exiting {
+  animation: twn-page-out 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Notebook Loading Shimmer Lines ──────────────────────────────────────────
+   Instead of skeleton rectangles, show blank ruled-paper lines.
+*/
+@keyframes twn-line-shimmer {
+  0%   { opacity: 0.4; }
+  50%  { opacity: 0.9; }
+  100% { opacity: 0.4; }
+}
+.twn-loading-line {
+  height: 1px;
+  background: var(--border);
+  border-radius: 1px;
+  animation: twn-line-shimmer 1.8s ease-in-out infinite;
+}
+.twn-loading-line:nth-child(2) { animation-delay: 0.15s; width: 85%; }
+.twn-loading-line:nth-child(3) { animation-delay: 0.30s; width: 40%; }
+.twn-loading-line:nth-child(4) { animation-delay: 0.45s; width: 70%; }
+
+/* ── Pen micro-animation (every 25s) ─────────────────────────────────────────*/
+@keyframes twn-pen-rest {
+  0%,  96% { transform: rotate(28deg); }
+  97%       { transform: rotate(30deg); }
+  98%       { transform: rotate(28deg); }
+  99%       { transform: rotate(29.5deg); }
+  100%      { transform: rotate(28deg); }
+}
+.twn-pen-animate {
+  animation: twn-pen-rest 25s ease-in-out infinite;
+  transform-origin: 410px 240px;
+}
+
+/* ── Ink Line: draw-once SVG signature stroke ─────────────────────────────── */
+@keyframes twn-ink-draw {
+  from { stroke-dashoffset: 1200; opacity: 0; }
+  10%  { opacity: 1; }
+  to   { stroke-dashoffset: 0;    opacity: 1; }
+}
+.twn-ink-line {
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+  animation: twn-ink-draw 2.2s cubic-bezier(0.16, 1, 0.3, 1) 1.2s both;
+}
+
+/* ── Notebook page drift: subtle life on the illustration ─────────────────── */
+@keyframes twn-notebook-drift {
+  0%   { transform: rotate(-0.4deg) translateY(0px); }
+  50%  { transform: rotate(0.4deg)  translateY(-2px); }
+  100% { transform: rotate(-0.4deg) translateY(0px); }
+}
+.twn-notebook-drift {
+  animation: twn-notebook-drift 18s ease-in-out infinite;
+}
+
+/* ── Section breathing room: 120px vertical rhythm ───────────────────────── */
+.section-breathe {
+  padding-top: 7.5rem;
+  padding-bottom: 7.5rem;
+}
+
+/* ── Quote font class ─────────────────────────────────────────────────────── */
+.font-quote {
+  font-family: var(--font-quote), Georgia, serif;
+}
+
+/* ── Notebook Timeline Sidebar ────────────────────────────────────────────── */
+.twn-timeline {
+  position: fixed;
+  left: 18px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  z-index: 30;
+  pointer-events: none;
+}
+.twn-timeline-track {
+  position: absolute;
+  left: 0;
+  top: 10%;
+  bottom: 10%;
+  width: 1px;
+  background: var(--border);
+}
+.twn-timeline-dot {
+  position: absolute;
+  left: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--foreground);
+  opacity: 0.55;
+  transition: top 0.15s linear;
+}
+
+/* ── Reduced Motion Overrides ─────────────────────────────────────────────────
+   Respect user's system preference. Collapse all durations to near zero.
+*/
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .twn-reading-line,
+  .twn-cursor {
+    display: none;
+  }
 }
 
