@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { createAdminClient } from "@/lib/db/server";
-import type { NotebookEntry, Notebook } from "@/types";
+import type { Notebook, NotebookEntry } from "@/types";
 
 /**
  * Admin: Fetches all notebooks.
@@ -163,7 +163,8 @@ export async function updateEntryAdmin(
     if (input.title !== undefined) updatePayload.title = input.title?.trim() || null;
     if (input.thought !== undefined) updatePayload.thought = input.thought.trim();
     if (input.slug !== undefined) updatePayload.slug = input.slug?.trim() || null;
-    if (input.source_article_id !== undefined) updatePayload.source_article_id = input.source_article_id;
+    if (input.source_article_id !== undefined)
+      updatePayload.source_article_id = input.source_article_id;
     if (input.is_active !== undefined) updatePayload.is_active = input.is_active;
     if (input.priority !== undefined) updatePayload.priority = input.priority;
     if (input.display_date !== undefined) updatePayload.display_date = input.display_date || null;
@@ -197,10 +198,7 @@ export async function deleteEntryAdmin(id: string): Promise<boolean> {
 
   try {
     const adminSupabase = createAdminClient();
-    const { error } = await adminSupabase
-      .from("notebook_entries")
-      .delete()
-      .eq("id", id);
+    const { error } = await adminSupabase.from("notebook_entries").delete().eq("id", id);
 
     if (error) {
       console.error("[deleteEntryAdmin] DB delete error:", error.message);

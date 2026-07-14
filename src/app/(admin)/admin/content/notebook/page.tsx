@@ -28,11 +28,7 @@ export default async function AdminNotebookEntriesPage() {
       </div>
 
       {/* Main Manager Component */}
-      <NotebookEntriesManager
-        initialEntries={entries}
-        notebooks={notebooks}
-        articles={articles}
-      />
+      <NotebookEntriesManager initialEntries={entries} notebooks={notebooks} articles={articles} />
     </div>
   );
 }

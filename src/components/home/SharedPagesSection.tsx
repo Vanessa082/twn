@@ -39,7 +39,12 @@ export default function SharedPagesSection({ initialPages }: SharedPagesSectionP
     const el = sectionRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setCardsInView(true); observer.disconnect(); } },
+      ([e]) => {
+        if (e.isIntersecting) {
+          setCardsInView(true);
+          observer.disconnect();
+        }
+      },
       { threshold: 0.1 }
     );
     observer.observe(el);
@@ -69,22 +74,31 @@ export default function SharedPagesSection({ initialPages }: SharedPagesSectionP
       className="py-16 sm:py-24 bg-background border-b border-[#ECECEC]"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-10 lg:px-20">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start" ref={sectionRef}>
-
+        <div
+          className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start"
+          ref={sectionRef}
+        >
           {/* ── LEFT: intro panel ── */}
           <div className="lg:col-span-4 flex flex-col gap-5">
             <span className="text-[9px] font-sans font-bold uppercase tracking-[0.28em] text-[#9B9B9B]">
               Pages from the Community
             </span>
             <h2 className="font-serif font-bold text-foreground leading-[1.1] tracking-tight text-[2rem] sm:text-[2.4rem]">
-              Voices<br />from our<br />community
+              Voices
+              <br />
+              from our
+              <br />
+              community
             </h2>
             <p className="text-sm text-[#6B6B6B] leading-[1.7] max-w-[280px]">
               Real reflections from women in technology.
             </p>
             <Link
               href="#"
-              onClick={(e) => { e.preventDefault(); setIsModalOpen(true); }}
+              onClick={(e) => {
+                e.preventDefault();
+                setIsModalOpen(true);
+              }}
               data-cursor="link"
               className="group inline-flex items-center gap-2 text-[10px] font-sans font-semibold uppercase tracking-[0.22em] text-foreground hover:opacity-60 transition-opacity mt-2"
             >
@@ -151,7 +165,10 @@ export default function SharedPagesSection({ initialPages }: SharedPagesSectionP
                       &ldquo;
                     </span>
                     {/* Quote text */}
-                    <p className="font-quote font-medium text-foreground leading-[1.55]" style={{ fontSize: "1.15rem" }}>
+                    <p
+                      className="font-quote font-medium text-foreground leading-[1.55]"
+                      style={{ fontSize: "1.15rem" }}
+                    >
                       {page.content}
                     </p>
                   </div>

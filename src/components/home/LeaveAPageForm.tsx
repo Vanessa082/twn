@@ -1,7 +1,7 @@
 "use client";
 
 import { submitSharedPageAction } from "@/app/actions/shared-pages";
-import { AlertCircle, CheckCircle2, Feather, HelpCircle, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle2, Feather, Loader2 } from "lucide-react";
 import { useState, useTransition } from "react";
 
 interface LeaveAPageFormProps {
@@ -66,7 +66,8 @@ export default function LeaveAPageForm({ onSuccess }: LeaveAPageFormProps) {
         </div>
         <h3 className="font-serif text-lg font-bold text-foreground">Reflection Shared</h3>
         <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
-          Your page has been added to our pending pile. Once reviewed by our editorial team, it will appear on the Shared Pages wall. Thank you for reading and sharing.
+          Your page has been added to our pending pile. Once reviewed by our editorial team, it will
+          appear on the Shared Pages wall. Thank you for reading and sharing.
         </p>
       </div>
     );
@@ -76,14 +77,17 @@ export default function LeaveAPageForm({ onSuccess }: LeaveAPageFormProps) {
     <form onSubmit={handleSubmit} className="space-y-5 animate-fade-in">
       {error && (
         <div className="p-3.5 border border-red-500/20 bg-red-500/5 text-red-500 text-xs flex items-start gap-2.5 rounded-lg">
-          <AlertCircle className="h-4.5 w-4.5 shrink-0 mt-0.5" />
+          <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
           <span className="leading-relaxed">{error}</span>
         </div>
       )}
 
       {/* Author Name */}
       <div className="space-y-1.5">
-        <label htmlFor="authorName" className="text-[10px] font-bold uppercase tracking-wider text-foreground">
+        <label
+          htmlFor="authorName"
+          className="text-[10px] font-bold uppercase tracking-wider text-foreground"
+        >
           Your Name / Display Alias (Optional)
         </label>
         <input
@@ -99,7 +103,10 @@ export default function LeaveAPageForm({ onSuccess }: LeaveAPageFormProps) {
 
       {/* Reflection Title */}
       <div className="space-y-1.5">
-        <label htmlFor="refTitle" className="text-[10px] font-bold uppercase tracking-wider text-foreground">
+        <label
+          htmlFor="refTitle"
+          className="text-[10px] font-bold uppercase tracking-wider text-foreground"
+        >
           Reflection Title (Optional)
         </label>
         <input
@@ -116,7 +123,10 @@ export default function LeaveAPageForm({ onSuccess }: LeaveAPageFormProps) {
       {/* Content Area */}
       <div className="space-y-1.5 relative">
         <div className="flex justify-between items-center">
-          <label htmlFor="refContent" className="text-[10px] font-bold uppercase tracking-wider text-foreground">
+          <label
+            htmlFor="refContent"
+            className="text-[10px] font-bold uppercase tracking-wider text-foreground"
+          >
             Your Reflection (Required)
           </label>
           <span

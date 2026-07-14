@@ -17,7 +17,10 @@
 
 import { useEffect, useState } from "react";
 
-export default function NotebookSketch({ mouseX = 0, mouseY = 0 }: { mouseX?: number; mouseY?: number }) {
+export default function NotebookSketch({
+  mouseX = 0,
+  mouseY = 0,
+}: { mouseX?: number; mouseY?: number }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -35,7 +38,10 @@ export default function NotebookSketch({ mouseX = 0, mouseY = 0 }: { mouseX?: nu
   return (
     <div className="w-full select-none pointer-events-none relative flex items-center justify-center py-6">
       {/* Self-contained CSS for high performance GPU animations */}
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: self-contained CSS rules for GPU graphics
+        dangerouslySetInnerHTML={{
+          __html: `
         .notebook-container {
           transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
           animation: notebook-float 8s ease-in-out infinite;
@@ -78,7 +84,9 @@ export default function NotebookSketch({ mouseX = 0, mouseY = 0 }: { mouseX?: nu
           90% { opacity: 0.4; }
           95%, 100% { transform: translateY(120px) rotate(45deg); opacity: 0; }
         }
-      `}} />
+      `,
+        }}
+      />
 
       {/* Interactive Wrapper */}
       <div className="notebook-wrapper w-full max-w-[500px] pointer-events-auto cursor-default relative">
@@ -93,7 +101,7 @@ export default function NotebookSketch({ mouseX = 0, mouseY = 0 }: { mouseX?: nu
             <filter id="notebook-shadow-filter" x="-20%" y="-20%" width="140%" height="140%">
               <feGaussianBlur stdDeviation="22" />
             </filter>
-            
+
             {/* Pen Soft Shadow Filter */}
             <filter id="pen-shadow-filter" x="-30%" y="-30%" width="160%" height="160%">
               <feGaussianBlur stdDeviation="5" />
@@ -123,12 +131,12 @@ export default function NotebookSketch({ mouseX = 0, mouseY = 0 }: { mouseX?: nu
 
           {/* ── Layer 1: Floating Dust Particles (Background) ── */}
           <g opacity="0.3">
-            <circle cx="80"  cy="120" r="1.5" fill="#AE8D64" opacity="0.6" />
-            <circle cx="120" cy="80"  r="1.0" fill="#AE8D64" opacity="0.4" />
+            <circle cx="80" cy="120" r="1.5" fill="#AE8D64" opacity="0.6" />
+            <circle cx="120" cy="80" r="1.0" fill="#AE8D64" opacity="0.4" />
             <circle cx="510" cy="110" r="2.0" fill="#AE8D64" opacity="0.5" />
             <circle cx="490" cy="290" r="1.2" fill="#AE8D64" opacity="0.7" />
             <circle cx="160" cy="380" r="1.5" fill="#AE8D64" opacity="0.5" />
-            <circle cx="340" cy="70"  r="1.0" fill="#AE8D64" opacity="0.4" />
+            <circle cx="340" cy="70" r="1.0" fill="#AE8D64" opacity="0.4" />
           </g>
 
           {/* ── Layer 2: Main Soft Underlay Shadow ── */}
@@ -144,20 +152,21 @@ export default function NotebookSketch({ mouseX = 0, mouseY = 0 }: { mouseX?: nu
           />
 
           {/* ── Layer 3: Floating Notebook Body (Rotated ~15° & Skewed) ── */}
-          <g className="notebook-container" style={{ transform: `translate(${parallaxX}px, ${parallaxY}px)` }}>
+          <g
+            className="notebook-container"
+            style={{ transform: `translate(${parallaxX}px, ${parallaxY}px)` }}
+          >
             {/* The Notebook Wrapper Group with Perspective Skew and Rotation */}
             <g transform="rotate(14, 300, 210) skewX(-4)">
-              
               {/* Pages stack breathing block */}
               <g className="notebook-pages-group">
-                
                 {/* ── Layer 3a: Under Cover and Pages Stack Depth (Visible Thickness) ── */}
                 <g stroke="#E0DDD6" strokeWidth="1" opacity="0.9">
                   {/* Left stack border offsets */}
                   <path d="M 88 102 L 88 322 L 296 322" fill="none" />
                   <path d="M 86 104 L 86 324 L 296 324" fill="none" />
                   <path d="M 84 106 L 84 326 L 296 326" fill="none" />
-                  
+
                   {/* Right stack border offsets */}
                   <path d="M 512 102 L 512 322 L 304 322" fill="none" />
                   <path d="M 514 104 L 514 324 L 304 324" fill="none" />
@@ -172,7 +181,7 @@ export default function NotebookSketch({ mouseX = 0, mouseY = 0 }: { mouseX?: nu
                   stroke="#E4E1DA"
                   strokeWidth="1.2"
                 />
-                
+
                 {/* Right Sheet */}
                 <path
                   d="M 304 90 L 500 90 C 505 90, 510 95, 510 100 L 510 310 C 510 315, 505 320, 500 320 L 304 320 Z"
@@ -185,18 +194,37 @@ export default function NotebookSketch({ mouseX = 0, mouseY = 0 }: { mouseX?: nu
                 <g stroke="#E7E1D8" strokeWidth="0.8">
                   {/* Left Page Lines */}
                   {Array.from({ length: 11 }).map((_, i) => (
-                    <line key={`left-line-${i}`} x1="110" y1={110 + i * 18} x2="280" y2={110 + i * 18} />
+                    <line
+                      key={`left-line-${i}`}
+                      x1="110"
+                      y1={110 + i * 18}
+                      x2="280"
+                      y2={110 + i * 18}
+                    />
                   ))}
-                  
+
                   {/* Right Page Lines */}
                   {Array.from({ length: 11 }).map((_, i) => (
-                    <line key={`right-line-${i}`} x1="320" y1={110 + i * 18} x2="490" y2={110 + i * 18} />
+                    <line
+                      key={`right-line-${i}`}
+                      x1="320"
+                      y1={110 + i * 18}
+                      x2="490"
+                      y2={110 + i * 18}
+                    />
                   ))}
                 </g>
 
                 {/* Spine crease shading */}
                 <rect x="296" y="90" width="8" height="230" fill="rgba(0,0,0,0.03)" />
-                <line x1="300" y1="90" x2="300" y2="320" stroke="rgba(0,0,0,0.12)" strokeWidth="1" />
+                <line
+                  x1="300"
+                  y1="90"
+                  x2="300"
+                  y2="320"
+                  stroke="rgba(0,0,0,0.12)"
+                  strokeWidth="1"
+                />
 
                 {/* Spiral Binding Rings */}
                 {Array.from({ length: 10 }).map((_, i) => {
@@ -220,14 +248,32 @@ export default function NotebookSketch({ mouseX = 0, mouseY = 0 }: { mouseX?: nu
                 <g stroke="#C2BDB2" strokeWidth="0.8" fill="none" opacity="0.75">
                   {/* User box */}
                   <rect x="135" y="122" width="36" height="13" rx="2" />
-                  <text x="141" y="131" fontFamily="monospace" fontSize="7" fill="#C2BDB2" stroke="none">User</text>
-                  
+                  <text
+                    x="141"
+                    y="131"
+                    fontFamily="monospace"
+                    fontSize="7"
+                    fill="#C2BDB2"
+                    stroke="none"
+                  >
+                    User
+                  </text>
+
                   {/* Down Arrow */}
                   <path d="M 153 135 L 153 145 M 151 143 L 153 145 L 155 143" />
-                  
+
                   {/* API Box */}
                   <rect x="138" y="148" width="30" height="13" rx="2" />
-                  <text x="146" y="157" fontFamily="monospace" fontSize="7" fill="#C2BDB2" stroke="none">API</text>
+                  <text
+                    x="146"
+                    y="157"
+                    fontFamily="monospace"
+                    fontSize="7"
+                    fill="#C2BDB2"
+                    stroke="none"
+                  >
+                    API
+                  </text>
 
                   {/* Down Arrow */}
                   <path d="M 153 161 L 153 171 M 151 169 L 153 171 L 155 169" />
@@ -235,24 +281,51 @@ export default function NotebookSketch({ mouseX = 0, mouseY = 0 }: { mouseX?: nu
                   {/* DB Box (cylinder shape) */}
                   <path d="M 137 177 C 137 175, 169 175, 169 177 L 169 187 C 169 189, 137 189, 137 187 Z" />
                   <path d="M 137 180 C 137 182, 169 182, 169 180" />
-                  <text x="147" y="185" fontFamily="monospace" fontSize="6.5" fill="#C2BDB2" stroke="none">DB</text>
+                  <text
+                    x="147"
+                    y="185"
+                    fontFamily="monospace"
+                    fontSize="6.5"
+                    fill="#C2BDB2"
+                    stroke="none"
+                  >
+                    DB
+                  </text>
                 </g>
 
                 {/* Faint Handwritten Marks (Right Page) */}
                 <g fill="#AFAAA0" fontFamily="monospace" fontSize="9" opacity="0.65">
-                  <text x="330" y="123">• API</text>
-                  <text x="330" y="141">→ auth()</text>
-                  <text x="330" y="159">✓ deployed</text>
-                  <text x="330" y="177">cache?</text>
-                  <text x="330" y="195">v2</text>
-                  
+                  <text x="330" y="123">
+                    • API
+                  </text>
+                  <text x="330" y="141">
+                    → auth()
+                  </text>
+                  <text x="330" y="159">
+                    ✓ deployed
+                  </text>
+                  <text x="330" y="177">
+                    cache?
+                  </text>
+                  <text x="330" y="195">
+                    v2
+                  </text>
+
                   {/* Faint handwritten wavy lines */}
-                  <path d="M 330 228 Q 350 226, 370 229 T 410 227" stroke="#C2BDB2" strokeWidth="1" fill="none" />
-                  <path d="M 330 246 Q 360 244, 380 247 T 420 245" stroke="#C2BDB2" strokeWidth="0.85" fill="none" />
+                  <path
+                    d="M 330 228 Q 350 226, 370 229 T 410 227"
+                    stroke="#C2BDB2"
+                    strokeWidth="1"
+                    fill="none"
+                  />
+                  <path
+                    d="M 330 246 Q 360 244, 380 247 T 420 245"
+                    stroke="#C2BDB2"
+                    strokeWidth="0.85"
+                    fill="none"
+                  />
                 </g>
-
               </g>
-
             </g>
 
             {/* ── Layer 4: Matte Black Fountain Pen (Diagonally Placed) ── */}
@@ -277,7 +350,6 @@ export default function NotebookSketch({ mouseX = 0, mouseY = 0 }: { mouseX?: nu
               {/* Tilted Fountain Pen Group */}
               {/* Drawn straight, then rotated 38° to align */}
               <g transform="translate(330, 205) rotate(38)">
-                
                 {/* Pen Cap (top) */}
                 <rect x="-4.5" y="-70" width="9" height="50" rx="2" fill="url(#pen-barrel-grad)" />
                 {/* Silver clip */}
@@ -301,16 +373,21 @@ export default function NotebookSketch({ mouseX = 0, mouseY = 0 }: { mouseX?: nu
 
                 {/* Moving Highlight Reflection Layer */}
                 <g opacity="0.3" clipPath="url(#cap-clip)">
-                  <rect x="-4" y="-80" width="8" height="20" fill="#FFFFFF" className="pen-reflection" />
+                  <rect
+                    x="-4"
+                    y="-80"
+                    width="8"
+                    height="20"
+                    fill="#FFFFFF"
+                    className="pen-reflection"
+                  />
                 </g>
-
               </g>
 
               {/* ── Layer 5: Fresh Ink Dot (#202020) ── */}
               {/* Located precisely at the tip of the pen (x: 279, y: 265 approx) */}
               <circle cx="277" cy="265" r="1.8" fill="#202020" />
             </g>
-
           </g>
         </svg>
       </div>

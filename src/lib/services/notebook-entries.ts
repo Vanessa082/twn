@@ -109,7 +109,8 @@ export const FALLBACK_ENTRIES: NotebookEntry[] = [
     id: "fe8",
     notebook_id: NOTEBOOK_ID_PLACEHOLDER,
     title: null,
-    thought: "Growth often looks like repeating the same difficult thing until it becomes ordinary.",
+    thought:
+      "Growth often looks like repeating the same difficult thing until it becomes ordinary.",
     slug: null,
     source_article_id: null,
     is_active: true,
@@ -225,4 +226,3 @@ export async function getTodaysEntry(): Promise<NotebookEntry | null> {
 
 // Re-export Admin Services
 export * from "./notebook-entries-admin";
-

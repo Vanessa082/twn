@@ -46,6 +46,7 @@
   },
   "articles": {
     "title": "All Articles",
+    "description": "Reflections and records on writing code, leading teams, and building technology.",
     "readMore": "Read more",
     "readingTime": "{minutes} min read",
     "publishedOn": "Published {date}",

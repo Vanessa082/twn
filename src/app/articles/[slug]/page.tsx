@@ -1,6 +1,6 @@
 import ArticleEngagement from "@/components/articles/ArticleEngagement";
-import ReadingProgress from "@/components/articles/ReadingProgress";
 import MarginNotesList from "@/components/articles/MarginNotesList";
+import ReadingProgress from "@/components/articles/ReadingProgress";
 import NewsletterSection from "@/components/home/NewsletterSection";
 import ImageWithSkeleton from "@/components/ui/ImageWithSkeleton";
 import { getArticleBySlug } from "@/lib/services/articles";

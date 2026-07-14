@@ -1,8 +1,8 @@
 "use client";
 
-import { moderateSharedPageAction, deleteSharedPageAction } from "@/app/actions/shared-pages";
-import type { SharedPage, ModerationStatus } from "@/types";
-import { Check, X, Trash2, Calendar, AlertCircle, Clock, Eye } from "lucide-react";
+import { deleteSharedPageAction, moderateSharedPageAction } from "@/app/actions/shared-pages";
+import type { ModerationStatus, SharedPage } from "@/types";
+import { Check, Clock, Eye, Trash2, X } from "lucide-react";
 import { useState, useTransition } from "react";
 
 interface SharedPagesModeratorProps {
@@ -24,9 +24,7 @@ export default function SharedPagesModerator({ initialPages }: SharedPagesModera
     startTransition(async () => {
       const result = await moderateSharedPageAction(id, status);
       if (result.success && result.data) {
-        setPages((prev) =>
-          prev.map((p) => (p.id === id ? result.data! : p))
-        );
+        setPages((prev) => prev.map((p) => (p.id === id ? result.data! : p)));
       } else {
         alert(result.error || "Failed to update moderation status.");
       }
@@ -34,7 +32,8 @@ export default function SharedPagesModerator({ initialPages }: SharedPagesModera
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to permanently delete this shared page submission?")) return;
+    if (!confirm("Are you sure you want to permanently delete this shared page submission?"))
+      return;
 
     startTransition(async () => {
       const result = await deleteSharedPageAction(id);
@@ -104,17 +103,15 @@ export default function SharedPagesModerator({ initialPages }: SharedPagesModera
                     <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                       Submitted by:
                     </span>
-                    <span className="text-xs font-bold text-foreground">
-                      {page.author_name}
-                    </span>
-                    <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm ${getStatusBadgeClass(page.status)}`}>
+                    <span className="text-xs font-bold text-foreground">{page.author_name}</span>
+                    <span
+                      className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm ${getStatusBadgeClass(page.status)}`}
+                    >
                       {page.status}
                     </span>
                   </div>
                   {page.title && (
-                    <h3 className="font-serif font-bold text-lg text-foreground">
-                      {page.title}
-                    </h3>
+                    <h3 className="font-serif font-bold text-lg text-foreground">{page.title}</h3>
                   )}
                 </div>
 
@@ -129,9 +126,7 @@ export default function SharedPagesModerator({ initialPages }: SharedPagesModera
                       minute: "2-digit",
                     })}
                   </span>
-                  <span className="border-l border-border pl-2">
-                    {page.word_count} words
-                  </span>
+                  <span className="border-l border-border pl-2">{page.word_count} words</span>
                 </div>
               </div>
 
@@ -198,7 +193,8 @@ export default function SharedPagesModerator({ initialPages }: SharedPagesModera
           <div
             className="relative w-full max-w-xl bg-card border border-border rounded-xl shadow-xl p-8 sm:p-10 overflow-y-auto max-h-[85vh] transition-colors"
             style={{
-              backgroundImage: "linear-gradient(to right, rgba(220, 38, 38, 0.08) 1px, transparent 1px)",
+              backgroundImage:
+                "linear-gradient(to right, rgba(220, 38, 38, 0.08) 1px, transparent 1px)",
               backgroundSize: "40px 100%",
               backgroundPosition: "left",
             }}

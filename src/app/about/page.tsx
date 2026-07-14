@@ -48,7 +48,7 @@ export default async function AboutPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="p-4 rounded-xl border border-border bg-card">
                   <div className="flex items-center gap-2 text-deep-navy dark:text-muted-gold font-bold mb-2">
-                    <BookOpen className="h-4.5 w-4.5" />
+                    <BookOpen className="h-[18px] w-[18px]" />
                     <span className="text-sm uppercase tracking-wider">Education</span>
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed">
@@ -59,7 +59,7 @@ export default async function AboutPage() {
 
                 <div className="p-4 rounded-xl border border-border bg-card">
                   <div className="flex items-center gap-2 text-deep-navy dark:text-muted-gold font-bold mb-2">
-                    <Award className="h-4.5 w-4.5" />
+                    <Award className="h-[18px] w-[18px]" />
                     <span className="text-sm uppercase tracking-wider">Leadership</span>
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed">
@@ -76,7 +76,7 @@ export default async function AboutPage() {
             {/* Visual Monogram Card */}
             <div className="relative p-6 rounded-2xl border border-border bg-card text-center flex flex-col items-center shadow-xs">
               <div className="flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-deep-navy bg-white text-deep-navy dark:border-muted-gold dark:bg-charcoal-black dark:text-muted-gold shadow-sm mb-4">
-                <span className="font-serif text-3xl font-black tracking-tighter">TNW</span>
+                <span className="font-serif text-3xl font-black tracking-tighter">TWN</span>
               </div>
               <h4 className="font-serif text-lg font-bold text-foreground">Vanessa</h4>
               <p className="text-xs text-muted-foreground mb-4">Founder & Writer</p>

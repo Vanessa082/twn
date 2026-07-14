@@ -43,11 +43,5 @@ export default function ReadingLine() {
     };
   }, []);
 
-  return (
-    <div
-      ref={lineRef}
-      className="twn-reading-line hidden lg:block"
-      aria-hidden="true"
-    />
-  );
+  return <div ref={lineRef} className="twn-reading-line hidden lg:block" aria-hidden="true" />;
 }

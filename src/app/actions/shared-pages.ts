@@ -25,7 +25,15 @@ export async function submitSharedPageAction(
   } catch (error: unknown) {
     const err = error as Error;
     console.error("[submitSharedPageAction] Error:", err.message);
-    return { success: false, data: null, error: err.message || "Failed to submit reflection." };
+    let userFriendlyError = err.message || "Failed to submit reflection.";
+    if (
+      userFriendlyError.includes("fetch failed") ||
+      userFriendlyError.includes("TypeError") ||
+      userFriendlyError.includes("failed to fetch")
+    ) {
+      userFriendlyError = "Unable to connect to the database right now. Please try again later.";
+    }
+    return { success: false, data: null, error: userFriendlyError };
   }
 }
 
@@ -41,7 +49,11 @@ export async function moderateSharedPageAction(id: string, status: ModerationSta
   } catch (error: unknown) {
     const err = error as Error;
     console.error("[moderateSharedPageAction] Error:", err.message);
-    return { success: false, data: null, error: err.message || "Failed to update moderation status." };
+    return {
+      success: false,
+      data: null,
+      error: err.message || "Failed to update moderation status.",
+    };
   }
 }
 

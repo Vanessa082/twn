@@ -55,13 +55,14 @@ export default function MarginNoteForm({ articleId }: MarginNoteFormProps) {
           Leave a Margin Note
         </h4>
         <p className="text-[11px] text-muted-foreground">
-          Write a concise reflection (maximum 120 characters). It will appear in the margin once approved.
+          Write a concise reflection (maximum 120 characters). It will appear in the margin once
+          approved.
         </p>
       </div>
 
       {success ? (
         <div className="p-4 border border-emerald-500/20 bg-emerald-500/5 text-emerald-600 rounded-lg flex items-start gap-2.5 animate-fade-in">
-          <CheckCircle2 className="h-4.5 w-4.5 shrink-0 mt-0.5" />
+          <CheckCircle2 className="h-4 w-4 shrink-0 mt-0.5" />
           <p className="text-xs leading-relaxed">
             Note submitted to the margins! It will appear here once approved by TWN editors.
           </p>
@@ -111,7 +112,7 @@ export default function MarginNoteForm({ articleId }: MarginNoteFormProps) {
               <button
                 type="submit"
                 disabled={isPending || !content.trim() || content.length > charLimit}
-                className="inline-flex h-9.5 items-center justify-center gap-1.5 border border-foreground bg-foreground px-4 text-xs font-bold uppercase tracking-wider text-background hover:bg-background hover:text-foreground transition-all cursor-pointer rounded-lg disabled:opacity-50"
+                className="inline-flex h-9 items-center justify-center gap-1.5 border border-foreground bg-foreground px-4 text-xs font-bold uppercase tracking-wider text-background hover:bg-background hover:text-foreground transition-all cursor-pointer rounded-lg disabled:opacity-50"
               >
                 {isPending ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />

@@ -20,7 +20,16 @@ const CATEGORIES = [
     key: "technology" as const,
     description: "Architecture, scale, quality, engineering at scale.",
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7" aria-hidden="true">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="h-7 w-7"
+        aria-hidden="true"
+      >
         <polyline points="16 18 22 12 16 6" />
         <polyline points="8 6 2 12 8 18" />
       </svg>
@@ -30,7 +39,16 @@ const CATEGORIES = [
     key: "leadership" as const,
     description: "Mentoring teams, driving culture, leading with empathy.",
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7" aria-hidden="true">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="h-7 w-7"
+        aria-hidden="true"
+      >
         <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
         <circle cx="9" cy="7" r="4" />
         <path d="M23 21v-2a4 4 0 00-3-3.87" />
@@ -42,7 +60,16 @@ const CATEGORIES = [
     key: "learning" as const,
     description: "Techniques, methodologies, and lifelong learning guides.",
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7" aria-hidden="true">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="h-7 w-7"
+        aria-hidden="true"
+      >
         <path d="M12 7v14" />
         <path d="M3 18a1 1 0 01-1-1V4a1 1 0 011-1h5a4 4 0 014 4 4 4 0 014-4h5a1 1 0 011 1v13a1 1 0 01-1 1h-6a3 3 0 00-3 3 3 3 0 00-3-3z" />
       </svg>
@@ -52,7 +79,16 @@ const CATEGORIES = [
     key: "community" as const,
     description: "Open source, local tech groups, and ecosystem support.",
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7" aria-hidden="true">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="h-7 w-7"
+        aria-hidden="true"
+      >
         <circle cx="12" cy="12" r="10" />
         <line x1="2" y1="12" x2="22" y2="12" />
         <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
@@ -63,7 +99,16 @@ const CATEGORIES = [
     key: "reflections" as const,
     description: "Society, the African tech landscape, and career growth.",
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7" aria-hidden="true">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="h-7 w-7"
+        aria-hidden="true"
+      >
         <path d="M12 20h9" />
         <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
       </svg>
@@ -80,7 +125,12 @@ export default function BrowseByTopic() {
     const el = sectionRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setInView(true); observer.disconnect(); } },
+      ([e]) => {
+        if (e.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
       { threshold: 0.1 }
     );
     observer.observe(el);
@@ -95,14 +145,14 @@ export default function BrowseByTopic() {
       className="py-14 sm:py-20 bg-background border-b border-[#ECECEC]"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-10 lg:px-20">
-
         {/* Header */}
         <div
           className="flex items-end justify-between mb-10"
           style={{
             opacity: inView ? 1 : 0,
             transform: inView ? "translateY(0)" : "translateY(14px)",
-            transition: "opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)",
+            transition:
+              "opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)",
           }}
         >
           <div>
@@ -124,7 +174,9 @@ export default function BrowseByTopic() {
         </div>
 
         {/* 5-tile grid */}
-        <div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5 reveal-cards ${inView ? "in-view" : ""}`}>
+        <div
+          className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5 reveal-cards ${inView ? "in-view" : ""}`}
+        >
           {CATEGORIES.map(({ key, description, icon }) => (
             <Link
               key={key}
@@ -141,12 +193,8 @@ export default function BrowseByTopic() {
 
               {/* Label */}
               <div className="flex flex-col gap-1.5">
-                <h3 className="font-serif font-bold text-[0.95rem] text-foreground">
-                  {t(key)}
-                </h3>
-                <p className="text-[11px] text-[#9B9B9B] leading-[1.55]">
-                  {description}
-                </p>
+                <h3 className="font-serif font-bold text-[0.95rem] text-foreground">{t(key)}</h3>
+                <p className="text-[11px] text-[#9B9B9B] leading-[1.55]">{description}</p>
               </div>
             </Link>
           ))}

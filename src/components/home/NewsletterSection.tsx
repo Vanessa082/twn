@@ -33,10 +33,8 @@ export default function NewsletterSection() {
       className="py-14 bg-background border-b border-[#ECECEC]"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-10 lg:px-20">
-        
         {/* Horizontal Card */}
         <div className="bg-white border border-[#ECECEC] rounded-[20px] p-6 sm:p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-10">
-          
           {/* Left: Envelope Icon */}
           <div className="flex-shrink-0 flex items-center justify-center w-14 h-14 border border-[#ECECEC] text-[#6B6B6B] rounded-[12px] bg-[#F9F9F7]">
             <Mail className="h-6 w-6" strokeWidth={1.5} />
@@ -73,11 +71,7 @@ export default function NewsletterSection() {
                 data-cursor="button"
                 className="h-11 px-6 bg-foreground text-background text-[10px] font-sans font-bold uppercase tracking-[0.18em] hover:bg-foreground/85 transition-all duration-200 disabled:opacity-60 flex items-center justify-center gap-2 shrink-0 rounded-r-[8px] border border-foreground cursor-pointer"
               >
-                {isPending ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  "Subscribe"
-                )}
+                {isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Subscribe"}
               </button>
             </form>
 
@@ -90,13 +84,13 @@ export default function NewsletterSection() {
                 </div>
               )}
               {state.error && (
-                <p className="text-[11px] text-destructive animate-in fade-in duration-300">{state.error}</p>
+                <p className="text-[11px] text-destructive animate-in fade-in duration-300">
+                  {state.error}
+                </p>
               )}
             </div>
           </div>
-
         </div>
-        
       </div>
     </section>
   );

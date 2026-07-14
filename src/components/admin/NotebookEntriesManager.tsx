@@ -1,8 +1,12 @@
 "use client";
 
-import { createEntryAction, deleteEntryAction, updateEntryAction } from "@/app/actions/notebook-entries";
+import {
+  createEntryAction,
+  deleteEntryAction,
+  updateEntryAction,
+} from "@/app/actions/notebook-entries";
 import type { Article, Notebook, NotebookEntry } from "@/types";
-import { Plus, Edit2, Trash2, Calendar, Sparkles, Check, X, AlertCircle } from "lucide-react";
+import { AlertCircle, Calendar, Check, Edit2, Plus, Sparkles, Trash2, X } from "lucide-react";
 import { useState, useTransition } from "react";
 
 interface NotebookEntriesManagerProps {
@@ -81,9 +85,7 @@ export default function NotebookEntriesManager({
       if (editingEntry) {
         const result = await updateEntryAction(editingEntry.id, payload);
         if (result.success && result.data) {
-          setEntries((prev) =>
-            prev.map((e) => (e.id === editingEntry.id ? result.data! : e))
-          );
+          setEntries((prev) => prev.map((e) => (e.id === editingEntry.id ? result.data! : e)));
           resetForm();
         } else {
           setFormError(result.error || "Failed to update entry");
@@ -118,9 +120,7 @@ export default function NotebookEntriesManager({
       const newActive = !entry.is_active;
       const result = await updateEntryAction(entry.id, { is_active: newActive });
       if (result.success && result.data) {
-        setEntries((prev) =>
-          prev.map((e) => (e.id === entry.id ? result.data! : e))
-        );
+        setEntries((prev) => prev.map((e) => (e.id === entry.id ? result.data! : e)));
       } else {
         alert(result.error || "Failed to toggle status");
       }
@@ -178,7 +178,10 @@ export default function NotebookEntriesManager({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Thought Content */}
             <div className="md:col-span-2 space-y-1.5">
-              <label htmlFor="thought" className="text-xs font-bold uppercase tracking-wider text-foreground">
+              <label
+                htmlFor="thought"
+                className="text-xs font-bold uppercase tracking-wider text-foreground"
+              >
                 Thought / Sentence (Required)
               </label>
               <textarea
@@ -194,7 +197,10 @@ export default function NotebookEntriesManager({
 
             {/* Context Title */}
             <div className="space-y-1.5">
-              <label htmlFor="title" className="text-xs font-bold uppercase tracking-wider text-foreground">
+              <label
+                htmlFor="title"
+                className="text-xs font-bold uppercase tracking-wider text-foreground"
+              >
                 Label / Title (Optional)
               </label>
               <input
@@ -209,7 +215,10 @@ export default function NotebookEntriesManager({
 
             {/* Notebook ID */}
             <div className="space-y-1.5">
-              <label htmlFor="notebook" className="text-xs font-bold uppercase tracking-wider text-foreground">
+              <label
+                htmlFor="notebook"
+                className="text-xs font-bold uppercase tracking-wider text-foreground"
+              >
                 Notebook Collection
               </label>
               <select
@@ -228,7 +237,10 @@ export default function NotebookEntriesManager({
 
             {/* Display Date */}
             <div className="space-y-1.5">
-              <label htmlFor="displayDate" className="text-xs font-bold uppercase tracking-wider text-foreground">
+              <label
+                htmlFor="displayDate"
+                className="text-xs font-bold uppercase tracking-wider text-foreground"
+              >
                 Today&apos;s Page Schedule (Optional)
               </label>
               <input
@@ -239,13 +251,17 @@ export default function NotebookEntriesManager({
                 className="w-full p-3 rounded-lg border border-border bg-background text-sm text-foreground focus:outline-none focus:border-foreground transition-colors"
               />
               <p className="text-[10px] text-muted-foreground">
-                Assign a calendar day to pin this entry on the home page as &ldquo;Today&apos;s Page&rdquo;.
+                Assign a calendar day to pin this entry on the home page as &ldquo;Today&apos;s
+                Page&rdquo;.
               </p>
             </div>
 
             {/* Linked Article */}
             <div className="space-y-1.5">
-              <label htmlFor="sourceArticle" className="text-xs font-bold uppercase tracking-wider text-foreground">
+              <label
+                htmlFor="sourceArticle"
+                className="text-xs font-bold uppercase tracking-wider text-foreground"
+              >
                 Inspired / Source Article (Optional)
               </label>
               <select
@@ -265,7 +281,10 @@ export default function NotebookEntriesManager({
 
             {/* Priority */}
             <div className="space-y-1.5">
-              <label htmlFor="priority" className="text-xs font-bold uppercase tracking-wider text-foreground">
+              <label
+                htmlFor="priority"
+                className="text-xs font-bold uppercase tracking-wider text-foreground"
+              >
                 Rotation Priority
               </label>
               <input
@@ -289,9 +308,12 @@ export default function NotebookEntriesManager({
                 type="checkbox"
                 checked={isActive}
                 onChange={(e) => setIsActive(e.target.checked)}
-                className="h-4.5 w-4.5 rounded-sm border-border text-foreground focus:ring-0 focus:ring-offset-0 accent-foreground cursor-pointer"
+                className="h-4 w-4 rounded-sm border-border text-foreground focus:ring-0 focus:ring-offset-0 accent-foreground cursor-pointer"
               />
-              <label htmlFor="isActive" className="text-xs font-bold uppercase tracking-wider text-foreground cursor-pointer select-none">
+              <label
+                htmlFor="isActive"
+                className="text-xs font-bold uppercase tracking-wider text-foreground cursor-pointer select-none"
+              >
                 Active in Rotation
               </label>
             </div>
@@ -321,7 +343,9 @@ export default function NotebookEntriesManager({
         <h2 className="text-xl font-serif font-bold text-foreground">All Notebook Thoughts</h2>
         {entries.length === 0 ? (
           <div className="p-8 border border-dashed border-border rounded-xl text-center">
-            <p className="text-sm text-muted-foreground">No thoughts written yet. Write your first thought above.</p>
+            <p className="text-sm text-muted-foreground">
+              No thoughts written yet. Write your first thought above.
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4">
@@ -371,7 +395,10 @@ export default function NotebookEntriesManager({
                       {/* Attached Article */}
                       {matchedArticle && (
                         <p className="text-[11px] text-muted-foreground">
-                          Inspired by article: <span className="font-semibold text-foreground">{matchedArticle.title}</span>
+                          Inspired by article:{" "}
+                          <span className="font-semibold text-foreground">
+                            {matchedArticle.title}
+                          </span>
                         </p>
                       )}
                     </div>
@@ -388,7 +415,11 @@ export default function NotebookEntriesManager({
                             : "border-border bg-muted/5 text-muted-foreground hover:bg-muted/10"
                         }`}
                       >
-                        {entry.is_active ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
+                        {entry.is_active ? (
+                          <Check className="h-4 w-4" />
+                        ) : (
+                          <X className="h-4 w-4" />
+                        )}
                       </button>
 
                       {/* Edit Button */}

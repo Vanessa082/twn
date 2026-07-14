@@ -1,7 +1,7 @@
 import { getAllArticlesAdmin } from "@/lib/services/articles";
-import { getAllSubscribersAdmin } from "@/lib/services/subscribers";
 import { getAllEntriesAdmin } from "@/lib/services/notebook-entries";
-import { ArrowLeft, BookOpen, ChevronRight, FileText, PenSquare, Users, BookOpenIcon, Sparkles } from "lucide-react";
+import { getAllSubscribersAdmin } from "@/lib/services/subscribers";
+import { ArrowLeft, BookOpen, ChevronRight, Sparkles, Users } from "lucide-react";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -9,16 +9,16 @@ export const dynamic = "force-dynamic";
 export default async function AdminDashboardPage() {
   // 1. Fetch real statistics from database using admin clients
   let articlesCount = 0;
-  let publishedCount = 0;
-  let draftsCount = 0;
+  let _publishedCount = 0;
+  let _draftsCount = 0;
   let subscribersCount = 0;
   let notebookEntriesCount = 0;
 
   try {
     const articles = await getAllArticlesAdmin();
     articlesCount = articles.length;
-    publishedCount = articles.filter((a) => a.status === "published").length;
-    draftsCount = articles.filter((a) => a.status === "draft").length;
+    _publishedCount = articles.filter((a) => a.status === "published").length;
+    _draftsCount = articles.filter((a) => a.status === "draft").length;
 
     const subscribers = await getAllSubscribersAdmin();
     subscribersCount = subscribers.length;

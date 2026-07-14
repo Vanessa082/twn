@@ -22,7 +22,7 @@ import ReadingLine from "@/components/ui/ReadingLine";
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
-import { Inter, Playfair_Display, Cormorant_Garamond } from "next/font/google";
+import { Cormorant_Garamond, Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 /**
@@ -106,8 +106,14 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`${inter.variable} ${playfair.variable} ${cormorant.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-300" suppressHydrationWarning>
+    <html
+      lang={locale}
+      className={`${inter.variable} ${playfair.variable} ${cormorant.variable} h-full antialiased`}
+    >
+      <body
+        className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-300"
+        suppressHydrationWarning
+      >
         <NextIntlClientProvider locale={locale} messages={messages}>
           {/* Global ambient UI — cursor, reading line, page transitions */}
           <CustomCursor />

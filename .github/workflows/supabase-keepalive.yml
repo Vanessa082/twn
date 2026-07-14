@@ -1,0 +1,63 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# Supabase Keepalive — TWN
+#
+# Supabase free-tier projects are paused after 7 days of no database activity.
+# This workflow runs every 3 days and makes a lightweight, read-only request
+# to the REST API (SELECT 1 via /rpc/ping or a schema introspection).
+#
+# ✅ Stores nothing in the database.
+# ✅ Creates no records.
+# ✅ Uses only a few bytes of Supabase bandwidth (well within free limits).
+# ✅ Runs entirely on GitHub's free compute (not your Supabase quota).
+#
+# Setup required:
+#   1. Add SUPABASE_URL as a GitHub Actions secret
+#      (value: https://ajafekyeeuvygqdyrlpu.supabase.co)
+#   2. Add SUPABASE_ANON_KEY as a GitHub Actions secret
+#      (value: your anon public key from Supabase > Project Settings > API)
+#
+#   Go to: GitHub repo → Settings → Secrets and variables → Actions → New secret
+# ──────────────────────────────────────────────────────────────────────────────
+
+name: Supabase Keepalive
+
+on:
+  schedule:
+    # Runs at 08:00 UTC every 3 days (day 1, 4, 7, 10, ...)
+    # Supabase pauses after 7 days — every 3 days gives us 2x safety margin.
+    - cron: "0 8 */3 * *"
+
+  # Allow manual trigger from GitHub Actions UI
+  workflow_dispatch:
+
+jobs:
+  keepalive:
+    name: Ping Supabase REST API
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Ping Supabase REST endpoint
+        run: |
+          echo "🟡 Pinging Supabase project..."
+
+          HTTP_STATUS=$(curl -s -o /tmp/supabase_response.json -w "%{http_code}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/?select=1" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+            --max-time 15 \
+            --retry 2)
+
+          echo "HTTP Status: $HTTP_STATUS"
+
+          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 500 ]; then
+            echo "✅ Supabase is alive. Project will not be paused."
+          else
+            echo "❌ Unexpected status: $HTTP_STATUS. Supabase may be paused or unreachable."
+            cat /tmp/supabase_response.json
+            exit 1
+          fi
+
+      - name: Log success timestamp
+        run: |
+          echo "✅ Keepalive completed at $(date -u '+%Y-%m-%d %H:%M:%S UTC')"

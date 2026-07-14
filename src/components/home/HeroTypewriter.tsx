@@ -50,18 +50,14 @@ export default function HeroTypewriter({ currentEntry, phase }: HeroTypewriterPr
     phase === "entering"
       ? { animation: "twn-ink-reveal 1.5s cubic-bezier(0.16,1,0.3,1) forwards" }
       : phase === "exiting"
-      ? { opacity: 0, filter: "blur(5px)", transition: "opacity 0.9s ease, filter 0.9s ease" }
-      : phase === "gap"
-      ? { opacity: 0 }
-      : {};
+        ? { opacity: 0, filter: "blur(5px)", transition: "opacity 0.9s ease, filter 0.9s ease" }
+        : phase === "gap"
+          ? { opacity: 0 }
+          : {};
 
   return (
     <div aria-live="polite" aria-atomic="true">
-      <div
-        key={currentEntry.id}
-        className="flex flex-col gap-6"
-        style={containerStyle}
-      >
+      <div key={currentEntry.id} className="flex flex-col gap-6" style={containerStyle}>
         {/*
           Cormorant Garamond, ~50px on desktop, weight 500.
           Line height 1.2 so it reads like a hand-written journal entry.

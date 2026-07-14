@@ -25,14 +25,14 @@ export interface Notebook {
 // Today's Page. Can optionally reference an article (source_article_id).
 export interface NotebookEntry {
   id: string;
-  notebook_id: string;            // References notebooks.id
-  title: string | null;           // e.g. "Today I wondered..."
-  thought: string;                // The actual sentence or paragraph
-  slug: string | null;            // For future /notes/[slug] route
+  notebook_id: string; // References notebooks.id
+  title: string | null; // e.g. "Today I wondered..."
+  thought: string; // The actual sentence or paragraph
+  slug: string | null; // For future /notes/[slug] route
   source_article_id: string | null; // Article this entry references (optional)
-  is_active: boolean;             // Show in hero rotation?
-  priority: number;               // 0 = normal, higher = more prominent
-  display_date: string | null;    // ISO date string e.g. "2026-07-04"
+  is_active: boolean; // Show in hero rotation?
+  priority: number; // 0 = normal, higher = more prominent
+  display_date: string | null; // ISO date string e.g. "2026-07-04"
   created_at: string;
   updated_at: string;
 }
@@ -43,7 +43,7 @@ export interface NotebookEntry {
 export interface SharedPage {
   id: string;
   author_name: string;
-  title: string | null;           // Optional heading
+  title: string | null; // Optional heading
   content: string;
   word_count: number;
   status: ModerationStatus;
@@ -57,11 +57,11 @@ export interface SharedPage {
 // article. No replies, no likes, no threads — just a note in the margin.
 export interface MarginNote {
   id: string;
-  article_id: string;             // UUID — references articles.id (not slug)
+  article_id: string; // UUID — references articles.id (not slug)
   author_name: string;
-  content: string;                // Max 120 characters
+  content: string; // Max 120 characters
   status: ModerationStatus;
-  display_order: number;          // 999 = default; 0 = pinned to top
+  display_order: number; // 999 = default; 0 = pinned to top
   submitted_at: string;
   published_at: string | null;
   updated_at: string;

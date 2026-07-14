@@ -1,8 +1,12 @@
 "use client";
 
-import { deleteMarginNoteAction, moderateMarginNoteAction, pinMarginNoteAction } from "@/app/actions/margin-notes";
+import {
+  deleteMarginNoteAction,
+  moderateMarginNoteAction,
+  pinMarginNoteAction,
+} from "@/app/actions/margin-notes";
 import type { MarginNote, ModerationStatus } from "@/types";
-import { Check, X, Trash2, Calendar, AlertCircle, Clock, Pin } from "lucide-react";
+import { Check, Clock, Pin, Trash2, X } from "lucide-react";
 import { useState, useTransition } from "react";
 
 interface MarginNotesModeratorProps {
@@ -23,9 +27,7 @@ export default function MarginNotesModerator({ initialNotes }: MarginNotesModera
     startTransition(async () => {
       const result = await moderateMarginNoteAction(id, status);
       if (result.success && result.data) {
-        setNotes((prev) =>
-          prev.map((n) => (n.id === id ? { ...n, ...result.data } : n))
-        );
+        setNotes((prev) => prev.map((n) => (n.id === id ? { ...n, ...result.data } : n)));
       } else {
         alert(result.error || "Failed to update moderation status.");
       }
@@ -36,9 +38,7 @@ export default function MarginNotesModerator({ initialNotes }: MarginNotesModera
     startTransition(async () => {
       const result = await pinMarginNoteAction(id, !currentlyPinned);
       if (result.success && result.data) {
-        setNotes((prev) =>
-          prev.map((n) => (n.id === id ? { ...n, ...result.data } : n))
-        );
+        setNotes((prev) => prev.map((n) => (n.id === id ? { ...n, ...result.data } : n)));
       } else {
         alert(result.error || "Failed to toggle pin status.");
       }
@@ -119,10 +119,10 @@ export default function MarginNotesModerator({ initialNotes }: MarginNotesModera
                       <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                         Author:
                       </span>
-                      <span className="text-xs font-bold text-foreground">
-                        {note.author_name}
-                      </span>
-                      <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm ${getStatusBadgeClass(note.status)}`}>
+                      <span className="text-xs font-bold text-foreground">{note.author_name}</span>
+                      <span
+                        className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm ${getStatusBadgeClass(note.status)}`}
+                      >
                         {note.status}
                       </span>
                       {isPinned && (
@@ -132,7 +132,10 @@ export default function MarginNotesModerator({ initialNotes }: MarginNotesModera
                       )}
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      Article: <span className="font-semibold text-foreground">{note.article_title || "Unknown Article"}</span>
+                      Article:{" "}
+                      <span className="font-semibold text-foreground">
+                        {note.article_title || "Unknown Article"}
+                      </span>
                     </p>
                   </div>
 

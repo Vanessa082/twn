@@ -13,13 +13,13 @@
 import { useEffect, useState } from "react";
 
 const STOPS = [
-  { id: "hero",            label: "HERO" },
-  { id: "todays-page",     label: "TODAY" },
-  { id: "featured-note",   label: "FEATURED" },
-  { id: "latest-notes",    label: "LATEST" },
-  { id: "community",       label: "VOICES" },
+  { id: "hero", label: "HERO" },
+  { id: "todays-page", label: "TODAY" },
+  { id: "featured-note", label: "FEATURED" },
+  { id: "latest-notes", label: "LATEST" },
+  { id: "community", label: "VOICES" },
   { id: "browse-by-topic", label: "TOPICS" },
-  { id: "newsletter",      label: "NEWS" },
+  { id: "newsletter", label: "NEWS" },
 ];
 
 export default function NotebookTimeline() {
@@ -30,9 +30,9 @@ export default function NotebookTimeline() {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      
+
       // Calculate overall scroll percentage
-      const percent = docHeight > 0 ? (scrollY / docHeight) : 0;
+      const percent = docHeight > 0 ? scrollY / docHeight : 0;
       setDotTop(percent * 100);
 
       // Determine active section based on position
@@ -88,9 +88,7 @@ export default function NotebookTimeline() {
               key={stop.id}
               onClick={() => handleClick(stop.id)}
               className={`text-left text-[9px] font-sans font-bold tracking-[0.25em] transition-all duration-300 cursor-pointer block ${
-                isActive
-                  ? "text-foreground translate-x-1"
-                  : "text-[#CCCCCC] hover:text-[#6B6B6B]"
+                isActive ? "text-foreground translate-x-1" : "text-[#CCCCCC] hover:text-[#6B6B6B]"
               }`}
             >
               {stop.label}

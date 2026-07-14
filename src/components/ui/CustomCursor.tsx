@@ -55,11 +55,5 @@ export default function CustomCursor() {
     };
   }, []);
 
-  return (
-    <div
-      ref={cursorRef}
-      className={`twn-cursor ${cursorClass}`}
-      aria-hidden="true"
-    />
-  );
+  return <div ref={cursorRef} className={`twn-cursor ${cursorClass}`} aria-hidden="true" />;
 }

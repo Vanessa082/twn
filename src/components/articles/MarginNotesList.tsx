@@ -22,7 +22,7 @@ export default function MarginNotesList({ articleId, notes }: MarginNotesListPro
     <div className="space-y-10 border-t border-border pt-12">
       {/* Title */}
       <div className="flex items-center gap-2 border-b border-border pb-4">
-        <MessageSquare className="h-4.5 w-4.5 text-muted-foreground" />
+        <MessageSquare className="h-4 w-4 text-muted-foreground" />
         <h3 className="text-sm font-bold uppercase tracking-wider text-foreground">
           Margin Reflections ({notes.length})
         </h3>

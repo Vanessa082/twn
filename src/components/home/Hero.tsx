@@ -14,11 +14,5 @@ export default async function Hero() {
     getAllActiveEntries(),
   ]);
 
-  return (
-    <HeroClient
-      initialEntry={initialEntry}
-      allEntries={allEntries}
-      title={t("title")}
-    />
-  );
+  return <HeroClient initialEntry={initialEntry} allEntries={allEntries} title={t("title")} />;
 }

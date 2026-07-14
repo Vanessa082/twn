@@ -39,7 +39,15 @@ export async function addSubscriber(
         return { success: true, error: null }; // Silent success, already subscribed
       }
       console.error("[addSubscriber] DB error:", error.message);
-      return { success: false, error: "Database registration failed." };
+      let errMsg = "Database registration failed.";
+      if (
+        error.message.includes("fetch failed") ||
+        error.message.includes("TypeError") ||
+        error.message.includes("failed to fetch")
+      ) {
+        errMsg = "Unable to connect to the database right now. Please try again later.";
+      }
+      return { success: false, error: errMsg };
     }
 
     return { success: true, error: null };

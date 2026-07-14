@@ -40,7 +40,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
             {t("title")}
           </h1>
           <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-            Reflections and records on writing code, leading teams, and building technology.
+            {t("description")}
           </p>
         </div>
 

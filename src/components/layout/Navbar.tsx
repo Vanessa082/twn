@@ -19,12 +19,11 @@ export default function Navbar() {
   const lastScrollY = useRef(0);
 
   const links = [
-    { label: t("home"),       href: "/" },
-    { label: t("articles"),   href: "/articles" },
-    { label: t("notebook"),   href: "/#community" },
-    { label: t("about"),      href: "/about" },
+    { label: t("home"), href: "/" },
+    { label: t("articles"), href: "/articles" },
+    { label: t("about"), href: "/about" },
     { label: t("newsletter"), href: "/newsletter" },
-    { label: t("contact"),    href: "/contact" },
+    { label: t("contact"), href: "/contact" },
   ];
 
   const isActive = (path: string) => {
@@ -43,7 +42,9 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => { setIsOpen(false); }, [pathname]);
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
 
   const headerClass = [
     "sticky top-0 z-50 w-full border-b transition-all duration-500 h-[88px]",
@@ -56,7 +57,6 @@ export default function Navbar() {
     <header className={headerClass}>
       <div className="twn-nav-enter mx-auto max-w-7xl px-5 sm:px-10 lg:px-20 h-full">
         <div className="flex h-full items-center justify-between">
-
           {/* ── Logo ── */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center gap-3 group" data-cursor="link">
@@ -64,8 +64,12 @@ export default function Navbar() {
                 TWN
               </span>
               <span className="hidden sm:flex flex-col border-l border-[#ECECEC] pl-3 leading-[1.4] text-left">
-                <span className="font-sans text-[8px] font-bold tracking-[0.28em] uppercase text-[#6B6B6B] group-hover:text-foreground transition-colors">The Notebook</span>
-                <span className="font-sans text-[8px] font-bold tracking-[0.28em] uppercase text-[#9B9B9B] group-hover:text-[#6B6B6B] transition-colors">of a Tech Woman</span>
+                <span className="font-sans text-[8px] font-bold tracking-[0.28em] uppercase text-[#6B6B6B] group-hover:text-foreground transition-colors">
+                  The Notebook
+                </span>
+                <span className="font-sans text-[8px] font-bold tracking-[0.28em] uppercase text-[#9B9B9B] group-hover:text-[#6B6B6B] transition-colors">
+                  of a Tech Woman
+                </span>
               </span>
             </Link>
           </div>

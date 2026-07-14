@@ -50,7 +50,7 @@ export default async function NewsletterPage() {
               return (
                 <div key={item.title} className="p-5 rounded-xl border border-border bg-card">
                   <div className="p-2 rounded-lg bg-deep-navy/5 dark:bg-muted-gold/10 text-deep-navy dark:text-muted-gold w-fit mb-3">
-                    <Icon className="h-4.5 w-4.5" />
+                    <Icon className="h-[18px] w-[18px]" />
                   </div>
                   <h3 className="font-serif font-bold text-sm text-foreground mb-1">
                     {item.title}

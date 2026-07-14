@@ -28,7 +28,12 @@ export default function LatestNotesSection({ articles }: LatestNotesSectionProps
     const el = gridRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setInView(true); observer.disconnect(); } },
+      ([e]) => {
+        if (e.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
       { threshold: 0.08 }
     );
     observer.observe(el);
@@ -37,7 +42,11 @@ export default function LatestNotesSection({ articles }: LatestNotesSectionProps
 
   const formatDate = (d: string | null) => {
     if (!d) return "";
-    return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    return new Date(d).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
   };
 
   if (articles.length === 0) return null;
@@ -45,7 +54,6 @@ export default function LatestNotesSection({ articles }: LatestNotesSectionProps
   return (
     <section id="latest-notes" className="py-14 sm:py-20 bg-background border-b border-[#ECECEC]">
       <div className="mx-auto max-w-7xl px-5 sm:px-10 lg:px-20">
-
         {/* Section header */}
         <div className="flex items-baseline justify-between mb-10">
           <h2 className="font-serif font-bold text-[2rem] sm:text-[2.4rem] tracking-tight text-foreground">
@@ -87,7 +95,9 @@ export default function LatestNotesSection({ articles }: LatestNotesSectionProps
                   />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center bg-neutral-100">
-                    <span className="font-serif font-black text-4xl tracking-widest text-neutral-200">TWN</span>
+                    <span className="font-serif font-black text-4xl tracking-widest text-neutral-200">
+                      TWN
+                    </span>
                   </div>
                 )}
               </div>

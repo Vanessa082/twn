@@ -38,10 +38,5 @@ export default function PageTransition() {
 
   if (phase === "idle") return null;
 
-  return (
-    <div
-      className={`twn-page-wipe ${phase}`}
-      aria-hidden="true"
-    />
-  );
+  return <div className={`twn-page-wipe ${phase}`} aria-hidden="true" />;
 }

@@ -26,7 +26,15 @@ export async function submitMarginNoteAction(
   } catch (error: unknown) {
     const err = error as Error;
     console.error("[submitMarginNoteAction] Error:", err.message);
-    return { success: false, data: null, error: err.message || "Failed to submit note." };
+    let userFriendlyError = err.message || "Failed to submit note.";
+    if (
+      userFriendlyError.includes("fetch failed") ||
+      userFriendlyError.includes("TypeError") ||
+      userFriendlyError.includes("failed to fetch")
+    ) {
+      userFriendlyError = "Unable to connect to the database right now. Please try again later.";
+    }
+    return { success: false, data: null, error: userFriendlyError };
   }
 }
 

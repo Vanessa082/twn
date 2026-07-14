@@ -3,7 +3,7 @@
 // Handles short reader reflections (max 120 chars) in article margins/footers.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { createClient, createAdminClient } from "@/lib/db/server";
+import { createAdminClient, createClient } from "@/lib/db/server";
 import type { MarginNote, ModerationStatus } from "@/types";
 
 // ── Fallback Data ─────────────────────────────────────────────────────────────
@@ -23,7 +23,8 @@ export const FALLBACK_MARGIN_NOTES: MarginNote[] = [
     id: "mn2",
     article_id: "default-article",
     author_name: "Jess",
-    content: "The part about 'designing for scale' is exactly what we struggle with in early startups.",
+    content:
+      "The part about 'designing for scale' is exactly what we struggle with in early startups.",
     status: "approved",
     display_order: 999,
     submitted_at: new Date().toISOString(),
@@ -53,7 +54,7 @@ export async function getApprovedMarginNotesForArticle(articleId: string): Promi
       .order("submitted_at", { ascending: false });
 
     if (error) {
-      console.warn(`[getApprovedMarginNotesForArticle] DB error, using fallbacks:`, error.message);
+      console.warn("[getApprovedMarginNotesForArticle] DB error, using fallbacks:", error.message);
       // Remap fallbacks to the current article id so they show up
       return FALLBACK_MARGIN_NOTES.map((n) => ({ ...n, article_id: articleId }));
     }
@@ -62,7 +63,7 @@ export async function getApprovedMarginNotesForArticle(articleId: string): Promi
       ? (data as MarginNote[])
       : FALLBACK_MARGIN_NOTES.map((n) => ({ ...n, article_id: articleId }));
   } catch (error) {
-    console.warn(`[getApprovedMarginNotesForArticle] Service error, using fallbacks:`, error);
+    console.warn("[getApprovedMarginNotesForArticle] Service error, using fallbacks:", error);
     return FALLBACK_MARGIN_NOTES.map((n) => ({ ...n, article_id: articleId }));
   }
 }
@@ -121,7 +122,9 @@ export async function submitMarginNote(
  * Admin: Fetches all margin notes (active + inactive) bypassing RLS.
  * Includes joined article information where possible.
  */
-export async function getAllMarginNotesAdmin(): Promise<(MarginNote & { article_title?: string })[]> {
+export async function getAllMarginNotesAdmin(): Promise<
+  (MarginNote & { article_title?: string })[]
+> {
   try {
     const adminSupabase = createAdminClient();
     // Fetch margin notes and select article title
@@ -235,10 +238,7 @@ export async function deleteMarginNoteAdmin(id: string): Promise<boolean> {
 
   try {
     const adminSupabase = createAdminClient();
-    const { error } = await adminSupabase
-      .from("margin_notes")
-      .delete()
-      .eq("id", id);
+    const { error } = await adminSupabase.from("margin_notes").delete().eq("id", id);
 
     if (error) {
       console.error("[deleteMarginNoteAdmin] DB error:", error.message);

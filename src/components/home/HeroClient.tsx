@@ -27,15 +27,15 @@ interface HeroClientProps {
 
 type AnimationPhase = "entering" | "visible" | "exiting" | "gap";
 
-const ENTER_DURATION   = 1500;
+const ENTER_DURATION = 1500;
 const VISIBLE_DURATION = 5000;
-const EXIT_DURATION    = 900;
-const GAP_DURATION     = 400;
+const EXIT_DURATION = 900;
+const GAP_DURATION = 400;
 
 export default function HeroClient({ initialEntry, allEntries, title }: HeroClientProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const rafRef     = useRef<number | null>(null);
-  const timerRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [mouseX, setMouseX] = useState(0);
   const [mouseY, setMouseY] = useState(0);
@@ -53,8 +53,8 @@ export default function HeroClient({ initialEntry, allEntries, title }: HeroClie
         const section = sectionRef.current;
         if (!section) return;
         const rect = section.getBoundingClientRect();
-        setMouseX((e.clientX - rect.left - rect.width  / 2) / (rect.width  / 2));
-        setMouseY((e.clientY - rect.top  - rect.height / 2) / (rect.height / 2));
+        setMouseX((e.clientX - rect.left - rect.width / 2) / (rect.width / 2));
+        setMouseY((e.clientY - rect.top - rect.height / 2) / (rect.height / 2));
       });
     };
     window.addEventListener("mousemove", onMove, { passive: true });
@@ -84,7 +84,9 @@ export default function HeroClient({ initialEntry, allEntries, title }: HeroClie
       }, ENTER_DURATION);
     };
     runCycle();
-    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -100,7 +102,8 @@ export default function HeroClient({ initialEntry, allEntries, title }: HeroClie
 
   // Lines behind the title — ruled-paper effect
   const lineBg = {
-    backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(0,0,0,0.04) 28px)",
+    backgroundImage:
+      "repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(0,0,0,0.04) 28px)",
     backgroundSize: "100% 28px",
   };
 
@@ -112,7 +115,11 @@ export default function HeroClient({ initialEntry, allEntries, title }: HeroClie
       className="relative bg-background overflow-hidden border-b border-[#ECECEC] min-h-[700px] flex items-center"
     >
       {/* Ruled paper background */}
-      <div className="absolute inset-0 pointer-events-none select-none" style={lineBg} aria-hidden="true" />
+      <div
+        className="absolute inset-0 pointer-events-none select-none"
+        style={lineBg}
+        aria-hidden="true"
+      />
 
       {/* ── Far-left margin numbers ── */}
       <div
@@ -141,10 +148,8 @@ export default function HeroClient({ initialEntry, allEntries, title }: HeroClie
       {/* Main content grid */}
       <div className="relative z-10 mx-auto max-w-7xl w-full px-5 sm:px-10 lg:px-20 py-20 sm:py-28">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-
           {/* ── Left content col (55%) ── */}
           <div className="lg:col-span-7 flex flex-col gap-7">
-
             {/* Label */}
             <span
               className="text-[10px] font-sans font-bold uppercase tracking-[0.28em] text-[#9B9B9B]"
@@ -181,10 +186,7 @@ export default function HeroClient({ initialEntry, allEntries, title }: HeroClie
             </div>
 
             {/* Notebook illustration with subtle drift animation */}
-            <div
-              className="w-full max-w-[420px] twn-notebook-drift"
-              style={illustrationStyle}
-            >
+            <div className="w-full max-w-[420px] twn-notebook-drift" style={illustrationStyle}>
               <NotebookSketch mouseX={mouseX} mouseY={mouseY} />
             </div>
           </div>

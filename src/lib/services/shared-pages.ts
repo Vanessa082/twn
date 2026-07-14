@@ -3,8 +3,8 @@
 // Handles visitor submissions and admin moderation of community-submitted thoughts.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { createClient, createAdminClient } from "@/lib/db/server";
-import type { SharedPage, ModerationStatus } from "@/types";
+import { createAdminClient, createClient } from "@/lib/db/server";
+import type { ModerationStatus, SharedPage } from "@/types";
 
 // ── Fallback Data ─────────────────────────────────────────────────────────────
 export const FALLBACK_SHARED_PAGES: SharedPage[] = [
@@ -195,10 +195,7 @@ export async function deleteSharedPageAdmin(id: string): Promise<boolean> {
 
   try {
     const adminSupabase = createAdminClient();
-    const { error } = await adminSupabase
-      .from("shared_pages")
-      .delete()
-      .eq("id", id);
+    const { error } = await adminSupabase.from("shared_pages").delete().eq("id", id);
 
     if (error) {
       console.error("[deleteSharedPageAdmin] DB error:", error.message);
