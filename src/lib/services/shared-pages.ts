@@ -59,11 +59,13 @@ export async function getApprovedSharedPages(): Promise<SharedPage[]> {
       .order("published_at", { ascending: false });
 
     if (error) {
+      // Only use fallbacks when DB is genuinely unreachable
       console.warn("[getApprovedSharedPages] DB error, using fallbacks:", error.message);
       return FALLBACK_SHARED_PAGES;
     }
 
-    return data && data.length > 0 ? (data as SharedPage[]) : FALLBACK_SHARED_PAGES;
+    // Return real data — empty array when no approved pages yet (not fallback)
+    return (data as SharedPage[]) ?? [];
   } catch (error) {
     console.warn("[getApprovedSharedPages] Service error, using fallbacks:", error);
     return FALLBACK_SHARED_PAGES;

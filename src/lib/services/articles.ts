@@ -59,6 +59,7 @@ export async function getLatestArticles(limit = 10): Promise<Article[]> {
       .limit(safeLimit);
 
     if (error) {
+      // Only fall back when DB is genuinely unreachable
       console.warn(
         "[getLatestArticles] Database error, falling back to local seed:",
         error.message
@@ -66,9 +67,8 @@ export async function getLatestArticles(limit = 10): Promise<Article[]> {
       return FALLBACK_ARTICLES.slice(0, safeLimit);
     }
 
-    return data && data.length > 0
-      ? (data as DatabaseArticleRow[]).map(mapToArticle)
-      : FALLBACK_ARTICLES.slice(0, safeLimit);
+    // Return real data — empty array when DB has no published articles yet
+    return data ? (data as DatabaseArticleRow[]).map(mapToArticle) : [];
   } catch (error) {
     console.warn("[getLatestArticles] Service error, falling back to local seed:", error);
     return FALLBACK_ARTICLES.slice(0, safeLimit);
@@ -97,6 +97,7 @@ export async function getArticlesByCategory(
       .limit(safeLimit);
 
     if (error) {
+      // Only fall back when DB is genuinely unreachable
       console.warn(
         "[getArticlesByCategory] Database error, falling back to local seed:",
         error.message
@@ -104,9 +105,8 @@ export async function getArticlesByCategory(
       return FALLBACK_ARTICLES.filter((a) => a.category === category).slice(0, safeLimit);
     }
 
-    return data && data.length > 0
-      ? (data as DatabaseArticleRow[]).map(mapToArticle)
-      : FALLBACK_ARTICLES.filter((a) => a.category === category).slice(0, safeLimit);
+    // Return real data — empty array when category has no published articles yet
+    return data ? (data as DatabaseArticleRow[]).map(mapToArticle) : [];
   } catch (error) {
     console.warn("[getArticlesByCategory] Service error, falling back to local seed:", error);
     return FALLBACK_ARTICLES.filter((a) => a.category === category).slice(0, safeLimit);
@@ -130,13 +130,13 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
       .maybeSingle();
 
     if (error) {
+      // Only fallback on DB error
       console.warn("[getArticleBySlug] Database error, falling back to local seed:", error.message);
       return FALLBACK_ARTICLES.find((a) => a.slug === slug) || null;
     }
 
-    return data
-      ? mapToArticle(data as DatabaseArticleRow)
-      : FALLBACK_ARTICLES.find((a) => a.slug === slug) || null;
+    // Return the mapping or null if not found
+    return data ? mapToArticle(data as DatabaseArticleRow) : null;
   } catch (error) {
     console.warn("[getArticleBySlug] Service error, falling back to local seed:", error);
     return FALLBACK_ARTICLES.find((a) => a.slug === slug) || null;

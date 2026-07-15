@@ -1,3 +1,4 @@
+import { UserButton } from "@clerk/nextjs";
 import {
   BookOpen,
   FileText,
@@ -51,14 +52,17 @@ export default function AdminLayout({
               </nav>
             </div>
 
-            {/* Back Home */}
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <Home className="h-3.5 w-3.5" />
-              View Site
-            </Link>
+            {/* Right side: View Site + User */}
+            <div className="flex items-center gap-4">
+              <Link
+                href="/"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <Home className="h-3.5 w-3.5" />
+                View Site
+              </Link>
+              <UserButton />
+            </div>
           </div>
         </div>
       </div>

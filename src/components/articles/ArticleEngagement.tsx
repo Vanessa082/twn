@@ -34,9 +34,8 @@ export default function ArticleEngagement({ slug, title }: ArticleEngagementProp
     const storedCount = localStorage.getItem(`twn-like-count-${slug}`);
     if (storedLike === "1") setLiked(true);
     if (storedBookmark === "1") setBookmarked(true);
-    setLikeCount(
-      storedCount ? Number.parseInt(storedCount, 10) : Math.floor(Math.random() * 80) + 12
-    );
+    // Start at 0 — grows only from real user interactions
+    setLikeCount(storedCount ? Number.parseInt(storedCount, 10) : 0);
   }, [slug]);
 
   const handleLike = () => {

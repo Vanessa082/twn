@@ -1,4 +1,5 @@
 import { createAdminClient, createClient } from "@/lib/db/server";
+import { sendWelcomeEmail } from "@/lib/services/email";
 import type { Subscriber } from "@/types";
 
 /**
@@ -48,6 +49,13 @@ export async function addSubscriber(
         errMsg = "Unable to connect to the database right now. Please try again later.";
       }
       return { success: false, error: errMsg };
+    }
+
+    // 2. Send branded welcome email via Resend (non-fatal — failure must not block subscription)
+    try {
+      await sendWelcomeEmail(cleanEmail);
+    } catch (emailError) {
+      console.error("[addSubscriber] Welcome email failed:", emailError);
     }
 
     return { success: true, error: null };

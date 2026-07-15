@@ -54,14 +54,13 @@ export async function getApprovedMarginNotesForArticle(articleId: string): Promi
       .order("submitted_at", { ascending: false });
 
     if (error) {
+      // Only use fallbacks when DB is genuinely unreachable
       console.warn("[getApprovedMarginNotesForArticle] DB error, using fallbacks:", error.message);
-      // Remap fallbacks to the current article id so they show up
       return FALLBACK_MARGIN_NOTES.map((n) => ({ ...n, article_id: articleId }));
     }
 
-    return data && data.length > 0
-      ? (data as MarginNote[])
-      : FALLBACK_MARGIN_NOTES.map((n) => ({ ...n, article_id: articleId }));
+    // Return real data — empty array when no approved notes yet (not fallback)
+    return (data as MarginNote[]) ?? [];
   } catch (error) {
     console.warn("[getApprovedMarginNotesForArticle] Service error, using fallbacks:", error);
     return FALLBACK_MARGIN_NOTES.map((n) => ({ ...n, article_id: articleId }));
