@@ -43,23 +43,23 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-background border-t border-[#ECECEC] mt-auto">
+    <footer className="bg-background border-t border-border mt-auto">
       <div className="mx-auto max-w-7xl px-5 py-14 sm:px-10 lg:px-20">
         {/* ── Main 5-column grid ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10 pb-12 border-b border-[#ECECEC]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10 pb-12 border-b border-border">
           {/* Col 1: Branding */}
           <div className="flex flex-col gap-4">
             <Link href="/" className="flex flex-col gap-1 w-fit group">
               <span className="font-serif text-[26px] font-black tracking-[0.12em] text-foreground group-hover:opacity-75 transition-opacity leading-none">
                 TWN
               </span>
-              <span className="text-[8px] font-bold uppercase tracking-[0.22em] text-[#9B9B9B] leading-tight">
+              <span className="text-[8px] font-bold uppercase tracking-[0.22em] text-muted-foreground/70 leading-tight">
                 The Notebook
                 <br />
                 of a Tech Woman
               </span>
             </Link>
-            <p className="text-xs text-[#6B6B6B] leading-relaxed max-w-[200px] mt-1">
+            <p className="text-xs text-muted-foreground leading-relaxed max-w-[200px] mt-1">
               Notes on technology, ideas, challenges, and the journey of becoming.
             </p>
             {/* Social icons */}
@@ -70,7 +70,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
-                className="text-[#9B9B9B] hover:text-foreground transition-colors"
+                className="text-muted-foreground/70 hover:text-foreground transition-colors"
               >
                 <svg
                   className="h-4 w-4"
@@ -93,7 +93,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Twitter / X"
-                className="text-[#9B9B9B] hover:text-foreground transition-colors"
+                className="text-muted-foreground/70 hover:text-foreground transition-colors"
               >
                 <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -105,7 +105,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="GitHub"
-                className="text-[#9B9B9B] hover:text-foreground transition-colors"
+                className="text-muted-foreground/70 hover:text-foreground transition-colors"
               >
                 <svg
                   className="h-4 w-4"
@@ -134,7 +134,7 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-xs text-[#6B6B6B] hover:text-foreground transition-colors"
+                    className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -153,7 +153,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-xs text-[#6B6B6B] hover:text-foreground transition-colors"
+                    className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -171,12 +171,12 @@ export default function Footer() {
               <li>
                 <a
                   href="mailto:hello@twnotebook.com"
-                  className="text-xs text-[#6B6B6B] hover:text-foreground transition-colors"
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                 >
                   hello@twnotebook.com
                 </a>
               </li>
-              <li className="text-xs text-[#6B6B6B]">Abuja, Nigeria</li>
+              <li className="text-xs text-muted-foreground">Abuja, Nigeria</li>
             </ul>
           </div>
 
@@ -185,14 +185,14 @@ export default function Footer() {
             <h3 className="text-[10px] font-sans font-bold uppercase tracking-[0.22em] text-foreground">
               Stay in the loop
             </h3>
-            <p className="text-xs text-[#6B6B6B] leading-relaxed">
+            <p className="text-xs text-muted-foreground leading-relaxed">
               Get new notes directly in your inbox.
             </p>
 
             <form
               ref={formRef}
               action={formAction}
-              className="flex w-full max-w-[220px] items-center border border-[#ECECEC] bg-background rounded-[6px] overflow-hidden"
+              className="flex w-full max-w-[220px] items-center border border-border bg-background rounded-[6px] overflow-hidden"
             >
               <input
                 type="email"
@@ -200,13 +200,13 @@ export default function Footer() {
                 required
                 placeholder="you@email.com"
                 disabled={isPending}
-                className="flex-1 h-9 px-3 bg-transparent text-xs text-foreground placeholder:text-[#9B9B9B] focus:outline-none min-w-0"
+                className="flex-1 h-9 px-3 bg-transparent text-xs text-foreground placeholder:text-muted-foreground/70 focus:outline-none min-w-0"
               />
               <button
                 type="submit"
                 disabled={isPending}
                 aria-label="Subscribe"
-                className="w-9 h-9 flex items-center justify-center border-l border-[#ECECEC] hover:bg-[#F5F5F3] text-foreground transition-colors flex-shrink-0 cursor-pointer"
+                className="w-9 h-9 flex items-center justify-center border-l border-border hover:bg-muted text-foreground transition-colors flex-shrink-0 cursor-pointer"
               >
                 {isPending ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -233,7 +233,7 @@ export default function Footer() {
         </div>
 
         {/* ── Bottom bar ── */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-8 text-xs text-[#9B9B9B]">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-8 text-xs text-muted-foreground/70">
           <p>© {currentYear} The Notebook of a Tech Woman. All rights reserved.</p>
           <div className="flex gap-6">
             <Link href="/about" className="hover:text-foreground transition-colors">

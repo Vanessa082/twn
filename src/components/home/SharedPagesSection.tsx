@@ -71,7 +71,7 @@ export default function SharedPagesSection({ initialPages }: SharedPagesSectionP
     <section
       id="community"
       aria-label="Pages from the Community"
-      className="py-16 sm:py-24 bg-background border-b border-[#ECECEC]"
+      className="py-16 sm:py-24 bg-background border-b border-border"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-10 lg:px-20">
         <div
@@ -80,7 +80,7 @@ export default function SharedPagesSection({ initialPages }: SharedPagesSectionP
         >
           {/* ── LEFT: intro panel ── */}
           <div className="lg:col-span-4 flex flex-col gap-5">
-            <span className="text-[9px] font-sans font-bold uppercase tracking-[0.28em] text-[#9B9B9B]">
+            <span className="text-[9px] font-sans font-bold uppercase tracking-[0.28em] text-muted-foreground/70">
               Pages from the Community
             </span>
             <h2 className="font-serif font-bold text-foreground leading-[1.1] tracking-tight text-[2rem] sm:text-[2.4rem]">
@@ -90,7 +90,7 @@ export default function SharedPagesSection({ initialPages }: SharedPagesSectionP
               <br />
               community
             </h2>
-            <p className="text-sm text-[#6B6B6B] leading-[1.7] max-w-[280px]">
+            <p className="text-sm text-muted-foreground leading-[1.7] max-w-[280px]">
               Real reflections from women in technology.
             </p>
             <Link
@@ -115,7 +115,7 @@ export default function SharedPagesSection({ initialPages }: SharedPagesSectionP
                 onClick={() => scroll("left")}
                 aria-label="Previous pages"
                 data-cursor="button"
-                className="w-9 h-9 rounded-full border border-[#CCCCCC] flex items-center justify-center text-[#6B6B6B]
+                className="w-9 h-9 rounded-full border border-[#CCCCCC] flex items-center justify-center text-muted-foreground
                   hover:bg-foreground hover:border-foreground hover:text-background
                   transition-all duration-200"
               >
@@ -125,7 +125,7 @@ export default function SharedPagesSection({ initialPages }: SharedPagesSectionP
                 onClick={() => scroll("right")}
                 aria-label="Next pages"
                 data-cursor="button"
-                className="w-9 h-9 rounded-full border border-[#CCCCCC] flex items-center justify-center text-[#6B6B6B]
+                className="w-9 h-9 rounded-full border border-[#CCCCCC] flex items-center justify-center text-muted-foreground
                   hover:bg-foreground hover:border-foreground hover:text-background
                   transition-all duration-200"
               >
@@ -144,7 +144,7 @@ export default function SharedPagesSection({ initialPages }: SharedPagesSectionP
                   key={page.id}
                   className={[
                     "flex-shrink-0 w-[300px] sm:w-[320px] snap-start",
-                    "bg-white border border-[#ECECEC] rounded-[16px] p-7",
+                    "bg-card border border-border rounded-[16px] p-7",
                     "shadow-[0_2px_16px_rgba(0,0,0,0.04)]",
                     "flex flex-col justify-between gap-5",
                     "twn-paper-place",
@@ -178,7 +178,7 @@ export default function SharedPagesSection({ initialPages }: SharedPagesSectionP
                     <span className="text-[13px] font-sans font-semibold text-foreground">
                       — {page.author_name}
                     </span>
-                    <span className="text-[11px] text-[#9B9B9B]">
+                    <span className="text-[11px] text-muted-foreground/70">
                       {formatDate(page.submitted_at)}
                     </span>
                   </div>
@@ -187,8 +187,8 @@ export default function SharedPagesSection({ initialPages }: SharedPagesSectionP
 
               {/* Fallback if empty */}
               {pages.length === 0 && (
-                <div className="flex-shrink-0 w-[300px] bg-white border border-[#ECECEC] rounded-[16px] p-7 flex items-center justify-center min-h-[200px]">
-                  <p className="text-sm text-[#9B9B9B] text-center">
+                <div className="flex-shrink-0 w-[300px] bg-card border border-border rounded-[16px] p-7 flex items-center justify-center min-h-[200px]">
+                  <p className="text-sm text-muted-foreground/70 text-center">
                     Be the first to leave a page.
                   </p>
                 </div>
@@ -210,10 +210,10 @@ export default function SharedPagesSection({ initialPages }: SharedPagesSectionP
             className="absolute inset-0 bg-foreground/20 backdrop-blur-sm"
             onClick={() => setIsModalOpen(false)}
           />
-          <div className="relative bg-background border border-[#ECECEC] rounded-[18px] shadow-[0_20px_60px_rgba(0,0,0,0.12)] w-full max-w-lg p-8 z-10">
+          <div className="relative bg-background border border-border rounded-[18px] shadow-[0_20px_60px_rgba(0,0,0,0.12)] w-full max-w-lg p-8 z-10">
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-5 right-5 text-[#9B9B9B] hover:text-foreground transition-colors"
+              className="absolute top-5 right-5 text-muted-foreground/70 hover:text-foreground transition-colors"
               aria-label="Close"
             >
               <X className="h-5 w-5" />

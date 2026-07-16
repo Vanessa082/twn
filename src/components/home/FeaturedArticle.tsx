@@ -67,12 +67,12 @@ export default function FeaturedArticle({ article }: FeaturedArticleProps) {
       ref={sectionRef}
       id="featured-note"
       aria-label="Featured article"
-      className="py-14 sm:py-20 border-b border-[#ECECEC] bg-background"
+      className="py-14 sm:py-20 border-b border-border bg-background"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-10 lg:px-20">
         {/* "FEATURED NOTE" label */}
         <span
-          className="text-[9px] font-sans font-bold uppercase tracking-[0.28em] text-[#9B9B9B] block mb-7"
+          className="text-[9px] font-sans font-bold uppercase tracking-[0.28em] text-muted-foreground/70 block mb-7"
           style={text(0)}
         >
           Featured Note
@@ -115,8 +115,8 @@ export default function FeaturedArticle({ article }: FeaturedArticleProps) {
               style={text(100)}
             >
               <span className="text-foreground">{article.category}</span>
-              <span className="text-[#CCCCCC]">·</span>
-              <span className="text-[#6B6B6B]">{article.reading_time ?? 1} min read</span>
+              <span className="text-muted">·</span>
+              <span className="text-muted-foreground">{article.reading_time ?? 1} min read</span>
             </div>
 
             {/* Title — Playfair, ~42px */}
@@ -134,16 +134,16 @@ export default function FeaturedArticle({ article }: FeaturedArticleProps) {
             </h2>
 
             {/* Excerpt — 2 lines max */}
-            <p className="text-sm text-[#6B6B6B] leading-[1.7] line-clamp-3" style={text(260)}>
+            <p className="text-sm text-muted-foreground leading-[1.7] line-clamp-3" style={text(260)}>
               {article.excerpt}
             </p>
 
             {/* Date + Read Note */}
             <div
-              className="flex items-center justify-between pt-5 border-t border-[#ECECEC]"
+              className="flex items-center justify-between pt-5 border-t border-border"
               style={text(340)}
             >
-              <span className="text-[11px] text-[#9B9B9B]">{formatDate(article.published_at)}</span>
+              <span className="text-[11px] text-muted-foreground/70">{formatDate(article.published_at)}</span>
               <Link
                 href={`/articles/${article.slug}`}
                 data-cursor="link"

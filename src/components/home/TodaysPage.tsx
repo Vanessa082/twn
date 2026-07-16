@@ -65,16 +65,16 @@ export default function TodaysPage({ entry }: TodaysPageProps) {
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-10 lg:px-20 py-6">
         {/* Card */}
-        <div className="bg-white border border-[#ECECEC] rounded-[18px] overflow-hidden">
+        <div className="bg-card border border-border rounded-[18px] overflow-hidden">
           <div className="flex flex-col md:flex-row md:items-center gap-0">
             {/* Left — Calendar icon box */}
             <div
-              className="flex-shrink-0 flex items-center justify-center md:border-r border-b md:border-b-0 border-[#ECECEC] px-6 py-6 md:py-0 md:h-[170px] md:w-[100px]"
+              className="flex-shrink-0 flex items-center justify-center md:border-r border-b md:border-b-0 border-border px-6 py-6 md:py-0 md:h-[170px] md:w-[100px]"
               style={seq(100)}
             >
-              <div className="w-[52px] h-[52px] bg-[#F9F9F7] border border-[#ECECEC] flex items-center justify-center rounded-[10px]">
+              <div className="w-[52px] h-[52px] bg-muted border border-border flex items-center justify-center rounded-[10px]">
                 <svg
-                  className="h-5 w-5 text-[#6B6B6B]"
+                  className="h-5 w-5 text-muted-foreground"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -91,9 +91,9 @@ export default function TodaysPage({ entry }: TodaysPageProps) {
             </div>
 
             {/* Center — Label + Quote */}
-            <div className="flex-1 px-8 py-7 md:py-0 md:h-[170px] md:flex md:flex-col md:justify-center border-b md:border-b-0 border-[#ECECEC]">
+            <div className="flex-1 px-8 py-7 md:py-0 md:h-[170px] md:flex md:flex-col md:justify-center border-b md:border-b-0 border-border">
               <span
-                className="text-[9px] font-sans font-bold uppercase tracking-[0.28em] text-[#9B9B9B] block mb-3"
+                className="text-[9px] font-sans font-bold uppercase tracking-[0.28em] text-muted-foreground/70 block mb-3"
                 style={seq(150)}
               >
                 Today&apos;s Page &nbsp;·&nbsp; {displayDate}

@@ -49,8 +49,8 @@ export default function Navbar() {
   const headerClass = [
     "sticky top-0 z-50 w-full border-b transition-all duration-500 h-[88px]",
     isScrolled
-      ? "bg-[#FCFBF8]/90 backdrop-blur-[20px] border-[#ECECEC]"
-      : "bg-[#FCFBF8]/0 border-transparent",
+      ? "bg-background/90 backdrop-blur-[20px] border-border"
+      : "bg-background/0 border-transparent",
   ].join(" ");
 
   return (
@@ -63,11 +63,11 @@ export default function Navbar() {
               <span className="font-serif text-[2rem] font-black tracking-[0.12em] text-foreground transition-opacity duration-300 group-hover:opacity-70 leading-none">
                 TWN
               </span>
-              <span className="hidden sm:flex flex-col border-l border-[#ECECEC] pl-3 leading-[1.4] text-left">
-                <span className="font-sans text-[8px] font-bold tracking-[0.28em] uppercase text-[#6B6B6B] group-hover:text-foreground transition-colors">
+              <span className="hidden sm:flex flex-col border-l border-border pl-3 leading-[1.4] text-left">
+                <span className="font-sans text-[8px] font-bold tracking-[0.28em] uppercase text-muted-foreground group-hover:text-foreground transition-colors">
                   The Notebook
                 </span>
-                <span className="font-sans text-[8px] font-bold tracking-[0.28em] uppercase text-[#9B9B9B] group-hover:text-[#6B6B6B] transition-colors">
+                <span className="font-sans text-[8px] font-bold tracking-[0.28em] uppercase text-muted-foreground/70 group-hover:text-muted-foreground transition-colors">
                   of a Tech Woman
                 </span>
               </span>
@@ -86,7 +86,7 @@ export default function Navbar() {
                 data-cursor="link"
                 className={[
                   "nav-ink-link text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors duration-200",
-                  isActive(link.href) ? "text-foreground" : "text-[#6B6B6B] hover:text-foreground",
+                  isActive(link.href) ? "text-foreground" : "text-muted-foreground hover:text-foreground",
                 ].join(" ")}
                 {...(isActive(link.href) ? { "data-active": "true" } : {})}
               >
@@ -101,7 +101,7 @@ export default function Navbar() {
               href="/search"
               aria-label={t("search")}
               data-cursor="button"
-              className="text-[#6B6B6B] hover:text-foreground transition-colors duration-200"
+              className="text-muted-foreground hover:text-foreground transition-colors duration-200"
             >
               <Search className="h-[18px] w-[18px]" strokeWidth={1.5} />
             </Link>
@@ -121,7 +121,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setIsOpen((v) => !v)}
-              className="inline-flex items-center justify-center p-2 text-[#6B6B6B] hover:text-foreground transition-colors lg:hidden"
+              className="inline-flex items-center justify-center p-2 text-muted-foreground hover:text-foreground transition-colors lg:hidden"
               aria-expanded={isOpen}
               aria-label="Open menu"
               data-cursor="button"
@@ -134,15 +134,15 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="lg:hidden fixed inset-0 top-[88px] z-40 bg-[#FCFBF8]/97 backdrop-blur-md">
+        <div className="lg:hidden fixed inset-0 top-[88px] z-40 bg-background/97 backdrop-blur-md">
           <div className="flex flex-col h-full px-8 pt-10 pb-10 space-y-1">
             {links.map((link) => (
               <Link
                 key={link.href}
                 onClick={() => setIsOpen(false)}
                 href={link.href}
-                className={`block py-4 text-xl font-serif font-black tracking-tight border-b border-[#ECECEC] transition-colors hover:text-foreground ${
-                  isActive(link.href) ? "text-foreground" : "text-[#6B6B6B]"
+                className={`block py-4 text-xl font-serif font-black tracking-tight border-b border-border transition-colors hover:text-foreground ${
+                  isActive(link.href) ? "text-foreground" : "text-muted-foreground"
                 }`}
               >
                 {link.label}

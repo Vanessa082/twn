@@ -52,7 +52,7 @@ export default function LatestNotesSection({ articles }: LatestNotesSectionProps
   if (articles.length === 0) return null;
 
   return (
-    <section id="latest-notes" className="py-14 sm:py-20 bg-background border-b border-[#ECECEC]">
+    <section id="latest-notes" className="py-14 sm:py-20 bg-background border-b border-border">
       <div className="mx-auto max-w-7xl px-5 sm:px-10 lg:px-20">
         {/* Section header */}
         <div className="flex items-baseline justify-between mb-10">
@@ -62,7 +62,7 @@ export default function LatestNotesSection({ articles }: LatestNotesSectionProps
           <Link
             href="/articles"
             data-cursor="link"
-            className="group hidden sm:inline-flex items-center gap-1.5 text-[10px] font-sans font-semibold uppercase tracking-[0.22em] text-[#6B6B6B] hover:text-foreground transition-colors"
+            className="group hidden sm:inline-flex items-center gap-1.5 text-[10px] font-sans font-semibold uppercase tracking-[0.22em] text-muted-foreground hover:text-foreground transition-colors"
           >
             <span>View All Articles</span>
             <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
@@ -79,7 +79,7 @@ export default function LatestNotesSection({ articles }: LatestNotesSectionProps
               key={article.id}
               href={`/articles/${article.slug}`}
               data-cursor="link"
-              className="group flex flex-col bg-white border border-[#F1F1F1] rounded-[14px] overflow-hidden
+              className="group flex flex-col bg-card border border-[#F1F1F1] rounded-[14px] overflow-hidden
                 hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)]
                 transition-all duration-300"
             >
@@ -107,8 +107,8 @@ export default function LatestNotesSection({ articles }: LatestNotesSectionProps
                 {/* Category · reading time */}
                 <div className="flex items-center gap-2 text-[9px] font-sans font-bold uppercase tracking-[0.22em]">
                   <span className="text-foreground">{article.category}</span>
-                  <span className="text-[#CCCCCC]">·</span>
-                  <span className="text-[#6B6B6B]">{article.reading_time ?? 1} min read</span>
+                  <span className="text-muted">·</span>
+                  <span className="text-muted-foreground">{article.reading_time ?? 1} min read</span>
                 </div>
 
                 {/* Title */}
@@ -117,12 +117,12 @@ export default function LatestNotesSection({ articles }: LatestNotesSectionProps
                 </h3>
 
                 {/* Excerpt */}
-                <p className="text-[13px] text-[#6B6B6B] leading-[1.65] line-clamp-2 flex-1">
+                <p className="text-[13px] text-muted-foreground leading-[1.65] line-clamp-2 flex-1">
                   {article.excerpt}
                 </p>
 
                 {/* Date */}
-                <span className="text-[11px] text-[#9B9B9B] mt-1">
+                <span className="text-[11px] text-muted-foreground/70 mt-1">
                   {formatDate(article.published_at)}
                 </span>
               </div>
@@ -135,7 +135,7 @@ export default function LatestNotesSection({ articles }: LatestNotesSectionProps
           <Link
             href="/articles"
             data-cursor="link"
-            className="text-[10px] font-sans font-semibold uppercase tracking-[0.22em] text-[#6B6B6B] hover:text-foreground transition-colors"
+            className="text-[10px] font-sans font-semibold uppercase tracking-[0.22em] text-muted-foreground hover:text-foreground transition-colors"
           >
             View All Articles →
           </Link>

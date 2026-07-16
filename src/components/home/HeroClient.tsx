@@ -112,7 +112,7 @@ export default function HeroClient({ initialEntry, allEntries, title }: HeroClie
       ref={sectionRef}
       id="hero"
       aria-label="Hero — The Notebook of a Tech Woman"
-      className="relative bg-background overflow-hidden border-b border-[#ECECEC] min-h-[700px] flex items-center"
+      className="relative bg-background overflow-hidden border-b border-border min-h-[700px] flex items-center"
     >
       {/* Ruled paper background */}
       <div
@@ -152,7 +152,7 @@ export default function HeroClient({ initialEntry, allEntries, title }: HeroClie
           <div className="lg:col-span-7 flex flex-col gap-7">
             {/* Label */}
             <span
-              className="text-[10px] font-sans font-bold uppercase tracking-[0.28em] text-[#9B9B9B]"
+              className="text-[10px] font-sans font-bold uppercase tracking-[0.28em] text-muted-foreground/70"
               style={{ animation: "softFadeIn 0.7s cubic-bezier(0.16,1,0.3,1) 200ms both" }}
             >
               Welcome to my notebook
