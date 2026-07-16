@@ -1,4 +1,4 @@
-import { UserButton } from "@clerk/nextjs";
+import { ClerkProvider, UserButton } from "@clerk/nextjs";
 import {
   BookOpen,
   FileText,
@@ -25,7 +25,8 @@ export default function AdminLayout({
   ];
 
   return (
-    <div className="bg-background min-h-screen flex flex-col transition-colors duration-300">
+    <ClerkProvider>
+      <div className="bg-background min-h-screen flex flex-col transition-colors duration-300">
       {/* Secondary Admin Navigation Bar */}
       <div className="border-b border-border bg-card">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -70,5 +71,6 @@ export default function AdminLayout({
       {/* Main Admin Workspace Content */}
       <div className="flex-1 bg-background/50">{children}</div>
     </div>
+    </ClerkProvider>
   );
 }
