@@ -88,7 +88,9 @@ export default function NotebookTimeline() {
               key={stop.id}
               onClick={() => handleClick(stop.id)}
               className={`text-left text-[9px] font-sans font-bold tracking-[0.25em] transition-all duration-300 cursor-pointer block ${
-                isActive ? "text-foreground translate-x-1" : "text-muted hover:text-muted-foreground"
+                isActive
+                  ? "text-foreground translate-x-1"
+                  : "text-muted hover:text-muted-foreground"
               }`}
             >
               {stop.label}

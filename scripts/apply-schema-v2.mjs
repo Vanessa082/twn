@@ -82,7 +82,6 @@ try {
   console.log("  ✓ shared_pages");
   console.log("  ✓ margin_notes");
   console.log("\nNext: restart the dev server and test the newsletter form.");
-
 } catch (err) {
   console.error("❌ Request failed:", err.message);
   console.log("\nFallback: Please paste the SQL into the Supabase SQL Editor:");

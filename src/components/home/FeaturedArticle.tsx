@@ -134,7 +134,10 @@ export default function FeaturedArticle({ article }: FeaturedArticleProps) {
             </h2>
 
             {/* Excerpt — 2 lines max */}
-            <p className="text-sm text-muted-foreground leading-[1.7] line-clamp-3" style={text(260)}>
+            <p
+              className="text-sm text-muted-foreground leading-[1.7] line-clamp-3"
+              style={text(260)}
+            >
               {article.excerpt}
             </p>
 
@@ -143,7 +146,9 @@ export default function FeaturedArticle({ article }: FeaturedArticleProps) {
               className="flex items-center justify-between pt-5 border-t border-border"
               style={text(340)}
             >
-              <span className="text-[11px] text-muted-foreground/70">{formatDate(article.published_at)}</span>
+              <span className="text-[11px] text-muted-foreground/70">
+                {formatDate(article.published_at)}
+              </span>
               <Link
                 href={`/articles/${article.slug}`}
                 data-cursor="link"

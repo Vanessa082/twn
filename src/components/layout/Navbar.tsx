@@ -86,7 +86,9 @@ export default function Navbar() {
                 data-cursor="link"
                 className={[
                   "nav-ink-link text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors duration-200",
-                  isActive(link.href) ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+                  isActive(link.href)
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground",
                 ].join(" ")}
                 {...(isActive(link.href) ? { "data-active": "true" } : {})}
               >

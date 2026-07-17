@@ -108,7 +108,9 @@ export default function LatestNotesSection({ articles }: LatestNotesSectionProps
                 <div className="flex items-center gap-2 text-[9px] font-sans font-bold uppercase tracking-[0.22em]">
                   <span className="text-foreground">{article.category}</span>
                   <span className="text-muted">·</span>
-                  <span className="text-muted-foreground">{article.reading_time ?? 1} min read</span>
+                  <span className="text-muted-foreground">
+                    {article.reading_time ?? 1} min read
+                  </span>
                 </div>
 
                 {/* Title */}
