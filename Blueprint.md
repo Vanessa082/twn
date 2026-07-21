@@ -128977,3 +128977,40487 @@ This will define:
 * CI enforcement;
 * coverage philosophy;
 * testing responsibilities per module.
+# 7.6 Backend Architecture — Progress
+
+Completed:
+
+```text
+7.6.1  Purpose, Scope & Backend Philosophy
+7.6.2  Backend Module Structure, Boundaries & Dependency Rules
+7.6.3  Application Layer Architecture
+7.6.4  Domain Layer Architecture
+7.6.5  Infrastructure Layer Architecture
+7.6.6  Transport Layer Architecture
+7.6.7  Command Architecture
+7.6.8  Query Architecture
+7.6.9  Domain Entities, Value Objects & Aggregate Boundaries
+7.6.10 Domain Policies, Business Rules & Invariant Enforcement
+7.6.11 Application Services
+7.6.12 Repository Architecture
+7.6.13 Provider Adapter Architecture
+7.6.14 Transaction Management
+7.6.15 Idempotency Architecture
+7.6.16 Concurrency Architecture
+7.6.17 Error Handling Architecture
+7.6.18 Background Work Boundaries
+7.6.19 Cross-Module Communication
+```
+
+Remaining:
+
+```text
+7.6.20 Backend Testing Boundaries
+7.6.21 Backend Observability Responsibilities
+7.6.22 Backend Evolution Strategy
+7.6.23 Backend Architecture Decision Record
+7.6.24 Backend Completion Criteria
+```
+
+---
+
+# 7.6.20 Backend Testing Boundaries
+
+**Status:** Backend Architecture Specification
+
+**Parent chapter:** Volume 7 — Technical Architecture
+
+**Current scope:** Section 7.6 — Backend Architecture
+
+**Applies to:** Every backend module, Aggregate, Repository, Application Service, Adapter, Worker, Scheduler, Event Consumer, Query, Command and Infrastructure component
+
+**Primary objective:** Define a comprehensive testing strategy that verifies business correctness, architectural integrity, operational resilience and long-term maintainability while preventing implementation details from leaking across module boundaries.
+
+---
+
+# Purpose
+
+This subsection defines:
+
+* testing philosophy;
+* testing pyramid;
+* testing boundaries;
+* unit tests;
+* Aggregate tests;
+* Domain tests;
+* Application tests;
+* Repository tests;
+* database tests;
+* integration tests;
+* contract tests;
+* architectural tests;
+* event tests;
+* queue tests;
+* workflow tests;
+* resilience testing;
+* concurrency testing;
+* migration testing;
+* performance testing;
+* fixture strategy;
+* CI enforcement;
+* coverage philosophy.
+
+The central rule is:
+
+> TWN tests behaviour—not implementation.
+
+A passing test suite should prove that the system behaves correctly under realistic conditions, not merely that individual functions execute.
+
+---
+
+# 7.6.20.1 Testing Philosophy
+
+Testing exists to answer four questions:
+
+```text
+Does it work?
+
+Does it continue working?
+
+Can it safely evolve?
+
+Can we trust future changes?
+```
+
+Testing is an architectural responsibility rather than a final development activity.
+
+---
+
+# 7.6.20.2 Behaviour Over Implementation
+
+Tests should verify observable behaviour.
+
+Good:
+
+```text
+Publishing an approved Article
+creates exactly one
+ArticlePublished event.
+```
+
+Poor:
+
+```text
+publishArticle()
+called
+saveRepository()
+three times.
+```
+
+Implementation may change.
+
+Business behaviour should remain stable.
+
+---
+
+# 7.6.20.3 The Testing Pyramid
+
+TWN follows a layered testing strategy.
+
+```text
+                End-to-End
+             Integration Tests
+        Contract / Database Tests
+        Domain / Application Tests
+             Unit Tests
+```
+
+The majority of tests should exist in the lower layers because they are:
+
+* faster;
+* deterministic;
+* easier to diagnose;
+* cheaper to maintain.
+
+Higher-level tests verify integration rather than replacing lower-level tests.
+
+---
+
+# 7.6.20.4 Testing Responsibilities by Layer
+
+Each architectural layer owns different responsibilities.
+
+| Layer          | Primary responsibility   |
+| -------------- | ------------------------ |
+| Domain         | Business correctness     |
+| Application    | Use-case orchestration   |
+| Infrastructure | Technical integration    |
+| Transport      | Request/response mapping |
+| Database       | Persistence correctness  |
+| Workers        | Background execution     |
+| System         | End-to-end behaviour     |
+
+No single test type replaces another.
+
+---
+
+# 7.6.20.5 Unit Test Definition
+
+A unit test verifies one isolated unit of behaviour.
+
+Characteristics:
+
+* deterministic;
+* fast;
+* repeatable;
+* isolated;
+* independent.
+
+A unit test should execute without:
+
+* network access;
+* queues;
+* storage providers;
+* external APIs.
+
+---
+
+# 7.6.20.6 Aggregate Tests
+
+Aggregate Roots are the primary unit of Domain testing.
+
+Example:
+
+```text
+Publish Article
+```
+
+Tests should verify:
+
+* invariants;
+* lifecycle transitions;
+* emitted events;
+* version changes;
+* business rules.
+
+The Aggregate should be testable without PostgreSQL.
+
+---
+
+# 7.6.20.7 Domain Service Tests
+
+Domain Services should verify:
+
+* policies;
+* calculations;
+* rule composition;
+* decision making.
+
+They should not require:
+
+* HTTP;
+* database connections;
+* queues;
+* provider SDKs.
+
+---
+
+# 7.6.20.8 Value Object Tests
+
+Every Value Object should verify:
+
+* construction;
+* validation;
+* equality;
+* immutability;
+* serialization;
+* invalid input.
+
+Example:
+
+```text
+Slug
+
+EmailAddress
+
+JourneyTitle
+
+PublicationWindow
+```
+
+---
+
+# 7.6.20.9 Application Service Tests
+
+Application tests verify:
+
+* command orchestration;
+* transaction boundaries;
+* repository interaction through interfaces;
+* authorization decisions;
+* result mapping.
+
+They should not test SQL.
+
+---
+
+# 7.6.20.10 Repository Tests
+
+Repositories should verify:
+
+* persistence mapping;
+* optimistic concurrency;
+* transactions;
+* unique constraints;
+* retrieval;
+* updates;
+* deletion behaviour.
+
+These tests require a real PostgreSQL instance.
+
+Repository correctness cannot be fully validated using mocks.
+
+---
+
+# 7.6.20.11 Database Testing
+
+Database integration tests should verify:
+
+* schema correctness;
+* foreign keys;
+* indexes;
+* constraints;
+* transactions;
+* migrations;
+* concurrency behaviour.
+
+Mock databases cannot reliably reproduce PostgreSQL behaviour.
+
+---
+
+# 7.6.20.12 Migration Tests
+
+Every schema migration should verify:
+
+* upgrade succeeds;
+* downgrade (where supported);
+* existing data preserved;
+* indexes recreated;
+* constraints remain valid;
+* application compatibility.
+
+Migration failures are deployment failures.
+
+---
+
+# 7.6.20.13 Adapter Tests
+
+Provider adapters should verify:
+
+* request mapping;
+* response mapping;
+* retry classification;
+* timeout handling;
+* error translation.
+
+Business rules belong elsewhere.
+
+---
+
+# 7.6.20.14 Worker Tests
+
+Workers verify:
+
+* payload validation;
+* lease handling;
+* retries;
+* idempotency;
+* acknowledgement;
+* dead-letter handling;
+* cancellation.
+
+Workers should invoke Application Commands rather than duplicate business logic.
+
+---
+
+# 7.6.20.15 Queue Tests
+
+Queue tests verify:
+
+* duplicate delivery;
+* delayed jobs;
+* retry policy;
+* poison jobs;
+* worker concurrency;
+* lease expiry;
+* graceful recovery.
+
+---
+
+# 7.6.20.16 Event Tests
+
+Events should verify:
+
+* emission;
+* payload schema;
+* version;
+* immutability;
+* ordering assumptions;
+* consumer compatibility.
+
+---
+
+# 7.6.20.17 Contract Tests
+
+Contract tests verify public communication between modules.
+
+Examples:
+
+```text
+Editorial Query Contract
+
+Search Event Contract
+
+Newsletter Commands
+```
+
+Consumers validate expectations.
+
+Producers validate guarantees.
+
+---
+
+# 7.6.20.18 Architectural Tests
+
+Architectural tests enforce structural rules.
+
+Examples:
+
+```text
+Community cannot import Editorial Infrastructure.
+
+Repositories remain internal.
+
+Transport cannot reference PostgreSQL directly.
+
+Modules remain acyclic.
+```
+
+These tests prevent architectural erosion.
+
+---
+
+# 7.6.20.19 Dependency Rule Tests
+
+Automated tests should verify:
+
+* no circular dependencies;
+* approved import directions;
+* Shared Kernel restrictions;
+* forbidden package references.
+
+Architecture should be continuously enforced rather than manually reviewed.
+
+---
+
+# 7.6.20.20 End-to-End Tests
+
+End-to-end tests verify complete user workflows.
+
+Examples:
+
+```text
+Create Article
+Publish Article
+Search finds Article
+```
+
+or
+
+```text
+Upload Media
+Processing completes
+Article displays Media
+```
+
+These tests verify the complete system rather than individual components.
+
+---
+
+# 7.6.20.21 Concurrency Tests
+
+Concurrency tests verify:
+
+* optimistic locking;
+* lost update prevention;
+* duplicate job handling;
+* stale lease rejection;
+* publication races;
+* scheduler overlap.
+
+Sequential tests cannot validate concurrent correctness.
+
+---
+
+# 7.6.20.22 Resilience Tests
+
+Resilience testing verifies system behaviour during failure.
+
+Examples:
+
+* provider outage;
+* PostgreSQL restart;
+* queue interruption;
+* worker crash;
+* network timeout;
+* partial deployment failure.
+
+The system should fail predictably.
+
+---
+
+# 7.6.20.23 Performance Tests
+
+Performance tests verify:
+
+* response time;
+* throughput;
+* queue processing;
+* query performance;
+* memory usage;
+* worker scaling.
+
+Performance is a functional requirement.
+
+Not merely an optimization.
+
+---
+
+# 7.6.20.24 Load Tests
+
+Load testing verifies:
+
+* expected production traffic;
+* burst behaviour;
+* queue backlog;
+* scheduler throughput;
+* concurrent editing.
+
+The objective is to identify operational limits before production.
+
+---
+
+# 7.6.20.25 Fixture Strategy
+
+Test fixtures should be:
+
+* minimal;
+* reusable;
+* deterministic;
+* independent.
+
+Avoid large shared fixture databases.
+
+Each test should construct only the state it needs.
+
+---
+
+# 7.6.20.26 Test Data Builders
+
+Prefer builders over large fixture files.
+
+Example:
+
+```typescript
+ArticleBuilder
+    .published()
+    .withJourney(...)
+    .build();
+```
+
+Builders improve readability while reducing duplication.
+
+---
+
+# 7.6.20.27 Random Test Data
+
+Randomness may discover hidden defects.
+
+However:
+
+* generated values should remain reproducible;
+* failures must be repeatable;
+* seeds should be recorded.
+
+Completely uncontrolled randomness reduces debugging quality.
+
+---
+
+# 7.6.20.28 Mocking Strategy
+
+Mock only:
+
+* external providers;
+* network calls;
+* clocks;
+* random generators;
+* queues where integration is unnecessary.
+
+Do not mock:
+
+* Domain logic;
+* Aggregate behaviour;
+* business rules.
+
+---
+
+# 7.6.20.29 Fake Versus Mock
+
+Prefer:
+
+```text
+In-memory fake repository
+```
+
+for Application tests.
+
+Prefer:
+
+```text
+Real PostgreSQL
+```
+
+for Repository tests.
+
+Avoid mocking SQL behaviour.
+
+---
+
+# 7.6.20.30 Snapshot Tests
+
+Snapshot tests may be useful for:
+
+* generated documents;
+* serialized events;
+* API schemas.
+
+Avoid snapshot testing rapidly changing business objects.
+
+Snapshots should not replace explicit assertions.
+
+---
+
+# 7.6.20.31 Mutation Testing
+
+Mutation testing intentionally introduces small code changes to verify that tests detect incorrect behaviour.
+
+Examples:
+
+* reversing comparisons;
+* removing conditions;
+* changing boolean values.
+
+A surviving mutation indicates insufficient test quality.
+
+Mutation testing should complement—not replace—traditional testing.
+
+---
+
+# 7.6.20.32 Code Coverage Philosophy
+
+Coverage is a signal.
+
+Not a target.
+
+100% coverage does not prove correctness.
+
+Low coverage may reveal risk.
+
+TWN prioritizes:
+
+* behavioural confidence;
+* critical business paths;
+* architectural boundaries.
+
+Coverage percentages alone should never determine quality.
+
+---
+
+# 7.6.20.33 Critical Path Coverage
+
+The following workflows require especially strong testing:
+
+* publication;
+* moderation;
+* authentication;
+* authorization;
+* payment (if introduced);
+* newsletter subscription;
+* Media processing;
+* Search indexing;
+* scheduled publication.
+
+---
+
+# 7.6.20.34 Continuous Integration
+
+Every pull request should execute:
+
+* static analysis;
+* type checking;
+* unit tests;
+* architectural tests;
+* integration tests appropriate to the change.
+
+Deployment should be blocked when mandatory checks fail.
+
+---
+
+# 7.6.20.35 Flaky Test Policy
+
+Flaky tests reduce trust.
+
+A flaky test should be:
+
+* investigated;
+* stabilized;
+* temporarily quarantined if necessary;
+* never ignored indefinitely.
+
+Deleting unstable tests without replacement reduces confidence.
+
+---
+
+# 7.6.20.36 Regression Tests
+
+Every production defect should receive:
+
+1. a failing automated test;
+2. a corrective implementation;
+3. a passing regression test.
+
+This prevents recurrence.
+
+---
+
+# 7.6.20.37 Test Naming
+
+Tests should describe behaviour.
+
+Good:
+
+```text
+publishes_article_once_when_approved
+```
+
+Poor:
+
+```text
+test1
+
+articleTest
+
+publishWorks
+```
+
+Names should explain intent.
+
+---
+
+# 7.6.20.38 Review Checklist
+
+Before approving backend code, verify:
+
+* appropriate test layer selected;
+* behaviour verified;
+* architectural boundaries respected;
+* concurrency tested where relevant;
+* retries tested;
+* failure paths covered;
+* regression tests added;
+* public contracts verified;
+* no unnecessary mocks introduced.
+
+---
+
+# 7.6.20.39 Testing Anti-Patterns
+
+Avoid:
+
+* testing private methods;
+* mocking everything;
+* implementation-coupled assertions;
+* shared mutable fixtures;
+* disabled failing tests;
+* testing only happy paths;
+* ignoring concurrency;
+* relying solely on end-to-end tests;
+* measuring success by coverage percentage alone.
+
+---
+
+# 7.6.20.40 Architecture Decision Record
+
+**Decision:** TWN adopts a layered testing strategy that validates business behaviour, architectural integrity, persistence correctness and operational resilience through multiple complementary test types.
+
+**Supporting decisions:**
+
+* Domain behaviour is tested independently of infrastructure.
+* Repositories use real PostgreSQL integration tests.
+* Public contracts receive dedicated contract tests.
+* Architectural boundaries are automatically enforced.
+* Critical workflows receive end-to-end validation.
+* Concurrency and resilience are first-class testing concerns.
+
+**Reasons:**
+
+* protects business correctness;
+* enables safe refactoring;
+* prevents architectural erosion;
+* reduces production defects;
+* supports long-term maintainability.
+
+**Consequences:**
+
+Positive:
+
+* high confidence in releases;
+* safer evolution;
+* early defect detection.
+
+Costs:
+
+* larger test suite;
+* CI execution time;
+* ongoing maintenance of fixtures and contracts.
+
+---
+
+# Completion Criteria
+
+This subsection is complete when:
+
+* testing philosophy is defined;
+* testing layers are assigned responsibilities;
+* Domain, Application and Repository testing are distinguished;
+* database and migration testing are required;
+* worker, queue and event testing are specified;
+* architectural and contract testing are established;
+* resilience and concurrency testing are included;
+* fixture and mocking strategies are documented;
+* CI requirements are defined;
+* testing anti-patterns are documented.
+
+---
+
+## End of 7.6.20
+
+**Remaining before 7.6 is complete: 4 subsections.**
+
+Next:
+
+# **7.6.21 — Backend Observability Responsibilities**
+
+This subsection will define:
+
+* logging architecture;
+* metrics;
+* distributed tracing;
+* health checks;
+* readiness and liveness;
+* alerting;
+* audit vs observability;
+* correlation IDs;
+* operational dashboards;
+* SLOs/SLIs;
+* incident response instrumentation;
+* production diagnostics and monitoring responsibilities.
+
+# 7.6 Backend Architecture — Progress
+
+Completed:
+
+```text
+7.6.1  Purpose, Scope & Backend Philosophy
+7.6.2  Backend Module Structure, Boundaries & Dependency Rules
+7.6.3  Application Layer Architecture
+7.6.4  Domain Layer Architecture
+7.6.5  Infrastructure Layer Architecture
+7.6.6  Transport Layer Architecture
+7.6.7  Command Architecture
+7.6.8  Query Architecture
+7.6.9  Domain Entities, Value Objects & Aggregate Boundaries
+7.6.10 Domain Policies, Business Rules & Invariant Enforcement
+7.6.11 Application Services
+7.6.12 Repository Architecture
+7.6.13 Provider Adapter Architecture
+7.6.14 Transaction Management
+7.6.15 Idempotency Architecture
+7.6.16 Concurrency Architecture
+7.6.17 Error Handling Architecture
+7.6.18 Background Work Boundaries
+7.6.19 Cross-Module Communication
+7.6.20 Backend Testing Boundaries
+```
+
+Remaining:
+
+```text
+7.6.21 Backend Observability Responsibilities
+7.6.22 Backend Evolution Strategy
+7.6.23 Backend Architecture Decision Record
+7.6.24 Backend Completion Criteria
+```
+
+---
+
+# 7.6.21 Backend Observability Responsibilities
+
+**Status:** Backend Architecture Specification
+
+**Parent chapter:** Volume 7 — Technical Architecture
+
+**Current scope:** Section 7.6 — Backend Architecture
+
+**Applies to:** Interactive requests, commands, queries, transactions, repositories, provider adapters, background jobs, schedulers, event consumers, outbox processing, Search, Media, Newsletter, AI tasks and all future backend modules
+
+**Primary objective:** Ensure that TWN’s production behaviour can be understood, diagnosed and measured without exposing sensitive information or coupling the application to one monitoring vendor.
+
+---
+
+# Purpose
+
+This subsection defines:
+
+* observability philosophy;
+* telemetry signals;
+* structured logging;
+* metrics;
+* distributed tracing;
+* correlation;
+* health endpoints;
+* liveness;
+* readiness;
+* startup checks;
+* Service Level Indicators;
+* Service Level Objectives;
+* error budgets;
+* alerting;
+* dashboards;
+* incident diagnostics;
+* security monitoring;
+* Audit separation;
+* telemetry privacy;
+* cardinality control;
+* retention;
+* sampling;
+* instrumentation ownership;
+* provider neutrality;
+* operational testing.
+
+The central rule is:
+
+> A production system is not operationally complete when it merely runs. It must explain what it is doing, how well it is doing it, and where it is failing.
+
+OpenTelemetry defines observability as understanding a system’s internal state through outputs such as traces, metrics and logs, and provides a vendor-neutral framework for producing and exporting these signals. ([OpenTelemetry][1])
+
+---
+
+# 7.6.21.1 Observability Definition
+
+Observability is the ability to infer internal system behaviour from externally available telemetry.
+
+It should answer:
+
+```text
+What happened?
+
+Where did it happen?
+
+When did it happen?
+
+Who or what initiated it?
+
+How long did it take?
+
+What dependencies were involved?
+
+Was the outcome successful?
+
+Can the failure be reproduced?
+
+Is this isolated or systemic?
+```
+
+Observability is broader than monitoring.
+
+Monitoring reports known conditions.
+
+Observability supports investigation of conditions that were not predicted in advance.
+
+---
+
+# 7.6.21.2 Observability Is a Backend Responsibility
+
+Instrumentation must be designed alongside:
+
+* commands;
+* queries;
+* transactions;
+* jobs;
+* adapters;
+* events;
+* workflows.
+
+It cannot be added effectively after implementation without understanding the operation’s business meaning.
+
+Every backend component must expose enough operational context to diagnose its behaviour.
+
+---
+
+# 7.6.21.3 Observability Does Not Replace Correctness
+
+Telemetry cannot compensate for:
+
+* missing invariants;
+* unsafe transactions;
+* non-idempotent jobs;
+* undefined ownership;
+* unreliable retries;
+* broken authorization.
+
+Observability reveals behaviour.
+
+It does not make incorrect behaviour correct.
+
+---
+
+# 7.6.21.4 Primary Telemetry Signals
+
+TWN will use three primary telemetry signals:
+
+```text
+Logs
+
+Metrics
+
+Traces
+```
+
+OpenTelemetry treats logs, metrics and traces as distinct but correlatable signals emitted by instrumented systems. ([OpenTelemetry][1])
+
+Each signal answers different questions.
+
+| Signal  | Primary purpose                        |
+| ------- | -------------------------------------- |
+| Logs    | Explain discrete events and context    |
+| Metrics | Measure behaviour over time            |
+| Traces  | Follow one operation across components |
+
+No single signal is sufficient for all diagnosis.
+
+---
+
+# 7.6.21.5 Logs
+
+Logs record discrete events.
+
+Examples:
+
+```text
+Article publication started
+
+Article publication completed
+
+Provider request failed
+
+Job retry scheduled
+
+Lease expired
+
+Outbox relay stalled
+```
+
+Logs provide detailed diagnostic context about individual occurrences.
+
+---
+
+# 7.6.21.6 Metrics
+
+Metrics represent numeric measurements aggregated over time.
+
+Examples:
+
+```text
+Request count
+
+Error rate
+
+Request duration
+
+Queue depth
+
+Job completion count
+
+Database pool usage
+
+Provider timeout count
+```
+
+Metrics are suited to:
+
+* dashboards;
+* trends;
+* thresholds;
+* SLO measurement;
+* alerting.
+
+---
+
+# 7.6.21.7 Traces
+
+A trace represents the path of one logical operation.
+
+Example:
+
+```text
+HTTP request
+    ↓
+Transport handler
+    ↓
+Application command
+    ↓
+Repository
+    ↓
+PostgreSQL
+    ↓
+Outbox write
+```
+
+A trace consists of spans representing individual steps.
+
+---
+
+# 7.6.21.8 Signal Correlation
+
+Logs, metrics and traces should share consistent resource and operation context.
+
+Useful common attributes include:
+
+```text
+service.name
+
+service.version
+
+deployment.environment
+
+trace.id
+
+span.id
+
+operation.name
+
+module.name
+```
+
+OpenTelemetry supports correlation across signals by associating telemetry with consistent resource and execution context. ([OpenTelemetry][2])
+
+---
+
+# 7.6.21.9 Vendor-Neutral Instrumentation
+
+Application code should instrument through vendor-neutral abstractions.
+
+Preferred position:
+
+```text
+Application instrumentation
+        ↓
+OpenTelemetry-compatible API
+        ↓
+Collector or exporter
+        ↓
+Selected observability backend
+```
+
+TWN should not embed one commercial monitoring provider’s SDK throughout Domain and Application code.
+
+OpenTelemetry is explicitly designed as a vendor-neutral framework for generating, collecting and exporting telemetry. ([OpenTelemetry][3])
+
+---
+
+# 7.6.21.10 Domain Layer Instrumentation
+
+The Domain Layer should remain largely free from infrastructure telemetry dependencies.
+
+Domain objects may return:
+
+* decisions;
+* result categories;
+* Domain Events;
+* failure reasons.
+
+The Application Layer records operational telemetry around those outcomes.
+
+Bad:
+
+```typescript
+article.publish(logger, metricsClient);
+```
+
+Preferred:
+
+```typescript
+const result = article.publish(command);
+```
+
+The Application Service then records:
+
+```text
+publication outcome
+
+duration
+
+conflict
+
+emitted events
+```
+
+---
+
+# 7.6.21.11 Application Layer Instrumentation
+
+Application Services should create operation-level telemetry.
+
+For every important command, record:
+
+* operation name;
+* module;
+* result category;
+* duration;
+* actor type;
+* resource type;
+* retry or conflict state;
+* transaction outcome.
+
+Example operation:
+
+```text
+editorial.publish-article
+```
+
+---
+
+# 7.6.21.12 Infrastructure Layer Instrumentation
+
+Infrastructure components should expose:
+
+* dependency latency;
+* connection failures;
+* timeout counts;
+* retry attempts;
+* pool usage;
+* queue state;
+* provider response categories;
+* serialization failures;
+* deadlocks.
+
+Infrastructure telemetry should not expose raw secrets or sensitive payloads.
+
+---
+
+# 7.6.21.13 Transport Layer Instrumentation
+
+Transport handlers should record:
+
+* request method;
+* route template;
+* status category;
+* duration;
+* request correlation;
+* authenticated actor type;
+* payload size where useful.
+
+Do not record unbounded raw URLs containing identifiers or secrets as metric dimensions.
+
+Use:
+
+```text
+/articles/:articleId/publish
+```
+
+rather than:
+
+```text
+/articles/8839209/publish
+```
+
+for route-level aggregation.
+
+---
+
+# 7.6.21.14 Worker Instrumentation
+
+Every worker execution should record:
+
+* job type;
+* attempt;
+* queue wait time;
+* processing duration;
+* completion category;
+* retry category;
+* source version;
+* stale-work result;
+* lease expiration;
+* dead-letter transition.
+
+Worker observability must distinguish:
+
+```text
+Job waiting
+
+Job processing
+
+Job retrying
+
+Job permanently failed
+```
+
+---
+
+# 7.6.21.15 Scheduler Instrumentation
+
+Schedulers should record:
+
+* trigger time;
+* schedule delay;
+* due items found;
+* items claimed;
+* items completed;
+* items skipped;
+* overlapping execution;
+* failed batches;
+* next checkpoint.
+
+A scheduler invocation that runs successfully but discovers no due work is not necessarily a failure.
+
+---
+
+# 7.6.21.16 Outbox Instrumentation
+
+The outbox relay should expose:
+
+```text
+Pending record count
+
+Oldest pending age
+
+Publication attempts
+
+Publication failures
+
+Completed record count
+
+Stale claims
+
+Duplicate publications
+
+Relay batch duration
+```
+
+The age of the oldest pending outbox record is often more useful than total row count because it reveals whether committed work is being delayed.
+
+---
+
+# 7.6.21.17 Structured Logging Requirement
+
+Production logs must be structured.
+
+Preferred:
+
+```json
+{
+  "level": "info",
+  "event": "article.publication.completed",
+  "module": "editorial",
+  "operationId": "op_123",
+  "articleId": "art_456",
+  "result": "published",
+  "durationMs": 84
+}
+```
+
+Avoid:
+
+```text
+Article publication maybe worked.
+```
+
+Structured logging supports reliable search, filtering and aggregation.
+
+---
+
+# 7.6.21.18 Canonical Log Envelope
+
+A common log record should support fields such as:
+
+```typescript
+type LogContext = {
+  timestamp: string;
+  level: "debug" | "info" | "warn" | "error" | "fatal";
+
+  event: string;
+  message?: string;
+
+  service: string;
+  serviceVersion: string;
+  environment: string;
+  module?: string;
+
+  traceId?: string;
+  spanId?: string;
+  correlationId?: string;
+  operationId?: string;
+
+  actorType?: "user" | "system" | "anonymous";
+  resourceType?: string;
+  resourceId?: string;
+
+  result?: string;
+  durationMs?: number;
+  error?: SafeErrorContext;
+};
+```
+
+This is conceptual.
+
+The final implementation may adapt to the selected telemetry library.
+
+---
+
+# 7.6.21.19 Event Name Convention
+
+Log events should use stable machine-readable names.
+
+Examples:
+
+```text
+editorial.article.publish.started
+
+editorial.article.publish.completed
+
+media.processing.failed
+
+newsletter.delivery.retry-scheduled
+
+infrastructure.outbox.backlog-detected
+```
+
+The human-readable message may evolve.
+
+The event name should remain stable for dashboards and alerts.
+
+---
+
+# 7.6.21.20 Log Severity
+
+TWN uses:
+
+```text
+DEBUG
+
+INFO
+
+WARN
+
+ERROR
+
+FATAL
+```
+
+Severity must reflect operational meaning rather than developer frustration.
+
+---
+
+# 7.6.21.21 Debug Logs
+
+Use `DEBUG` for detailed diagnostics not normally required in production investigations.
+
+Examples:
+
+* internal decision path;
+* batch boundaries;
+* cache selection;
+* adapter request preparation.
+
+Debug logs may be disabled or sampled in production.
+
+---
+
+# 7.6.21.22 Information Logs
+
+Use `INFO` for meaningful normal operations.
+
+Examples:
+
+```text
+Article published
+
+Campaign approved
+
+Worker started
+
+Migration completed
+```
+
+Do not create an information log for every trivial function call.
+
+---
+
+# 7.6.21.23 Warning Logs
+
+Use `WARN` when the system continues but requires attention.
+
+Examples:
+
+```text
+Optimistic concurrency conflict
+
+Provider retry scheduled
+
+Queue delay above target
+
+Deprecated event version consumed
+
+Fallback provider selected
+```
+
+A warning should represent a condition that may become harmful or indicates degraded operation.
+
+---
+
+# 7.6.21.24 Error Logs
+
+Use `ERROR` when an operation failed unexpectedly or required work could not complete.
+
+Examples:
+
+```text
+Database transaction failed
+
+Job exhausted retries
+
+Provider remained unavailable
+
+Outbox record could not be published
+```
+
+Expected validation failures should not automatically produce error-level logs.
+
+---
+
+# 7.6.21.25 Fatal Logs
+
+Use `FATAL` when the process cannot continue safely.
+
+Examples:
+
+```text
+Invalid mandatory configuration
+
+Application boot failure
+
+Unsupported database schema version
+
+Critical dependency unavailable during required startup
+```
+
+A fatal log normally precedes process termination.
+
+---
+
+# 7.6.21.26 Avoid Duplicate Error Logging
+
+An error should normally be logged once at the boundary that has enough context to classify it.
+
+Bad:
+
+```text
+Repository logs error
+
+Application logs same error
+
+Transport logs same error
+
+Global handler logs same error
+```
+
+This produces four records for one failure.
+
+Lower layers may attach context or create trace events, but the owning error boundary should emit the principal error log.
+
+---
+
+# 7.6.21.27 Exception Context
+
+Error telemetry should include:
+
+* stable error category;
+* operation;
+* module;
+* retryability;
+* dependency;
+* correlation;
+* safe resource references;
+* stack trace for programming failures.
+
+Do not use the raw exception message as the only classification.
+
+---
+
+# 7.6.21.28 Error Fingerprinting
+
+Programming failures should support grouping through a stable fingerprint based on:
+
+* exception class;
+* code location;
+* normalized message;
+* deployment version.
+
+Do not create a new incident group for every resource identifier.
+
+---
+
+# 7.6.21.29 Correlation ID
+
+A correlation ID links related activity across one request or propagated workflow.
+
+Example:
+
+```text
+User request
+    ↓
+Command
+    ↓
+Outbox event
+    ↓
+Worker
+```
+
+Where practical, the same correlation lineage should remain discoverable across the chain.
+
+---
+
+# 7.6.21.30 Trace ID
+
+A trace ID identifies one distributed trace.
+
+It may differ from the broader correlation ID.
+
+Example:
+
+```text
+One originating operation
+```
+
+may produce several asynchronous traces:
+
+```text
+Original request trace
+
+Search worker trace
+
+Notification worker trace
+
+Analytics worker trace
+```
+
+All may share a correlation or causation reference.
+
+---
+
+# 7.6.21.31 Operation ID
+
+An operation ID identifies one logical business operation.
+
+Examples:
+
+```text
+Publish Article
+
+Approve Shared Page
+
+Send Campaign
+
+Process Media
+```
+
+Retries and redeliveries should retain the same logical operation identity when they represent the same work.
+
+---
+
+# 7.6.21.32 Causation ID
+
+A causation ID identifies the event or operation that directly caused the current work.
+
+Example:
+
+```text
+ArticlePublished event
+```
+
+causes:
+
+```text
+IndexPublishedArticle job
+```
+
+The job records the event as its cause.
+
+This supports investigation of event chains.
+
+---
+
+# 7.6.21.33 Correlation Propagation
+
+Correlation context should propagate through:
+
+* HTTP headers where appropriate;
+* Application command context;
+* events;
+* outbox records;
+* queue messages;
+* provider adapter calls where safe;
+* background jobs.
+
+Untrusted external correlation identifiers must be validated and bounded before logging.
+
+---
+
+# 7.6.21.34 Metrics Taxonomy
+
+TWN metrics fall into four categories:
+
+```text
+Request metrics
+
+Business-operation metrics
+
+Dependency metrics
+
+Resource metrics
+```
+
+---
+
+# 7.6.21.35 Request Metrics
+
+Examples:
+
+```text
+HTTP request count
+
+HTTP response duration
+
+Error rate
+
+Active request count
+
+Payload rejection count
+```
+
+They measure transport behaviour.
+
+---
+
+# 7.6.21.36 Business-Operation Metrics
+
+Examples:
+
+```text
+Articles published
+
+Moderation decisions completed
+
+Subscribers confirmed
+
+Media assets processed
+
+Campaign recipient deliveries completed
+```
+
+These measure backend outcomes.
+
+They should not become product Analytics by accident.
+
+Operational metrics exist to understand system behaviour.
+
+---
+
+# 7.6.21.37 Dependency Metrics
+
+Examples:
+
+```text
+PostgreSQL query duration
+
+Database connection wait
+
+Storage request failure
+
+Email provider latency
+
+AI provider timeout
+
+Search adapter error
+```
+
+Dependency metrics help identify whether failures originate inside TWN or in supporting systems.
+
+---
+
+# 7.6.21.38 Resource Metrics
+
+Examples:
+
+```text
+CPU usage
+
+Memory usage
+
+Event-loop delay
+
+Database pool saturation
+
+Worker concurrency
+
+Disk usage
+
+Queue depth
+```
+
+Resource metrics explain capacity and saturation.
+
+---
+
+# 7.6.21.39 Metric Types
+
+The implementation may use:
+
+* counters;
+* gauges;
+* histograms;
+* up/down counters.
+
+Examples:
+
+```text
+Counter:
+jobs_completed_total
+
+Gauge:
+queue_pending_jobs
+
+Histogram:
+command_duration
+```
+
+Metric type must match the measurement’s semantics.
+
+---
+
+# 7.6.21.40 Metric Naming
+
+Metric names should be:
+
+* stable;
+* specific;
+* unit-aware;
+* provider-neutral.
+
+Examples:
+
+```text
+twn_backend_command_duration
+
+twn_worker_jobs_completed
+
+twn_outbox_oldest_pending_age
+
+twn_provider_requests
+```
+
+The final naming syntax should follow the selected OpenTelemetry and backend exporter conventions.
+
+---
+
+# 7.6.21.41 Metric Units
+
+Units must be explicit.
+
+Prefer:
+
+```text
+duration in seconds
+
+size in bytes
+
+age in seconds
+```
+
+Do not mix:
+
+```text
+milliseconds in one module
+
+seconds in another
+```
+
+under the same metric identity.
+
+---
+
+# 7.6.21.42 Metric Cardinality
+
+Metric labels must have bounded cardinality.
+
+Appropriate dimensions:
+
+```text
+module
+
+operation
+
+result
+
+job_type
+
+provider
+
+status_class
+```
+
+Dangerous dimensions:
+
+```text
+user_id
+
+article_id
+
+email_address
+
+request_id
+
+full_url
+
+raw_error_message
+```
+
+High-cardinality dimensions can make telemetry costly, slow and operationally difficult.
+
+---
+
+# 7.6.21.43 Cardinality Review
+
+Every new metric should answer:
+
+```text
+How many possible label values exist?
+
+Can Users influence the label?
+
+Will this grow without bound?
+
+Could this contain sensitive data?
+```
+
+Unbounded identifiers belong in logs or traces, not metric labels.
+
+---
+
+# 7.6.21.44 Histograms
+
+Latency and size distributions should use histograms rather than averages alone.
+
+An average can hide:
+
+* slow tail requests;
+* periodic provider stalls;
+* large variation;
+* rare but severe delays.
+
+Useful measures include:
+
+```text
+p50
+
+p90
+
+p95
+
+p99
+```
+
+Exact percentiles should match operational needs.
+
+---
+
+# 7.6.21.45 Distributed Tracing Scope
+
+Trace important boundaries:
+
+* HTTP request handling;
+* command execution;
+* query execution;
+* database operations;
+* provider calls;
+* event publication;
+* worker execution;
+* workflow steps.
+
+Do not create spans for every trivial getter or in-memory function.
+
+---
+
+# 7.6.21.46 Span Naming
+
+Span names should describe stable operations.
+
+Good:
+
+```text
+editorial.publish_article
+
+postgresql.article.update
+
+media.generate_variant
+
+newsletter.send_recipient_batch
+```
+
+Bad:
+
+```text
+POST /articles/2388293/publish
+
+runFunction
+
+process
+```
+
+Dynamic identifiers should be attributes, not span names.
+
+---
+
+# 7.6.21.47 Span Attributes
+
+Potential attributes:
+
+```text
+twn.module
+
+twn.operation
+
+twn.actor.type
+
+twn.resource.type
+
+twn.job.type
+
+twn.job.attempt
+
+twn.result
+
+db.system
+
+server.address
+
+http.route
+```
+
+Sensitive or unbounded information should be excluded.
+
+---
+
+# 7.6.21.48 Span Events
+
+A span event can record significant moments within one operation.
+
+Examples:
+
+```text
+transaction.retry
+
+lease.renewed
+
+provider.rate_limited
+
+source_version.obsolete
+
+fallback.selected
+```
+
+Span events should not replace normal Domain Events.
+
+They are operational trace annotations.
+
+---
+
+# 7.6.21.49 Trace Status
+
+Trace status should represent whether the operation failed unexpectedly.
+
+Expected outcomes such as:
+
+* validation rejected;
+* version conflict;
+* already completed;
+
+should be represented through result attributes and appropriate status conventions rather than automatically classified as internal system errors.
+
+---
+
+# 7.6.21.50 Trace Sampling
+
+Not every production trace must always be retained.
+
+Sampling may be necessary for:
+
+* cost;
+* storage;
+* throughput;
+* privacy.
+
+Sampling policy should preserve:
+
+* errors;
+* high-latency operations;
+* rare workflows;
+* representative successful requests.
+
+The exact sampling strategy depends on traffic and the selected telemetry platform.
+
+---
+
+# 7.6.21.51 Tail-Based Sampling Position
+
+Tail-based sampling may be considered when TWN needs to retain traces based on completed outcomes, such as:
+
+```text
+Keep failed traces
+
+Keep very slow traces
+
+Sample routine success traces
+```
+
+This requires collector or backend support and adds operational complexity.
+
+It should not be introduced before justified.
+
+---
+
+# 7.6.21.52 Health Check Definition
+
+Health checks provide machine-readable information about process and service readiness.
+
+They are not substitutes for:
+
+* user-facing availability measurements;
+* SLOs;
+* full diagnostics;
+* dependency dashboards.
+
+---
+
+# 7.6.21.53 Liveness Check
+
+Liveness answers:
+
+```text
+Should this process continue running?
+```
+
+A failed liveness check may trigger a restart.
+
+Kubernetes defines liveness probes as checks used to determine when a container should be restarted, including cases where a process is running but cannot make progress. ([Kubernetes][4])
+
+---
+
+# 7.6.21.54 Liveness Must Be Minimal
+
+A liveness check should not fail merely because:
+
+* email provider is down;
+* Search is temporarily unavailable;
+* one optional dependency is degraded.
+
+Restarting the application does not repair an external provider outage.
+
+Liveness should focus on whether the process itself is irrecoverably unhealthy.
+
+---
+
+# 7.6.21.55 Readiness Check
+
+Readiness answers:
+
+```text
+Can this process currently receive its intended workload?
+```
+
+A failed readiness check should remove the instance from serving traffic or claiming work without necessarily restarting it.
+
+---
+
+# 7.6.21.56 Readiness Dependencies
+
+Readiness may check only dependencies required for the process’s immediate role.
+
+Examples:
+
+## Web application
+
+May require:
+
+* configuration loaded;
+* database connectivity;
+* critical migrations compatible.
+
+## Search worker
+
+May require:
+
+* queue access;
+* Search provider access;
+* database access if needed.
+
+## Email worker
+
+May require:
+
+* queue access;
+* provider configuration;
+* database access where required.
+
+Do not make every process depend on every platform service.
+
+---
+
+# 7.6.21.57 Startup Check
+
+Startup checks protect slow-starting applications from being judged unhealthy before initialization finishes.
+
+Kubernetes distinguishes startup probes from liveness and readiness probes so that startup-sensitive workloads can complete initialization before normal health checks take effect. ([Kubernetes][5])
+
+Potential startup checks:
+
+```text
+Configuration validated
+
+Dependency graph created
+
+Telemetry initialized
+
+Database schema compatibility confirmed
+```
+
+---
+
+# 7.6.21.58 Health Check Safety
+
+Health endpoints must not expose:
+
+* environment variables;
+* credentials;
+* internal topology;
+* provider tokens;
+* database hostnames;
+* stack traces.
+
+Public response:
+
+```json
+{
+  "status": "ready"
+}
+```
+
+Detailed diagnostics should remain in protected operational telemetry.
+
+---
+
+# 7.6.21.59 Health Check Timeouts
+
+Health checks must be:
+
+* fast;
+* bounded;
+* non-blocking;
+* safe under repeated execution.
+
+A health endpoint must not launch expensive database scans or provider operations.
+
+---
+
+# 7.6.21.60 Synthetic Monitoring
+
+Synthetic checks exercise important workflows from outside the application.
+
+Examples:
+
+```text
+Public homepage reachable
+
+Published Article retrievable
+
+Search returns known content
+
+Subscription endpoint accepts valid request
+```
+
+Synthetic checks measure externally observed behaviour rather than internal process state.
+
+---
+
+# 7.6.21.61 Service Level Indicator
+
+A Service Level Indicator is a measured aspect of service behaviour.
+
+Potential TWN SLIs:
+
+```text
+Successful Article-read proportion
+
+Article publication success proportion
+
+Interactive request latency
+
+Search freshness
+
+Media processing completion time
+
+Newsletter dispatch completion proportion
+```
+
+Google’s SRE guidance defines an SLI as the measurement used to evaluate a service-level target. ([sre.google][6])
+
+---
+
+# 7.6.21.62 Service Level Objective
+
+A Service Level Objective is the target or acceptable range for an SLI.
+
+Conceptual example:
+
+```text
+99.9% of public Article reads
+succeed during a 28-day window.
+```
+
+Google’s SRE guidance describes an SLO as a target value or range for an SLI. ([sre.google][6])
+
+Exact targets must be chosen from:
+
+* product expectations;
+* hosting capability;
+* operational capacity;
+* measured baseline;
+* business consequences.
+
+They must not be invented solely because another company uses them.
+
+---
+
+# 7.6.21.63 SLO Scope
+
+SLOs should measure User-relevant service behaviour.
+
+Prefer:
+
+```text
+Can a reader retrieve an Article?
+```
+
+over:
+
+```text
+Is one server process running?
+```
+
+A process may be alive while the user experience remains broken.
+
+OpenTelemetry’s observability guidance similarly distinguishes uptime from whether the system performs the outcome users expect. ([OpenTelemetry][7])
+
+---
+
+# 7.6.21.64 Candidate TWN SLOs
+
+Potential future SLOs include:
+
+| Capability      | Candidate SLI                                          |
+| --------------- | ------------------------------------------------------ |
+| Public reading  | Successful eligible Article reads                      |
+| Editorial       | Successful accepted publication commands               |
+| Search          | Published items indexed within target freshness        |
+| Media           | Valid uploads processed within target duration         |
+| Newsletter      | Eligible delivery jobs accepted within dispatch target |
+| Background work | Required jobs completed before maximum age             |
+
+These are candidate measurement areas.
+
+Numerical objectives belong to production operations planning after measurement exists.
+
+---
+
+# 7.6.21.65 Error Budget
+
+An error budget represents the allowable unreliability implied by an SLO.
+
+For example, a 99.9% objective leaves a 0.1% error budget. ([sre.google][8])
+
+Error budgets can guide whether the team should prioritize:
+
+* feature delivery;
+* reliability work;
+* capacity;
+* incident prevention.
+
+TWN should not establish an error-budget policy before meaningful SLOs and operating history exist.
+
+---
+
+# 7.6.21.66 Alerting Philosophy
+
+An alert should require human or automated action.
+
+Do not alert merely because a metric exists.
+
+Good alerts indicate:
+
+* user impact;
+* imminent exhaustion;
+* required background work stalled;
+* data integrity risk;
+* security concern.
+
+---
+
+# 7.6.21.67 Actionable Alerts
+
+Every alert should answer:
+
+```text
+What is wrong?
+
+What is affected?
+
+How urgent is it?
+
+Who owns it?
+
+What should be checked first?
+
+Where is the runbook?
+```
+
+An alert without ownership or response guidance becomes noise.
+
+---
+
+# 7.6.21.68 Symptom-Based Alerts
+
+Prefer alerts on user-visible symptoms.
+
+Examples:
+
+```text
+Article-read failure rate increased
+
+Publication success dropped
+
+Search freshness exceeded target
+
+Media processing backlog too old
+```
+
+Infrastructure alerts remain useful when they predict imminent user impact, such as:
+
+```text
+Database connections nearly exhausted
+```
+
+---
+
+# 7.6.21.69 SLO-Based Alerting
+
+As TWN matures, alerts should increasingly relate to SLO consumption rather than arbitrary isolated thresholds.
+
+Google’s SRE guidance recommends alerting approaches that focus on significant SLO-impacting events and error-budget consumption. ([sre.google][9])
+
+---
+
+# 7.6.21.70 Alert Severity
+
+Conceptual severity levels:
+
+```text
+Critical
+
+High
+
+Moderate
+
+Informational
+```
+
+## Critical
+
+Immediate broad service or integrity risk.
+
+## High
+
+Significant capability degradation requiring prompt response.
+
+## Moderate
+
+Limited degradation or growing operational risk.
+
+## Informational
+
+Requires review but not interruption.
+
+Exact incident levels belong to operational governance.
+
+---
+
+# 7.6.21.71 Alert Deduplication
+
+Repeated failures from one incident should not produce thousands of independent notifications.
+
+Alerts should group by bounded dimensions such as:
+
+* capability;
+* dependency;
+* region;
+* job family;
+* error category.
+
+Do not group by every resource ID.
+
+---
+
+# 7.6.21.72 Alert Suppression
+
+Suppression may be appropriate during:
+
+* approved maintenance;
+* controlled migrations;
+* known provider incidents;
+* intentionally disabled features.
+
+Suppression must be:
+
+* time-bounded;
+* visible;
+* owned;
+* reversible.
+
+Never permanently silence a failing alert without addressing its meaning.
+
+---
+
+# 7.6.21.73 Dashboard Philosophy
+
+Dashboards should support specific operational questions.
+
+Avoid dashboards containing every available metric.
+
+Recommended categories:
+
+```text
+Platform overview
+
+Interactive backend
+
+Database
+
+Background work
+
+Provider dependencies
+
+Module-specific health
+
+SLO status
+```
+
+---
+
+# 7.6.21.74 Platform Overview Dashboard
+
+Should answer:
+
+* Is TWN serving Users?
+* Is the error rate normal?
+* Is latency normal?
+* Are required jobs progressing?
+* Are critical providers available?
+* Is any SLO at risk?
+
+---
+
+# 7.6.21.75 Interactive Backend Dashboard
+
+Potential panels:
+
+```text
+Request rate
+
+Success rate
+
+Latency percentiles
+
+Active requests
+
+Command outcomes
+
+Query outcomes
+
+Concurrency conflicts
+
+Transaction failures
+```
+
+---
+
+# 7.6.21.76 Background Work Dashboard
+
+Potential panels:
+
+```text
+Queue depth by job family
+
+Oldest pending age
+
+Processing throughput
+
+Retry rate
+
+Dead-letter count
+
+Lease expirations
+
+Worker concurrency
+
+Job duration percentiles
+```
+
+---
+
+# 7.6.21.77 Database Dashboard
+
+Potential panels:
+
+```text
+Connection pool usage
+
+Connection wait time
+
+Query latency
+
+Transaction duration
+
+Deadlocks
+
+Serialization retries
+
+Lock wait
+
+Database availability
+```
+
+The database dashboard should diagnose backend pressure without exposing raw business content.
+
+---
+
+# 7.6.21.78 Provider Dashboard
+
+Potential panels:
+
+```text
+Request count
+
+Latency
+
+Error rate
+
+Rate-limit responses
+
+Timeouts
+
+Fallback usage
+
+Circuit state
+```
+
+Provider metrics should use stable provider and operation labels.
+
+---
+
+# 7.6.21.79 Module Dashboard
+
+Each critical module may have an operational dashboard.
+
+Example Editorial dashboard:
+
+```text
+Publication attempts
+
+Publication success
+
+Conflicts
+
+Scheduled-publication delay
+
+Outbox events pending
+
+Public projection freshness
+```
+
+Module owners are responsible for defining meaningful signals.
+
+---
+
+# 7.6.21.80 Audit Versus Observability
+
+Audit records and observability telemetry serve different purposes.
+
+## Audit
+
+Answers:
+
+```text
+Who performed a sensitive business action?
+
+What changed?
+
+When did it change?
+
+Was it authorized?
+```
+
+## Observability
+
+Answers:
+
+```text
+How did the system execute?
+
+How long did it take?
+
+Why did it fail?
+
+Is the platform healthy?
+```
+
+They may reference the same operation ID but should not be treated as one storage system.
+
+---
+
+# 7.6.21.81 Audit Durability
+
+Audit records may require:
+
+* stronger integrity;
+* longer retention;
+* restricted access;
+* business context;
+* compliance controls.
+
+Ordinary logs may be sampled or retained for shorter periods.
+
+Therefore a log entry must not be the sole Audit record for a critical business change.
+
+---
+
+# 7.6.21.82 Security Logging
+
+Security-relevant backend activity should include appropriate monitoring of:
+
+* authentication failures;
+* authorization failures;
+* suspicious rate patterns;
+* administrative actions;
+* repeated token rejection;
+* privilege changes;
+* unusual webhook failures;
+* tampering attempts.
+
+OWASP recommends application security logging and monitoring while emphasizing safe handling of sensitive data and technical error details. ([cheatsheetseries.owasp.org][10])
+
+The detailed security event catalogue belongs to Volume 10.
+
+---
+
+# 7.6.21.83 Sensitive Data Exclusion
+
+Telemetry must not contain:
+
+```text
+Passwords
+
+Session tokens
+
+API keys
+
+Authorization headers
+
+Database credentials
+
+Signed storage URLs
+
+Complete private Article drafts
+
+Raw newsletter recipient lists
+
+Full AI prompts containing private content
+```
+
+OWASP advises against exposing or improperly logging sensitive authentication, session and technical information. ([cheatsheetseries.owasp.org][10])
+
+---
+
+# 7.6.21.84 Personal Data Minimization
+
+Before recording personal data, ask:
+
+```text
+Is this necessary for diagnosis?
+
+Can it be replaced with an internal identifier?
+
+Can it be hashed safely?
+
+How long must it be retained?
+
+Who can access it?
+```
+
+Prefer internal resource IDs over names or email addresses.
+
+---
+
+# 7.6.21.85 Log Injection Protection
+
+Untrusted text must not be permitted to alter log structure.
+
+Examples of untrusted data:
+
+* User-Agent;
+* filenames;
+* User-provided titles;
+* provider messages;
+* webhook fields.
+
+Structured logging libraries and controlled field encoding should be used.
+
+OWASP specifically warns that application logging must consider log injection and sanitization of untrusted data. ([cheatsheetseries.owasp.org][11])
+
+---
+
+# 7.6.21.86 Telemetry Access
+
+Access to logs, traces and metrics should follow least privilege.
+
+Different access may be required for:
+
+* developers;
+* operators;
+* security reviewers;
+* support;
+* administrators.
+
+Observability access must not become an indirect way to read private User content.
+
+---
+
+# 7.6.21.87 Telemetry Retention
+
+Retention should be defined separately for:
+
+```text
+Application logs
+
+Security logs
+
+Traces
+
+Metrics
+
+Audit records
+
+Failed-job diagnostics
+```
+
+Retention depends on:
+
+* operational value;
+* legal requirements;
+* privacy;
+* storage cost;
+* incident investigation windows.
+
+No single retention period should be assumed for all signals.
+
+---
+
+# 7.6.21.88 Telemetry Cost Control
+
+Observability infrastructure can become expensive.
+
+Controls include:
+
+* log-level policies;
+* trace sampling;
+* metric cardinality limits;
+* payload redaction;
+* retention tiers;
+* aggregation;
+* dropping low-value debug events;
+* controlling span volume.
+
+Cost control must not remove critical integrity or security signals.
+
+---
+
+# 7.6.21.89 Telemetry Failure
+
+The application should normally continue serving core operations if telemetry export fails.
+
+Example:
+
+```text
+Observability backend unavailable
+```
+
+should not automatically prevent:
+
+```text
+Article publication
+```
+
+unless a legally or operationally mandatory record cannot be created.
+
+Audit persistence is separate and may have stronger requirements.
+
+---
+
+# 7.6.21.90 Non-Blocking Export
+
+Telemetry export should be buffered and bounded where supported.
+
+It must not create:
+
+* unbounded memory growth;
+* long request delays;
+* database transaction extension;
+* process crashes during exporter failure.
+
+Loss behaviour should be visible through exporter health metrics.
+
+---
+
+# 7.6.21.91 Clock Consistency
+
+Production systems require reasonably synchronized clocks because telemetry depends on timestamps.
+
+Clock drift can damage:
+
+* trace ordering;
+* job duration analysis;
+* lease diagnosis;
+* incident timelines;
+* Audit correlation.
+
+Infrastructure should maintain time synchronization.
+
+---
+
+# 7.6.21.92 Deployment Context
+
+Every telemetry record should identify:
+
+```text
+Application version
+
+Deployment environment
+
+Runtime role
+
+Service name
+```
+
+This allows incidents to be correlated with:
+
+* releases;
+* configuration changes;
+* worker versions;
+* migrations.
+
+---
+
+# 7.6.21.93 Release Markers
+
+Deployments should emit or register a release marker.
+
+This enables dashboards to show:
+
+```text
+Error rate changed after release X.
+
+Latency changed after migration Y.
+```
+
+Release context is critical for regression diagnosis.
+
+---
+
+# 7.6.21.94 Feature Context
+
+Where safe and bounded, telemetry may include:
+
+```text
+Feature identifier
+
+Experiment group
+
+Provider route
+
+Model route
+```
+
+Do not use highly dynamic feature data as metric labels without cardinality review.
+
+---
+
+# 7.6.21.95 AI Observability Boundary
+
+AI operations may record:
+
+* provider;
+* model identifier;
+* operation type;
+* latency;
+* token or usage counters where available;
+* timeout;
+* validation failure;
+* fallback;
+* source version;
+* human-review outcome.
+
+Do not automatically store:
+
+* complete private prompts;
+* complete generated outputs;
+* sensitive contextual documents.
+
+AI telemetry must remain provider-neutral where possible.
+
+---
+
+# 7.6.21.96 Media Observability Boundary
+
+Media processing should expose:
+
+```text
+Upload confirmation rate
+
+Inspection duration
+
+Variant generation duration
+
+Failure category
+
+Source-version conflicts
+
+Processing backlog age
+
+Artifact size
+```
+
+Do not log signed URLs or complete binary content.
+
+---
+
+# 7.6.21.97 Search Observability Boundary
+
+Search should expose:
+
+```text
+Query latency
+
+Query failure
+
+Zero-result rate where operationally meaningful
+
+Indexing delay
+
+Projection version lag
+
+Reconciliation findings
+
+Provider fallback
+```
+
+Product search Analytics and operational Search telemetry must remain conceptually separate.
+
+---
+
+# 7.6.21.98 Newsletter Observability Boundary
+
+Newsletter workers should expose:
+
+```text
+Batch age
+
+Provider acceptance rate
+
+Retry rate
+
+Suppression count
+
+Permanent rejection category
+
+Dispatch completion
+
+Webhook processing lag
+```
+
+Do not use individual email addresses as metric labels.
+
+---
+
+# 7.6.21.99 Observability Ownership
+
+Ownership follows module responsibility.
+
+| Signal                    | Owner                                        |
+| ------------------------- | -------------------------------------------- |
+| Publication outcome       | Editorial                                    |
+| Search indexing freshness | Search                                       |
+| Media processing age      | Media                                        |
+| Delivery progress         | Newsletter                                   |
+| Outbox backlog            | Infrastructure                               |
+| Database pool health      | Infrastructure                               |
+| Authentication anomalies  | Identity/Security boundary                   |
+| Worker job outcome        | Owning job module plus worker infrastructure |
+
+The platform team may provide common instrumentation libraries.
+
+It does not define every module’s business-health signals alone.
+
+---
+
+# 7.6.21.100 Shared Instrumentation Library
+
+A shared backend observability library may provide:
+
+* logger creation;
+* trace creation;
+* context propagation;
+* metric helpers;
+* redaction;
+* standard resource attributes;
+* common error mapping.
+
+It must not contain module-specific business logic.
+
+---
+
+# 7.6.21.101 Instrumentation Review
+
+Every important backend operation should define:
+
+```text
+Operation name
+
+Trace boundary
+
+Success result
+
+Expected failure results
+
+Unexpected error classification
+
+Metrics
+
+Relevant logs
+
+Sensitive-data exclusions
+```
+
+Observability should be reviewed during implementation, not after deployment.
+
+---
+
+# 7.6.21.102 Observability Testing
+
+Tests should verify:
+
+* correlation propagation;
+* stable event names;
+* error classification;
+* redaction;
+* metric label bounds;
+* health-check behaviour;
+* trace creation;
+* worker attempt context;
+* telemetry export failure handling.
+
+Do not assert implementation-specific timestamps or generated trace IDs unnecessarily.
+
+---
+
+# 7.6.21.103 Redaction Tests
+
+Provide automated cases containing:
+
+```text
+Password
+
+Authorization header
+
+API key
+
+Email address
+
+Signed URL
+
+Private draft content
+```
+
+Assert that prohibited values do not appear in:
+
+* logs;
+* span attributes;
+* error reports;
+* metrics.
+
+---
+
+# 7.6.21.104 Health Check Tests
+
+Verify:
+
+* healthy process returns liveness success;
+* irrecoverably stuck process can fail liveness;
+* critical unavailable dependency fails readiness;
+* optional provider outage does not incorrectly fail liveness;
+* startup remains pending during initialization;
+* health responses expose no secrets;
+* checks complete within strict timeout.
+
+---
+
+# 7.6.21.105 Metric Tests
+
+Verify:
+
+* counters increase once;
+* retry metrics distinguish attempts;
+* histogram units are correct;
+* result labels use bounded values;
+* resource IDs are not labels;
+* duplicate processing does not falsely count duplicate business success.
+
+---
+
+# 7.6.21.106 Trace Tests
+
+Verify:
+
+* command span exists;
+* repository and provider spans are children;
+* asynchronous work preserves correlation and causation;
+* expected business outcomes are represented correctly;
+* sensitive inputs are excluded;
+* error spans contain safe classifications.
+
+---
+
+# 7.6.21.107 Alert Tests
+
+Where infrastructure permits, test alerts against controlled signals.
+
+Examples:
+
+```text
+Increase simulated error rate.
+
+Create an old outbox backlog.
+
+Stop worker completion.
+
+Exhaust test database pool.
+```
+
+Verify:
+
+* alert fires;
+* ownership is correct;
+* deduplication works;
+* recovery resolves the alert.
+
+---
+
+# 7.6.21.108 Incident Diagnostic Requirement
+
+For any critical production failure, telemetry should allow an operator to determine:
+
+1. when impact began;
+2. which capability failed;
+3. which deployment was active;
+4. whether all Users or a subset were affected;
+5. which dependency contributed;
+6. whether retries helped;
+7. whether data integrity was threatened;
+8. whether recovery completed.
+
+If telemetry cannot answer these questions, instrumentation is incomplete.
+
+---
+
+# 7.6.21.109 Runbook Linkage
+
+Critical alerts should link to a runbook containing:
+
+* symptom;
+* likely causes;
+* diagnostic queries;
+* immediate containment;
+* safe restart or replay procedure;
+* escalation owner;
+* recovery validation.
+
+Runbooks belong to operational documentation, not Domain code.
+
+---
+
+# 7.6.21.110 Observability Anti-Patterns
+
+## Plain-Text Unstructured Logs
+
+Difficult to aggregate and search reliably.
+
+## Logging Everything
+
+Creates cost, noise and privacy risk.
+
+## No Correlation
+
+Makes multi-step operations impossible to follow.
+
+## User IDs as Metric Labels
+
+Creates unbounded cardinality.
+
+## Raw Error Messages as Labels
+
+Creates unpredictable dimensions.
+
+## Health Endpoint Checks Every Provider
+
+Causes unrelated outages to remove healthy instances.
+
+## Liveness Equals Readiness
+
+Creates unnecessary restart loops.
+
+## Alert on Every Error
+
+Creates alert fatigue.
+
+## Dashboard Without Operational Question
+
+Creates visual noise.
+
+## Logs Used as Audit Records
+
+Provides insufficient durability and integrity.
+
+## Telemetry Inside Domain Entities
+
+Couples business rules to infrastructure.
+
+## Full Payload Logging
+
+Leaks sensitive information.
+
+## Tracing Every Function
+
+Creates overwhelming low-value telemetry.
+
+## Missing Release Version
+
+Prevents deployment correlation.
+
+## Sampling All Errors Away
+
+Destroys incident evidence.
+
+## Blocking Business Operations on Telemetry Export
+
+Makes monitoring failure become product failure.
+
+## No Reconciliation Signal
+
+Allows eventual-consistency drift to remain invisible.
+
+---
+
+# 7.6.21.111 Initial TWN Observability Catalogue
+
+| Capability            | Logs                         | Metrics                            | Traces                       |
+| --------------------- | ---------------------------- | ---------------------------------- | ---------------------------- |
+| Article publication   | Start, result, error         | Success, conflict, duration        | Command, transaction, outbox |
+| Scheduled publication | Due item, skip, failure      | Delay, success, backlog            | Scheduler and command        |
+| Search indexing       | Version, stale result, error | Freshness, duration, failure       | Worker and provider          |
+| Media processing      | Stage, retry, failure        | Processing age, duration, failures | Workflow steps               |
+| Newsletter dispatch   | Batch result, retry          | Acceptance, failure, completion    | Batch and provider           |
+| AI generation         | Route, validation, fallback  | Duration, timeout, usage           | Worker and provider          |
+| Outbox relay          | Claim, publish, failure      | Backlog, oldest age, attempts      | Relay batch                  |
+| Database              | Slow query category, failure | Pool, latency, deadlock            | Repository/database span     |
+| Web requests          | Result and unexpected error  | Rate, latency, status              | Request trace                |
+| Security events       | Safe classified event        | Bounded anomaly counters           | Relevant protected trace     |
+
+---
+
+# 7.6.21.112 Implementation Sequence
+
+## Phase 1 — Core Instrumentation
+
+Implement:
+
+* structured logger;
+* correlation context;
+* application version context;
+* command and query spans;
+* HTTP metrics;
+* worker metrics;
+* error classification;
+* redaction.
+
+## Phase 2 — Dependency Visibility
+
+Add:
+
+* PostgreSQL instrumentation;
+* provider adapter spans;
+* queue and outbox metrics;
+* database-pool dashboard;
+* provider dashboards.
+
+## Phase 3 — Reliability Signals
+
+Add:
+
+* User-facing SLIs;
+* initial SLOs;
+* queue-age objectives;
+* alert ownership;
+* runbooks;
+* release markers.
+
+## Phase 4 — Advanced Operations
+
+Add where justified:
+
+* tail-based trace sampling;
+* error-budget policy;
+* synthetic workflow monitoring;
+* automated anomaly detection;
+* cross-environment telemetry comparison.
+
+---
+
+# 7.6.21.113 Architecture Decision Record
+
+**Decision:** TWN adopts vendor-neutral backend instrumentation based on structured logs, metrics and distributed traces, with consistent correlation across interactive and asynchronous operations.
+
+**Supporting decisions:**
+
+* OpenTelemetry-compatible abstractions are preferred.
+* Domain objects remain free from infrastructure telemetry clients.
+* Application Services own operation-level instrumentation.
+* Infrastructure adapters expose dependency behaviour.
+* Logs use stable structured event names.
+* Errors are principally logged once at the boundary with sufficient context.
+* Metrics use bounded labels and explicit units.
+* Resource identifiers do not become metric dimensions.
+* Traces cover meaningful request, command, database, provider and worker boundaries.
+* Correlation, operation and causation identities are distinct.
+* Health checks distinguish startup, liveness and readiness.
+* Liveness remains independent of optional external-provider availability.
+* SLOs measure User-relevant outcomes rather than process uptime alone.
+* Alerts must be actionable and owned.
+* Audit records remain distinct from operational telemetry.
+* Sensitive data is excluded and redacted.
+* Telemetry export must not normally block business operations.
+* Deployment version and environment are attached to telemetry.
+* Sampling and retention remain configurable.
+* Each module owns its business-health signals.
+* Observability requirements are tested.
+
+**Reasons:**
+
+* enables production diagnosis;
+* supports incident response;
+* measures reliability;
+* identifies dependency and capacity failures;
+* prevents vendor lock-in;
+* preserves module boundaries;
+* supports future distributed extraction;
+* protects private information.
+
+**Consequences:**
+
+Positive:
+
+* faster failure diagnosis;
+* measurable reliability;
+* clearer operational ownership;
+* safer provider changes;
+* better correlation across jobs and events;
+* stronger incident evidence.
+
+Costs:
+
+* additional instrumentation code;
+* telemetry storage and processing cost;
+* dashboard and alert maintenance;
+* cardinality and privacy governance;
+* periodic SLO review;
+* operational training.
+
+**Expected lifetime:** The principles of structured signals, correlation, bounded cardinality, privacy and User-centred reliability are permanent. Exporters, collectors, storage backends, sampling rates, dashboards and numerical SLO targets may evolve.
+
+---
+
+# Completion Criteria for 7.6.21
+
+This subsection is complete when:
+
+* observability is distinguished from correctness and monitoring;
+* logs, metrics and traces have defined responsibilities;
+* vendor-neutral instrumentation is established;
+* layer-specific instrumentation responsibilities are defined;
+* structured logging and severity rules exist;
+* duplicate error logging is prevented;
+* correlation, trace, operation and causation identities are distinguished;
+* metrics have naming, units and cardinality rules;
+* tracing boundaries and sampling positions are established;
+* liveness, readiness and startup checks are separated;
+* User-relevant SLIs and SLOs are introduced;
+* alerting and dashboard principles are defined;
+* Audit and observability remain separate;
+* security and sensitive-data protections are documented;
+* telemetry retention, access and cost controls are recognized;
+* module ownership is assigned;
+* redaction, health, metric, trace and alert tests are required;
+* an implementation sequence is established.
+
+---
+
+## End of 7.6.21
+
+**Remaining before 7.6 is complete: 3 subsections.**
+
+Next:
+
+# **7.6.22 — Backend Evolution Strategy**
+
+It will define:
+
+* modular-monolith evolution;
+* safe refactoring;
+* compatibility;
+* module extraction;
+* strangler migrations;
+* database and event boundary preparation;
+* versioned contracts;
+* technical-debt governance;
+* deprecation;
+* feature flags;
+* rolling deployment compatibility;
+* framework and provider replacement;
+* scale-triggered architecture changes;
+* decision thresholds;
+* avoiding premature microservices.
+
+[1]: https://opentelemetry.io/docs/concepts/signals/?utm_source=chatgpt.com "Signals"
+[2]: https://opentelemetry.io/docs/specs/otel/logs/?utm_source=chatgpt.com "OpenTelemetry Logging"
+[3]: https://opentelemetry.io/docs/?utm_source=chatgpt.com "Documentation"
+[4]: https://kubernetes.io/docs/concepts/workloads/pods/probes/?utm_source=chatgpt.com "Liveness, Readiness, and Startup Probes"
+[5]: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/?utm_source=chatgpt.com "Configure Liveness, Readiness and Startup Probes"
+[6]: https://sre.google/sre-book/service-level-objectives/?utm_source=chatgpt.com "Defining slo: service level objective meaning"
+[7]: https://opentelemetry.io/docs/concepts/observability-primer/?utm_source=chatgpt.com "Observability primer"
+[8]: https://sre.google/workbook/error-budget-policy/?utm_source=chatgpt.com "Error Budget Policy for Service Reliability - Google SRE"
+[9]: https://sre.google/workbook/alerting-on-slos/?utm_source=chatgpt.com "Chapter 5 - Alerting on SLOs"
+[10]: https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html?utm_source=chatgpt.com "Logging - OWASP Cheat Sheet Series"
+[11]: https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html?utm_source=chatgpt.com "REST Security - OWASP Cheat Sheet Series"
+
+# 7.6 Backend Architecture — Progress
+
+Completed:
+
+```text id="9k8mqp"
+7.6.1  Purpose, Scope & Backend Philosophy
+7.6.2  Backend Module Structure, Boundaries & Dependency Rules
+7.6.3  Application Layer Architecture
+7.6.4  Domain Layer Architecture
+7.6.5  Infrastructure Layer Architecture
+7.6.6  Transport Layer Architecture
+7.6.7  Command Architecture
+7.6.8  Query Architecture
+7.6.9  Domain Entities, Value Objects & Aggregate Boundaries
+7.6.10 Domain Policies, Business Rules & Invariant Enforcement
+7.6.11 Application Services
+7.6.12 Repository Architecture
+7.6.13 Provider Adapter Architecture
+7.6.14 Transaction Management
+7.6.15 Idempotency Architecture
+7.6.16 Concurrency Architecture
+7.6.17 Error Handling Architecture
+7.6.18 Background Work Boundaries
+7.6.19 Cross-Module Communication
+7.6.20 Backend Testing Boundaries
+7.6.21 Backend Observability Responsibilities
+```
+
+Remaining:
+
+```text id="9xq4rn"
+7.6.22 Backend Evolution Strategy
+7.6.23 Backend Architecture Decision Record
+7.6.24 Backend Completion Criteria
+```
+
+---
+
+# 7.6.22 Backend Evolution Strategy
+
+**Status:** Backend Architecture Specification
+
+**Parent chapter:** Volume 7 — Technical Architecture
+
+**Current scope:** Section 7.6 — Backend Architecture
+
+**Applies to:** Every backend module, repository, event contract, API contract, worker, database schema, provider adapter, deployment pipeline and future architectural evolution.
+
+**Primary objective:** Define how TWN evolves safely over many years without requiring disruptive rewrites, while preserving backward compatibility, operational stability and architectural integrity.
+
+---
+
+# Purpose
+
+This subsection defines:
+
+* long-term backend evolution;
+* architectural growth;
+* modular evolution;
+* compatibility;
+* safe refactoring;
+* module extraction;
+* service decomposition;
+* feature flags;
+* schema evolution;
+* event evolution;
+* contract evolution;
+* provider replacement;
+* deployment compatibility;
+* deprecation;
+* migration strategy;
+* technical debt governance;
+* scalability triggers;
+* architecture review.
+
+The central rule is:
+
+> TWN must evolve through controlled, incremental change—not through periodic rewrites.
+
+Architecture should support continuous evolution rather than large-scale replacement projects.
+
+---
+
+# 7.6.22.1 Evolution Philosophy
+
+Software systems that survive for many years evolve continuously.
+
+The backend must support:
+
+* new features;
+* changing requirements;
+* infrastructure changes;
+* provider replacement;
+* increased scale;
+* new teams;
+* future architectural decisions.
+
+Every major architectural decision should ask:
+
+```text id="twq4uk"
+Can this evolve safely?
+```
+
+rather than:
+
+```text id="sj1b7r"
+Does this solve today's problem?
+```
+
+---
+
+# 7.6.22.2 Evolution Before Optimization
+
+Do not optimize for hypothetical future scale.
+
+Instead:
+
+```text id="ukgj6g"
+Build clear boundaries.
+
+Measure.
+
+Identify constraints.
+
+Improve incrementally.
+```
+
+Architecture should evolve based on evidence.
+
+Not speculation.
+
+---
+
+# 7.6.22.3 Stable Core Principle
+
+Some architectural principles should remain stable regardless of implementation changes.
+
+Examples:
+
+```text id="p7jvql"
+Module ownership
+
+Aggregate boundaries
+
+Command/Query separation
+
+Repository abstraction
+
+Provider adapters
+
+Transactional consistency
+
+Idempotency
+
+Event-driven secondary work
+```
+
+Technology may change.
+
+These principles should not.
+
+---
+
+# 7.6.22.4 Technology Is Replaceable
+
+Frameworks change.
+
+Libraries change.
+
+Cloud providers change.
+
+The architecture should minimize dependency upon:
+
+* one database vendor;
+* one queue vendor;
+* one AI provider;
+* one storage provider;
+* one monitoring vendor.
+
+Technology choices belong behind adapters.
+
+---
+
+# 7.6.22.5 Modular Monolith First
+
+TWN deliberately begins as a Modular Monolith.
+
+Reasons:
+
+* operational simplicity;
+* lower cost;
+* transactional consistency;
+* easier development;
+* fewer deployment risks;
+* simpler debugging.
+
+The modular boundaries already established prepare the system for future extraction if justified.
+
+---
+
+# 7.6.22.6 Microservices Are Not the Initial Goal
+
+The objective is:
+
+```text id="fqh4l2"
+Well-designed modules.
+```
+
+Not:
+
+```text id="hf1j4v"
+Many deployable services.
+```
+
+Poor modules become poor microservices.
+
+Architecture quality matters more than deployment topology.
+
+---
+
+# 7.6.22.7 Evolution Through Extraction
+
+When justified:
+
+```text id="pkw5ti"
+Module
+        ↓
+Service
+```
+
+should require minimal business changes.
+
+Preparation already exists through:
+
+* ownership;
+* contracts;
+* events;
+* repositories;
+* adapters.
+
+---
+
+# 7.6.22.8 Module Independence
+
+Every module should continue reducing unnecessary dependencies.
+
+Goals:
+
+* explicit contracts;
+* isolated business rules;
+* isolated persistence;
+* isolated tests;
+* isolated workers.
+
+Independent modules evolve more safely.
+
+---
+
+# 7.6.22.9 Safe Refactoring
+
+Refactoring should preserve:
+
+```text id="kdt1q9"
+Behaviour
+```
+
+while improving:
+
+```text id="k7d8mh"
+Structure.
+```
+
+Tests protect behaviour.
+
+Architecture improves structure.
+
+---
+
+# 7.6.22.10 Behavioural Compatibility
+
+Internal implementation may change.
+
+Public behaviour should remain compatible unless intentionally versioned.
+
+Users should not experience breaking changes because:
+
+* repositories changed;
+* ORM changed;
+* provider changed;
+* modules reorganized.
+
+---
+
+# 7.6.22.11 Continuous Refactoring
+
+Refactoring should occur continuously.
+
+Avoid:
+
+```text id="fyzjfx"
+Ten years of accumulated debt
+```
+
+followed by:
+
+```text id="adgb98"
+Complete rewrite.
+```
+
+Small improvements reduce long-term risk.
+
+---
+
+# 7.6.22.12 Technical Debt
+
+Technical debt is acceptable only when:
+
+* understood;
+* documented;
+* intentional;
+* prioritized;
+* reviewed.
+
+Undocumented shortcuts become permanent defects.
+
+---
+
+# 7.6.22.13 Technical Debt Register
+
+Every significant debt item should record:
+
+```text id="znjww5"
+Description
+
+Reason
+
+Impact
+
+Risk
+
+Owner
+
+Removal strategy
+
+Priority
+```
+
+Debt without ownership rarely disappears.
+
+---
+
+# 7.6.22.14 Architecture Decision Records
+
+Every significant backend decision should have an ADR.
+
+ADR documents:
+
+* decision;
+* alternatives;
+* reasoning;
+* consequences;
+* review date.
+
+Future developers understand:
+
+```text id="hvrxv2"
+Why
+```
+
+rather than guessing.
+
+---
+
+# 7.6.22.15 Deprecation Philosophy
+
+Features should rarely disappear immediately.
+
+Instead:
+
+```text id="r4skdf"
+Introduce replacement
+
+Support transition
+
+Deprecate
+
+Remove
+```
+
+Predictable evolution reduces operational risk.
+
+---
+
+# 7.6.22.16 Deprecation Lifecycle
+
+Recommended stages:
+
+```text id="h03ll4"
+Supported
+
+Deprecated
+
+Removal scheduled
+
+Removed
+```
+
+Each stage should be documented.
+
+---
+
+# 7.6.22.17 Compatibility Window
+
+Deprecated contracts should remain supported long enough for dependent components to migrate safely.
+
+The appropriate duration depends on:
+
+* deployment model;
+* external consumers;
+* operational complexity;
+* maintenance cost.
+
+Avoid unnecessarily short compatibility periods.
+
+---
+
+# 7.6.22.18 Backward Compatibility
+
+Prefer additive evolution.
+
+Examples:
+
+Good:
+
+```text id="2h6dkd"
+Optional field added.
+```
+
+Poor:
+
+```text id="jlwm9u"
+Required field renamed.
+```
+
+Breaking changes should be explicit.
+
+---
+
+# 7.6.22.19 Forward Compatibility
+
+Consumers should ignore:
+
+* unknown optional fields;
+* future metadata;
+* extensions.
+
+Rigid parsers slow evolution.
+
+---
+
+# 7.6.22.20 Event Evolution
+
+Events should evolve carefully.
+
+Strategies:
+
+* optional additions;
+* new versions;
+* parallel support;
+* consumer migration.
+
+Never silently change event meaning.
+
+---
+
+# 7.6.22.21 Command Evolution
+
+Commands evolve through:
+
+* optional parameters;
+* explicit versions;
+* new commands.
+
+Do not overload one command with incompatible behaviour.
+
+---
+
+# 7.6.22.22 Query Evolution
+
+Queries should evolve by:
+
+* expanding projections;
+* adding optional fields;
+* introducing new query contracts.
+
+Avoid breaking existing consumers unnecessarily.
+
+---
+
+# 7.6.22.23 Schema Evolution
+
+Database schemas should evolve incrementally.
+
+Each migration should:
+
+* preserve existing data;
+* remain testable;
+* be reversible where practical;
+* avoid unnecessary downtime.
+
+---
+
+# 7.6.22.24 Expand-Contract Strategy
+
+Prefer:
+
+```text id="o5vh8g"
+Expand
+
+Migrate
+
+Contract
+```
+
+Example:
+
+```text id="dxvzxt"
+Add new column
+
+Populate
+
+Read both
+
+Write both
+
+Remove old column
+```
+
+This supports rolling deployments.
+
+---
+
+# 7.6.22.25 Rolling Deployment Compatibility
+
+Old and new application versions may coexist temporarily.
+
+Therefore:
+
+* schemas;
+* events;
+* queues;
+* commands;
+
+must remain compatible during deployment.
+
+Do not assume every instance updates simultaneously.
+
+---
+
+# 7.6.22.26 Feature Flags
+
+Feature flags separate:
+
+```text id="ujfq3z"
+Deployment
+```
+
+from:
+
+```text id="jl0kv8"
+Release.
+```
+
+Flags support:
+
+* gradual rollout;
+* experimentation;
+* emergency disablement;
+* migration.
+
+Feature flags should not become permanent architecture.
+
+---
+
+# 7.6.22.27 Temporary Flag Rule
+
+Every feature flag should have:
+
+* owner;
+* purpose;
+* expected removal date.
+
+Permanent flags increase complexity.
+
+---
+
+# 7.6.22.28 Provider Replacement
+
+Provider adapters already isolate:
+
+* AI;
+* Email;
+* Storage;
+* Search;
+* Payments.
+
+Replacing providers should primarily affect:
+
+```text id="9h6ix5"
+Infrastructure Layer.
+```
+
+Not Domain logic.
+
+---
+
+# 7.6.22.29 Framework Replacement
+
+Framework changes should largely affect:
+
+* Transport;
+* Infrastructure;
+* composition root.
+
+Business logic should remain largely unchanged.
+
+---
+
+# 7.6.22.30 Database Evolution
+
+Database technology may eventually evolve.
+
+Repositories protect:
+
+* Domain;
+* Application;
+
+from direct database coupling.
+
+---
+
+# 7.6.22.31 Queue Evolution
+
+Queue implementation may change.
+
+Workers should continue consuming:
+
+```text id="zprjye"
+Job Contracts.
+```
+
+Queue provider changes should not require rewriting business logic.
+
+---
+
+# 7.6.22.32 AI Provider Evolution
+
+AI providers evolve rapidly.
+
+Provider adapters allow:
+
+* model replacement;
+* routing changes;
+* fallback changes;
+* pricing optimization.
+
+Business logic remains stable.
+
+---
+
+# 7.6.22.33 Search Evolution
+
+Search implementation may change.
+
+Search consumers continue using:
+
+```text id="7mjlwm"
+Search Queries.
+```
+
+Search indexing continues consuming:
+
+```text id="6f83gi"
+Published Events.
+```
+
+---
+
+# 7.6.22.34 Service Extraction Triggers
+
+Module extraction should be considered when:
+
+* deployment independence required;
+* scaling differs significantly;
+* ownership differs significantly;
+* technology requirements diverge;
+* operational isolation justified.
+
+Not simply because:
+
+```text id="ekg7n4"
+Microservices are popular.
+```
+
+---
+
+# 7.6.22.35 Extraction Checklist
+
+Before extracting a module:
+
+Verify:
+
+* ownership clear;
+* contracts stable;
+* events stable;
+* tests comprehensive;
+* observability complete;
+* operational cost justified.
+
+---
+
+# 7.6.22.36 Strangler Pattern
+
+Large migrations should replace behaviour incrementally.
+
+Example:
+
+```text id="i8f8b6"
+Old implementation
+        ↓
+New implementation
+```
+
+gradually takes responsibility.
+
+Avoid:
+
+```text id="dqtzks"
+Big-bang replacement.
+```
+
+---
+
+# 7.6.22.37 Migration Safety
+
+Every migration should support:
+
+* rollback where feasible;
+* monitoring;
+* validation;
+* reconciliation;
+* compatibility.
+
+Migration success should be measurable.
+
+---
+
+# 7.6.22.38 Scaling Strategy
+
+Scaling should follow measured bottlenecks.
+
+Examples:
+
+```text id="iopfjv"
+More workers
+
+Read replicas
+
+Caching
+
+Query optimization
+
+Provider batching
+```
+
+before architectural fragmentation.
+
+---
+
+# 7.6.22.39 Premature Distribution
+
+Distributed systems introduce:
+
+* latency;
+* partial failure;
+* consistency challenges;
+* operational cost.
+
+Avoid them until necessary.
+
+---
+
+# 7.6.22.40 Continuous Architecture Review
+
+Architecture should be reviewed periodically.
+
+Questions:
+
+```text id="6v2nbd"
+Are boundaries still correct?
+
+Has coupling increased?
+
+Is ownership clear?
+
+Are modules still cohesive?
+
+Can providers still be replaced?
+
+Can modules still be extracted?
+```
+
+---
+
+# 7.6.22.41 Evolution Anti-Patterns
+
+Avoid:
+
+* complete rewrites;
+* permanent feature flags;
+* undocumented technical debt;
+* breaking contracts without migration;
+* premature microservices;
+* provider lock-in;
+* architecture driven by trends;
+* removing compatibility windows;
+* ignoring refactoring.
+
+---
+
+# 7.6.22.42 Evolution Roadmap
+
+## Phase 1
+
+Strengthen modular boundaries.
+
+## Phase 2
+
+Improve contracts.
+
+## Phase 3
+
+Optimize infrastructure.
+
+## Phase 4
+
+Extract modules only where justified.
+
+Architecture evolves gradually.
+
+---
+
+# 7.6.22.43 Architecture Decision Record
+
+**Decision:** TWN evolves through incremental architectural improvement built upon stable modular boundaries rather than periodic rewrites or premature distributed architecture.
+
+**Supporting decisions:**
+
+* Modular Monolith remains the starting architecture.
+* Module ownership is preserved.
+* Stable contracts enable extraction.
+* Provider adapters isolate infrastructure.
+* Feature flags remain temporary.
+* Expand-contract governs schema evolution.
+* Technical debt is documented.
+* ADRs capture significant decisions.
+
+**Reasons:**
+
+* lower operational risk;
+* easier maintenance;
+* long-term flexibility;
+* reduced vendor lock-in;
+* sustainable evolution.
+
+**Consequences:**
+
+Positive:
+
+* safer upgrades;
+* predictable evolution;
+* easier onboarding;
+* future scalability.
+
+Costs:
+
+* ongoing architectural discipline;
+* documentation maintenance;
+* compatibility management.
+
+---
+
+# Completion Criteria
+
+This subsection is complete when:
+
+* evolution philosophy is defined;
+* Modular Monolith strategy is documented;
+* service extraction rules exist;
+* compatibility strategy exists;
+* schema evolution rules exist;
+* provider replacement strategy exists;
+* feature flag governance exists;
+* technical debt governance exists;
+* migration strategy exists;
+* architecture review process exists.
+
+---
+
+## End of 7.6.22
+
+**Remaining before 7.6 is complete: 2 subsections.**
+
+Next:
+
+# **7.6.23 — Backend Architecture Decision Record**
+
+This subsection will consolidate all major backend architectural decisions made throughout Sections **7.6.1–7.6.22** into a single authoritative reference, documenting the chosen architecture, rejected alternatives, rationale, trade-offs, and long-term implications before concluding with **7.6.24 — Backend Completion Criteria**.
+
+# 7.6 Backend Architecture — Progress
+
+Completed:
+
+```text id="jv4b9m"
+7.6.1  Purpose, Scope & Backend Philosophy
+7.6.2  Backend Module Structure, Boundaries & Dependency Rules
+7.6.3  Application Layer Architecture
+7.6.4  Domain Layer Architecture
+7.6.5  Infrastructure Layer Architecture
+7.6.6  Transport Layer Architecture
+7.6.7  Command Architecture
+7.6.8  Query Architecture
+7.6.9  Domain Entities, Value Objects & Aggregate Boundaries
+7.6.10 Domain Policies, Business Rules & Invariant Enforcement
+7.6.11 Application Services
+7.6.12 Repository Architecture
+7.6.13 Provider Adapter Architecture
+7.6.14 Transaction Management
+7.6.15 Idempotency Architecture
+7.6.16 Concurrency Architecture
+7.6.17 Error Handling Architecture
+7.6.18 Background Work Boundaries
+7.6.19 Cross-Module Communication
+7.6.20 Backend Testing Boundaries
+7.6.21 Backend Observability Responsibilities
+7.6.22 Backend Evolution Strategy
+```
+
+Remaining:
+
+```text id="bcd7xm"
+7.6.23 Backend Architecture Decision Record
+7.6.24 Backend Completion Criteria
+```
+
+---
+
+# 7.6.23 Backend Architecture Decision Record
+
+**Status:** Backend Architecture Specification
+
+**Parent chapter:** Volume 7 — Technical Architecture
+
+**Current scope:** Section 7.6 — Backend Architecture
+
+**Applies to:** Every current and future backend capability of TWN.
+
+**Primary objective:** Consolidate every major architectural decision made throughout Sections **7.6.1–7.6.22** into one authoritative reference that guides future implementation, reviews, onboarding and architectural evolution.
+
+---
+
+# Purpose
+
+This Architecture Decision Record (ADR) serves as the canonical summary of the backend architecture.
+
+It does **not** introduce new architecture.
+
+Instead, it records:
+
+* chosen architecture;
+* rejected alternatives;
+* architectural principles;
+* implementation priorities;
+* long-term expectations;
+* review criteria.
+
+This ADR should be treated as the architectural constitution of the backend.
+
+---
+
+# 7.6.23.1 Architectural Vision
+
+The TWN backend is designed to be:
+
+* modular;
+* maintainable;
+* scalable;
+* testable;
+* observable;
+* provider-neutral;
+* resilient;
+* evolvable.
+
+The backend is intentionally designed for a long product lifespan rather than short-term delivery speed alone.
+
+---
+
+# 7.6.23.2 Primary Architectural Decision
+
+**Decision**
+
+TWN will be implemented as a **Modular Monolith** with clearly defined business modules communicating through explicit contracts.
+
+**Status**
+
+Accepted.
+
+**Expected lifetime**
+
+Long-term.
+
+---
+
+# 7.6.23.3 Why the Modular Monolith Was Chosen
+
+Reasons include:
+
+* lower operational complexity;
+* simpler deployments;
+* easier debugging;
+* ACID transactions;
+* lower hosting costs;
+* easier onboarding;
+* faster development;
+* future extraction readiness.
+
+The architecture prioritizes strong internal boundaries rather than distributed deployment.
+
+---
+
+# 7.6.23.4 Rejected Alternative — Layered Monolith Without Modules
+
+Rejected because:
+
+* boundaries become unclear;
+* ownership deteriorates;
+* repositories become shared;
+* large services emerge;
+* extraction becomes difficult.
+
+---
+
+# 7.6.23.5 Rejected Alternative — Immediate Microservices
+
+Rejected because:
+
+* operational overhead;
+* distributed transactions;
+* network failures;
+* deployment complexity;
+* duplicated infrastructure;
+* unnecessary cost.
+
+Current product scale does not justify immediate service decomposition.
+
+---
+
+# 7.6.23.6 Module Ownership
+
+**Decision**
+
+Every business capability owns:
+
+* its Domain;
+* persistence;
+* commands;
+* queries;
+* events;
+* workflows;
+* tests.
+
+No module owns another module's business rules.
+
+---
+
+# 7.6.23.7 Communication Strategy
+
+**Decision**
+
+Modules communicate only through:
+
+```text id="rnzbpu"
+Commands
+
+Queries
+
+Events
+```
+
+Direct:
+
+* repository sharing;
+* database access;
+* aggregate mutation;
+
+across module boundaries is prohibited.
+
+---
+
+# 7.6.23.8 Domain-Centric Design
+
+Business rules belong inside:
+
+* Aggregates;
+* Value Objects;
+* Domain Services;
+* Policies.
+
+Infrastructure must not become the location of business decisions.
+
+---
+
+# 7.6.23.9 CQRS Position
+
+**Decision**
+
+Separate:
+
+* Commands
+* Queries
+
+conceptually.
+
+Read and write models may evolve independently.
+
+Separate databases are **not** required.
+
+---
+
+# 7.6.23.10 Repository Strategy
+
+Repositories abstract persistence.
+
+Repositories:
+
+* belong to modules;
+* expose business-oriented operations;
+* hide SQL and ORM details.
+
+Repositories are not shared across modules.
+
+---
+
+# 7.6.23.11 Provider Strategy
+
+Every external dependency is isolated behind Provider Adapters.
+
+Examples:
+
+```text id="f94rje"
+Storage
+
+Email
+
+AI
+
+Search
+
+Future Payments
+```
+
+Business logic remains provider-independent.
+
+---
+
+# 7.6.23.12 Transaction Strategy
+
+Transactions:
+
+* remain short;
+* protect authoritative state;
+* never include long-running provider calls.
+
+External work occurs after commit.
+
+---
+
+# 7.6.23.13 Outbox Strategy
+
+Required asynchronous work is registered durably through the transactional outbox pattern.
+
+Reasons:
+
+* reliable event publication;
+* retry support;
+* eventual consistency;
+* crash recovery.
+
+---
+
+# 7.6.23.14 Background Processing Strategy
+
+Slow work executes through:
+
+* durable jobs;
+* workers;
+* schedulers;
+* retries;
+* leases;
+* reconciliation.
+
+Workers invoke existing Application operations rather than implementing separate business logic.
+
+---
+
+# 7.6.23.15 Consistency Strategy
+
+Immediate consistency:
+
+* Aggregate state;
+* transaction;
+* authorization;
+* required mutations.
+
+Eventual consistency:
+
+* Search;
+* Analytics;
+* optional AI;
+* projections;
+* notifications.
+
+---
+
+# 7.6.23.16 Concurrency Strategy
+
+Primary mechanism:
+
+```text id="1p2e9z"
+Optimistic Concurrency
+```
+
+Pessimistic locking is reserved for carefully justified cases.
+
+---
+
+# 7.6.23.17 Idempotency Strategy
+
+Commands and jobs that may execute more than once must remain idempotent.
+
+Duplicate execution must never duplicate business outcomes.
+
+---
+
+# 7.6.23.18 Error Strategy
+
+Errors are classified into:
+
+* expected outcomes;
+* business failures;
+* infrastructure failures;
+* programming failures.
+
+Retries apply only where appropriate.
+
+---
+
+# 7.6.23.19 Cross-Module Strategy
+
+Modules remain autonomous.
+
+Interactions occur through stable contracts.
+
+Ownership remains explicit.
+
+---
+
+# 7.6.23.20 Testing Strategy
+
+Testing follows layered responsibilities.
+
+Primary investment:
+
+* Domain tests;
+* Application tests;
+* Repository tests;
+* Contract tests;
+* Architectural tests.
+
+End-to-end tests verify complete workflows rather than replacing lower-level tests.
+
+---
+
+# 7.6.23.21 Observability Strategy
+
+Telemetry consists of:
+
+* structured logs;
+* metrics;
+* traces.
+
+Instrumentation remains vendor-neutral.
+
+Sensitive information is excluded.
+
+---
+
+# 7.6.23.22 Evolution Strategy
+
+Architecture evolves through:
+
+* incremental refactoring;
+* compatibility;
+* documented ADRs;
+* modular extraction when justified.
+
+Large rewrites are intentionally avoided.
+
+---
+
+# 7.6.23.23 Scalability Strategy
+
+Scaling order:
+
+```text id="trhf9x"
+Improve algorithms
+
+Improve queries
+
+Improve caching
+
+Improve workers
+
+Optimize infrastructure
+
+Extract modules only if justified
+```
+
+Distribution is the final optimization—not the first.
+
+---
+
+# 7.6.23.24 Security Position
+
+Backend architecture assumes:
+
+* explicit authorization;
+* least privilege;
+* secure defaults;
+* provider isolation;
+* safe logging.
+
+Detailed security implementation belongs to **Volume 10**.
+
+---
+
+# 7.6.23.25 Database Position
+
+The backend assumes PostgreSQL as the initial authoritative datastore.
+
+Architecture intentionally avoids coupling Domain logic to PostgreSQL-specific APIs wherever practical.
+
+---
+
+# 7.6.23.26 Search Position
+
+Search is treated as a derived projection.
+
+The authoritative source remains the owning business module.
+
+---
+
+# 7.6.23.27 AI Position
+
+AI output is:
+
+* optional;
+* derived;
+* reviewable;
+* source-version aware.
+
+AI never becomes the authoritative source of business truth.
+
+---
+
+# 7.6.23.28 Event Position
+
+Events describe facts.
+
+Events do not request work.
+
+Commands request work.
+
+---
+
+# 7.6.23.29 Deployment Position
+
+Deployments assume:
+
+* rolling compatibility;
+* versioned contracts;
+* additive evolution;
+* safe migrations.
+
+Old and new application versions may coexist temporarily.
+
+---
+
+# 7.6.23.30 Provider Lock-In Position
+
+Avoid provider lock-in through:
+
+* adapters;
+* abstractions;
+* configuration;
+* stable business contracts.
+
+Infrastructure should remain replaceable.
+
+---
+
+# 7.6.23.31 Architectural Review Questions
+
+Every major backend change should answer:
+
+```text id="j8r0tv"
+Does ownership remain clear?
+
+Does coupling increase?
+
+Can this still be extracted?
+
+Is compatibility preserved?
+
+Can it be tested?
+
+Can it be observed?
+
+Can it evolve?
+
+Is it provider-neutral?
+```
+
+If any answer is "no," the design should be reconsidered.
+
+---
+
+# 7.6.23.32 Accepted Trade-Offs
+
+The architecture intentionally accepts:
+
+* additional abstractions;
+* more documentation;
+* stronger boundaries;
+* more explicit contracts.
+
+These costs improve:
+
+* maintainability;
+* scalability;
+* correctness;
+* long-term evolution.
+
+---
+
+# 7.6.23.33 Rejected Trade-Offs
+
+The architecture intentionally avoids:
+
+* shared repositories;
+* hidden coupling;
+* database-as-API;
+* premature microservices;
+* giant service classes;
+* infrastructure-driven business logic;
+* vendor-specific Domain code;
+* long database transactions;
+* undocumented technical debt.
+
+---
+
+# 7.6.23.34 Backend Architectural Principles
+
+The backend should always preserve:
+
+1. Clear ownership.
+2. Explicit contracts.
+3. Business-first modelling.
+4. Infrastructure independence.
+5. Provider neutrality.
+6. Testability.
+7. Observability.
+8. Safe evolution.
+9. Operational simplicity.
+10. Incremental improvement.
+
+These principles take precedence over convenience.
+
+---
+
+# 7.6.23.35 Architecture Governance
+
+Any proposal that changes:
+
+* module boundaries;
+* communication contracts;
+* persistence strategy;
+* transaction model;
+* deployment model;
+* event model;
+* background processing model;
+
+requires an updated ADR and architectural review.
+
+---
+
+# 7.6.23.36 Decision Review Frequency
+
+Major backend decisions should be reviewed:
+
+* after significant product growth;
+* before major infrastructure migrations;
+* before service extraction;
+* after recurring architectural pain;
+* during major roadmap planning.
+
+Architectural reviews should be evidence-based rather than trend-driven.
+
+---
+
+# 7.6.23.37 Success Indicators
+
+The backend architecture can be considered successful when:
+
+* modules remain cohesive;
+* coupling remains low;
+* new features integrate without widespread modification;
+* provider replacement remains feasible;
+* production incidents are diagnosable;
+* tests remain reliable;
+* deployments remain predictable;
+* long-term maintenance cost remains controlled.
+
+---
+
+# 7.6.23.38 Backend Architectural Summary
+
+The TWN backend is intentionally designed as:
+
+```text id="lt9lj3"
+Modular
+
+Domain-driven
+
+Provider-neutral
+
+Observable
+
+Resilient
+
+Incrementally evolvable
+
+Operationally simple
+
+Future-ready
+```
+
+Its architecture emphasizes longevity over novelty.
+
+---
+
+# Architecture Decision Record
+
+**Decision:** Build TWN as a modular, domain-centric backend whose business rules remain independent of infrastructure and whose long-term evolution occurs through stable contracts, incremental refactoring and evidence-based architectural change.
+
+**Supporting Decisions**
+
+* Modular Monolith is the initial architecture.
+* Commands, Queries and Events define module communication.
+* Aggregates own business invariants.
+* Provider adapters isolate infrastructure.
+* Transactions remain short.
+* Durable background work uses the transactional outbox.
+* Eventual consistency is accepted for derived capabilities.
+* Optimistic concurrency is the default.
+* Idempotency is mandatory.
+* Structured observability is required.
+* Layered testing is mandatory.
+* Incremental evolution replaces large rewrites.
+
+**Reasons**
+
+* maximize maintainability;
+* reduce operational complexity;
+* enable future extraction;
+* reduce vendor lock-in;
+* improve reliability;
+* preserve architectural integrity.
+
+**Consequences**
+
+Positive:
+
+* stable long-term architecture;
+* predictable growth;
+* simpler onboarding;
+* reduced architectural erosion.
+
+Costs:
+
+* additional design effort;
+* stricter governance;
+* higher documentation expectations;
+* stronger architectural discipline.
+
+**Expected Lifetime**
+
+These principles are expected to remain valid throughout the lifetime of TWN, although individual technologies and infrastructure implementations may change.
+
+---
+
+# Completion Criteria
+
+This subsection is complete when:
+
+* all backend architectural decisions are consolidated;
+* chosen and rejected alternatives are documented;
+* long-term architectural principles are summarized;
+* governance responsibilities are defined;
+* review triggers are established;
+* implementation priorities are recorded;
+* backend vision is documented in one authoritative reference.
+
+---
+
+## End of 7.6.23
+
+**Remaining before 7.6 is complete: 1 subsection.**
+
+Next:
+
+# **7.6.24 — Backend Completion Criteria**
+
+This final subsection will serve as the acceptance checklist for the entire **7.6 Backend Architecture** chapter, consolidating the completion requirements from **7.6.1 through 7.6.23** into one comprehensive, implementation-ready definition of done.
+
+Yes. For this blueprint, I'm deliberately grounding the architecture in established software engineering guidance rather than inventing patterns.
+
+Throughout Volume 7, the recommendations are aligned with well-established sources such as:
+
+* **Martin Fowler** (Patterns of Enterprise Application Architecture, CQRS, Transactional Outbox, Event Sourcing articles)
+* **Eric Evans** (Domain-Driven Design)
+* **Vaughn Vernon** (Implementing Domain-Driven Design)
+* **Microsoft Architecture Center** (DDD, CQRS, Modular Monoliths, Cloud Design Patterns)
+* **AWS Prescriptive Guidance** (Transactional Outbox, Idempotency, Retry, Event-driven Architecture)
+* **Google SRE** (SLIs, SLOs, Error Budgets)
+* **OpenTelemetry Specification**
+* **OWASP Cheat Sheets**
+* **Kubernetes documentation**
+* **PostgreSQL documentation**
+* **Temporal documentation** (workflow concepts—not recommending adoption)
+* **Stripe engineering articles** (idempotency concepts)
+* **GitHub Engineering** and **Shopify Engineering** articles where applicable.
+
+I'm also intentionally adapting the recommendations to **your constraints**, not writing architecture for a FAANG company.
+
+Specifically, I'm assuming:
+
+* a **single developer** initially;
+* **near-zero infrastructure budget**;
+* likely deployment on platforms such as Coolify, Railway, Hetzner, VPS, DigitalOcean, Fly.io or similar;
+* PostgreSQL;
+* one deployable application;
+* one database;
+* minimal operational complexity;
+* ability to evolve over **10+ years** without a rewrite.
+
+That is why I consistently recommend:
+
+* Modular Monolith
+* Repository abstraction
+* Transactional Outbox
+* Provider adapters
+* Background workers
+* OpenTelemetry-compatible instrumentation
+* Module boundaries
+
+while **not** recommending:
+
+* Kubernetes
+* Kafka
+* Service Mesh
+* Event Sourcing everywhere
+* Multiple databases
+* CQRS with separate read/write databases
+* Dozens of microservices
+* Complex orchestration platforms
+
+Those would be inappropriate for your current scale and budget.
+
+I also intentionally avoid locking the blueprint to:
+
+* NestJS
+* Express
+* Fastify
+* Prisma
+* Drizzle
+* TypeORM
+* BullMQ
+* RabbitMQ
+* Temporal
+* AWS
+
+because those implementation choices belong later. The architecture should survive framework changes.
+
+---
+
+One improvement I will make from the next chapter onward is to **increase the density of direct architectural references**. For example, where a recommendation comes directly from PostgreSQL, OpenTelemetry, Microsoft, AWS, Google SRE, OWASP, or Kubernetes guidance, I'll explicitly note that influence in the text (as I started doing in 7.6.21). That way, every major architectural principle is traceable to industry-standard practice rather than appearing as an unsupported opinion.
+
+---
+
+# 7.6.24 Backend Completion Criteria
+
+**Status:** Backend Architecture Specification
+
+**Parent chapter:** Volume 7 — Technical Architecture
+
+**Current scope:** Section 7.6 — Backend Architecture
+
+**Primary objective:** Define the objective acceptance criteria that determine when the backend architecture is complete, internally consistent, production-ready, and ready to transition into detailed implementation.
+
+---
+
+# Purpose
+
+This section consolidates the acceptance criteria established across Sections **7.6.1–7.6.23**.
+
+Completion means the architecture is:
+
+* coherent;
+* internally consistent;
+* implementable;
+* maintainable;
+* evolvable;
+* operationally supportable.
+
+Completion does **not** imply that implementation has begun.
+
+---
+
+# 7.6.24.1 Definition of Completion
+
+The backend architecture is considered complete when it answers:
+
+```text
+What exists?
+
+Who owns it?
+
+How does it communicate?
+
+How is business logic protected?
+
+How is data modified?
+
+How is data queried?
+
+How is background work executed?
+
+How are failures handled?
+
+How is correctness verified?
+
+How is production monitored?
+
+How does the system evolve?
+```
+
+If any of these questions cannot be answered unambiguously, the architecture remains incomplete.
+
+---
+
+# 7.6.24.2 Module Completeness
+
+Every backend module must define:
+
+* responsibilities;
+* ownership;
+* public contracts;
+* dependencies;
+* lifecycle;
+* communication boundaries.
+
+No module may have ambiguous ownership.
+
+---
+
+# 7.6.24.3 Domain Completeness
+
+The Domain Layer is complete when:
+
+* Aggregates are identified;
+* Value Objects are identified;
+* business invariants are assigned;
+* policies are located;
+* business rules are infrastructure-independent.
+
+---
+
+# 7.6.24.4 Application Layer Completeness
+
+Application Services must define:
+
+* commands;
+* queries;
+* orchestration;
+* transaction boundaries;
+* authorization entry points.
+
+Application Services should not contain persistence or transport concerns.
+
+---
+
+# 7.6.24.5 Infrastructure Completeness
+
+Infrastructure must define:
+
+* repositories;
+* provider adapters;
+* storage abstractions;
+* messaging implementations;
+* scheduler infrastructure;
+* worker infrastructure.
+
+Infrastructure details remain replaceable.
+
+---
+
+# 7.6.24.6 Transport Completeness
+
+Transport responsibilities must define:
+
+* request mapping;
+* response mapping;
+* validation boundaries;
+* authentication entry points;
+* protocol isolation.
+
+Business rules remain outside the transport layer.
+
+---
+
+# 7.6.24.7 Command Completeness
+
+Commands are complete when:
+
+* intent is explicit;
+* validation is defined;
+* authorization boundary exists;
+* transactional behaviour is understood;
+* outcomes are documented.
+
+---
+
+# 7.6.24.8 Query Completeness
+
+Queries are complete when:
+
+* projections are identified;
+* performance expectations are known;
+* ownership is clear;
+* read consistency expectations are documented.
+
+---
+
+# 7.6.24.9 Repository Completeness
+
+Repositories are complete when:
+
+* ownership is module-specific;
+* persistence technology is abstracted;
+* contracts are explicit;
+* transaction participation is defined.
+
+---
+
+# 7.6.24.10 Background Processing Completeness
+
+Background work is complete when:
+
+* every asynchronous operation has an owner;
+* retry strategy exists;
+* idempotency is defined;
+* reconciliation is possible;
+* observability exists.
+
+---
+
+# 7.6.24.11 Error Handling Completeness
+
+Error handling is complete when:
+
+* failure categories exist;
+* retry decisions are documented;
+* user-visible failures are separated from operational failures;
+* infrastructure failures are classified.
+
+---
+
+# 7.6.24.12 Concurrency Completeness
+
+Concurrency architecture is complete when:
+
+* optimistic concurrency rules exist;
+* conflict resolution is defined;
+* duplicate execution protection exists.
+
+---
+
+# 7.6.24.13 Transaction Completeness
+
+Transactions are complete when:
+
+* boundaries are explicit;
+* external calls occur outside transactions;
+* consistency guarantees are documented.
+
+---
+
+# 7.6.24.14 Cross-Module Completeness
+
+Module interaction is complete when:
+
+* communication occurs only through Commands, Queries and Events;
+* ownership remains explicit;
+* shared persistence is prohibited.
+
+---
+
+# 7.6.24.15 Testing Completeness
+
+Testing architecture is complete when:
+
+* layered testing exists;
+* repository integration testing is defined;
+* contract testing exists;
+* architectural testing exists;
+* regression testing strategy exists.
+
+---
+
+# 7.6.24.16 Observability Completeness
+
+Observability is complete when:
+
+* logs;
+* metrics;
+* traces;
+* health checks;
+* correlation;
+* dashboards;
+* alerting principles
+
+have defined responsibilities.
+
+---
+
+# 7.6.24.17 Evolution Completeness
+
+Evolution planning is complete when:
+
+* refactoring principles exist;
+* compatibility rules exist;
+* extraction strategy exists;
+* deprecation policy exists;
+* technical debt governance exists.
+
+---
+
+# 7.6.24.18 Architectural Integrity Checklist
+
+The backend architecture must satisfy all of the following:
+
+✓ Clear module ownership
+
+✓ Domain-driven business rules
+
+✓ Explicit contracts
+
+✓ Repository abstraction
+
+✓ Provider abstraction
+
+✓ Short transactions
+
+✓ Reliable asynchronous processing
+
+✓ Optimistic concurrency
+
+✓ Idempotent background work
+
+✓ Layered testing
+
+✓ Structured observability
+
+✓ Incremental evolution
+
+---
+
+# 7.6.24.19 Operational Readiness Checklist
+
+The architecture should support:
+
+* deployment;
+* rollback;
+* monitoring;
+* diagnosis;
+* recovery;
+* scaling;
+* maintenance.
+
+without architectural redesign.
+
+---
+
+# 7.6.24.20 Long-Term Maintainability Checklist
+
+Future developers should be able to:
+
+* understand module ownership quickly;
+* replace infrastructure providers;
+* extend business rules safely;
+* diagnose failures efficiently;
+* refactor confidently.
+
+---
+
+# 7.6.24.21 Production Readiness Assessment
+
+Before implementation begins, verify:
+
+| Area                      | Complete |
+| ------------------------- | -------- |
+| Module boundaries         | ✓        |
+| Domain responsibilities   | ✓        |
+| Application orchestration | ✓        |
+| Repository contracts      | ✓        |
+| Provider abstraction      | ✓        |
+| Background processing     | ✓        |
+| Error handling            | ✓        |
+| Concurrency               | ✓        |
+| Transactions              | ✓        |
+| Testing                   | ✓        |
+| Observability             | ✓        |
+| Evolution                 | ✓        |
+
+---
+
+# 7.6.24.22 Architecture Acceptance Statement
+
+The backend architecture shall be considered accepted when:
+
+1. all architectural decisions are documented;
+2. no critical ownership ambiguity remains;
+3. communication rules are explicit;
+4. implementation teams can begin development without redefining architecture;
+5. future architectural evolution has been anticipated.
+
+---
+
+# Final Architecture Decision Record
+
+**Decision:** The backend architecture defined in Sections **7.6.1–7.6.23** is accepted as the canonical architectural foundation for TWN.
+
+It establishes:
+
+* a Modular Monolith;
+* Domain-Driven Design principles;
+* CQRS-inspired command/query separation;
+* explicit module ownership;
+* provider abstraction;
+* reliable background processing;
+* structured observability;
+* layered testing;
+* incremental evolution.
+
+Future implementation should conform to these principles unless a subsequent ADR explicitly supersedes them.
+
+---
+
+# Backend Architecture Exit Criteria
+
+Section **7.6** is complete when:
+
+* every backend responsibility has an identified owner;
+* communication boundaries are explicit;
+* architectural principles are internally consistent;
+* implementation may proceed without redefining foundational backend concepts;
+* future evolution paths have been documented;
+* operational concerns have been incorporated from the outset.
+
+---
+
+es. This final section is being treated as an implementation gate, not a collection of fashionable architecture terms.
+
+The acceptance criteria below are grounded in the official documentation for the selected technologies:
+
+Next.js App Router provides Route Handlers for backend request handling inside the app directory.
+PostgreSQL supports the transactions, row locks, conflict handling and SKIP LOCKED mechanisms referenced in the architecture.
+OpenTelemetry provides vendor-neutral instrumentation for traces, metrics and logs.
+Vercel’s Hobby plan is currently free, but it has material restrictions. In particular, Hobby cron jobs can run only once per day, and function execution has defined limits. The architecture therefore must not assume that Vercel can operate frequent workers or advanced scheduling for free.
+
+The blueprint will distinguish between:
+
+Required for the first usable release
+
+Required before the affected feature launches
+
+Required only after measurable scale
+
+Optional future infrastructure
+
+You should not build every advanced component now. That would waste your time and increase complexity without improving the first release.
+
+7.6 Backend Architecture — Progress
+
+Completed:
+
+7.6.1  Purpose, Scope & Backend Philosophy
+7.6.2  Backend Module Structure, Boundaries & Dependency Rules
+7.6.3  Application Layer Architecture
+7.6.4  Domain Layer Architecture
+7.6.5  Infrastructure Layer Architecture
+7.6.6  Transport Layer Architecture
+7.6.7  Command Architecture
+7.6.8  Query Architecture
+7.6.9  Domain Entities, Value Objects & Aggregate Boundaries
+7.6.10 Domain Policies, Business Rules & Invariant Enforcement
+7.6.11 Application Services
+7.6.12 Repository Architecture
+7.6.13 Provider Adapter Architecture
+7.6.14 Transaction Management
+7.6.15 Idempotency Architecture
+7.6.16 Concurrency Architecture
+7.6.17 Error Handling Architecture
+7.6.18 Background Work Boundaries
+7.6.19 Cross-Module Communication
+7.6.20 Backend Testing Boundaries
+7.6.21 Backend Observability Responsibilities
+7.6.22 Backend Evolution Strategy
+7.6.23 Backend Architecture Decision Record
+
+Final subsection:
+
+7.6.24 Backend Completion Criteria
+7.6.24 Backend Completion Criteria
+
+Status: Final Backend Architecture Acceptance Specification
+
+Parent chapter: Volume 7 — Technical Architecture
+
+Current scope: Section 7.6 — Backend Architecture
+
+Applies to: All backend modules, commands, queries, Domain models, repositories, transport handlers, provider adapters, transactions, workers, schedulers, events, tests and operational instrumentation
+
+Primary objective: Define the authoritative conditions that must be satisfied before the TWN backend architecture can be considered coherent, implementable, testable and suitable for gradual production use.
+
+Purpose
+
+This subsection consolidates the completion requirements established throughout Sections 7.6.1–7.6.23.
+
+It answers:
+
+What must exist before implementation begins?
+
+What must exist before a feature is released?
+
+What can remain deferred?
+
+What would make the backend architecturally incomplete?
+
+How does a solo developer with no infrastructure budget apply this architecture?
+
+This section does not require every future system to be implemented immediately.
+
+Instead, it defines:
+
+mandatory architectural boundaries;
+implementation-readiness criteria;
+feature-specific release gates;
+deferred infrastructure;
+zero-budget constraints;
+review checklists;
+evidence required for completion;
+final architectural definition of done.
+
+The central rule is:
+
+Backend architecture is complete when its responsibilities, boundaries, failure behaviour and evolution rules are clear enough to guide implementation without forcing premature infrastructure.
+
+7.6.24.1 Meaning of Completion
+
+Completion does not mean:
+
+Every backend feature has been built.
+
+Every future provider has been integrated.
+
+Every possible worker exists.
+
+The system has been split into services.
+
+Enterprise infrastructure has been purchased.
+
+Completion means:
+
+The architecture provides a coherent implementation path.
+
+Each responsibility has an owner.
+
+Dependencies follow defined rules.
+
+Critical failure behaviour is specified.
+
+Future capabilities can be introduced without redesigning the entire backend.
+7.6.24.2 Completion Levels
+
+Backend completion is divided into four levels.
+
+Level 1 — Architecture Defined
+
+The relevant boundaries, contracts and rules are documented.
+
+Level 2 — Implementation Ready
+
+A developer can implement the capability without inventing fundamental architecture during coding.
+
+Level 3 — Feature Release Ready
+
+The implemented feature satisfies its correctness, testing and operational requirements.
+
+Level 4 — Scale Ready
+
+Infrastructure has been validated under measured production workload.
+
+A feature does not need Level 4 before an early release unless its expected workload requires it.
+
+7.6.24.3 No-Budget Architecture Principle
+
+TWN must not require paid infrastructure merely to establish architectural correctness.
+
+The initial implementation should prefer:
+
+one Next.js application;
+one PostgreSQL database;
+one deployment;
+one repository;
+database-backed background work where necessary;
+provider adapters;
+free development tooling;
+platform logs;
+lightweight testing;
+manual operational procedures where volume is low.
+
+Do not begin with:
+
+Kafka;
+Kubernetes;
+multiple microservices;
+managed workflow engines;
+expensive observability platforms;
+multiple production databases;
+dedicated Search clusters;
+permanent AI processing pipelines.
+7.6.24.4 Free Does Not Mean Unlimited
+
+A free platform is still constrained.
+
+The current Vercel Hobby plan is designed for personal and small-scale projects, while its cron scheduling and function-execution limits restrict how frequent or long-running background work may operate.
+
+Therefore:
+
+deployment limits must be documented;
+frequent workers must not be assumed;
+long-running Media tasks must not run inside ordinary web requests;
+daily cron may support basic cleanup or reconciliation;
+more frequent scheduling requires another free-compatible mechanism, manual triggering or later infrastructure;
+the system must degrade safely when an optional job cannot run immediately.
+7.6.24.5 Cost Classification Requirement
+
+Every backend capability must be classified as one of:
+
+Zero-cost core
+
+Free-tier dependent
+
+Usage-sensitive
+
+Paid only after scale
+
+Optional future capability
+
+Example:
+
+Capability	Initial classification
+Domain logic	Zero-cost core
+Modular boundaries	Zero-cost core
+PostgreSQL repository interfaces	Zero-cost core
+Unit tests	Zero-cost core
+GitHub-based CI within available limits	Free-tier dependent
+Hosted PostgreSQL	Free-tier dependent
+Transactional email	Usage-sensitive
+AI generation	Usage-sensitive or optional
+Dedicated Search engine	Paid only after justified scale
+Durable workflow platform	Optional future capability
+Enterprise observability	Optional future capability
+
+No feature should silently introduce an unavoidable paid dependency.
+
+7.6.24.6 Architecture Versus Infrastructure
+
+The following architectural concepts are mandatory even if their infrastructure remains simple:
+
+Module ownership
+
+Commands and Queries
+
+Repository boundaries
+
+Provider interfaces
+
+Transaction boundaries
+
+Idempotency
+
+Error classification
+
+Testing boundaries
+
+Structured operational context
+
+The following infrastructure may remain deferred:
+
+Dedicated message broker
+
+Separate worker deployment
+
+Distributed tracing backend
+
+Search cluster
+
+Durable workflow engine
+
+Read replica
+
+Microservices
+
+Multi-region deployment
+
+This distinction is essential.
+
+7.6.24.7 Backend Purpose Completion
+
+Section 7.6 is complete only when the backend’s purpose is understood as:
+
+enforcing business rules;
+protecting authoritative state;
+coordinating application use cases;
+isolating infrastructure;
+supporting safe asynchronous work;
+producing predictable outcomes;
+remaining observable;
+evolving incrementally.
+
+The backend must not be treated merely as a collection of API endpoints.
+
+7.6.24.8 Architectural Style Completion
+
+The architecture must explicitly remain a:
+
+Modular Monolith
+
+until evidence justifies another deployment model.
+
+Completion requires:
+
+one deployable system may contain many modules;
+module boundaries are logical and enforceable;
+shared deployment does not permit unrestricted coupling;
+service extraction remains optional;
+microservices are not assumed in the initial roadmap.
+7.6.24.9 Module Catalogue Completion
+
+Before implementation expands significantly, TWN must maintain a backend module catalogue.
+
+The catalogue should identify at minimum:
+
+Module name
+
+Purpose
+
+Owned entities
+
+Owned commands
+
+Owned queries
+
+Published events
+
+Consumed events
+
+External providers
+
+Public contracts
+
+Private implementation
+
+Likely modules include:
+
+Editorial;
+Community;
+Identity;
+Media;
+Newsletter;
+Search;
+Analytics;
+Notifications;
+AI capability;
+Infrastructure support.
+
+Not every listed module must be implemented in the first release.
+
+7.6.24.10 Module Ownership Completion
+
+Every authoritative business record must have one clear owning module.
+
+Examples:
+
+Record	Authoritative owner
+Article	Editorial
+Notebook Entry	Editorial
+Journey	Editorial
+Journey Chapter	Editorial
+Shared Page	Community
+Margin Note	Community
+Media Asset	Media
+Subscriber	Newsletter
+Search Document	Search
+Account identity	Identity
+
+Completion fails when two modules can independently mutate the same authoritative record.
+
+7.6.24.11 Module Boundary Completion
+
+A module boundary is complete when:
+
+internal entities are not imported by other modules;
+repositories are private;
+persistence mappings are private;
+Application Services are accessed through public contracts;
+events expose only necessary facts;
+external modules cannot bypass invariants;
+module dependencies are documented;
+circular dependencies are absent.
+7.6.24.12 Dependency Direction Completion
+
+The implementation must preserve the dependency direction:
+
+Transport
+    ↓
+Application
+    ↓
+Domain
+
+Infrastructure implements interfaces required by the inner layers.
+
+The Domain Layer must not depend on:
+
+Next.js;
+route handlers;
+PostgreSQL clients;
+ORM libraries;
+queue providers;
+email SDKs;
+AI SDKs;
+telemetry vendors.
+7.6.24.13 Domain Layer Completion
+
+The Domain Layer is complete for a feature when it contains:
+
+relevant Aggregates;
+Entities;
+Value Objects;
+Domain policies;
+invariant enforcement;
+valid lifecycle transitions;
+meaningful Domain Events;
+typed business outcomes.
+
+It must be testable without starting Next.js or connecting to PostgreSQL.
+
+7.6.24.14 Aggregate Completion
+
+Each Aggregate must define:
+
+Aggregate identity
+
+Aggregate Root
+
+Invariant boundary
+
+Allowed commands
+
+Valid lifecycle
+
+Version behaviour
+
+Emitted Domain Events
+
+An Aggregate is incomplete when external code can directly mutate its internal state without enforcing rules.
+
+7.6.24.15 Aggregate Size Review
+
+Before approving an Aggregate, verify:
+
+all members require transactional consistency together;
+the boundary is not based merely on UI layout;
+unrelated records are referenced by identity rather than embedded;
+loading the Aggregate does not require an unbounded graph;
+the Aggregate does not own another module’s entities.
+7.6.24.16 Entity Completion
+
+Every Entity must have:
+
+stable identity;
+owned lifecycle;
+controlled mutation;
+clear equality semantics;
+valid state transitions;
+module ownership.
+
+Entities must not be passive database-shaped containers when they own business behaviour.
+
+7.6.24.17 Value Object Completion
+
+Every important Value Object must define:
+
+validation;
+normalization;
+equality;
+immutability;
+serialization boundary.
+
+Likely examples:
+
+Slug
+
+Email Address
+
+Publication Time
+
+Article Status
+
+Journey Position
+
+Media Variant Identity
+
+Primitive values should not carry unexpressed business meaning throughout the backend.
+
+7.6.24.18 Domain Policy Completion
+
+A policy is complete when:
+
+its business purpose is explicit;
+it does not depend directly on infrastructure;
+required input is defined;
+decision output is typed;
+failure reasons are stable;
+tests cover boundary conditions.
+
+Policies must not be scattered across route handlers.
+
+7.6.24.19 Application Layer Completion
+
+The Application Layer is complete for a use case when it:
+
+receives an explicit command or query;
+establishes execution context;
+verifies relevant authorization;
+retrieves required state;
+invokes Domain behaviour;
+coordinates the transaction;
+persists authoritative changes;
+registers required outbox work;
+returns a typed result;
+records operation-level telemetry.
+
+It must not contain provider-specific business rules.
+
+7.6.24.20 Application Service Size Review
+
+An Application Service is incomplete or poorly bounded when it:
+
+handles unrelated use cases;
+contains long conditional chains for many modules;
+directly constructs provider SDK clients;
+directly writes SQL;
+contains hidden transaction boundaries;
+duplicates Aggregate rules;
+returns transport-specific responses.
+
+Prefer one coherent use-case handler per command or query family.
+
+7.6.24.21 Command Completion
+
+Every command must define:
+
+Command name
+
+Owning module
+
+Actor
+
+Input
+
+Preconditions
+
+Authorization requirement
+
+Transactional boundary
+
+Possible outcomes
+
+Idempotency requirement
+
+Emitted events
+
+Commands should use imperative names such as:
+
+PublishArticle
+
+ApproveSharedPage
+
+ConfirmSubscription
+
+ScheduleJourneyPublication
+7.6.24.22 Command Outcome Completion
+
+A command should return a typed outcome rather than ambiguous booleans.
+
+Example conceptual outcomes:
+
+Published
+
+AlreadyPublished
+
+ValidationRejected
+
+NotAuthorized
+
+VersionConflict
+
+NotFound
+
+InfrastructureFailure
+
+Expected business outcomes must not be represented only through generic exceptions.
+
+7.6.24.23 Query Completion
+
+Every query must define:
+
+owning module;
+input;
+read model;
+access requirements;
+ordering;
+pagination where applicable;
+caching position;
+consistency expectation;
+not-found behaviour.
+
+Queries must not produce hidden mutations.
+
+7.6.24.24 Query Determinism
+
+Paginated queries must use deterministic ordering.
+
+PostgreSQL documentation warns that LIMIT and OFFSET without an ordering that constrains results predictably can return an unpredictable subset.
+
+Therefore every paginated query requires:
+
+Explicit ORDER BY
+
+Stable tie-breaker
+
+Defined pagination strategy
+7.6.24.25 Transport Layer Completion
+
+A transport handler is complete when it:
+
+accepts the request;
+validates transport shape;
+establishes correlation context;
+creates the actor context;
+constructs a command or query;
+invokes the Application Layer;
+maps typed outcomes to transport responses;
+prevents internal error leakage.
+
+In Next.js App Router, custom HTTP handling should use Route Handlers inside the app directory where that transport is appropriate.
+
+7.6.24.26 Transport Independence
+
+Application and Domain code must not return:
+
+Response;
+NextResponse;
+HTTP status codes;
+route-specific cookies;
+framework redirects.
+
+These belong to the Transport Layer.
+
+7.6.24.27 Repository Contract Completion
+
+Every repository contract must:
+
+belong to one module;
+operate in Domain terminology;
+use owned entities or projections;
+expose required concurrency behaviour;
+avoid leaking ORM types;
+avoid leaking raw database rows;
+support transaction participation where needed.
+7.6.24.28 Repository Implementation Completion
+
+A repository implementation must verify:
+
+Domain-to-persistence mapping;
+persistence-to-Domain reconstruction;
+unique constraints;
+not-found behaviour;
+optimistic version checks;
+transaction participation;
+ordering;
+pagination;
+error translation.
+
+Repository implementations require integration testing against real PostgreSQL behaviour.
+
+7.6.24.29 No Cross-Module Repository Access
+
+The backend is incomplete if:
+
+Search imports EditorialRepository.
+
+Newsletter imports CommunityRepository.
+
+Analytics directly queries every module's private tables.
+
+Cross-module reads must use:
+
+a published query contract;
+a permitted read projection;
+a consumed event;
+an explicitly governed reporting boundary.
+7.6.24.30 Provider Adapter Completion
+
+Every external provider integration must define:
+
+Provider-neutral interface
+
+Provider implementation
+
+Configuration
+
+Timeout
+
+Retry classification
+
+Error translation
+
+Observability
+
+Fallback position
+
+Test strategy
+
+No Domain object may import a provider SDK.
+
+7.6.24.31 Provider-Free Core
+
+The following must remain functional without optional external providers:
+
+Article drafting;
+local content management;
+Domain validation;
+Editorial state transitions;
+Community moderation state;
+repository tests;
+basic publication to the authoritative database.
+
+Loss of AI or Search must not prevent basic content ownership and editing.
+
+7.6.24.32 AI Completion Gate
+
+AI architecture is release-ready only when:
+
+the feature remains optional;
+provider access occurs through an adapter;
+source content version is recorded;
+output is marked as generated;
+output is reviewable;
+stale results cannot replace newer source content;
+provider failure does not corrupt authoritative state;
+no paid model is required for core platform operation;
+usage limits are configurable;
+the feature can be disabled completely.
+
+Until these exist, AI should not be placed in a critical publishing path.
+
+7.6.24.33 Search Completion Gate
+
+Search architecture is release-ready when:
+
+Search is treated as derived state;
+authoritative content remains elsewhere;
+indexing uses stable document identity;
+source version is recorded;
+stale indexing is rejected or superseded;
+indexing is idempotent;
+missing documents can be reconciled;
+Search failure does not delete authoritative content.
+
+For the first release, PostgreSQL-backed search or basic database querying may be acceptable if product requirements permit it. A dedicated Search provider is not automatically required.
+
+7.6.24.34 Media Completion Gate
+
+Media architecture is release-ready when:
+
+uploads use controlled references;
+file identity is verified;
+metadata is recorded;
+processing lifecycle is explicit;
+generated variants bind to source version;
+failed processing has a visible state;
+old workers cannot overwrite newer Media state;
+storage provider details remain behind an adapter;
+upload and processing limits are defined.
+
+Complex video pipelines should remain deferred unless TWN actually requires video processing.
+
+7.6.24.35 Newsletter Completion Gate
+
+Newsletter delivery is release-ready when:
+
+Subscriber consent is authoritative;
+confirmation lifecycle is explicit;
+unsubscribe is enforced;
+Campaign content can be frozen;
+recipient identity is duplicate-safe;
+delivery uses stable idempotency identity;
+provider errors are translated;
+retries are bounded;
+suppressed recipients are respected;
+delivery does not occur inside a long interactive transaction.
+7.6.24.36 Transaction Boundary Completion
+
+Every mutating use case must identify:
+
+Where the transaction begins
+
+What authoritative changes it contains
+
+Which invariants it protects
+
+Where it commits
+
+What occurs after commit
+
+Implicit transaction behaviour is not sufficient documentation.
+
+7.6.24.37 Transaction Duration Requirement
+
+Transactions must remain short.
+
+Do not keep a database transaction open while:
+
+sending email;
+calling an AI provider;
+uploading to object storage;
+indexing Search;
+waiting for user input;
+performing long Media transformations.
+7.6.24.38 Atomicity Completion
+
+Operations that must succeed or fail together must be contained in one valid consistency boundary.
+
+Example:
+
+Update Article publication state
+
+Record published revision
+
+Append ArticlePublished outbox entry
+
+should commit atomically when they represent one publication decision.
+
+7.6.24.39 Outbox Completion Gate
+
+The transactional outbox is required before any business-critical event depends on reliable post-commit delivery.
+
+Completion requires:
+
+event recorded in the authoritative transaction;
+stable outbox identity;
+payload version;
+ownership;
+processing state;
+bounded relay batch;
+duplicate-safe publication;
+retry handling;
+stale claim recovery;
+backlog observability.
+
+It may initially use PostgreSQL rather than a separate broker.
+
+7.6.24.40 Idempotency Completion
+
+A command or job requires idempotency when it may be:
+
+retried;
+redelivered;
+double-submitted;
+triggered by overlapping schedulers;
+replayed manually;
+repeated after uncertain provider results.
+
+Completion requires:
+
+## End of **7.6 – Backend Architecture**
+
+**Backend Architecture Status:** **Complete**
+
+**Approximate coverage:** 24 subsections defining the backend philosophy, layering, business modelling, persistence, communication, reliability, testing, observability, and long-term evolution.
+
+---
+
+The next major section, **7.7**, should move into a new technical concern (for example, Frontend Architecture) without revisiting backend implementation details already covered here.
+Agreed. The next logical section is **7.7 Frontend Architecture**.
+
+Just as with 7.6, I will keep it at software architecture level—not UI/UX (covered earlier), not API design (Volume 9), not database (Volume 8), and not security implementation (Volume 10).
+
+The same standard will apply:
+
+* based on React/Next.js architectural best practices rather than framework tutorials;
+* aligned with Microsoft Architecture Center, React documentation, Next.js documentation, W3C guidance where applicable, and established frontend architecture patterns;
+* optimized for **one developer**, **minimal hosting cost**, **long-term maintainability**, and **incremental evolution**;
+* avoiding overengineering (Redux everywhere, micro-frontends, unnecessary state libraries, etc.) unless justified.
+
+---
+
+# Volume 7 – Technical Architecture
+
+## 7.7 Frontend Architecture
+
+### Progress
+
+```text
+7.7.1  Purpose, Scope & Frontend Philosophy
+7.7.2  Frontend Module Structure
+7.7.3  Rendering Strategy
+7.7.4  Routing Architecture
+7.7.5  Component Architecture
+7.7.6  State Management Architecture
+7.7.7  Data Fetching Architecture
+7.7.8  Frontend Domain Models
+7.7.9  Form Architecture
+7.7.10 Error Boundaries & Recovery
+7.7.11 Frontend Performance Architecture
+7.7.12 Offline & Progressive Enhancement
+7.7.13 Accessibility Responsibilities
+7.7.14 Frontend Testing Strategy
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution Strategy
+7.7.17 Frontend Architecture Decision Record
+7.7.18 Frontend Completion Criteria
+```
+
+---
+
+# 7.7.1 Purpose, Scope & Frontend Philosophy
+
+**Status:** Frontend Architecture Specification
+
+**Parent chapter:** Volume 7 — Technical Architecture
+
+**Current scope:** Section 7.7 — Frontend Architecture
+
+**Applies to:** Every web interface of TWN including the public website, editorial workspace, community platform, notebook experience, dashboards and future frontend applications.
+
+**Primary objective:** Define a frontend architecture that remains maintainable, performant, accessible and scalable throughout the lifetime of TWN while preserving clear separation between presentation, business interaction and infrastructure concerns.
+
+---
+
+# Purpose
+
+This subsection defines:
+
+* frontend philosophy;
+* architectural goals;
+* frontend responsibilities;
+* rendering principles;
+* interaction boundaries;
+* maintainability principles;
+* scalability objectives;
+* design constraints.
+
+The central rule is:
+
+> The frontend is responsible for presenting and orchestrating user interactions. It is not the authoritative source of business truth.
+
+---
+
+# 7.7.1.1 Frontend Mission
+
+The frontend exists to allow people to interact with TWN.
+
+Its responsibilities are to:
+
+* present information;
+* collect user intent;
+* validate immediate input;
+* coordinate user interactions;
+* provide feedback;
+* communicate with backend services;
+* remain responsive under varying network conditions.
+
+Business authority remains on the backend.
+
+---
+
+# 7.7.1.2 Architectural Goals
+
+The frontend architecture should optimize for:
+
+* maintainability;
+* simplicity;
+* accessibility;
+* performance;
+* progressive enhancement;
+* composability;
+* testability;
+* long-term evolution.
+
+No individual feature should compromise these goals.
+
+---
+
+# 7.7.1.3 Primary Design Principles
+
+The frontend should be:
+
+* component-driven;
+* route-oriented;
+* server-first where appropriate;
+* progressively enhanced;
+* accessible by default;
+* resilient to failure;
+* independent of backend implementation details.
+
+---
+
+# 7.7.1.4 User Interface Is Not Business Logic
+
+The frontend may:
+
+* display rules;
+* guide workflows;
+* perform lightweight validation.
+
+It must not become the permanent location of:
+
+* authorization decisions;
+* publication rules;
+* moderation policies;
+* ownership rules;
+* business invariants.
+
+Those belong to the backend Domain.
+
+---
+
+# 7.7.1.5 Server-First Philosophy
+
+Where both approaches provide equivalent user experience, prefer server-rendered or server-computed content over unnecessary client-side execution.
+
+Reasons include:
+
+* faster initial rendering;
+* improved SEO;
+* reduced JavaScript;
+* lower client memory usage;
+* improved accessibility.
+
+This aligns with the direction of the React Server Components architecture adopted by Next.js.
+
+---
+
+# 7.7.1.6 Progressive Enhancement
+
+Core functionality should remain usable before optional enhancements load.
+
+Enhancements include:
+
+* animations;
+* optimistic interactions;
+* infinite scrolling;
+* live updates;
+* rich editors.
+
+The primary content should not depend entirely on JavaScript when practical.
+
+---
+
+# 7.7.1.7 Frontend as an Orchestrator
+
+The frontend coordinates interactions between:
+
+```text
+User
+   ↓
+Interface
+   ↓
+Backend
+   ↓
+Rendered Result
+```
+
+It should avoid becoming an independent business system.
+
+---
+
+# 7.7.1.8 Separation of Concerns
+
+The frontend should clearly separate:
+
+* presentation;
+* interaction;
+* state;
+* networking;
+* reusable UI;
+* feature modules.
+
+Mixing these concerns increases maintenance cost.
+
+---
+
+# 7.7.1.9 Performance Is a Feature
+
+Performance should be considered part of product quality.
+
+Architectural decisions should minimize:
+
+* unnecessary rendering;
+* unnecessary JavaScript;
+* duplicate requests;
+* layout shifts;
+* blocking resources.
+
+Performance optimization should be built into the architecture rather than treated as a final optimization phase.
+
+---
+
+# 7.7.1.10 Accessibility Is Architectural
+
+Accessibility is not limited to semantic HTML or color contrast.
+
+Architecture should support:
+
+* keyboard navigation;
+* screen readers;
+* predictable focus management;
+* reduced motion preferences;
+* responsive layouts;
+* scalable typography.
+
+Accessibility requirements influence component architecture from the beginning.
+
+---
+
+# 7.7.1.11 Maintainability Before Cleverness
+
+Prefer:
+
+* explicit structure;
+* readable components;
+* predictable data flow;
+* clear naming.
+
+Avoid architectural patterns that require excessive explanation or specialized knowledge without clear benefit.
+
+---
+
+# 7.7.1.12 Framework Independence
+
+Although TWN is expected to use React and Next.js, the architecture should emphasize concepts rather than framework-specific APIs.
+
+Frameworks evolve.
+
+Architectural principles should remain stable.
+
+---
+
+# 7.7.1.13 Frontend Anti-Goals
+
+The frontend should not become:
+
+* the source of business truth;
+* a second backend;
+* an unstructured collection of components;
+* dependent on one UI library;
+* tightly coupled to backend implementation details.
+
+---
+
+# 7.7.1.14 Architecture Decision Record
+
+**Decision:** TWN adopts a server-first, component-driven frontend architecture with clear separation between presentation, interaction and business authority.
+
+**Supporting decisions:**
+
+* Backend remains authoritative.
+* Progressive enhancement is preferred.
+* Accessibility is an architectural concern.
+* Performance is considered a product requirement.
+* Maintainability takes precedence over unnecessary abstraction.
+
+**Reasons:**
+
+* simpler long-term maintenance;
+* improved user experience;
+* reduced client complexity;
+* lower hosting and execution costs;
+* better scalability.
+
+**Consequences:**
+
+Positive:
+
+* predictable frontend evolution;
+* improved performance;
+* easier onboarding;
+* stronger separation of concerns.
+
+Costs:
+
+* requires discipline in preventing business logic leakage;
+* some interactions may require additional backend round-trips.
+
+---
+
+# Completion Criteria
+
+This subsection is complete when:
+
+* frontend responsibilities are defined;
+* architectural goals are established;
+* server-first philosophy is documented;
+* frontend/backend responsibilities are separated;
+* accessibility and performance are recognized as architectural concerns;
+* long-term maintainability principles are documented.
+
+---
+
+## End of 7.7.1
+
+**Remaining before 7.7 is complete:**
+
+```text
+7.7.2  Frontend Module Structure
+7.7.3  Rendering Strategy
+7.7.4  Routing Architecture
+7.7.5  Component Architecture
+7.7.6  State Management Architecture
+7.7.7  Data Fetching Architecture
+7.7.8  Frontend Domain Models
+7.7.9  Form Architecture
+7.7.10 Error Boundaries & Recovery
+7.7.11 Frontend Performance Architecture
+7.7.12 Offline & Progressive Enhancement
+7.7.13 Accessibility Responsibilities
+7.7.14 Frontend Testing Strategy
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution Strategy
+7.7.17 Frontend Architecture Decision Record
+7.7.18 Frontend Completion Criteria
+```
+# Volume 7 – Technical Architecture
+
+## 7.7 Frontend Architecture
+
+### Progress
+
+Completed:
+
+```text id="z81l7m"
+7.7.1  Purpose, Scope & Frontend Philosophy
+```
+
+Remaining:
+
+```text id="m6kj2v"
+7.7.2  Frontend Module Structure
+7.7.3  Rendering Strategy
+7.7.4  Routing Architecture
+7.7.5  Component Architecture
+7.7.6  State Management Architecture
+7.7.7  Data Fetching Architecture
+7.7.8  Frontend Domain Models
+7.7.9  Form Architecture
+7.7.10 Error Boundaries & Recovery
+7.7.11 Frontend Performance Architecture
+7.7.12 Offline & Progressive Enhancement
+7.7.13 Accessibility Responsibilities
+7.7.14 Frontend Testing Strategy
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution Strategy
+7.7.17 Frontend Architecture Decision Record
+7.7.18 Frontend Completion Criteria
+```
+
+---
+
+# 7.7.2 Frontend Module Structure
+
+**Status:** Frontend Architecture Specification
+
+**Parent chapter:** Volume 7 — Technical Architecture
+
+**Current scope:** Section 7.7 — Frontend Architecture
+
+**Applies to:** Every frontend feature, route, component, workspace, reusable library and future interface developed for TWN.
+
+**Primary objective:** Define a modular frontend architecture that supports long-term maintainability, independent feature evolution, code reuse and team scalability while avoiding tightly coupled user interfaces.
+
+---
+
+# Purpose
+
+This subsection defines:
+
+* frontend modularization;
+* feature organization;
+* shared libraries;
+* ownership boundaries;
+* dependency rules;
+* reusable components;
+* layout organization;
+* feature isolation;
+* cross-feature communication;
+* frontend scalability.
+
+The central rule is:
+
+> The frontend should be organized around business capabilities, not file types or framework conventions.
+
+---
+
+# 7.7.2.1 Module Definition
+
+A frontend module represents a complete user-facing capability.
+
+Examples include:
+
+```text
+Editorial
+
+Notebook
+
+Journeys
+
+Shared Pages
+
+Margin Notes
+
+Community
+
+Search
+
+Authentication
+
+Media
+
+Newsletter
+
+Profile
+
+Settings
+```
+
+A module owns everything required to deliver that capability's interface.
+
+---
+
+# 7.7.2.2 Module Ownership
+
+Every module owns:
+
+* pages/routes belonging to that capability;
+* feature components;
+* feature-specific hooks;
+* feature-specific state;
+* feature-specific validation;
+* feature-specific utilities;
+* local assets;
+* frontend tests.
+
+Ownership should mirror backend module ownership whenever practical.
+
+---
+
+# 7.7.2.3 Feature-First Organization
+
+Prefer organizing by feature.
+
+Example:
+
+```text
+features/
+
+    editorial/
+
+    notebook/
+
+    journeys/
+
+    search/
+
+    profile/
+
+    media/
+```
+
+Avoid organizing primarily by technical type:
+
+```text
+components/
+
+hooks/
+
+pages/
+
+utils/
+
+services/
+
+models/
+
+helpers/
+```
+
+Large type-based folders eventually mix unrelated business capabilities.
+
+Microsoft's guidance for modern frontend applications similarly recommends organizing by feature or domain to improve cohesion and maintainability.
+
+---
+
+# 7.7.2.4 High-Level Frontend Structure
+
+A conceptual organization may resemble:
+
+```text
+app/
+
+features/
+
+shared/
+
+layouts/
+
+design-system/
+
+providers/
+
+lib/
+
+config/
+
+styles/
+
+assets/
+```
+
+Each directory has a distinct architectural responsibility.
+
+The exact folder names may evolve with framework conventions.
+
+---
+
+# 7.7.2.5 Application Layer
+
+The application entry layer is responsible for:
+
+* routing;
+* composition;
+* providers;
+* layouts;
+* metadata;
+* initialization.
+
+It should not contain feature implementation.
+
+---
+
+# 7.7.2.6 Feature Modules
+
+Each feature module should contain only the code required for that business capability.
+
+Possible structure:
+
+```text
+editorial/
+
+    components/
+
+    hooks/
+
+    state/
+
+    services/
+
+    validation/
+
+    types/
+
+    tests/
+```
+
+The exact internal organization may vary with module complexity.
+
+---
+
+# 7.7.2.7 Shared Layer
+
+The shared layer contains functionality reused by multiple modules.
+
+Examples:
+
+* UI primitives;
+* common hooks;
+* utilities;
+* icons;
+* typography;
+* accessibility helpers;
+* date formatting.
+
+Shared code must remain generic.
+
+---
+
+# 7.7.2.8 Shared Does Not Mean Global
+
+A reusable item belongs in the shared layer only when multiple independent modules genuinely require it.
+
+Avoid moving code into shared folders prematurely.
+
+Premature sharing often creates unnecessary coupling.
+
+---
+
+# 7.7.2.9 Design System Boundary
+
+The Design System owns:
+
+* buttons;
+* inputs;
+* typography;
+* cards;
+* dialogs;
+* spacing primitives;
+* visual tokens.
+
+It should not contain feature-specific business behaviour.
+
+Example:
+
+Good:
+
+```text
+PrimaryButton
+```
+
+Poor:
+
+```text
+PublishArticleButton
+```
+
+---
+
+# 7.7.2.10 Feature Components
+
+Feature components contain business-specific presentation.
+
+Examples:
+
+```text
+ArticleEditor
+
+JourneyTimeline
+
+SharedPageCard
+
+PublicationStatus
+
+CommentComposer
+```
+
+These belong to their owning module.
+
+---
+
+# 7.7.2.11 Layout Layer
+
+Layouts coordinate page composition.
+
+Responsibilities include:
+
+* navigation;
+* page structure;
+* slots;
+* responsive regions;
+* shared chrome.
+
+Layouts should not implement feature logic.
+
+---
+
+# 7.7.2.12 Providers
+
+Global providers include capabilities such as:
+
+* theme;
+* authentication context;
+* localization;
+* feature flags;
+* error handling.
+
+Providers should remain small and composable.
+
+Avoid creating one massive provider responsible for unrelated concerns.
+
+---
+
+# 7.7.2.13 Library Layer
+
+The library layer contains framework-independent frontend utilities.
+
+Examples:
+
+* formatting;
+* URL utilities;
+* serialization;
+* clipboard helpers;
+* browser abstractions.
+
+Library code should not depend on feature modules.
+
+---
+
+# 7.7.2.14 Configuration Layer
+
+Configuration contains:
+
+* environment mapping;
+* feature configuration;
+* route constants;
+* application metadata;
+* build configuration references.
+
+Configuration should not contain executable business logic.
+
+---
+
+# 7.7.2.15 Asset Organization
+
+Assets should be categorized by purpose.
+
+Examples:
+
+* illustrations;
+* icons;
+* fonts;
+* static media;
+* branding resources.
+
+Avoid storing feature state inside asset folders.
+
+---
+
+# 7.7.2.16 Module Independence
+
+Modules should minimize knowledge of one another.
+
+Editorial should not directly import Search implementation.
+
+Notebook should not depend upon Community implementation.
+
+Interaction should occur through shared abstractions where appropriate.
+
+---
+
+# 7.7.2.17 Dependency Direction
+
+Preferred dependency flow:
+
+```text
+Feature
+
+↓
+
+Shared
+
+↓
+
+Framework
+```
+
+Never:
+
+```text
+Shared
+
+↓
+
+Feature
+```
+
+Shared code must not depend upon business modules.
+
+---
+
+# 7.7.2.18 Circular Dependency Prevention
+
+Feature modules must never create circular imports.
+
+Example:
+
+```text
+Editorial
+
+↓
+
+Media
+
+↓
+
+Search
+
+↓
+
+Editorial
+```
+
+Circular dependencies complicate testing, bundling and maintenance.
+
+Static analysis should detect these automatically.
+
+---
+
+# 7.7.2.19 Cross-Feature Communication
+
+Modules communicate through:
+
+* shared state interfaces where justified;
+* routing;
+* backend APIs;
+* events exposed by application infrastructure.
+
+Avoid direct manipulation of another feature's internal state.
+
+---
+
+# 7.7.2.20 UI Composition
+
+Compose interfaces from smaller reusable building blocks.
+
+Example hierarchy:
+
+```text
+Button
+
+↓
+
+Toolbar
+
+↓
+
+EditorHeader
+
+↓
+
+ArticleEditorPage
+```
+
+Each level should have a single, understandable responsibility.
+
+---
+
+# 7.7.2.21 Component Ownership
+
+Every component should have one owning module.
+
+If ownership is unclear, architectural boundaries likely need refinement.
+
+---
+
+# 7.7.2.22 Reuse Strategy
+
+Before creating a reusable component, ask:
+
+```text
+Is this used today by multiple modules?
+
+Will reuse simplify maintenance?
+
+Is the abstraction stable?
+
+Does sharing reduce duplication without introducing coupling?
+```
+
+Do not abstract after the first duplicate.
+
+Wait until the abstraction becomes evident.
+
+---
+
+# 7.7.2.23 Module Scalability
+
+A module should continue growing internally before splitting into additional modules.
+
+Extraction becomes appropriate when:
+
+* ownership diverges;
+* responsibilities become unrelated;
+* deployment strategy changes;
+* maintainability declines.
+
+---
+
+# 7.7.2.24 Lazy Loading Boundaries
+
+Modules should define natural code-splitting boundaries.
+
+Examples:
+
+* Editorial workspace;
+* Admin tools;
+* Analytics dashboard;
+* Settings.
+
+Large capabilities should not be downloaded before needed.
+
+This aligns with React and Next.js recommendations to split code by routes and feature boundaries.
+
+---
+
+# 7.7.2.25 Naming Conventions
+
+Names should describe business purpose.
+
+Good:
+
+```text
+JourneyProgress
+
+ArticleMetadataPanel
+
+CommunitySidebar
+```
+
+Poor:
+
+```text
+WidgetOne
+
+HelperPanel
+
+MainThing
+```
+
+Names should remain understandable without opening the implementation.
+
+---
+
+# 7.7.2.26 Frontend Module Review Checklist
+
+When reviewing a module, verify:
+
+* ownership is clear;
+* dependencies are minimal;
+* feature boundaries are respected;
+* reusable elements are genuinely generic;
+* layouts contain no business logic;
+* providers remain focused;
+* shared layer remains independent;
+* no circular imports exist.
+
+---
+
+# 7.7.2.27 Frontend Anti-Patterns
+
+Avoid:
+
+* one enormous `components` folder;
+* feature code inside shared libraries;
+* shared state for unrelated features;
+* duplicated ownership;
+* circular imports;
+* global utility files containing business rules;
+* generic "helpers" directories with unrelated responsibilities;
+* feature-specific code inside the Design System.
+
+---
+
+# 7.7.2.28 Module Evolution
+
+Modules should evolve independently.
+
+Adding a new feature should rarely require modifications to unrelated modules.
+
+If implementing one capability repeatedly changes many existing modules, coupling should be re-evaluated.
+
+---
+
+# 7.7.2.29 Architecture Decision Record
+
+**Decision:** TWN adopts a feature-first modular frontend architecture organized around business capabilities rather than technical file types.
+
+**Supporting decisions:**
+
+* Each feature owns its interface.
+* Shared code remains framework- and feature-independent.
+* Design System components remain presentation-only.
+* Modules communicate through explicit boundaries.
+* Circular dependencies are prohibited.
+* Code splitting follows feature boundaries.
+
+**Reasons:**
+
+* improved maintainability;
+* clearer ownership;
+* easier onboarding;
+* simpler testing;
+* scalable growth;
+* better bundle organization.
+
+**Consequences:**
+
+Positive:
+
+* independent feature evolution;
+* lower coupling;
+* easier refactoring;
+* improved performance through natural lazy loading.
+
+Costs:
+
+* requires architectural discipline;
+* some reusable abstractions may emerge later rather than immediately.
+
+---
+
+# Completion Criteria
+
+This subsection is complete when:
+
+* frontend module ownership is defined;
+* feature-first organization is established;
+* shared layer responsibilities are documented;
+* Design System boundaries are explicit;
+* dependency direction is defined;
+* cross-feature communication principles are established;
+* code-splitting boundaries are identified;
+* anti-patterns are documented;
+* long-term module evolution strategy is defined.
+
+---
+
+## End of 7.7.2
+
+**Remaining before 7.7 is complete:**
+
+```text
+7.7.3  Rendering Strategy
+7.7.4  Routing Architecture
+7.7.5  Component Architecture
+7.7.6  State Management Architecture
+7.7.7  Data Fetching Architecture
+7.7.8  Frontend Domain Models
+7.7.9  Form Architecture
+7.7.10 Error Boundaries & Recovery
+7.7.11 Frontend Performance Architecture
+7.7.12 Offline & Progressive Enhancement
+7.7.13 Accessibility Responsibilities
+7.7.14 Frontend Testing Strategy
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution Strategy
+7.7.17 Frontend Architecture Decision Record
+7.7.18 Frontend Completion Criteria
+```
+
+**Research note:** One recommendation I would strengthen in the next subsection (**7.7.3 Rendering Strategy**) is to explicitly map rendering choices to React 19 and Next.js App Router guidance. Rather than saying "use SSR where appropriate," I intend to define objective criteria for when TWN should use Server Components, Client Components, Static Rendering, Dynamic Rendering, Streaming, Partial Prerendering (where stable), and Suspense boundaries. This will make the blueprint more implementation-ready while remaining framework-conscious rather than framework-dependent.
+
+# Volume 7 – Technical Architecture
+
+## 7.7 Frontend Architecture
+
+### Progress
+
+Completed:
+
+```text id="8njqk3"
+7.7.1 Purpose, Scope & Frontend Philosophy
+7.7.2 Frontend Module Structure
+```
+
+Remaining:
+
+```text id="b74m2f"
+7.7.3  Rendering Strategy
+7.7.4  Routing Architecture
+7.7.5  Component Architecture
+7.7.6  State Management Architecture
+7.7.7  Data Fetching Architecture
+7.7.8  Frontend Domain Models
+7.7.9  Form Architecture
+7.7.10 Error Boundaries & Recovery
+7.7.11 Frontend Performance Architecture
+7.7.12 Offline & Progressive Enhancement
+7.7.13 Accessibility Responsibilities
+7.7.14 Frontend Testing Strategy
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution Strategy
+7.7.17 Frontend Architecture Decision Record
+7.7.18 Frontend Completion Criteria
+```
+
+---
+
+# 7.7.3 Rendering Strategy
+
+**Status:** Frontend Architecture Specification
+
+**Parent chapter:** Volume 7 — Technical Architecture
+
+**Current scope:** Section 7.7 — Frontend Architecture
+
+**Applies to:** Every page, route, dashboard, editor, workspace, profile, search experience and future frontend capability.
+
+**Primary objective:** Define how TWN renders user interfaces to maximize performance, accessibility, maintainability, SEO, operational simplicity and long-term scalability while minimizing unnecessary JavaScript and server load.
+
+---
+
+# Purpose
+
+This subsection defines:
+
+* rendering philosophy;
+* rendering modes;
+* rendering decision criteria;
+* server/client boundaries;
+* streaming;
+* hydration;
+* caching responsibilities;
+* rendering lifecycle;
+* progressive enhancement.
+
+This section is informed primarily by:
+
+* React Server Components architecture (React documentation)
+* Next.js App Router architecture
+* Core Web Vitals guidance
+* Web.dev rendering best practices
+
+The architecture remains conceptual rather than tied to a specific framework API.
+
+---
+
+# 7.7.3.1 Rendering Philosophy
+
+Rendering is not merely a technical implementation detail.
+
+Rendering strategy directly influences:
+
+* perceived performance;
+* accessibility;
+* SEO;
+* bandwidth;
+* battery usage;
+* server cost;
+* scalability;
+* maintainability.
+
+Rendering decisions therefore belong to architecture.
+
+---
+
+# 7.7.3.2 Server-First Principle
+
+The default rendering strategy for TWN is:
+
+```text
+Server First
+```
+
+Whenever possible:
+
+* retrieve data on the server;
+* prepare UI on the server;
+* send usable HTML first;
+* hydrate only where interaction requires it.
+
+This reduces unnecessary client computation.
+
+---
+
+# 7.7.3.3 Client Execution Is a Limited Resource
+
+CPU time on the user's device should be treated as valuable.
+
+Avoid transferring work to the browser simply because it is technically possible.
+
+Client execution increases:
+
+* battery consumption;
+* memory usage;
+* bundle size;
+* hydration cost;
+* rendering complexity.
+
+---
+
+# 7.7.3.4 Rendering Modes
+
+The architecture recognizes several rendering approaches:
+
+* Static Rendering
+* Dynamic Server Rendering
+* Incremental Revalidation
+* Streaming Rendering
+* Client Rendering
+* Progressive Hydration
+
+Each exists for a different architectural purpose.
+
+---
+
+# 7.7.3.5 Static Rendering
+
+Static rendering produces HTML before user requests arrive.
+
+Ideal candidates include:
+
+* landing pages;
+* documentation;
+* editorial articles;
+* public journeys;
+* about pages;
+* policies;
+* help pages.
+
+Benefits:
+
+* lowest latency;
+* CDN-friendly;
+* excellent SEO;
+* minimal server work.
+
+---
+
+# 7.7.3.6 Dynamic Server Rendering
+
+Dynamic rendering generates content during requests.
+
+Use for:
+
+* authenticated dashboards;
+* personalized recommendations;
+* account settings;
+* moderation queues;
+* private notebooks;
+* editorial workspace.
+
+Dynamic rendering should be reserved for genuinely request-specific content.
+
+---
+
+# 7.7.3.7 Incremental Revalidation
+
+Some pages change occasionally rather than continuously.
+
+Suitable examples:
+
+* author profiles;
+* featured articles;
+* category pages;
+* community statistics;
+* public collections.
+
+These pages benefit from scheduled regeneration rather than continuous recomputation.
+
+---
+
+# 7.7.3.8 Streaming Rendering
+
+Large interfaces should progressively stream content.
+
+Examples:
+
+```text
+Layout
+
+↓
+
+Navigation
+
+↓
+
+Hero
+
+↓
+
+Article
+
+↓
+
+Related Content
+
+↓
+
+Comments
+```
+
+Users begin consuming content while later sections continue loading.
+
+Streaming improves perceived responsiveness without sacrificing server rendering.
+
+---
+
+# 7.7.3.9 Suspense Boundaries
+
+Loading boundaries should exist around independent regions.
+
+Example:
+
+```text
+Page
+
+├── Hero
+
+├── Article
+
+├── Related Articles
+
+├── Comments
+
+└── Recommendations
+```
+
+A delay in recommendations should never block the article itself.
+
+Suspense boundaries should follow user-perceived loading units rather than arbitrary component boundaries.
+
+---
+
+# 7.7.3.10 Progressive Rendering
+
+The interface should become useful as quickly as possible.
+
+Rendering order should prioritize:
+
+1. page structure;
+2. primary content;
+3. navigation;
+4. interaction;
+5. enhancements.
+
+Decorative elements should never delay meaningful content.
+
+---
+
+# 7.7.3.11 Client Rendering
+
+Client rendering should be reserved for highly interactive interfaces.
+
+Examples include:
+
+* rich text editing;
+* drag-and-drop;
+* collaborative editing;
+* media cropping;
+* interactive charts;
+* live previews.
+
+Do not use client rendering for static content merely for implementation convenience.
+
+---
+
+# 7.7.3.12 Server Components
+
+Server Components are preferred when a component:
+
+* primarily displays backend data;
+* does not require browser APIs;
+* has no local interaction;
+* benefits from reduced client-side JavaScript.
+
+Examples:
+
+* article pages;
+* public profiles;
+* search result lists;
+* navigation menus built from server data.
+
+---
+
+# 7.7.3.13 Client Components
+
+Client Components should be used only when browser capabilities are required.
+
+Examples:
+
+* form interactions;
+* keyboard shortcuts;
+* animations;
+* drag-and-drop;
+* media recording;
+* optimistic UI;
+* browser storage;
+* clipboard integration.
+
+Client Components should remain as small as practical.
+
+---
+
+# 7.7.3.14 Client Boundary Principle
+
+Move the client boundary downward.
+
+Preferred:
+
+```text
+Server Page
+
+↓
+
+Server Section
+
+↓
+
+Small Client Widget
+```
+
+Avoid:
+
+```text
+Entire Page
+
+↓
+
+Client Component
+```
+
+Minimizing client boundaries reduces bundle size and hydration cost.
+
+---
+
+# 7.7.3.15 Hydration Strategy
+
+Hydration should occur only where interactivity is required.
+
+Static content should not incur hydration cost unnecessarily.
+
+Hydration is not free; it consumes CPU and memory on the client.
+
+---
+
+# 7.7.3.16 Partial Hydration Philosophy
+
+Interactive islands should hydrate independently where supported by the framework.
+
+Independent hydration allows one interactive region to become usable without waiting for unrelated regions.
+
+This improves responsiveness on slower devices.
+
+---
+
+# 7.7.3.17 Rendering Hierarchy
+
+Preferred rendering hierarchy:
+
+```text
+Static
+
+↓
+
+Incremental
+
+↓
+
+Dynamic
+
+↓
+
+Client
+```
+
+Choose the simplest rendering mode that satisfies the feature's requirements.
+
+---
+
+# 7.7.3.18 Rendering Decision Matrix
+
+| Content Type        | Preferred Rendering            |
+| ------------------- | ------------------------------ |
+| Landing page        | Static                         |
+| Documentation       | Static                         |
+| Editorial article   | Static or Incremental          |
+| Public Journey      | Static or Incremental          |
+| Author profile      | Incremental                    |
+| Search results      | Dynamic                        |
+| User dashboard      | Dynamic                        |
+| Notebook editor     | Dynamic + Client interactions  |
+| Rich editor         | Client                         |
+| Analytics dashboard | Dynamic with streamed sections |
+| Settings            | Dynamic                        |
+
+---
+
+# 7.7.3.19 Data Ownership During Rendering
+
+Rendering does not change data ownership.
+
+The frontend displays data.
+
+The backend remains authoritative.
+
+Rendered HTML should never be considered the source of truth.
+
+---
+
+# 7.7.3.20 Rendering and SEO
+
+Public content should prioritize:
+
+* semantic HTML;
+* server-rendered metadata;
+* structured content;
+* predictable URLs.
+
+Search engines should receive meaningful HTML without requiring complex client execution.
+
+---
+
+# 7.7.3.21 Rendering and Accessibility
+
+Accessible interfaces benefit from:
+
+* early HTML delivery;
+* semantic markup;
+* predictable document structure;
+* reduced loading delays.
+
+Server-rendered content generally improves compatibility with assistive technologies.
+
+---
+
+# 7.7.3.22 Rendering and Performance
+
+Rendering decisions directly affect Core Web Vitals.
+
+Architecture should minimize:
+
+* Largest Contentful Paint (LCP);
+* Cumulative Layout Shift (CLS);
+* Interaction to Next Paint (INP).
+
+Rendering should contribute positively to these metrics rather than requiring later optimization.
+
+---
+
+# 7.7.3.23 Rendering and Caching
+
+Rendering should cooperate with caching strategies.
+
+Static and incrementally regenerated content should maximize cacheability.
+
+Dynamic rendering should be reserved for content where caching cannot satisfy correctness requirements.
+
+Detailed cache policy belongs to infrastructure configuration and API behavior, not this section.
+
+---
+
+# 7.7.3.24 Rendering Failures
+
+Failure in one independently rendered region should not prevent the remainder of the page from rendering where feasible.
+
+Graceful degradation is preferred over complete page failure.
+
+---
+
+# 7.7.3.25 Rendering for Slow Networks
+
+On constrained networks:
+
+* deliver meaningful HTML first;
+* defer optional interactions;
+* prioritize readable content;
+* avoid large JavaScript payloads.
+
+The architecture should remain usable on low-bandwidth connections.
+
+---
+
+# 7.7.3.26 Rendering for Low-End Devices
+
+The frontend should assume some users have:
+
+* older CPUs;
+* limited RAM;
+* slower browsers.
+
+Rendering strategy should therefore minimize client-side work by default.
+
+---
+
+# 7.7.3.27 Future Rendering Evolution
+
+As rendering technologies evolve, TWN should adopt improvements that:
+
+* reduce client JavaScript;
+* improve progressive delivery;
+* preserve accessibility;
+* maintain compatibility with established architectural principles.
+
+Framework features should be evaluated based on measurable user benefit rather than novelty.
+
+---
+
+# 7.7.3.28 Rendering Anti-Patterns
+
+Avoid:
+
+* rendering entire applications on the client unnecessarily;
+* converting server-friendly components into client components without justification;
+* oversized hydration boundaries;
+* blocking the page on non-critical widgets;
+* rendering private data into publicly cacheable pages;
+* relying on loading spinners instead of progressive rendering;
+* using client rendering to compensate for poor backend design.
+
+---
+
+# 7.7.3.29 Architecture Decision Record
+
+**Decision:** TWN adopts a server-first rendering architecture that minimizes client-side execution, prioritizes progressive rendering, and selects the least complex rendering strategy capable of meeting functional requirements.
+
+**Supporting Decisions**
+
+* Static rendering is preferred for stable public content.
+* Dynamic rendering is reserved for personalized experiences.
+* Server Components are the default where browser APIs are unnecessary.
+* Client Components remain focused and minimal.
+* Streaming is used for independently loadable regions.
+* Hydration is limited to interactive functionality.
+
+**Reasons**
+
+* improved performance;
+* reduced JavaScript payloads;
+* better accessibility;
+* stronger SEO;
+* lower infrastructure cost;
+* improved scalability.
+
+**Consequences**
+
+Positive:
+
+* smaller bundles;
+* faster first render;
+* reduced client resource consumption;
+* simpler long-term maintenance.
+
+Costs:
+
+* rendering decisions require architectural discipline;
+* some interactive features require careful server/client boundary design.
+
+---
+
+# Completion Criteria
+
+This subsection is complete when:
+
+* rendering philosophy is defined;
+* rendering modes are documented;
+* server/client responsibilities are established;
+* rendering decision criteria exist;
+* streaming and Suspense guidance is defined;
+* hydration strategy is documented;
+* rendering anti-patterns are identified;
+* an architectural decision record captures the adopted strategy.
+
+---
+
+## End of 7.7.3
+ Frontend Completion Criteria
+```
+
+**Architect's note:** One area I'd refine further during implementation is the rendering decision matrix. Rather than leaving it as a static table, I would convert it into an Architecture Decision Matrix (ADM) used during feature reviews. For every new page, the team would answer objective questions ("Is the content personalized?", "Can it be cached?", "Does it require browser APIs?", "Is SEO important?"), and the rendering strategy would fall out of those answers. This keeps rendering decisions consistent as TWN grows.
+
+# Volume 7 – Technical Architecture
+
+## 7.7 Frontend Architecture
+
+### Progress
+
+Completed:
+
+```text id="7zkx2h"
+7.7.1 Purpose, Scope & Frontend Philosophy
+7.7.2 Frontend Module Structure
+7.7.3 Rendering Strategy
+```
+
+Remaining:
+
+```text id="zq5xrk"
+7.7.4  Routing Architecture
+7.7.5  Component Architecture
+7.7.6  State Management Architecture
+7.7.7  Data Fetching Architecture
+7.7.8  Frontend Domain Models
+7.7.9  Form Architecture
+7.7.10 Error Boundaries & Recovery
+7.7.11 Frontend Performance Architecture
+7.7.12 Offline & Progressive Enhancement
+7.7.13 Accessibility Responsibilities
+7.7.14 Frontend Testing Strategy
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution Strategy
+7.7.17 Frontend Architecture Decision Record
+7.7.18 Frontend Completion Criteria
+```
+
+---
+
+# 7.7.4 Routing Architecture
+
+**Status:** Frontend Architecture Specification
+
+**Parent chapter:** Volume 7 — Technical Architecture
+
+**Current scope:** Section 7.7 — Frontend Architecture
+
+**Applies to:** Every page, layout, workspace, dashboard, editor, authenticated area, API interaction entry point, and future frontend capability.
+
+**Primary objective:** Define a routing architecture that remains scalable, predictable, secure, accessible and maintainable while supporting long-term product evolution.
+
+---
+
+# Purpose
+
+This subsection defines:
+
+* routing philosophy;
+* URL architecture;
+* navigation hierarchy;
+* nested layouts;
+* route ownership;
+* route lifecycle;
+* authorization boundaries;
+* metadata ownership;
+* route evolution;
+* navigation consistency.
+
+This section is primarily informed by:
+
+* Next.js App Router architecture
+* React routing principles
+* W3C URI best practices
+* Google Search documentation for URL structure
+* WCAG navigation guidance
+
+Although TWN currently targets Next.js, these principles are architectural rather than framework-specific.
+
+---
+
+# 7.7.4.1 Routing Philosophy
+
+Routes represent user-facing product capabilities.
+
+They are **not** file system conveniences.
+
+A route should exist because a user has somewhere meaningful to navigate.
+
+---
+
+# 7.7.4.2 URLs Are Product Contracts
+
+URLs become:
+
+* bookmarks;
+* shared links;
+* search engine entries;
+* documentation references;
+* external references.
+
+Therefore URLs should be considered long-lived contracts.
+
+Changing URLs unnecessarily introduces technical debt.
+
+---
+
+# 7.7.4.3 Human-Centered URLs
+
+URLs should be:
+
+* readable;
+* meaningful;
+* predictable;
+* stable.
+
+Good examples:
+
+```text id="8f7nqw"
+/
+
+ /articles
+
+ /articles/designing-editorial-workflows
+
+ /journeys/frontend-architecture
+
+ /profile/vanessa
+
+ /community/shared-pages
+```
+
+Poor examples:
+
+```text id="x5r8ah"
+/page?id=84
+
+/post/3928
+
+/article?id=29393
+
+/x/y/z
+```
+
+A user should understand a page's purpose from its URL.
+
+---
+
+# 7.7.4.4 Resource-Oriented Navigation
+
+Routes should model product resources rather than implementation.
+
+Examples:
+
+Good:
+
+```text id="ksv1wj"
+/articles
+
+/journeys
+
+/notebook
+
+/media
+
+/profile
+```
+
+Avoid:
+
+```text id="vrm3cz"
+/loadArticles
+
+/getPosts
+
+/showNotebook
+
+/fetchMedia
+```
+
+HTTP methods describe actions.
+
+URLs describe resources.
+
+---
+
+# 7.7.4.5 Stable Route Hierarchy
+
+The route hierarchy should reflect the mental model of the product.
+
+Example:
+
+```text id="1v9ncy"
+Home
+
+├── Articles
+
+├── Notebook
+
+├── Journeys
+
+├── Shared Pages
+
+├── Community
+
+├── Profile
+
+└── Settings
+```
+
+This hierarchy should remain relatively stable over time.
+
+---
+
+# 7.7.4.6 Route Ownership
+
+Every route belongs to exactly one feature module.
+
+Examples:
+
+```text id="x6ewml"
+/articles/*
+```
+
+belongs to
+
+Editorial
+
+```text id="hkj4so"
+/journeys/*
+```
+
+belongs to
+
+Journeys
+
+Ownership determines:
+
+* layouts;
+* metadata;
+* permissions;
+* rendering strategy;
+* tests.
+
+---
+
+# 7.7.4.7 Nested Layout Architecture
+
+Layouts should represent shared interface structure.
+
+Example:
+
+```text id="v4at2o"
+Root Layout
+
+↓
+
+Community Layout
+
+↓
+
+Shared Pages Layout
+
+↓
+
+Specific Page
+```
+
+Each level owns only the structure common to its descendants.
+
+This mirrors the nested layout architecture encouraged by the Next.js App Router.
+
+---
+
+# 7.7.4.8 Layout Responsibilities
+
+Layouts may own:
+
+* navigation;
+* headers;
+* sidebars;
+* footers;
+* shared toolbars;
+* theme providers;
+* persistent UI.
+
+Layouts should not own page-specific business workflows.
+
+---
+
+# 7.7.4.9 Route Independence
+
+Pages should remain independent.
+
+Navigating between routes should not require knowledge of internal implementation details of another feature.
+
+---
+
+# 7.7.4.10 Route Parameters
+
+Parameters should identify resources.
+
+Examples:
+
+```text id="crr2lu"
+/articles/{slug}
+
+/journeys/{slug}
+
+/profile/{username}
+```
+
+Parameters should represent stable business identifiers wherever possible.
+
+Avoid exposing implementation-specific identifiers if human-readable alternatives exist and meet product requirements.
+
+---
+
+# 7.7.4.11 Slug Strategy
+
+Public content should prefer descriptive slugs.
+
+Example:
+
+```text id="r6ylbx"
+/articles/building-the-notebook-of-a-tech-woman
+```
+
+instead of:
+
+```text id="pu6fxo"
+/articles/482947
+```
+
+Slugs improve:
+
+* readability;
+* SEO;
+* usability;
+* shareability.
+
+If uniqueness requires an internal identifier, it should remain an implementation concern rather than the primary public URL.
+
+---
+
+# 7.7.4.12 Canonical URLs
+
+Every public resource should have one canonical URL.
+
+Multiple URLs displaying the same resource should redirect or declare the canonical version.
+
+This aligns with search engine best practices and avoids duplicate indexing.
+
+---
+
+# 7.7.4.13 Route Metadata
+
+Each route owns its metadata.
+
+Including:
+
+* page title;
+* description;
+* Open Graph metadata;
+* structured data;
+* canonical URL.
+
+Metadata should remain close to the route that owns it.
+
+---
+
+# 7.7.4.14 Navigation Consistency
+
+Users should not need to relearn navigation across product areas.
+
+Navigation patterns should remain consistent across:
+
+* Editorial;
+* Notebook;
+* Community;
+* Journeys;
+* Settings.
+
+Consistency reduces cognitive load.
+
+---
+
+# 7.7.4.15 Breadcrumb Architecture
+
+Hierarchical resources should expose breadcrumbs where appropriate.
+
+Example:
+
+```text id="8x9j4r"
+Home
+
+↓
+
+Journeys
+
+↓
+
+Frontend Architecture
+
+↓
+
+Chapter 7
+```
+
+Breadcrumbs should reflect actual hierarchy rather than implementation paths.
+
+---
+
+# 7.7.4.16 Deep Linking
+
+Every meaningful product state should be reachable through a URL whenever practical.
+
+Examples:
+
+* specific article;
+* specific notebook entry;
+* editor draft;
+* journey chapter;
+* profile page.
+
+Deep links improve collaboration and discoverability.
+
+---
+
+# 7.7.4.17 Protected Routes
+
+Authentication and authorization should be enforced before protected content is rendered.
+
+Examples:
+
+Protected:
+
+* Dashboard
+* Settings
+* Editorial Workspace
+* Moderator Tools
+
+Public:
+
+* Articles
+* Journeys
+* Public Profiles
+
+Frontend protection improves user experience, but backend authorization remains authoritative.
+
+---
+
+# 7.7.4.18 Route Guards
+
+Route guards should primarily:
+
+* redirect unauthenticated users;
+* preserve intended destination;
+* display appropriate fallback interfaces.
+
+They should not replace backend permission checks.
+
+---
+
+# 7.7.4.19 Error Routes
+
+Dedicated routes should exist for:
+
+* Not Found;
+* Unauthorized;
+* Unexpected application errors;
+* Maintenance mode.
+
+Users should receive clear recovery options rather than generic failures.
+
+---
+
+# 7.7.4.20 Loading Routes
+
+Loading interfaces should:
+
+* preserve layout stability;
+* indicate progress;
+* avoid excessive animation;
+* maintain accessibility.
+
+Skeletons are generally preferable to large blank screens for content-heavy pages.
+
+---
+
+# 7.7.4.21 Intercepted and Modal Navigation
+
+Some workflows benefit from modal navigation layered over an existing page.
+
+Examples:
+
+* image preview;
+* quick profile view;
+* article preview.
+
+The underlying page context should remain available when appropriate.
+
+This pattern should be used selectively to improve workflow continuity rather than replacing normal navigation.
+
+---
+
+# 7.7.4.22 Navigation State
+
+Navigation state should primarily be represented in the URL.
+
+Examples include:
+
+* filters;
+* sorting;
+* pagination;
+* selected tabs.
+
+Encoding meaningful state in URLs improves shareability, browser history integration and recoverability.
+
+Ephemeral UI state (such as whether a dialog is open) generally does not belong in the URL unless deep linking is a product requirement.
+
+---
+
+# 7.7.4.23 Redirect Strategy
+
+Redirects should preserve user intent.
+
+Common cases include:
+
+* renamed articles;
+* updated slugs;
+* reorganized content;
+* legacy URLs.
+
+Permanent redirects should be used only when the old location will not return.
+
+Temporary redirects should be used for temporary routing changes.
+
+---
+
+# 7.7.4.24 Internationalization Readiness
+
+Routing should be designed so localized URLs can be introduced without restructuring the entire application.
+
+Language should remain an orthogonal concern rather than deeply embedded into feature modules.
+
+---
+
+# 7.7.4.25 Route Performance
+
+Routes should minimize unnecessary work.
+
+Examples:
+
+* avoid loading editor dependencies on article reading pages;
+* lazy-load feature-specific code;
+* reuse shared layouts;
+* stream independent sections.
+
+Route architecture directly influences bundle size and navigation performance.
+
+---
+
+# 7.7.4.26 Route Evolution
+
+New routes should integrate into the existing hierarchy without requiring widespread restructuring.
+
+The addition of one capability should rarely force changes across unrelated navigation trees.
+
+---
+
+# 7.7.4.27 Routing Anti-Patterns
+
+Avoid:
+
+* unstable URLs;
+* exposing implementation details in routes;
+* deeply nested URLs without user value;
+* duplicate routes for the same resource;
+* feature ownership ambiguity;
+* client-side authorization as the only protection;
+* loading entire applications for simple pages;
+* route names based on internal implementation rather than user concepts.
+
+---
+
+# 7.7.4.28 Architecture Decision Record
+
+**Decision:** TWN adopts a resource-oriented, feature-owned routing architecture built around stable, human-readable URLs and nested layouts.
+
+**Supporting Decisions**
+
+* URLs are treated as long-term product contracts.
+* Routes belong to feature modules.
+* Nested layouts represent shared structure.
+* Route metadata is owned by the route.
+* Navigation state is represented in URLs where meaningful.
+* Authorization remains backend-authoritative.
+* Deep linking is encouraged for meaningful resources.
+
+**Reasons**
+
+* improved usability;
+* stronger SEO;
+* better maintainability;
+* simpler navigation;
+* long-term URL stability;
+* predictable feature ownership.
+
+**Consequences**
+
+Positive:
+
+* consistent navigation;
+* scalable route organization;
+* easier onboarding;
+* improved discoverability;
+* simpler future expansion.
+
+Costs:
+
+* requires careful planning before public URL changes;
+* redirects must be maintained when public structures evolve.
+
+---
+
+# Completion Criteria
+
+This subsection is complete when:
+
+* routing philosophy is defined;
+* URL strategy is documented;
+* route ownership is established;
+* nested layout responsibilities are defined;
+* navigation principles are documented;
+* metadata ownership is explicit;
+* authorization boundaries are identified;
+* routing anti-patterns are documented;
+* an ADR captures the routing strategy.
+
+---
+
+## End of 7.7.4
+
+
+### Architectural review note
+
+While writing this section, I intentionally avoided prescribing a specific router API or file naming convention. Those are implementation details that may evolve with framework versions. Instead, the architectural principles—stable URLs, feature ownership, nested layouts, resource-oriented routing, and URL-backed navigation state—are consistent with current React and Next.js guidance and are likely to remain valid even as implementation details change. This separation helps keep the blueprint useful over a 10-year lifespan rather than tying it to a particular version of a framework.
+
+# Volume 7 – Technical Architecture
+
+## 7.7 Frontend Architecture
+
+### Progress
+
+Completed:
+
+```text id="zk8v2m"
+7.7.1 Purpose, Scope & Frontend Philosophy
+7.7.2 Frontend Module Structure
+7.7.3 Rendering Strategy
+7.7.4 Routing Architecture
+```
+
+Remaining:
+
+```text id="k7h3pd"
+7.7.5  Component Architecture
+7.7.6  State Management Architecture
+7.7.7  Data Fetching Architecture
+7.7.8  Frontend Domain Models
+7.7.9  Form Architecture
+7.7.10 Error Boundaries & Recovery
+7.7.11 Frontend Performance Architecture
+7.7.12 Offline & Progressive Enhancement
+7.7.13 Accessibility Responsibilities
+7.7.14 Frontend Testing Strategy
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution Strategy
+7.7.17 Frontend Architecture Decision Record
+7.7.18 Frontend Completion Criteria
+```
+
+---
+
+# 7.7.5 Component Architecture
+
+**Status:** Frontend Architecture Specification
+
+**Parent chapter:** Volume 7 — Technical Architecture
+
+**Current scope:** Section 7.7 — Frontend Architecture
+
+**Applies to:** Every UI component, page, layout, widget, editor, dashboard, form, dialog and reusable frontend element within TWN.
+
+**Primary objective:** Define a component architecture that remains composable, predictable, accessible, testable and maintainable while supporting years of product evolution without accumulating excessive UI complexity.
+
+---
+
+# Purpose
+
+This subsection defines:
+
+* component philosophy;
+* component hierarchy;
+* ownership;
+* composition;
+* responsibilities;
+* lifecycle;
+* reusability;
+* dependency rules;
+* state boundaries;
+* accessibility responsibilities.
+
+This section is informed by:
+
+* React documentation (Composition over Inheritance)
+* React Server Components architecture
+* React Hooks principles
+* WAI-ARIA Authoring Practices
+* Atomic Design (used selectively, not adopted wholesale)
+* Design system engineering practices from Material Design, Shopify Polaris and Adobe Spectrum.
+
+The architecture intentionally favors React's composition model over inheritance or highly abstract component hierarchies.
+
+---
+
+# 7.7.5.1 Component Philosophy
+
+Components are the fundamental building blocks of the frontend.
+
+A component should represent:
+
+* one responsibility;
+* one user-facing concept;
+* one reusable unit of behavior or presentation.
+
+Large interfaces emerge through composition rather than monolithic components.
+
+---
+
+# 7.7.5.2 Components Represent Product Concepts
+
+A component should model something users understand.
+
+Examples:
+
+```text id="cmpt1"
+ArticleCard
+
+JourneyTimeline
+
+NotebookEditor
+
+ProfileHeader
+
+CommentComposer
+```
+
+Avoid naming components after implementation details.
+
+Poor examples:
+
+```text id="cmpt2"
+ComponentA
+
+Wrapper2
+
+MainSection
+
+Thing
+
+RendererX
+```
+
+Names should communicate purpose.
+
+---
+
+# 7.7.5.3 Composition Over Inheritance
+
+React explicitly recommends composition instead of inheritance.
+
+TWN adopts the same principle.
+
+Interfaces should be assembled by combining smaller components.
+
+Example:
+
+```text id="cmpt3"
+ArticlePage
+
+↓
+
+ArticleHeader
+
+↓
+
+ArticleBody
+
+↓
+
+RelatedArticles
+
+↓
+
+CommentSection
+```
+
+Each component remains independently understandable.
+
+---
+
+# 7.7.5.4 Single Responsibility Principle
+
+Each component should have one primary reason to change.
+
+Example:
+
+Good:
+
+```text id="cmpt4"
+CommentList
+```
+
+Displays comments.
+
+Bad:
+
+```text id="cmpt5"
+CommentManager
+```
+
+Displays comments, edits comments, uploads images, manages notifications and performs analytics.
+
+---
+
+# 7.7.5.5 Component Hierarchy
+
+A typical hierarchy should resemble:
+
+```text id="cmpt6"
+Application
+
+↓
+
+Route
+
+↓
+
+Layout
+
+↓
+
+Feature
+
+↓
+
+Section
+
+↓
+
+Composite Component
+
+↓
+
+Reusable Component
+
+↓
+
+Primitive Component
+```
+
+Higher levels coordinate.
+
+Lower levels remain reusable.
+
+---
+
+# 7.7.5.6 Primitive Components
+
+Primitive components form the Design System.
+
+Examples:
+
+* Button
+* Input
+* Label
+* Card
+* Badge
+* Avatar
+* Icon
+* Dialog
+* Tooltip
+
+Primitive components should contain no feature-specific business behavior.
+
+---
+
+# 7.7.5.7 Composite Components
+
+Composite components assemble primitives into reusable interface patterns.
+
+Examples:
+
+```text id="cmpt7"
+SearchBar
+
+ArticleMetadata
+
+EditorToolbar
+
+AuthorCard
+
+NotificationItem
+```
+
+Composite components may coordinate several primitives while remaining reusable across one or more features.
+
+---
+
+# 7.7.5.8 Feature Components
+
+Feature components implement business-specific presentation.
+
+Examples:
+
+```text id="cmpt8"
+JourneyProgressTracker
+
+NotebookPublishingPanel
+
+SharedPageApprovalQueue
+
+CommunityLeaderboard
+```
+
+These belong exclusively to their owning feature module.
+
+---
+
+# 7.7.5.9 Page Components
+
+Page components assemble complete user experiences.
+
+Responsibilities include:
+
+* composing sections;
+* coordinating data flow;
+* arranging layouts;
+* selecting rendering boundaries.
+
+Page components should avoid implementing reusable business widgets directly.
+
+---
+
+# 7.7.5.10 Layout Components
+
+Layout components provide persistent structure.
+
+Responsibilities:
+
+* navigation;
+* headers;
+* sidebars;
+* responsive regions;
+* footer;
+* page framing.
+
+Layouts should not contain feature workflows.
+
+---
+
+# 7.7.5.11 Presentation vs Container Responsibilities
+
+Historically, React applications often separated "container" and "presentational" components.
+
+Modern React reduces this distinction through Server Components, hooks and composition, but the architectural principle remains useful:
+
+Presentation responsibilities:
+
+* rendering;
+* styling;
+* accessibility;
+* interaction.
+
+Coordination responsibilities:
+
+* obtaining data;
+* orchestrating actions;
+* selecting child components.
+
+Do not allow rendering concerns and orchestration concerns to become inseparably coupled.
+
+---
+
+# 7.7.5.12 Component Cohesion
+
+A component should keep closely related responsibilities together.
+
+If unrelated behavior repeatedly accumulates inside one component, it should be decomposed.
+
+High cohesion improves:
+
+* readability;
+* testing;
+* maintenance.
+
+---
+
+# 7.7.5.13 Component Coupling
+
+Components should know as little as possible about one another.
+
+Prefer:
+
+```text id="cmpt9"
+Parent
+
+↓
+
+Props
+
+↓
+
+Child
+```
+
+Avoid:
+
+```text id="cmpt10"
+Component A directly manipulating Component B.
+```
+
+Loose coupling supports reuse.
+
+---
+
+# 7.7.5.14 Explicit Interfaces
+
+Every reusable component should expose a clear public interface.
+
+Examples include:
+
+* properties;
+* events;
+* slots;
+* children.
+
+Implementation details remain private.
+
+---
+
+# 7.7.5.15 Component API Design
+
+Component APIs should be:
+
+* minimal;
+* explicit;
+* predictable;
+* difficult to misuse.
+
+Avoid components requiring dozens of optional properties.
+
+Excessive configuration often indicates multiple responsibilities.
+
+---
+
+# 7.7.5.16 Children Composition
+
+When appropriate, components should compose through children rather than numerous specialized configuration properties.
+
+Example:
+
+Preferred:
+
+```text id="cmpt11"
+<Card>
+
+  Header
+
+  Body
+
+  Footer
+
+</Card>
+```
+
+This aligns with React's composition model and improves flexibility.
+
+---
+
+# 7.7.5.17 Controlled vs Uncontrolled Components
+
+User input components should clearly define whether they are:
+
+* controlled;
+* uncontrolled;
+* capable of supporting both modes.
+
+Mixing both models implicitly creates inconsistent behavior.
+
+Controlled components should be preferred for complex forms where application state must remain authoritative.
+
+---
+
+# 7.7.5.18 Local State Ownership
+
+State should live as close as possible to where it is needed.
+
+Do not promote local UI state to global state without a demonstrated need.
+
+Examples of local state:
+
+* dialog visibility;
+* expanded sections;
+* hover state;
+* active tab;
+* temporary editor controls.
+
+This follows React's guidance to avoid unnecessary state lifting.
+
+---
+
+# 7.7.5.19 Component Lifecycle Awareness
+
+Components should assume they may:
+
+* mount;
+* suspend;
+* re-render;
+* unmount;
+* remount.
+
+They should avoid depending on mount occurring exactly once.
+
+This reflects React's concurrent rendering model and Strict Mode behavior.
+
+---
+
+# 7.7.5.20 Side Effects
+
+Rendering should remain pure.
+
+Side effects should occur only through appropriate lifecycle mechanisms.
+
+Examples:
+
+Acceptable:
+
+* subscriptions;
+* timers;
+* browser APIs;
+* analytics events.
+
+Rendering itself should not produce observable side effects.
+
+---
+
+# 7.7.5.21 Accessibility Responsibilities
+
+Every interactive component should define:
+
+* semantic role;
+* keyboard behavior;
+* focus behavior;
+* accessible labeling;
+* screen reader expectations.
+
+Accessibility should not be retrofitted after implementation.
+
+---
+
+# 7.7.5.22 Component Performance
+
+Components should minimize:
+
+* unnecessary re-renders;
+* unnecessary effects;
+* expensive calculations during rendering;
+* unnecessary DOM updates.
+
+Optimization should follow measurement rather than premature assumptions.
+
+---
+
+# 7.7.5.23 Memoization Philosophy
+
+Memoization is an optimization technique—not an architectural default.
+
+Apply memoization only when profiling demonstrates meaningful benefit.
+
+Unnecessary memoization increases complexity and can obscure code intent.
+
+This aligns with current React guidance, which encourages writing naturally efficient components before reaching for memoization APIs.
+
+---
+
+# 7.7.5.24 Error Isolation
+
+Components likely to fail independently should be isolated beneath Error Boundaries where appropriate.
+
+A failure in one widget should not necessarily prevent unrelated interface regions from functioning.
+
+Detailed Error Boundary behavior is specified in Section **7.7.10**.
+
+---
+
+# 7.7.5.25 Component Documentation
+
+Reusable components should document:
+
+* purpose;
+* expected properties;
+* accessibility requirements;
+* usage examples;
+* limitations.
+
+Documentation reduces misuse and onboarding time.
+
+---
+
+# 7.7.5.26 Component Evolution
+
+Components should evolve by:
+
+* extending composition;
+* improving accessibility;
+* refining APIs;
+* reducing complexity.
+
+Breaking component APIs should be rare and intentionally managed.
+
+---
+
+# 7.7.5.27 Component Review Checklist
+
+Before approving a component, verify:
+
+* one clear responsibility;
+* understandable name;
+* explicit API;
+* accessibility support;
+* appropriate ownership;
+* limited dependencies;
+* minimal state;
+* pure rendering;
+* reusable where appropriate.
+
+---
+
+# 7.7.5.28 Component Anti-Patterns
+
+Avoid:
+
+* "God Components" with hundreds of lines of unrelated logic;
+* deeply nested conditional rendering that obscures intent;
+* feature-specific behavior inside Design System primitives;
+* unnecessary prop drilling when composition or context is more appropriate;
+* excessive global state for local UI concerns;
+* mutable shared component state;
+* components that directly manipulate sibling components;
+* side effects executed during rendering;
+* overuse of memoization without evidence.
+
+---
+
+# 7.7.5.29 Architecture Decision Record
+
+**Decision:** TWN adopts a composition-first component architecture with clearly separated primitive, composite, feature and page components, emphasizing single responsibility, explicit interfaces and localized state.
+
+**Supporting Decisions**
+
+* Composition is preferred over inheritance.
+* Primitive components remain presentation-focused.
+* Feature components remain feature-owned.
+* State stays local unless sharing is required.
+* Rendering remains pure.
+* Accessibility is built into every interactive component.
+* Memoization is applied only when justified by measurement.
+
+**Reasons**
+
+* improved maintainability;
+* better testability;
+* reduced coupling;
+* clearer ownership;
+* simpler onboarding;
+* long-term flexibility.
+
+**Consequences**
+
+Positive:
+
+* reusable UI building blocks;
+* smaller, understandable components;
+* easier refactoring;
+* predictable evolution.
+
+Costs:
+
+* requires architectural discipline;
+* careful API design for reusable components;
+* ongoing review to prevent responsibility creep.
+
+---
+
+# Completion Criteria
+
+This subsection is complete when:
+
+* component hierarchy is defined;
+* ownership rules are documented;
+* composition strategy is established;
+* state ownership principles are documented;
+* accessibility responsibilities are identified;
+* component API guidelines are defined;
+* lifecycle assumptions are documented;
+* anti-patterns are identified;
+* an ADR captures the adopted component architecture.
+
+---
+
+## End of 7.7.5
+
+**Remaining before 7.7 is complete:**
+
+```text id="v8rj5q"
+7.7.6  State Management Architecture
+7.7.7  Data Fetching Architecture
+7.7.8  Frontend Domain Models
+7.7.9  Form Architecture
+7.7.10 Error Boundaries & Recovery
+7.7.11 Frontend Performance Architecture
+7.7.12 Offline & Progressive Enhancement
+7.7.13 Accessibility Responsibilities
+7.7.14 Frontend Testing Strategy
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution Strategy
+7.7.17 Frontend Architecture Decision Record
+7.7.18 Frontend Completion Criteria
+```
+
+### Architectural research note
+
+For the next subsection (**7.7.6 State Management Architecture**), I plan to base the guidance heavily on current React recommendations rather than older Redux-centric practices. Since React 19, Server Components, Server Actions, and improved data-fetching patterns have significantly reduced the need for global client state. For TWN, the architecture will distinguish between:
+
+* **Server state** (authoritative backend data),
+* **UI state** (dialogs, menus, tabs),
+* **Form state**,
+* **Session state**,
+* **Derived state**, and
+* **Cached state**.
+
+The objective will be to ensure TWN only introduces global state management where it provides measurable architectural value, keeping the frontend simpler, faster, and more maintainable for a solo developer with limited infrastructure resources.
+
+# Volume 7 – Technical Architecture
+
+## 7.7 Frontend Architecture
+
+### Progress
+
+Completed:
+
+```text id="zk8v2m"
+7.7.1 Purpose, Scope & Frontend Philosophy
+7.7.2 Frontend Module Structure
+7.7.3 Rendering Strategy
+7.7.4 Routing Architecture
+```
+
+Remaining:
+
+```text id="k7h3pd"
+7.7.5  Component Architecture
+7.7.6  State Management Architecture
+7.7.7  Data Fetching Architecture
+7.7.8  Frontend Domain Models
+7.7.9  Form Architecture
+7.7.10 Error Boundaries & Recovery
+7.7.11 Frontend Performance Architecture
+7.7.12 Offline & Progressive Enhancement
+7.7.13 Accessibility Responsibilities
+7.7.14 Frontend Testing Strategy
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution Strategy
+7.7.17 Frontend Architecture Decision Record
+7.7.18 Frontend Completion Criteria
+```
+
+---
+
+# 7.7.5 Component Architecture
+
+**Status:** Frontend Architecture Specification
+
+**Parent chapter:** Volume 7 — Technical Architecture
+
+**Current scope:** Section 7.7 — Frontend Architecture
+
+**Applies to:** Every UI component, page, layout, widget, editor, dashboard, form, dialog and reusable frontend element within TWN.
+
+**Primary objective:** Define a component architecture that remains composable, predictable, accessible, testable and maintainable while supporting years of product evolution without accumulating excessive UI complexity.
+
+---
+
+# Purpose
+
+This subsection defines:
+
+* component philosophy;
+* component hierarchy;
+* ownership;
+* composition;
+* responsibilities;
+* lifecycle;
+* reusability;
+* dependency rules;
+* state boundaries;
+* accessibility responsibilities.
+
+This section is informed by:
+
+* React documentation (Composition over Inheritance)
+* React Server Components architecture
+* React Hooks principles
+* WAI-ARIA Authoring Practices
+* Atomic Design (used selectively, not adopted wholesale)
+* Design system engineering practices from Material Design, Shopify Polaris and Adobe Spectrum.
+
+The architecture intentionally favors React's composition model over inheritance or highly abstract component hierarchies.
+
+---
+
+# 7.7.5.1 Component Philosophy
+
+Components are the fundamental building blocks of the frontend.
+
+A component should represent:
+
+* one responsibility;
+* one user-facing concept;
+* one reusable unit of behavior or presentation.
+
+Large interfaces emerge through composition rather than monolithic components.
+
+---
+
+# 7.7.5.2 Components Represent Product Concepts
+
+A component should model something users understand.
+
+Examples:
+
+```text id="cmpt1"
+ArticleCard
+
+JourneyTimeline
+
+NotebookEditor
+
+ProfileHeader
+
+CommentComposer
+```
+
+Avoid naming components after implementation details.
+
+Poor examples:
+
+```text id="cmpt2"
+ComponentA
+
+Wrapper2
+
+MainSection
+
+Thing
+
+RendererX
+```
+
+Names should communicate purpose.
+
+---
+
+# 7.7.5.3 Composition Over Inheritance
+
+React explicitly recommends composition instead of inheritance.
+
+TWN adopts the same principle.
+
+Interfaces should be assembled by combining smaller components.
+
+Example:
+
+```text id="cmpt3"
+ArticlePage
+
+↓
+
+ArticleHeader
+
+↓
+
+ArticleBody
+
+↓
+
+RelatedArticles
+
+↓
+
+CommentSection
+```
+
+Each component remains independently understandable.
+
+---
+
+# 7.7.5.4 Single Responsibility Principle
+
+Each component should have one primary reason to change.
+
+Example:
+
+Good:
+
+```text id="cmpt4"
+CommentList
+```
+
+Displays comments.
+
+Bad:
+
+```text id="cmpt5"
+CommentManager
+```
+
+Displays comments, edits comments, uploads images, manages notifications and performs analytics.
+
+---
+
+# 7.7.5.5 Component Hierarchy
+
+A typical hierarchy should resemble:
+
+```text id="cmpt6"
+Application
+
+↓
+
+Route
+
+↓
+
+Layout
+
+↓
+
+Feature
+
+↓
+
+Section
+
+↓
+
+Composite Component
+
+↓
+
+Reusable Component
+
+↓
+
+Primitive Component
+```
+
+Higher levels coordinate.
+
+Lower levels remain reusable.
+
+---
+
+# 7.7.5.6 Primitive Components
+
+Primitive components form the Design System.
+
+Examples:
+
+* Button
+* Input
+* Label
+* Card
+* Badge
+* Avatar
+* Icon
+* Dialog
+* Tooltip
+
+Primitive components should contain no feature-specific business behavior.
+
+---
+
+# 7.7.5.7 Composite Components
+
+Composite components assemble primitives into reusable interface patterns.
+
+Examples:
+
+```text id="cmpt7"
+SearchBar
+
+ArticleMetadata
+
+EditorToolbar
+
+AuthorCard
+
+NotificationItem
+```
+
+Composite components may coordinate several primitives while remaining reusable across one or more features.
+
+---
+
+# 7.7.5.8 Feature Components
+
+Feature components implement business-specific presentation.
+
+Examples:
+
+```text id="cmpt8"
+JourneyProgressTracker
+
+NotebookPublishingPanel
+
+SharedPageApprovalQueue
+
+CommunityLeaderboard
+```
+
+These belong exclusively to their owning feature module.
+
+---
+
+# 7.7.5.9 Page Components
+
+Page components assemble complete user experiences.
+
+Responsibilities include:
+
+* composing sections;
+* coordinating data flow;
+* arranging layouts;
+* selecting rendering boundaries.
+
+Page components should avoid implementing reusable business widgets directly.
+
+---
+
+# 7.7.5.10 Layout Components
+
+Layout components provide persistent structure.
+
+Responsibilities:
+
+* navigation;
+* headers;
+* sidebars;
+* responsive regions;
+* footer;
+* page framing.
+
+Layouts should not contain feature workflows.
+
+---
+
+# 7.7.5.11 Presentation vs Container Responsibilities
+
+Historically, React applications often separated "container" and "presentational" components.
+
+Modern React reduces this distinction through Server Components, hooks and composition, but the architectural principle remains useful:
+
+Presentation responsibilities:
+
+* rendering;
+* styling;
+* accessibility;
+* interaction.
+
+Coordination responsibilities:
+
+* obtaining data;
+* orchestrating actions;
+* selecting child components.
+
+Do not allow rendering concerns and orchestration concerns to become inseparably coupled.
+
+---
+
+# 7.7.5.12 Component Cohesion
+
+A component should keep closely related responsibilities together.
+
+If unrelated behavior repeatedly accumulates inside one component, it should be decomposed.
+
+High cohesion improves:
+
+* readability;
+* testing;
+* maintenance.
+
+---
+
+# 7.7.5.13 Component Coupling
+
+Components should know as little as possible about one another.
+
+Prefer:
+
+```text id="cmpt9"
+Parent
+
+↓
+
+Props
+
+↓
+
+Child
+```
+
+Avoid:
+
+```text id="cmpt10"
+Component A directly manipulating Component B.
+```
+
+Loose coupling supports reuse.
+
+---
+
+# 7.7.5.14 Explicit Interfaces
+
+Every reusable component should expose a clear public interface.
+
+Examples include:
+
+* properties;
+* events;
+* slots;
+* children.
+
+Implementation details remain private.
+
+---
+
+# 7.7.5.15 Component API Design
+
+Component APIs should be:
+
+* minimal;
+* explicit;
+* predictable;
+* difficult to misuse.
+
+Avoid components requiring dozens of optional properties.
+
+Excessive configuration often indicates multiple responsibilities.
+
+---
+
+# 7.7.5.16 Children Composition
+
+When appropriate, components should compose through children rather than numerous specialized configuration properties.
+
+Example:
+
+Preferred:
+
+```text id="cmpt11"
+<Card>
+
+  Header
+
+  Body
+
+  Footer
+
+</Card>
+```
+
+This aligns with React's composition model and improves flexibility.
+
+---
+
+# 7.7.5.17 Controlled vs Uncontrolled Components
+
+User input components should clearly define whether they are:
+
+* controlled;
+* uncontrolled;
+* capable of supporting both modes.
+
+Mixing both models implicitly creates inconsistent behavior.
+
+Controlled components should be preferred for complex forms where application state must remain authoritative.
+
+---
+
+# 7.7.5.18 Local State Ownership
+
+State should live as close as possible to where it is needed.
+
+Do not promote local UI state to global state without a demonstrated need.
+
+Examples of local state:
+
+* dialog visibility;
+* expanded sections;
+* hover state;
+* active tab;
+* temporary editor controls.
+
+This follows React's guidance to avoid unnecessary state lifting.
+
+---
+
+# 7.7.5.19 Component Lifecycle Awareness
+
+Components should assume they may:
+
+* mount;
+* suspend;
+* re-render;
+* unmount;
+* remount.
+
+They should avoid depending on mount occurring exactly once.
+
+This reflects React's concurrent rendering model and Strict Mode behavior.
+
+---
+
+# 7.7.5.20 Side Effects
+
+Rendering should remain pure.
+
+Side effects should occur only through appropriate lifecycle mechanisms.
+
+Examples:
+
+Acceptable:
+
+* subscriptions;
+* timers;
+* browser APIs;
+* analytics events.
+
+Rendering itself should not produce observable side effects.
+
+---
+
+# 7.7.5.21 Accessibility Responsibilities
+
+Every interactive component should define:
+
+* semantic role;
+* keyboard behavior;
+* focus behavior;
+* accessible labeling;
+* screen reader expectations.
+
+Accessibility should not be retrofitted after implementation.
+
+---
+
+# 7.7.5.22 Component Performance
+
+Components should minimize:
+
+* unnecessary re-renders;
+* unnecessary effects;
+* expensive calculations during rendering;
+* unnecessary DOM updates.
+
+Optimization should follow measurement rather than premature assumptions.
+
+---
+
+# 7.7.5.23 Memoization Philosophy
+
+Memoization is an optimization technique—not an architectural default.
+
+Apply memoization only when profiling demonstrates meaningful benefit.
+
+Unnecessary memoization increases complexity and can obscure code intent.
+
+This aligns with current React guidance, which encourages writing naturally efficient components before reaching for memoization APIs.
+
+---
+
+# 7.7.5.24 Error Isolation
+
+Components likely to fail independently should be isolated beneath Error Boundaries where appropriate.
+
+A failure in one widget should not necessarily prevent unrelated interface regions from functioning.
+
+Detailed Error Boundary behavior is specified in Section **7.7.10**.
+
+---
+
+# 7.7.5.25 Component Documentation
+
+Reusable components should document:
+
+* purpose;
+* expected properties;
+* accessibility requirements;
+* usage examples;
+* limitations.
+
+Documentation reduces misuse and onboarding time.
+
+---
+
+# 7.7.5.26 Component Evolution
+
+Components should evolve by:
+
+* extending composition;
+* improving accessibility;
+* refining APIs;
+* reducing complexity.
+
+Breaking component APIs should be rare and intentionally managed.
+
+---
+
+# 7.7.5.27 Component Review Checklist
+
+Before approving a component, verify:
+
+* one clear responsibility;
+* understandable name;
+* explicit API;
+* accessibility support;
+* appropriate ownership;
+* limited dependencies;
+* minimal state;
+* pure rendering;
+* reusable where appropriate.
+
+---
+
+# 7.7.5.28 Component Anti-Patterns
+
+Avoid:
+
+* "God Components" with hundreds of lines of unrelated logic;
+* deeply nested conditional rendering that obscures intent;
+* feature-specific behavior inside Design System primitives;
+* unnecessary prop drilling when composition or context is more appropriate;
+* excessive global state for local UI concerns;
+* mutable shared component state;
+* components that directly manipulate sibling components;
+* side effects executed during rendering;
+* overuse of memoization without evidence.
+
+---
+
+# 7.7.5.29 Architecture Decision Record
+
+**Decision:** TWN adopts a composition-first component architecture with clearly separated primitive, composite, feature and page components, emphasizing single responsibility, explicit interfaces and localized state.
+
+**Supporting Decisions**
+
+* Composition is preferred over inheritance.
+* Primitive components remain presentation-focused.
+* Feature components remain feature-owned.
+* State stays local unless sharing is required.
+* Rendering remains pure.
+* Accessibility is built into every interactive component.
+* Memoization is applied only when justified by measurement.
+
+**Reasons**
+
+* improved maintainability;
+* better testability;
+* reduced coupling;
+* clearer ownership;
+* simpler onboarding;
+* long-term flexibility.
+
+**Consequences**
+
+Positive:
+
+* reusable UI building blocks;
+* smaller, understandable components;
+* easier refactoring;
+* predictable evolution.
+
+Costs:
+
+* requires architectural discipline;
+* careful API design for reusable components;
+* ongoing review to prevent responsibility creep.
+
+---
+
+# Completion Criteria
+
+This subsection is complete when:
+
+* component hierarchy is defined;
+* ownership rules are documented;
+* composition strategy is established;
+* state ownership principles are documented;
+* accessibility responsibilities are identified;
+* component API guidelines are defined;
+* lifecycle assumptions are documented;
+* anti-patterns are identified;
+* an ADR captures the adopted component architecture.
+
+---
+
+## End of 7.7.5
+
+**Remaining before 7.7 is complete:**
+
+```text id="v8rj5q"
+7.7.6  State Management Architecture
+7.7.7  Data Fetching Architecture
+7.7.8  Frontend Domain Models
+7.7.9  Form Architecture
+7.7.10 Error Boundaries & Recovery
+7.7.11 Frontend Performance Architecture
+7.7.12 Offline & Progressive Enhancement
+7.7.13 Accessibility Responsibilities
+7.7.14 Frontend Testing Strategy
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution Strategy
+7.7.17 Frontend Architecture Decision Record
+7.7.18 Frontend Completion Criteria
+```
+
+### Architectural research note
+
+For the next subsection (**7.7.6 State Management Architecture**), I plan to base the guidance heavily on current React recommendations rather than older Redux-centric practices. Since React 19, Server Components, Server Actions, and improved data-fetching patterns have significantly reduced the need for global client state. For TWN, the architecture will distinguish between:
+
+* **Server state** (authoritative backend data),
+* **UI state** (dialogs, menus, tabs),
+* **Form state**,
+* **Session state**,
+* **Derived state**, and
+* **Cached state**.
+
+The objective will be to ensure TWN only introduces global state management where it provides measurable architectural value, keeping the frontend simpler, faster, and more maintainable for a solo developer with limited infrastructure resources.
+
+# Volume 7 – Technical Architecture
+
+## 7.7 Frontend Architecture
+
+### Progress
+
+Completed:
+
+```text id="4gk72n"
+7.7.1 Purpose, Scope & Frontend Philosophy
+7.7.2 Frontend Module Structure
+7.7.3 Rendering Strategy
+7.7.4 Routing Architecture
+7.7.5 Component Architecture
+```
+
+Remaining:
+
+```text id="t5a4np"
+7.7.6  State Management Architecture
+7.7.7  Data Fetching Architecture
+7.7.8  Frontend Domain Models
+7.7.9  Form Architecture
+7.7.10 Error Boundaries & Recovery
+7.7.11 Frontend Performance Architecture
+7.7.12 Offline & Progressive Enhancement
+7.7.13 Accessibility Responsibilities
+7.7.14 Frontend Testing Strategy
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution Strategy
+7.7.17 Frontend Architecture Decision Record
+7.7.18 Frontend Completion Criteria
+```
+
+---
+
+# 7.7.6 State Management Architecture
+
+**Status:** Frontend Architecture Specification
+
+**Parent chapter:** Volume 7 — Technical Architecture
+
+**Current scope:** Section 7.7 — Frontend Architecture
+
+**Applies to:** Every page, feature module, component, layout, editor, dashboard and future frontend capability within TWN.
+
+**Primary objective:** Define a state management architecture that minimizes unnecessary complexity, clearly distinguishes different categories of state, and supports long-term maintainability without introducing excessive global state or framework lock-in.
+
+---
+
+# Purpose
+
+This subsection defines:
+
+* frontend state philosophy;
+* state ownership;
+* state categories;
+* state lifetime;
+* state synchronization;
+* client/server responsibilities;
+* state sharing;
+* caching boundaries;
+* state evolution.
+
+This section is primarily informed by:
+
+* React documentation (Thinking in React, State Management, React Server Components)
+* React Working Group discussions
+* Next.js App Router architecture
+* TanStack Query design principles (server state separation)
+* Redux team's modern guidance ("You Might Not Need Redux")
+* Kent C. Dodds' guidance on colocating state
+* Mark Erikson's recommendations on distinguishing server state from client state
+
+Rather than beginning with a state library, this architecture begins by classifying **what kind of state exists**.
+
+---
+
+# 7.7.6.1 State Philosophy
+
+State is one of the primary sources of frontend complexity.
+
+The goal is **not** to centralize all state.
+
+The goal is to keep every piece of state in the smallest appropriate scope.
+
+Every state variable should have an identifiable owner.
+
+---
+
+# 7.7.6.2 State Is Not Data
+
+Not every piece of displayed information is frontend state.
+
+For example:
+
+```text id="state1"
+Published Article
+```
+
+displayed on a page
+
+is backend data,
+
+not frontend state.
+
+Displaying backend information does not make the frontend responsible for owning it.
+
+---
+
+# 7.7.6.3 Backend Remains Authoritative
+
+Business state belongs to the backend.
+
+Examples:
+
+* article publication;
+* moderation status;
+* notebook entries;
+* comments;
+* user permissions;
+* editor roles;
+* newsletter subscriptions.
+
+The frontend presents and temporarily caches this information.
+
+Ownership never changes.
+
+---
+
+# 7.7.6.4 Classifying State
+
+Every piece of state should first be classified.
+
+TWN recognizes six architectural categories:
+
+1. UI State
+2. Server State
+3. Form State
+4. Session State
+5. Derived State
+6. Persistent Client State
+
+Each category has different lifecycle and ownership rules.
+
+---
+
+# 7.7.6.5 UI State
+
+UI State exists solely to control presentation.
+
+Examples:
+
+* dialog visibility;
+* open menus;
+* active tabs;
+* accordion expansion;
+* selected sidebar item;
+* drawer visibility;
+* tooltip state.
+
+UI state belongs as close as possible to the component using it.
+
+---
+
+# 7.7.6.6 Server State
+
+Server State represents information owned elsewhere.
+
+Examples:
+
+* articles;
+* journeys;
+* comments;
+* media;
+* notifications;
+* search results;
+* profile information.
+
+Server State should not be copied into long-lived client stores unless a clear architectural need exists.
+
+---
+
+# 7.7.6.7 Form State
+
+Form State represents temporary user input.
+
+Examples:
+
+* draft values;
+* validation errors;
+* touched fields;
+* upload progress;
+* unsaved editor content.
+
+Form state has a temporary lifecycle and should disappear once the workflow completes unless explicit draft persistence is required.
+
+---
+
+# 7.7.6.8 Session State
+
+Session State represents information about the current user session.
+
+Examples:
+
+* authentication status;
+* current user identity;
+* locale;
+* active workspace;
+* theme preference.
+
+Session State typically has application-wide visibility but limited mutability.
+
+---
+
+# 7.7.6.9 Derived State
+
+Derived State is calculated from other state.
+
+Examples:
+
+* filtered articles;
+* sorted comments;
+* visible search results;
+* unread counts;
+* progress percentages.
+
+Derived state should generally be computed rather than stored.
+
+Duplicating derivable information increases synchronization complexity.
+
+---
+
+# 7.7.6.10 Persistent Client State
+
+Some client information survives browser refreshes.
+
+Examples:
+
+* preferred theme;
+* dismissed onboarding;
+* editor preferences;
+* recently opened workspaces.
+
+Persistent client state belongs in browser storage only when it improves user experience.
+
+It must never become the authoritative source for business information.
+
+---
+
+# 7.7.6.11 State Ownership
+
+Every state value should answer:
+
+```text id="state2"
+Who owns this?
+```
+
+Ownership determines:
+
+* lifetime;
+* synchronization;
+* persistence;
+* update responsibility.
+
+Ambiguous ownership is a design flaw.
+
+---
+
+# 7.7.6.12 Colocation Principle
+
+React recommends keeping state as close as possible to where it is used.
+
+TWN adopts this principle.
+
+Local state should remain local until there is a demonstrated requirement to share it.
+
+Premature state lifting increases coupling.
+
+---
+
+# 7.7.6.13 Lifting State
+
+State should only be lifted when:
+
+* multiple components require the same source of truth;
+* synchronization becomes necessary;
+* ownership naturally moves upward.
+
+State should never be lifted solely for convenience.
+
+---
+
+# 7.7.6.14 Global State
+
+Global state should be treated as a scarce architectural resource.
+
+Only information genuinely shared across large portions of the application belongs there.
+
+Candidates include:
+
+* authentication;
+* theme;
+* localization;
+* feature flags.
+
+Most feature state should remain local.
+
+---
+
+# 7.7.6.15 Shared State
+
+When state is shared:
+
+* ownership must remain explicit;
+* update paths must remain predictable;
+* consumers should not mutate shared state arbitrarily.
+
+The number of writers should remain small.
+
+---
+
+# 7.7.6.16 Server State Synchronization
+
+Server state changes over time.
+
+Synchronization concerns include:
+
+* freshness;
+* invalidation;
+* optimistic updates;
+* reconciliation;
+* background refresh.
+
+These concerns differ fundamentally from UI state.
+
+For this reason, server state should not be treated as ordinary client state.
+
+---
+
+# 7.7.6.17 Optimistic State
+
+Some interactions benefit from optimistic updates.
+
+Examples:
+
+* liking an article;
+* bookmarking;
+* following a journey;
+* deleting a draft.
+
+Optimistic updates should:
+
+* remain reversible;
+* handle failures gracefully;
+* reconcile with authoritative backend state.
+
+---
+
+# 7.7.6.18 Temporary State
+
+Temporary workflows often require short-lived state.
+
+Examples:
+
+* multi-step dialogs;
+* wizard progress;
+* image cropping;
+* media upload.
+
+Temporary state should disappear naturally after completion.
+
+---
+
+# 7.7.6.19 URL State
+
+Some state belongs in the URL.
+
+Examples:
+
+* filters;
+* search terms;
+* sorting;
+* pagination;
+* current tab when shareable.
+
+URL state improves:
+
+* bookmarking;
+* collaboration;
+* browser history;
+* recoverability.
+
+---
+
+# 7.7.6.20 Browser Storage
+
+Browser storage should be reserved for:
+
+* preferences;
+* remembered choices;
+* lightweight drafts;
+* non-sensitive personalization.
+
+Sensitive information should not rely solely on browser storage.
+
+Detailed security guidance belongs to Volume 10.
+
+---
+
+# 7.7.6.21 State Mutations
+
+State mutations should be:
+
+* predictable;
+* explicit;
+* localized;
+* observable.
+
+Hidden mutations complicate debugging.
+
+---
+
+# 7.7.6.22 Immutability
+
+Treat state as immutable.
+
+Replacing state rather than mutating existing objects improves predictability and aligns with React's rendering model.
+
+---
+
+# 7.7.6.23 Avoid Duplicate State
+
+The same information should rarely exist in multiple independent stores.
+
+Example:
+
+Avoid storing:
+
+```text id="state3"
+Current User
+
+↓
+
+Authentication Store
+
+↓
+
+Profile Store
+
+↓
+
+Navigation Store
+```
+
+Choose one owner.
+
+Other consumers should derive or reference it.
+
+---
+
+# 7.7.6.24 State Lifecycle
+
+Every state value has a lifecycle.
+
+Typical lifecycle:
+
+```text id="state4"
+Created
+
+↓
+
+Updated
+
+↓
+
+Consumed
+
+↓
+
+Disposed
+```
+
+Architecture should define when state naturally expires.
+
+---
+
+# 7.7.6.25 State Isolation
+
+Feature modules should isolate their internal state.
+
+Editorial state should not leak into Community state unless a deliberate integration exists.
+
+Isolation simplifies maintenance.
+
+---
+
+# 7.7.6.26 State Consistency
+
+When state spans multiple views:
+
+* updates should remain synchronized;
+* stale representations should be minimized;
+* invalidation should be predictable.
+
+Consistency is more important than minimizing network requests.
+
+---
+
+# 7.7.6.27 Choosing a State Library
+
+The architecture deliberately avoids mandating a specific global state library.
+
+Selection should follow demonstrated requirements rather than popularity.
+
+The progression should be:
+
+```text id="state5"
+React State
+
+↓
+
+Context (when appropriate)
+
+↓
+
+Dedicated State Library (only if justified)
+```
+
+This prevents unnecessary complexity during the early life of TWN.
+
+---
+
+# 7.7.6.28 State Review Checklist
+
+Before introducing new state, ask:
+
+* Who owns it?
+* Is it backend data?
+* Can it remain local?
+* Can it be derived?
+* Does it need persistence?
+* Does it need sharing?
+* Can the URL represent it?
+* What is its lifecycle?
+
+If these questions cannot be answered clearly, the design should be reconsidered.
+
+---
+
+# 7.7.6.29 State Anti-Patterns
+
+Avoid:
+
+* globalizing local UI state;
+* copying server state into multiple stores;
+* storing derivable information;
+* hidden mutable state;
+* circular state dependencies;
+* feature modules reading each other's internal state;
+* browser storage as business authority;
+* introducing a state management library before architectural need exists.
+
+---
+
+# 7.7.6.30 Architecture Decision Record
+
+**Decision:** TWN adopts a minimal, ownership-driven state architecture that classifies state by responsibility, colocates state wherever practical, and treats backend data separately from client UI state.
+
+**Supporting Decisions**
+
+* Backend remains the source of business truth.
+* UI state stays local by default.
+* Global state is introduced sparingly.
+* Server state is managed independently from UI state.
+* Derived state is computed rather than duplicated.
+* URL state is preferred for shareable navigation.
+* Browser persistence is limited to user experience improvements.
+
+**Reasons**
+
+* lower complexity;
+* improved maintainability;
+* fewer synchronization bugs;
+* better performance;
+* easier reasoning;
+* reduced coupling.
+
+**Consequences**
+
+Positive:
+
+* simpler frontend architecture;
+* fewer unnecessary dependencies;
+* clearer ownership;
+* easier testing;
+* scalable long-term evolution.
+
+Costs:
+
+* requires discipline in avoiding premature centralization;
+* developers must classify state before choosing implementation.
+
+---
+
+# Completion Criteria
+
+This subsection is complete when:
+
+* state categories are defined;
+* ownership rules are established;
+* backend/client responsibilities are separated;
+* local versus global state principles are documented;
+* persistence rules are identified;
+* synchronization strategy is outlined;
+* state anti-patterns are documented;
+* an ADR captures the adopted state philosophy.
+
+---
+
+## End of 7.7.6
+
+**Remaining before 7.7 is complete:**
+
+```text id="m4v2ke"
+7.7.7  Data Fetching Architecture
+7.7.8  Frontend Domain Models
+7.7.9  Form Architecture
+7.7.10 Error Boundaries & Recovery
+7.7.11 Frontend Performance Architecture
+7.7.12 Offline & Progressive Enhancement
+7.7.13 Accessibility Responsibilities
+7.7.14 Frontend Testing Strategy
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution Strategy
+7.7.17 Frontend Architecture Decision Record
+7.7.18 Frontend Completion Criteria
+```
+
+### Research note
+
+While writing this section I intentionally **did not** recommend Redux, Zustand, MobX, Jotai, Recoil, or any other library. This is based on the current direction of the React ecosystem. The React documentation and the Next.js App Router architecture both encourage minimizing client state, while modern guidance from the Redux maintainers also emphasizes that many applications no longer need a global state library for all state.
+
+In the next section (**7.7.7 Data Fetching Architecture**), I will go deeper into server state, covering request deduplication, caching, revalidation, invalidation, optimistic mutations, parallel versus sequential fetching, streaming data, Suspense integration, request waterfalls, race conditions, cancellation, pagination, infinite scrolling, and offline synchronization, aligning the guidance with React, Next.js, HTTP caching semantics, and modern frontend architecture best prac
+7.7.7 Data Fetching Architecture
+
+Status: Frontend Architecture Specification
+
+Parent chapter: Volume 7 — Technical Architecture
+
+Current scope: Section 7.7 — Frontend Architecture
+
+Applies to: Every frontend interaction requiring backend data, including public pages, dashboards, editors, search, community features, media workflows and future frontend capabilities.
+
+Primary objective: Define a data-fetching architecture that minimizes network overhead, prevents inconsistent client state, supports scalable rendering strategies, and remains framework-independent while aligning with modern React and HTTP best practices.
+
+Purpose
+
+This subsection defines:
+
+data ownership;
+fetching philosophy;
+request lifecycle;
+server/client responsibilities;
+caching;
+revalidation;
+invalidation;
+mutations;
+optimistic updates;
+pagination;
+streaming;
+concurrency;
+offline considerations.
+
+This section is informed by:
+
+React documentation (Server Components, Suspense, Fetching Data)
+Next.js App Router documentation
+HTTP Semantics (RFC 9110)
+HTTP Caching (RFC 9111)
+Fetch Standard
+MDN Fetch API documentation
+TanStack Query architecture (conceptually, not as a required library)
+Google Web.dev guidance on network performance
+7.7.7.1 Data Fetching Philosophy
+
+The frontend should retrieve only the data necessary to satisfy the user's current task.
+
+Fetching is not simply loading data.
+
+It is the coordinated retrieval of authoritative information while balancing:
+
+correctness;
+performance;
+bandwidth;
+latency;
+maintainability.
+7.7.7.2 Backend Remains Authoritative
+
+Every fetched resource originates from the backend.
+
+Examples:
+
+articles;
+comments;
+journeys;
+media;
+notifications;
+user profiles.
+
+The frontend may cache these resources but never owns them.
+
+7.7.7.3 Fetch Close to the Consumer
+
+Data should be fetched as close as practical to the component or route that owns its presentation.
+
+This reduces:
+
+unnecessary coupling;
+oversized requests;
+hidden dependencies.
+
+Fetching should follow ownership rather than convenience.
+
+7.7.7.4 Server-First Fetching
+
+Whenever rendering occurs on the server, data retrieval should also occur on the server unless browser-only capabilities are required.
+
+Benefits include:
+
+reduced client JavaScript;
+improved SEO;
+lower hydration cost;
+simplified security boundaries;
+faster initial rendering.
+7.7.7.5 Client Fetching
+
+Client-side fetching should be reserved for:
+
+user-driven interactions;
+live updates;
+browser-only APIs;
+optimistic workflows;
+incremental loading;
+polling where justified.
+
+Do not default to client fetching when server rendering can satisfy the requirement.
+
+7.7.7.6 One Source of Truth
+
+A resource should have one authoritative owner.
+
+Avoid simultaneously treating:
+
+cached data;
+local copies;
+browser storage;
+server responses
+
+as independent sources of truth.
+
+7.7.7.7 Request Lifecycle
+
+Every request follows a predictable lifecycle:
+
+Initiated
+
+↓
+
+Loading
+
+↓
+
+Successful
+
+↓
+
+Cached
+
+↓
+
+Revalidated
+
+↓
+
+Invalidated
+
+↓
+
+Disposed
+
+This lifecycle should remain observable.
+
+7.7.7.8 Request Ownership
+
+Every request should answer:
+
+who initiated it;
+who consumes it;
+who invalidates it;
+when it expires.
+
+Unowned requests often become maintenance problems.
+
+7.7.7.9 Fetch Granularity
+
+Requests should retrieve cohesive business information.
+
+Avoid:
+
+One enormous endpoint
+
+↓
+
+Entire application data
+
+Also avoid:
+
+Fifty tiny requests
+
+↓
+
+One page
+
+Balance cohesion against network efficiency.
+
+7.7.7.10 Request Waterfalls
+
+Sequential requests should be minimized.
+
+Example:
+
+Poor:
+
+Article
+
+↓
+
+Author
+
+↓
+
+Avatar
+
+↓
+
+Statistics
+
+↓
+
+Recommendations
+
+when these dependencies are independent.
+
+Where possible, independent requests should execute concurrently.
+
+React and Next.js explicitly encourage avoiding unnecessary request waterfalls.
+
+7.7.7.11 Parallel Fetching
+
+Independent resources should load in parallel.
+
+Example:
+
+Article
+
+Author
+
+Comments
+
+Recommendations
+
+rather than serially.
+
+Parallelization improves perceived responsiveness.
+
+7.7.7.12 Streaming Data
+
+Large pages should progressively reveal independently fetched regions.
+
+Streaming complements parallel fetching.
+
+The user should begin consuming meaningful content before every secondary request completes.
+
+7.7.7.13 Suspense Integration
+
+Loading boundaries should align with independent data dependencies.
+
+Each Suspense boundary should correspond to a meaningful user-perceived loading unit rather than arbitrary component divisions.
+
+7.7.7.14 Caching Philosophy
+
+Caching exists to improve performance without compromising correctness.
+
+The architecture recognizes multiple cache locations:
+
+browser cache;
+application cache;
+server cache;
+CDN cache.
+
+Each has different responsibilities.
+
+7.7.7.15 Freshness
+
+Cached information eventually becomes stale.
+
+Every resource should have a defined freshness strategy.
+
+Examples:
+
+always fresh;
+periodically refreshed;
+event-driven invalidation;
+manual refresh.
+
+Not every resource requires identical freshness guarantees.
+
+7.7.7.16 Cache Invalidation
+
+Invalidation should occur when authoritative data changes.
+
+Examples:
+
+article published;
+profile updated;
+comment added;
+notification dismissed.
+
+Invalidation should be targeted rather than clearing unrelated cached data.
+
+7.7.7.17 Revalidation
+
+Revalidation confirms whether cached data remains current.
+
+Revalidation should be:
+
+predictable;
+efficient;
+transparent to the user where practical.
+
+The strategy depends on resource volatility.
+
+7.7.7.18 Mutations
+
+Mutations modify backend state.
+
+Examples:
+
+publish article;
+upload media;
+create journey;
+follow author;
+update profile.
+
+Mutations should produce clear success and failure outcomes.
+
+7.7.7.19 Mutation Consistency
+
+After a successful mutation:
+
+affected views should become consistent;
+stale data should be refreshed or invalidated;
+duplicate representations should converge.
+
+Consistency takes precedence over avoiding network requests.
+
+7.7.7.20 Optimistic Updates
+
+Optimistic updates maytices rather than a specific data-fetching library.
+
+# Volume 7 – Technical Architecture
+
+## 7.7 Frontend Architecture
+
+### Progress
+
+Completed:
+
+```text
+7.7.1 Purpose, Scope & Frontend Philosophy
+7.7.2 Frontend Module Structure
+7.7.3 Rendering Strategy
+7.7.4 Routing Architecture
+7.7.5 Component Architecture
+7.7.6 State Management Architecture
+```
+
+Remaining:
+
+```text
+7.7.7  Data Fetching Architecture
+7.7.8  Frontend Domain Models
+7.7.9  Form Architecture
+7.7.10 Error Boundaries & Recovery
+7.7.11 Frontend Performance Architecture
+7.7.12 Offline & Progressive Enhancement
+7.7.13 Accessibility Responsibilities
+7.7.14 Frontend Testing Strategy
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution Strategy
+7.7.17 Frontend Architecture Decision Record
+7.7.18 Frontend Completion Criteria
+```
+
+---
+
+# 7.7.7 Data Fetching Architecture
+
+**Status:** Frontend Architecture Specification
+
+**Parent chapter:** Volume 7 — Technical Architecture
+
+**Current scope:** Section 7.7 — Frontend Architecture
+
+**Applies to:** Every interaction between the frontend and backend, including page rendering, mutations, search, editors, dashboards, media, authentication-aware pages, background synchronization and future integrations.
+
+**Primary objective:** Define a data-fetching architecture that maximizes performance, consistency, resilience and maintainability while minimizing network overhead, request waterfalls and duplicated business logic.
+
+---
+
+# Purpose
+
+This subsection defines:
+
+* data ownership;
+* fetching philosophy;
+* server-first data retrieval;
+* request lifecycle;
+* caching;
+* synchronization;
+* invalidation;
+* streaming;
+* pagination;
+* optimistic updates;
+* concurrency;
+* offline behavior.
+
+This section is informed by:
+
+* React documentation (Server Components, Suspense)
+* Next.js App Router architecture
+* HTTP RFC 9110 (HTTP Semantics)
+* HTTP Caching (RFC 9111)
+* Fetch Standard
+* TanStack Query architecture
+* Google web.dev performance guidance
+
+The architecture intentionally distinguishes **data retrieval** from **business logic**.
+
+---
+
+# 7.7.7.1 Data Fetching Philosophy
+
+Fetching data is not merely downloading JSON.
+
+It is the controlled synchronization of frontend views with backend truth.
+
+The frontend should request only the information required to satisfy the current user interaction.
+
+---
+
+# 7.7.7.2 Backend Remains the Source of Truth
+
+Business data is never owned by the frontend.
+
+Examples:
+
+* articles;
+* journeys;
+* notebooks;
+* comments;
+* moderation queues;
+* media;
+* analytics summaries.
+
+The frontend renders authoritative backend state.
+
+---
+
+# 7.7.7.3 Server-First Data Retrieval
+
+Whenever practical, data should be retrieved during server rendering.
+
+Benefits include:
+
+* faster first contentful paint;
+* improved SEO;
+* reduced client JavaScript;
+* lower hydration cost;
+* fewer loading states;
+* improved accessibility.
+
+Client-side fetching should be reserved for interactions that genuinely require it.
+
+---
+
+# 7.7.7.4 Fetch Close to Consumption
+
+Data should be fetched as close as possible to where it is consumed.
+
+Avoid retrieving large datasets at the application root simply because multiple descendants might eventually use them.
+
+Localized fetching improves:
+
+* modularity;
+* cache efficiency;
+* maintainability.
+
+---
+
+# 7.7.7.5 Minimize Over-Fetching
+
+Only retrieve information required by the current view.
+
+Avoid endpoints that return excessive data "just in case."
+
+Over-fetching increases:
+
+* bandwidth;
+* parsing cost;
+* memory usage;
+* latency.
+
+---
+
+# 7.7.7.6 Avoid Under-Fetching
+
+Conversely, avoid forcing multiple network requests to assemble a single screen when the backend can efficiently provide the required representation.
+
+The objective is balanced request design rather than maximizing or minimizing request count.
+
+---
+
+# 7.7.7.7 Parallel Data Fetching
+
+Independent requests should execute concurrently whenever dependencies do not exist.
+
+Example:
+
+```text
+Page
+
+↓
+
+Article
+
+↓
+
+Author
+
+↓
+
+Related Articles
+```
+
+These resources can often be requested simultaneously.
+
+Parallel retrieval reduces total latency.
+
+---
+
+# 7.7.7.8 Sequential Fetching
+
+Sequential requests should only occur when later requests depend upon earlier results.
+
+Example:
+
+```text
+Resolve Username
+
+↓
+
+Retrieve User ID
+
+↓
+
+Load Private Workspace
+```
+
+Dependencies justify sequential execution.
+
+Artificial sequencing should be avoided.
+
+---
+
+# 7.7.7.9 Avoid Request Waterfalls
+
+Request waterfalls significantly increase perceived latency.
+
+Poor example:
+
+```text
+Page
+
+↓
+
+Request A
+
+↓
+
+Wait
+
+↓
+
+Request B
+
+↓
+
+Wait
+
+↓
+
+Request C
+```
+
+Prefer:
+
+```text
+Page
+
+↓
+
+Request A
+
+Request B
+
+Request C
+
+↓
+
+Render
+```
+
+Request waterfalls should be considered an architectural smell unless dependency requires them.
+
+---
+
+# 7.7.7.10 Streaming Data
+
+Large pages should progressively stream independent sections.
+
+Example:
+
+```text
+Article
+
+↓
+
+Header
+
+↓
+
+Body
+
+↓
+
+Related Content
+
+↓
+
+Comments
+```
+
+Comments should not delay article rendering.
+
+Streaming improves perceived responsiveness.
+
+---
+
+# 7.7.7.11 Suspense Boundaries
+
+Suspense boundaries should isolate asynchronous regions.
+
+Boundaries should follow meaningful user experience divisions rather than arbitrary technical boundaries.
+
+Good examples:
+
+* article body;
+* sidebar recommendations;
+* comments;
+* moderation statistics.
+
+---
+
+# 7.7.7.12 Request Deduplication
+
+The frontend should avoid issuing duplicate requests for identical resources during the same rendering lifecycle whenever supported by the framework.
+
+Duplicate requests waste:
+
+* bandwidth;
+* server resources;
+* battery;
+* rendering time.
+
+---
+
+# 7.7.7.13 Request Cancellation
+
+Requests that become irrelevant should be cancelled whenever possible.
+
+Examples:
+
+* abandoned search queries;
+* navigation away from a page;
+* rapidly changing filters.
+
+Cancelling obsolete requests conserves resources and reduces race conditions.
+
+---
+
+# 7.7.7.14 Race Conditions
+
+Rapid user interactions may produce overlapping requests.
+
+The architecture should ensure stale responses cannot overwrite newer user intent.
+
+The newest valid interaction should determine visible state.
+
+---
+
+# 7.7.7.15 Retry Strategy
+
+Transient failures may be retried when appropriate.
+
+Retries should consider:
+
+* request idempotency;
+* network conditions;
+* user expectations.
+
+Automatic retries should never duplicate non-idempotent business operations.
+
+---
+
+# 7.7.7.16 Timeouts
+
+Requests should not wait indefinitely.
+
+The frontend should distinguish between:
+
+* temporary slowness;
+* connectivity failure;
+* server failure.
+
+Appropriate recovery interfaces should be presented.
+
+---
+
+# 7.7.7.17 Cache Philosophy
+
+Caching exists to improve:
+
+* responsiveness;
+* scalability;
+* resilience.
+
+Caching must never replace backend correctness.
+
+Stale data is acceptable only within clearly defined architectural boundaries.
+
+---
+
+# 7.7.7.18 Cache Ownership
+
+Different cache layers may exist:
+
+* browser cache;
+* framework cache;
+* server cache;
+* CDN cache;
+* application cache.
+
+Each layer has distinct responsibilities.
+
+Cache ownership should remain explicit.
+
+---
+
+# 7.7.7.19 Cache Invalidation
+
+Whenever business data changes, affected cached representations must be invalidated or refreshed.
+
+Invalidation strategies should remain predictable rather than ad hoc.
+
+Incorrect cache invalidation produces stale interfaces.
+
+---
+
+# 7.7.7.20 Freshness
+
+Not every resource requires identical freshness.
+
+Examples:
+
+High freshness:
+
+* notifications;
+* moderation queues;
+* dashboard metrics.
+
+Moderate freshness:
+
+* profile information;
+* comments.
+
+Low freshness:
+
+* published articles;
+* documentation;
+* policies.
+
+Freshness requirements should be driven by business needs rather than technical convenience.
+
+---
+
+# 7.7.7.21 Optimistic Updates
+
+Where user experience benefits, the frontend may temporarily assume success.
+
+Examples:
+
+* liking;
+* bookmarking;
+* following;
+* deleting draft items.
+
+Optimistic updates must:
+
+* be reversible;
+* reconcile with backend state;
+* recover gracefully after failure.
+
+---
+
+# 7.7.7.22 Background Revalidation
+
+Previously fetched information may be refreshed in the background without interrupting user interaction.
+
+Background revalidation improves perceived responsiveness while maintaining data accuracy.
+
+---
+
+# 7.7.7.23 Pagination
+
+Large datasets should be paginated.
+
+Avoid retrieving thousands of records for a single interface.
+
+Pagination improves:
+
+* rendering;
+* bandwidth;
+* memory consumption.
+
+---
+
+# 7.7.7.24 Infinite Scrolling
+
+Infinite scrolling should be used selectively.
+
+Suitable:
+
+* activity feeds;
+* notifications;
+* community timelines.
+
+Prefer explicit pagination where users frequently need orientation, navigation or predictable positions, such as search results or administrative tables.
+
+---
+
+# 7.7.7.25 Search
+
+Search requests should:
+
+* debounce rapid typing where appropriate;
+* cancel obsolete requests;
+* preserve latest intent;
+* avoid redundant requests.
+
+Search interfaces should prioritize responsiveness.
+
+---
+
+# 7.7.7.26 Prefetching
+
+Likely future navigation targets may be prefetched when:
+
+* network conditions are suitable;
+* user intent is reasonably predictable;
+* unnecessary bandwidth consumption remains limited.
+
+Prefetching should improve perceived navigation speed without excessive resource usage.
+
+---
+
+# 7.7.7.27 Lazy Fetching
+
+Some information should only be retrieved when needed.
+
+Examples:
+
+* advanced analytics;
+* rarely opened dialogs;
+* secondary settings;
+* expandable sections.
+
+Avoid loading data users may never request.
+
+---
+
+# 7.7.7.28 Offline Awareness
+
+When connectivity is interrupted:
+
+* existing cached information may remain available where appropriate;
+* user actions should clearly communicate synchronization status;
+* recovery should occur automatically once connectivity resumes where feasible.
+
+Offline capability should enhance resilience without compromising data integrity.
+
+---
+
+# 7.7.7.29 Error Recovery
+
+Fetching failures should provide meaningful recovery options.
+
+Interfaces should avoid generic messages where actionable guidance is possible.
+
+Users should understand whether they can:
+
+* retry;
+* refresh;
+* continue working;
+* wait for synchronization.
+
+---
+
+# 7.7.7.30 Security Boundaries
+
+The frontend should never assume successful data retrieval implies authorization.
+
+Every response should be treated according to backend authorization decisions.
+
+Detailed security mechanisms are specified in **Volume 10**.
+
+---
+
+# 7.7.7.31 Observability
+
+Fetching should generate sufficient telemetry to understand:
+
+* latency;
+* failures;
+* retry frequency;
+* cancellation frequency;
+* cache effectiveness.
+
+Detailed observability guidance is specified in **7.7.15**.
+
+---
+
+# 7.7.7.32 Evolution
+
+As TWN grows, the fetching architecture should evolve through improved caching, transport efficiency and rendering strategies without changing the fundamental ownership principle:
+
+**Backend owns business data.**
+
+The frontend synchronizes representations.
+
+---
+
+# 7.7.7.33 Data Fetching Anti-Patterns
+
+Avoid:
+
+* request waterfalls without dependencies;
+* duplicate requests;
+* fetching entire datasets unnecessarily;
+* storing server data permanently in client state;
+* optimistic updates without rollback;
+* ignoring request cancellation;
+* stale caches without invalidation;
+* polling when event-driven updates or revalidation are more appropriate;
+* coupling fetching logic directly to presentation components.
+
+---
+
+# 7.7.7.34 Architecture Decision Record
+
+**Decision:** TWN adopts a server-first, ownership-driven data-fetching architecture emphasizing localized retrieval, parallel execution, predictable caching, progressive streaming and explicit synchronization with backend-owned business data.
+
+**Supporting Decisions**
+
+* Backend remains authoritative.
+* Fetch close to consumption.
+* Prefer server-side retrieval.
+* Execute independent requests in parallel.
+* Avoid request waterfalls.
+* Use streaming for independent content regions.
+* Cache deliberately with explicit invalidation.
+* Apply optimistic updates selectively.
+* Cancel obsolete requests.
+* Treat fetching and business logic as separate concerns.
+
+**Reasons**
+
+* improved performance;
+* lower bandwidth consumption;
+* better user experience;
+* simpler reasoning;
+* scalability;
+* maintainability.
+
+**Consequences**
+
+Positive:
+
+* faster page rendering;
+* fewer duplicate requests;
+* reduced synchronization bugs;
+* predictable cache behavior;
+* resilient user experience.
+
+Costs:
+
+* requires disciplined cache management;
+* careful invalidation strategy;
+* thoughtful request design.
+
+---
+
+# Completion Criteria
+
+This subsection is complete when:
+
+* data ownership is defined;
+* fetching philosophy is established;
+* server-first retrieval is documented;
+* parallel and sequential fetching rules are defined;
+* streaming strategy is documented;
+* cache philosophy and invalidation are established;
+* optimistic update guidance is documented;
+* pagination and search principles are defined;
+* anti-patterns are identified;
+* an ADR captures the adopted architecture.
+
+---
+
+## End of 7.7.7
+
+**Remaining before 7.7 is complete:**
+
+```text
+7.7.8  Frontend Domain Models
+7.7.9  Form Architecture
+7.7.10 Error Boundaries & Recovery
+7.7.11 Frontend Performance Architecture
+7.7.12 Offline & Progressive Enhancement
+7.7.13 Accessibility Responsibilities
+7.7.14 Frontend Testing Strategy
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution Strategy
+7.7.17 Frontend Architecture Decision Record
+7.7.18 Frontend Completion Criteria
+```
+
+### Architectural review note
+
+This section intentionally avoids prescribing **TanStack Query**, **SWR**, **Apollo**, **RTK Query**, or any other specific data-fetching library. Those are implementation choices that may change over the lifetime of TWN. Instead, the blueprint defines architectural principles—server-first retrieval, request locality, parallelization, explicit cache ownership, predictable invalidation, streaming, and synchronization—that remain applicable regardless of the library or framework version used. This approach aligns with the goal of producing a framework-resilient architecture rather than documentation tied to today's tooling.
+
+
+# Volume 7 – Technical Architecture
+
+## 7.7 Frontend Architecture
+
+### Progress
+
+Completed:
+
+```text
+7.7.1 Purpose, Scope & Frontend Philosophy
+7.7.2 Frontend Module Structure
+7.7.3 Rendering Strategy
+7.7.4 Routing Architecture
+7.7.5 Component Architecture
+7.7.6 State Management Architecture
+7.7.7 Data Fetching Architecture
+```
+
+Remaining:
+
+```text
+7.7.8  Frontend Domain Models
+7.7.9  Form Architecture
+7.7.10 Error Boundaries & Recovery
+7.7.11 Frontend Performance Architecture
+7.7.12 Offline & Progressive Enhancement
+7.7.13 Accessibility Responsibilities
+7.7.14 Frontend Testing Strategy
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution Strategy
+7.7.17 Frontend Architecture Decision Record
+7.7.18 Frontend Completion Criteria
+```
+
+---
+
+# 7.7.8 Frontend Domain Models
+
+**Status:** Frontend Architecture Specification
+
+**Parent chapter:** Volume 7 — Technical Architecture
+
+**Current scope:** Section 7.7 — Frontend Architecture
+
+**Applies to:** Every feature module, page, component, form, API interaction, cache entry and UI representation within TWN.
+
+**Primary objective:** Define how business concepts are represented inside the frontend while preserving a clear separation between backend domain logic and frontend presentation concerns.
+
+---
+
+# Purpose
+
+This subsection defines:
+
+* frontend domain modeling;
+* UI models;
+* view models;
+* transformation boundaries;
+* model ownership;
+* serialization;
+* type consistency;
+* frontend representation;
+* evolution.
+
+This section is informed by:
+
+* Domain-Driven Design (Eric Evans)
+* Implementing Domain-Driven Design (Vaughn Vernon)
+* Martin Fowler's Presentation Model
+* Microsoft Architecture Center
+* React architecture guidance
+* TypeScript design principles
+
+The objective is **not** to duplicate backend entities.
+
+The objective is to provide frontend representations that support rendering while preserving backend authority.
+
+---
+
+# 7.7.8.1 Frontend Domain Philosophy
+
+The frontend does not implement the business domain.
+
+It represents the business domain.
+
+Business rules remain implemented within backend domain services.
+
+The frontend focuses on:
+
+* presentation;
+* interaction;
+* validation;
+* user workflows;
+* temporary state.
+
+---
+
+# 7.7.8.2 Domain Representation
+
+Every feature interacts with business concepts.
+
+Examples:
+
+Editorial
+
+* Article
+* Draft
+* Category
+* Tag
+
+Community
+
+* Comment
+* Reaction
+* Member
+
+Notebook
+
+* Entry
+* Collection
+* Reflection
+
+Journeys
+
+* Journey
+* Chapter
+* Progress
+
+These concepts become frontend models.
+
+---
+
+# 7.7.8.3 Frontend Models Are Representations
+
+Frontend models are representations of backend resources.
+
+They should never become independent business entities.
+
+For example:
+
+```text
+Article
+
+↓
+
+JSON Response
+
+↓
+
+Frontend Article Model
+
+↓
+
+UI Components
+```
+
+The frontend model exists to support rendering and interaction.
+
+---
+
+# 7.7.8.4 Separate Transport Models from UI Models
+
+Information received from the backend should not automatically become the structure used throughout the UI.
+
+Instead:
+
+```text
+Backend Response
+
+↓
+
+Transformation
+
+↓
+
+Frontend Model
+
+↓
+
+UI
+```
+
+This provides insulation against API evolution.
+
+---
+
+# 7.7.8.5 Transport Models
+
+Transport models represent network payloads.
+
+Characteristics:
+
+* closely match backend contracts;
+* serialization-friendly;
+* network-oriented.
+
+They should remain confined to data access boundaries.
+
+---
+
+# 7.7.8.6 UI Models
+
+UI Models represent the information required by the interface.
+
+They may:
+
+* combine fields;
+* simplify structures;
+* expose computed values;
+* hide backend implementation details.
+
+Example:
+
+Backend:
+
+```text
+first_name
+
+last_name
+```
+
+Frontend:
+
+```text
+displayName
+```
+
+The UI should not repeatedly reconstruct the same value across multiple components.
+
+---
+
+# 7.7.8.7 View Models
+
+Complex screens may introduce View Models.
+
+A View Model prepares information specifically for rendering.
+
+Example:
+
+```text
+Article
+
+Author
+
+Comments
+
+↓
+
+ArticlePageViewModel
+```
+
+The View Model coordinates presentation.
+
+It does not become the business authority.
+
+---
+
+# 7.7.8.8 Domain Boundaries
+
+Each feature owns its own models.
+
+Editorial owns:
+
+* ArticleModel
+* DraftModel
+* AuthorModel
+
+Community owns:
+
+* CommentModel
+* ReactionModel
+
+Journeys owns:
+
+* JourneyModel
+* ChapterModel
+
+Cross-feature reuse should occur only when concepts are genuinely shared.
+
+---
+
+# 7.7.8.9 Type Safety
+
+Every model should be explicitly typed.
+
+Avoid:
+
+```text
+any
+
+unknown object
+
+loosely typed maps
+```
+
+Strong typing improves:
+
+* maintainability;
+* tooling;
+* refactoring;
+* correctness.
+
+---
+
+# 7.7.8.10 Immutability
+
+Frontend models should be treated as immutable representations.
+
+When information changes:
+
+Replace the model.
+
+Do not mutate existing objects unpredictably.
+
+This aligns with React's rendering model.
+
+---
+
+# 7.7.8.11 Derived Properties
+
+Some UI properties naturally derive from backend information.
+
+Examples:
+
+```text
+readingTime
+
+formattedDate
+
+displayName
+
+progressPercentage
+```
+
+These values improve rendering.
+
+They should not become authoritative business fields.
+
+---
+
+# 7.7.8.12 Formatting Boundaries
+
+Formatting belongs near presentation.
+
+Examples include:
+
+* localized dates;
+* number formatting;
+* currency display;
+* relative time.
+
+The frontend should avoid embedding formatting decisions throughout individual components.
+
+Shared formatting utilities promote consistency.
+
+---
+
+# 7.7.8.13 Nullability
+
+Frontend models should explicitly represent optional information.
+
+Never assume backend data is always complete.
+
+Models should safely accommodate:
+
+* optional media;
+* missing profile pictures;
+* unpublished drafts;
+* incomplete metadata.
+
+---
+
+# 7.7.8.14 Identity
+
+Every model should possess a stable identity.
+
+Examples:
+
+* article slug;
+* journey slug;
+* username;
+* media identifier.
+
+Stable identity supports:
+
+* rendering;
+* caching;
+* reconciliation;
+* optimistic updates.
+
+---
+
+# 7.7.8.15 Collections
+
+Collections should remain collections.
+
+Avoid embedding unrelated presentation state into data collections.
+
+Instead of:
+
+```text
+Articles
+
++
+
+Sidebar Expanded
+
++
+
+Selected Tab
+```
+
+Keep UI state separate from domain representations.
+
+---
+
+# 7.7.8.16 Relationships
+
+Relationships should reflect business concepts.
+
+Example:
+
+```text
+Journey
+
+↓
+
+Chapters
+
+↓
+
+Notebook Entries
+```
+
+Relationships should remain understandable without requiring knowledge of backend implementation.
+
+---
+
+# 7.7.8.17 Model Transformation Layer
+
+Transformation should occur in a dedicated layer.
+
+Responsibilities include:
+
+* adapting backend payloads;
+* creating UI models;
+* normalizing structures;
+* computing derived values.
+
+Individual components should not repeatedly transform raw responses.
+
+---
+
+# 7.7.8.18 Normalization
+
+Normalization should be introduced only when justified.
+
+Most feature modules can safely work with naturally structured models.
+
+Premature normalization introduces unnecessary complexity.
+
+Large collaborative editors or highly relational interfaces may justify additional normalization strategies in the future.
+
+---
+
+# 7.7.8.19 Serialization
+
+Frontend models crossing network boundaries should remain serializable.
+
+Avoid embedding:
+
+* DOM references;
+* browser objects;
+* executable behavior;
+* framework-specific instances.
+
+Models should remain portable.
+
+---
+
+# 7.7.8.20 Business Rules
+
+Frontend models may support lightweight presentation rules.
+
+They should not become repositories of business policy.
+
+Examples that belong in the backend:
+
+* publication permissions;
+* moderation decisions;
+* role authorization;
+* workflow transitions.
+
+The frontend reflects these decisions.
+
+---
+
+# 7.7.8.21 Validation
+
+Frontend models may validate:
+
+* completeness;
+* formatting;
+* presentation constraints.
+
+Authoritative business validation remains a backend responsibility.
+
+---
+
+# 7.7.8.22 Evolution
+
+Frontend models should evolve independently from backend implementation details where practical.
+
+Transformation layers reduce the impact of backend contract changes on UI components.
+
+---
+
+# 7.7.8.23 Testing
+
+Transformation logic should be independently testable.
+
+Tests should verify:
+
+* mapping correctness;
+* derived values;
+* optional fields;
+* formatting preparation;
+* backward compatibility where necessary.
+
+---
+
+# 7.7.8.24 Model Documentation
+
+Every reusable model should clearly describe:
+
+* purpose;
+* owner;
+* source;
+* lifecycle;
+* consumers.
+
+Documentation improves consistency across features.
+
+---
+
+# 7.7.8.25 Frontend Domain Anti-Patterns
+
+Avoid:
+
+* exposing raw API responses throughout the UI;
+* placing business rules inside frontend models;
+* mutable shared models;
+* duplicated transformation logic;
+* presentation components performing repetitive data mapping;
+* weakly typed models;
+* storing UI state inside business models;
+* unnecessary normalization.
+
+---
+
+# 7.7.8.26 Architecture Decision Record
+
+**Decision:** TWN adopts explicit frontend domain models that separate transport contracts from presentation models, preserve backend ownership of business rules and provide strongly typed, immutable representations for rendering.
+
+**Supporting Decisions**
+
+* Backend owns business entities.
+* Frontend owns representations.
+* Transport models remain isolated.
+* UI models support rendering.
+* View Models prepare complex interfaces.
+* Transformations occur in dedicated mapping layers.
+* Models remain immutable and strongly typed.
+
+**Reasons**
+
+* improved maintainability;
+* API resilience;
+* simpler UI components;
+* better type safety;
+* easier testing;
+* reduced coupling.
+
+**Consequences**
+
+Positive:
+
+* cleaner frontend architecture;
+* isolated API changes;
+* reusable transformations;
+* predictable rendering.
+
+Costs:
+
+* additional mapping layer;
+* disciplined model ownership;
+* slightly more upfront design.
+
+---
+
+# Completion Criteria
+
+This subsection is complete when:
+
+* frontend model philosophy is defined;
+* transport and UI models are distinguished;
+* transformation boundaries are documented;
+* ownership rules are established;
+* type safety expectations are defined;
+* immutability principles are documented;
+* anti-patterns are identified;
+* an ADR captures the adopted frontend domain model architecture.
+
+---
+
+## End of 7.7.8
+
+### Architectural review note
+
+One refinement I made compared with many frontend guides is **explicitly separating Transport Models, UI Models, and View Models**. React and Next.js documentation don't prescribe this layering, but enterprise architecture guidance (particularly Fowler's Presentation Model pattern and Microsoft's application architecture guidance) consistently recommends insulating the UI from API contracts. For a long-lived product like TWN—where APIs, editors, mobile clients, and integrations may evolve independently—this separation will significantly reduce the impact of backend changes and make the frontend easier to maintain over the coming years.
+
+
+# Volume 7 – Technical Architecture
+
+## 7.7 Frontend Architecture
+
+### Progress
+
+Completed:
+
+```text
+7.7.1 Purpose, Scope & Frontend Philosophy
+7.7.2 Frontend Module Structure
+7.7.3 Rendering Strategy
+7.7.4 Routing Architecture
+7.7.5 Component Architecture
+7.7.6 State Management Architecture
+7.7.7 Data Fetching Architecture
+7.7.8 Frontend Domain Models
+```
+
+Remaining:
+
+```text
+7.7.9  Form Architecture
+7.7.10 Error Boundaries & Recovery
+7.7.11 Frontend Performance Architecture
+7.7.12 Offline & Progressive Enhancement
+7.7.13 Accessibility Responsibilities
+7.7.14 Frontend Testing Strategy
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution Strategy
+7.7.17 Frontend Architecture Decision Record
+7.7.18 Frontend Completion Criteria
+```
+
+---
+
+# 7.7.9 Form Architecture
+
+**Status:** Frontend Architecture Specification
+
+**Parent chapter:** Volume 7 — Technical Architecture
+
+**Current Scope:** Section 7.7 — Frontend Architecture
+
+**Applies To:** Every user input workflow including authentication, editorial tools, notebook creation, comments, settings, moderation, search, uploads, onboarding, profile management, newsletters and future product capabilities.
+
+**Primary Objective:** Define a form architecture that prioritizes accessibility, progressive enhancement, resilience, maintainability and correctness while minimizing unnecessary client-side complexity.
+
+---
+
+# Purpose
+
+This section defines:
+
+* form philosophy;
+* form lifecycle;
+* submission architecture;
+* validation responsibilities;
+* accessibility;
+* state ownership;
+* error handling;
+* uploads;
+* optimistic interactions;
+* progressive enhancement.
+
+This section is primarily informed by:
+
+* React Documentation (Forms, `<form>` Actions, Server Components)
+* Next.js App Router documentation (Server Actions & Forms)
+* HTML Living Standard
+* WAI-ARIA Authoring Practices
+* WCAG 2.2
+* MDN Form Guidance
+
+Unlike older React guidance that often encouraged JavaScript-heavy forms, the current React and Next.js direction is to embrace the browser's native form capabilities wherever possible, enhancing them rather than replacing them.
+
+---
+
+# 7.7.9.1 Form Philosophy
+
+Forms are one of the primary ways users interact with TWN.
+
+Every form should be:
+
+* predictable;
+* resilient;
+* accessible;
+* progressively enhanced;
+* recoverable.
+
+The architecture should assume:
+
+* slow networks;
+* interrupted connections;
+* validation failures;
+* accidental submissions;
+* incomplete user input.
+
+---
+
+# 7.7.9.2 HTML First
+
+Native HTML forms remain the architectural foundation.
+
+JavaScript should enhance forms—not replace them.
+
+This aligns with React's renewed emphasis on leveraging the platform rather than rebuilding browser behavior.
+
+---
+
+# 7.7.9.3 Progressive Enhancement
+
+Every critical form should remain functional even if client-side JavaScript fails to load, where technically feasible.
+
+Core capabilities should not depend exclusively on client-side scripting.
+
+Examples:
+
+* sign in;
+* newsletter subscription;
+* profile update;
+* article publishing.
+
+Rich editors may require JavaScript, but surrounding workflows should still degrade gracefully.
+
+---
+
+# 7.7.9.4 One Responsibility Per Form
+
+Each form should perform one clearly defined task.
+
+Examples:
+
+Good:
+
+* Create Comment
+* Publish Article
+* Update Profile
+* Change Password
+
+Avoid forms that perform multiple unrelated business operations simultaneously.
+
+---
+
+# 7.7.9.5 Form Ownership
+
+Each form belongs to a single feature.
+
+Examples:
+
+Editorial
+
+* Publish Article
+
+Community
+
+* Create Comment
+
+Notebook
+
+* Create Entry
+
+Profile
+
+* Update Avatar
+
+Ownership determines:
+
+* validation;
+* permissions;
+* submission endpoint;
+* success handling;
+* error handling.
+
+---
+
+# 7.7.9.6 Form Lifecycle
+
+Every form follows a predictable lifecycle.
+
+```text
+Idle
+
+↓
+
+Editing
+
+↓
+
+Validating
+
+↓
+
+Submitting
+
+↓
+
+Success
+```
+
+or
+
+```text
+Submitting
+
+↓
+
+Validation Error
+
+↓
+
+Editing
+
+↓
+
+Resubmit
+```
+
+or
+
+```text
+Submitting
+
+↓
+
+Server Error
+
+↓
+
+Retry
+```
+
+The lifecycle should be explicit.
+
+---
+
+# 7.7.9.7 Form State
+
+Form state is temporary.
+
+Typical form state includes:
+
+* field values;
+* touched fields;
+* dirty status;
+* pending submission;
+* validation errors;
+* upload progress.
+
+Once the workflow completes, temporary state should normally be discarded.
+
+---
+
+# 7.7.9.8 Controlled vs Uncontrolled Inputs
+
+Both controlled and uncontrolled inputs are valid architectural tools.
+
+Choose the approach based on interaction complexity rather than preference.
+
+Controlled inputs are appropriate when:
+
+* live validation is required;
+* dependent fields exist;
+* dynamic calculations occur;
+* immediate UI synchronization is necessary.
+
+Uncontrolled inputs are appropriate when native browser behavior sufficiently supports the workflow.
+
+The architecture should avoid making all inputs controlled by default.
+
+---
+
+# 7.7.9.9 Validation Philosophy
+
+Validation exists to improve user experience—not replace backend validation.
+
+Every submission must still be validated authoritatively by the backend.
+
+Client validation should never be trusted for business correctness.
+
+---
+
+# 7.7.9.10 Validation Layers
+
+Validation occurs in multiple layers.
+
+### Browser Validation
+
+Examples:
+
+* required
+* email
+* minimum length
+* maximum length
+
+### Client Validation
+
+Examples:
+
+* password confirmation;
+* character counters;
+* dynamic constraints.
+
+### Backend Validation
+
+Examples:
+
+* permissions;
+* uniqueness;
+* workflow rules;
+* publication requirements.
+
+Backend validation remains authoritative.
+
+---
+
+# 7.7.9.11 Real-Time Validation
+
+Real-time validation should be used selectively.
+
+Helpful:
+
+* password strength;
+* username availability;
+* formatting guidance.
+
+Avoid overwhelming users with immediate validation while they are still typing.
+
+Prefer validating after meaningful interaction (for example, on blur or after sufficient input).
+
+---
+
+# 7.7.9.12 Error Messages
+
+Validation messages should:
+
+* explain the problem;
+* identify the affected field;
+* describe how to fix it.
+
+Poor:
+
+```text
+Invalid.
+```
+
+Better:
+
+```text
+Password must contain at least twelve characters.
+```
+
+Messages should be actionable.
+
+---
+
+# 7.7.9.13 Accessible Error Handling
+
+Validation errors should be announced to assistive technologies.
+
+Errors should:
+
+* associate with the correct field;
+* receive programmatic focus when appropriate;
+* remain understandable without color alone.
+
+Accessibility is mandatory.
+
+---
+
+# 7.7.9.14 Submission Architecture
+
+Submissions should represent a single intentional user action.
+
+The architecture should prevent:
+
+* duplicate submissions;
+* accidental repeated clicks;
+* conflicting concurrent operations.
+
+Pending state should be clearly communicated.
+
+---
+
+# 7.7.9.15 Pending States
+
+During submission:
+
+* indicate progress;
+* disable repeated submission where appropriate;
+* preserve user input unless intentionally reset.
+
+Users should never wonder whether their submission succeeded.
+
+---
+
+# 7.7.9.16 Optimistic Form Interactions
+
+Optimistic UI may be appropriate for low-risk actions.
+
+Examples:
+
+* posting comments;
+* reactions;
+* bookmarks.
+
+High-impact workflows such as publishing, deleting, or changing permissions should normally wait for backend confirmation before presenting success.
+
+---
+
+# 7.7.9.17 File Uploads
+
+Uploads should support:
+
+* progress indication;
+* cancellation where feasible;
+* retry after transient failures;
+* clear file constraints;
+* graceful recovery.
+
+Large uploads should not block unrelated interface interactions.
+
+---
+
+# 7.7.9.18 Autosave
+
+Autosave should be used only where users invest significant effort.
+
+Examples:
+
+* notebook writing;
+* article editing;
+* long profile biographies.
+
+Autosave should never create ambiguity about whether content has actually been published.
+
+Saving and publishing remain separate concepts.
+
+---
+
+# 7.7.9.19 Draft Recovery
+
+Where appropriate, users should be able to recover unfinished work after:
+
+* browser crashes;
+* accidental refresh;
+* temporary network interruption.
+
+Recovery should prioritize user trust without creating duplicate records.
+
+---
+
+# 7.7.9.20 Navigation During Editing
+
+If users attempt to leave a page containing unsaved work, the interface should provide an opportunity to prevent accidental data loss where supported by the platform.
+
+This protection should be reserved for meaningful unsaved changes.
+
+---
+
+# 7.7.9.21 Focus Management
+
+Successful and unsuccessful submissions should manage focus intentionally.
+
+Examples:
+
+After success:
+
+* move focus to the success message or newly created content when appropriate.
+
+After failure:
+
+* move focus to the first validation error or summary.
+
+Proper focus management significantly improves accessibility.
+
+---
+
+# 7.7.9.22 Reset Behavior
+
+Forms should reset only when doing so aligns with user expectations.
+
+Examples:
+
+Keep values after validation failure.
+
+Clear values after successful newsletter subscription.
+
+Retain editor content after temporary network failures.
+
+Reset behavior should be intentional rather than automatic.
+
+---
+
+# 7.7.9.23 Security Considerations
+
+Forms should never assume:
+
+* trusted clients;
+* trusted browsers;
+* trusted input.
+
+Security responsibilities such as CSRF protection, authorization, input sanitization and output encoding are specified in **Volume 10**.
+
+---
+
+# 7.7.9.24 Form Documentation
+
+Reusable form patterns should document:
+
+* purpose;
+* required fields;
+* validation expectations;
+* accessibility behavior;
+* submission lifecycle.
+
+Shared documentation improves consistency across TWN.
+
+---
+
+# 7.7.9.25 Form Anti-Patterns
+
+Avoid:
+
+* JavaScript-only forms when native forms suffice;
+* trusting client validation;
+* clearing user input after failed submissions;
+* disabling paste into password fields without justification;
+* validating every keystroke unnecessarily;
+* generic error messages;
+* inaccessible validation;
+* duplicate submission requests;
+* combining unrelated workflows into one form.
+
+---
+
+# 7.7.9.26 Architecture Decision Record
+
+**Decision:** TWN adopts a progressively enhanced, HTML-first form architecture that treats backend validation as authoritative while using client-side enhancements to improve usability, accessibility and responsiveness.
+
+**Supporting Decisions**
+
+* Native HTML forms remain the foundation.
+* JavaScript enhances rather than replaces browser behavior.
+* Validation is layered.
+* Backend validation is authoritative.
+* Form state is temporary.
+* Autosave is reserved for high-value content.
+* Accessibility is integral to every form workflow.
+* Pending, success and error states are explicit.
+
+**Reasons**
+
+* improved resilience;
+* better accessibility;
+* simpler architecture;
+* reduced client-side complexity;
+* alignment with modern React and Next.js guidance;
+* improved long-term maintainability.
+
+**Consequences**
+
+Positive:
+
+* graceful degradation;
+* better support for slow or unreliable networks;
+* fewer duplicated validation rules;
+* more consistent user experience.
+
+Costs:
+
+* requires careful coordination between frontend and backend validation;
+* some advanced interactions require additional architectural planning.
+
+---
+
+# Completion Criteria
+
+This subsection is complete when:
+
+* form philosophy is defined;
+* progressive enhancement principles are established;
+* validation responsibilities are documented;
+* form lifecycle is defined;
+* submission architecture is specified;
+* accessibility requirements are identified;
+* upload and autosave strategies are documented;
+* anti-patterns are listed;
+* an ADR captures the adopted form architecture.
+
+---
+
+## End of 7.7.9
+
+### Architectural review
+
+This section intentionally reflects the current direction of the React ecosystem rather than older SPA-era practices. React 19 and the Next.js App Router have shifted emphasis back toward the browser's native form capabilities, server-side handling, and progressive enhancement. Consequently, the architecture does **not** prescribe JavaScript-controlled forms as the default. Instead, it treats HTML forms as the baseline and layers richer interactions—such as live validation, autosave, optimistic updates, and progress indicators—only where they provide measurable user value. This approach reduces complexity, improves resilience, and better aligns with modern web platform capabilities.
+
+# Volume 7 – Technical Architecture
+
+## 7.7 Frontend Architecture
+
+### Progress
+
+Completed:
+
+```text
+7.7.1 Purpose, Scope & Frontend Philosophy
+7.7.2 Frontend Module Structure
+7.7.3 Rendering Strategy
+7.7.4 Routing Architecture
+7.7.5 Component Architecture
+7.7.6 State Management Architecture
+7.7.7 Data Fetching Architecture
+7.7.8 Frontend Domain Models
+7.7.9 Form Architecture
+```
+
+Current:
+
+```text
+7.7.10 Error Boundaries & Recovery
+```
+
+Remaining:
+
+```text
+7.7.11 Frontend Performance Architecture
+7.7.12 Offline & Progressive Enhancement
+7.7.13 Accessibility Responsibilities
+7.7.14 Frontend Testing Strategy
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution Strategy
+7.7.17 Frontend Architecture Decision Record
+7.7.18 Frontend Completion Criteria
+```
+
+---
+
+# 7.7.10 Error Boundaries & Recovery
+
+**Status:** Frontend Architecture Specification
+
+**Parent chapter:** Volume 7 — Technical Architecture
+
+**Current scope:** Section 7.7 — Frontend Architecture
+
+**Applies to:** Route segments, layouts, pages, Server Components, Client Components, asynchronous data retrieval, mutations, forms, editors, media workflows, browser operations and other user-facing frontend failures.
+
+**Primary objective:** Define how TWN classifies, contains, communicates, records and recovers from frontend failures without converting normal business outcomes into application crashes or allowing one defective interface region to destroy the entire user experience.
+
+---
+
+## Purpose
+
+This subsection defines:
+
+* error classification;
+* expected-error handling;
+* unexpected-exception handling;
+* Error Boundary placement;
+* route-level isolation;
+* global failure recovery;
+* resource-not-found handling;
+* network failure handling;
+* mutation recovery;
+* preservation of user work;
+* accessible error communication;
+* retry and reset behavior;
+* observability boundaries;
+* degraded operation.
+
+The design is grounded primarily in the current React error-boundary model, the Next.js App Router error-handling conventions, the Fetch API behavior documented by MDN and WCAG 2.2 guidance for error identification and status messages. React defines Error Boundaries as components that replace a failed descendant subtree with fallback UI, while Next.js distinguishes expected operational errors from uncaught exceptions that should reach route-level error boundaries. ([react.dev][1])
+
+---
+
+## 7.7.10.1 Error-Handling Philosophy
+
+TWN should not treat every unsuccessful operation as an exceptional application failure.
+
+The architecture distinguishes between:
+
+1. **Expected operational outcomes**
+2. **Unexpected exceptions**
+3. **Unavailable resources**
+4. **Authorization outcomes**
+5. **Network and environmental failures**
+6. **User-correctable input failures**
+
+This distinction matters because each category requires a different response.
+
+A validation error should be displayed as part of the workflow.
+
+A missing article should produce a not-found experience.
+
+A rendering defect should be isolated by an Error Boundary.
+
+A network interruption should preserve the user's work and support retry.
+
+A complete application crash should be the final containment layer, not the default response.
+
+Next.js explicitly separates expected errors—such as validation failures or unsuccessful requests during ordinary operation—from uncaught exceptions that indicate defects or conditions the application did not handle. ([nextjs.org][2])
+
+---
+
+## 7.7.10.2 Error Taxonomy
+
+TWN adopts the following frontend error taxonomy.
+
+| Category                   | Example                                | Architectural treatment                                        |
+| -------------------------- | -------------------------------------- | -------------------------------------------------------------- |
+| Validation error           | Missing article title                  | Return structured field or form error                          |
+| Business rejection         | User cannot publish draft              | Display explicit workflow outcome                              |
+| Not found                  | Article slug does not exist            | Render route-appropriate not-found UI                          |
+| Unauthorized or forbidden  | User lacks moderation permission       | Present access outcome without exposing protected content      |
+| Network failure            | Browser loses connection               | Preserve state, explain failure, permit retry                  |
+| Transport failure          | Backend responds with 500              | Convert to controlled request failure or propagate to boundary |
+| Rendering exception        | Component throws while rendering       | Contain with nearest Error Boundary                            |
+| Browser capability failure | Clipboard operation denied             | Provide localized fallback                                     |
+| Global application failure | Root layout or critical provider fails | Render global fallback experience                              |
+
+The application must avoid collapsing these categories into one generic “Something went wrong” response.
+
+---
+
+## 7.7.10.3 Expected Errors
+
+Expected errors are part of normal application operation.
+
+Examples include:
+
+* invalid form input;
+* duplicate username;
+* expired invitation;
+* unavailable article;
+* rejected publication request;
+* failed search with recoverable input;
+* temporary rate limit;
+* unsupported uploaded file;
+* insufficient permission.
+
+Expected errors should normally be represented as structured return values rather than thrown as unexpected exceptions.
+
+Conceptually:
+
+```text
+User operation
+
+↓
+
+Expected outcome result
+
+├── Success
+├── Validation failure
+├── Permission rejection
+├── Conflict
+└── Temporary unavailability
+```
+
+The consuming interface should interpret that result and display an appropriate response.
+
+Next.js currently recommends explicitly handling expected failures and returning them to the client rather than allowing them to become uncaught exceptions. ([nextjs.org][2])
+
+---
+
+## 7.7.10.4 Unexpected Exceptions
+
+Unexpected exceptions represent conditions that the current workflow did not anticipate or cannot safely resolve locally.
+
+Examples include:
+
+* programming defects;
+* invalid assumptions;
+* corrupted component state;
+* failed required dependency initialization;
+* unhandled parsing failures;
+* rendering exceptions;
+* unexpected server exceptions.
+
+Unexpected exceptions should:
+
+1. stop the unsafe operation;
+2. be contained at the smallest useful boundary;
+3. produce a safe fallback;
+4. be recorded for diagnosis;
+5. offer recovery where recovery is safe.
+
+They should not be silently converted into misleading success or empty states.
+
+---
+
+## 7.7.10.5 Error Boundaries
+
+An Error Boundary protects a React subtree by rendering fallback UI when a descendant fails during rendering or related React lifecycle processing. Without such containment, a rendering exception may remove the affected React interface from the screen. ([react.dev][1])
+
+The conceptual structure is:
+
+```text
+Boundary
+
+├── Normal child interface
+└── Fallback interface after failure
+```
+
+Error Boundaries should be treated as **containment mechanisms**, not general-purpose error handlers.
+
+---
+
+## 7.7.10.6 What Error Boundaries Do Not Replace
+
+Error Boundaries do not replace explicit handling for:
+
+* form validation;
+* expected server responses;
+* rejected user operations;
+* missing resources;
+* event-handler failures that can be handled locally;
+* request status checks;
+* aborted operations;
+* authorization decisions.
+
+A `try/catch` around the creation of child JSX does not substitute for an Error Boundary because rendering failures propagate through the React tree and must be handled through the boundary mechanism. ([react.dev][3])
+
+The architecture must therefore combine:
+
+* explicit result handling for expected outcomes;
+* localized exception handling for imperative operations;
+* Error Boundaries for rendering failures;
+* global containment for unrecoverable application failures.
+
+---
+
+## 7.7.10.7 Boundary Placement Principle
+
+Boundaries should be placed according to **user-recoverable capability regions**.
+
+A boundary should surround an interface region when that region can fail independently while the surrounding experience remains useful.
+
+Potential TWN boundaries include:
+
+* article recommendations;
+* comments;
+* media gallery;
+* editor preview;
+* analytics panel;
+* journey progress;
+* community feed;
+* dashboard widget.
+
+Example:
+
+```text
+Article Route
+
+├── Article content
+├── Related-content boundary
+│   └── Related articles
+└── Comment boundary
+    └── Comment interface
+```
+
+If comments fail, the article should remain readable.
+
+If related content fails, the primary content should remain available.
+
+---
+
+## 7.7.10.8 Boundary Granularity
+
+Boundaries should not be:
+
+* so broad that a minor widget failure destroys an entire route;
+* so narrow that every trivial component has its own error interface.
+
+The appropriate unit is normally a meaningful capability that can provide a useful fallback.
+
+Recommended decision questions:
+
+* Can this region fail independently?
+* Can the rest of the page remain useful?
+* Can the region be retried independently?
+* Does the region have enough context to explain the failure?
+* Would a separate boundary create unnecessary visual fragmentation?
+
+---
+
+## 7.7.10.9 Route-Segment Boundaries
+
+In the Next.js App Router, route-segment error files create boundaries around route segments and their descendants. The error interface can receive the error and a reset operation for attempting to render the segment again. ([nextjs.org][2])
+
+TWN should use segment-level boundaries for feature areas such as:
+
+```text
+/app
+  /articles
+  /journeys
+  /notebook
+  /community
+  /dashboard
+  /settings
+```
+
+This allows a dashboard failure, for example, to be contained without replacing unrelated public routes.
+
+The exact file conventions remain framework implementation details, but the architectural requirement is stable:
+
+> Every major route capability must have an intentional failure boundary and recovery experience.
+
+---
+
+## 7.7.10.10 Global Error Boundary
+
+A final global boundary must exist for failures that occur above ordinary route boundaries, including failures in critical root-level layout infrastructure.
+
+In the current Next.js App Router, the global error convention replaces the root layout when active and must therefore provide its own root document structure and required styling dependencies. ([nextjs.org][4])
+
+The global fallback should remain deliberately simple.
+
+It should not depend on:
+
+* complex providers;
+* feature-specific state;
+* fragile data requests;
+* the component tree that may have caused the failure.
+
+It should provide:
+
+* a clear failure message;
+* a safe attempt to retry;
+* navigation to a stable route where possible;
+* a support or issue-reporting path where appropriate.
+
+---
+
+## 7.7.10.11 Not-Found Handling
+
+A missing resource is not necessarily an application error.
+
+Examples:
+
+* an article was removed;
+* a journey slug changed;
+* a notebook entry is private;
+* a user entered an invalid URL.
+
+Missing resources should produce a dedicated not-found experience rather than a generic exception fallback.
+
+Next.js supports route-aware not-found interfaces and a `notFound` mechanism for terminating rendering of a missing resource and displaying the applicable not-found UI. ([nextjs.org][5])
+
+The not-found interface should:
+
+* state that the requested resource could not be located;
+* avoid revealing protected-resource existence;
+* provide navigation to a relevant parent area;
+* offer search or discovery where useful;
+* avoid blaming the user.
+
+---
+
+## 7.7.10.12 Authorization Outcomes
+
+Authentication and authorization outcomes should be modeled separately from rendering failures.
+
+Examples:
+
+* unauthenticated;
+* authenticated but unauthorized;
+* session expired;
+* restricted draft;
+* moderator-only capability.
+
+The frontend should present an appropriate access outcome while the backend remains authoritative.
+
+Experimental framework mechanisms should not become foundational architecture until they are production-stable. For example, the current Next.js `unauthorized` mechanism is documented as experimental and therefore should not be treated as a mandatory TWN dependency. ([nextjs.org][6])
+
+The architecture should depend on the semantic concept of an authorization outcome, not a currently experimental framework API.
+
+---
+
+## 7.7.10.13 Network Failure Classification
+
+The frontend must distinguish:
+
+* request aborted intentionally;
+* browser offline;
+* DNS or connection failure;
+* timeout;
+* backend HTTP error response;
+* malformed response;
+* application-level rejection.
+
+The Fetch API does not reject merely because the server returns a status such as 404 or 500. Consumers must inspect the response status or `Response.ok`; rejection generally indicates a network-level or request-level failure. ([developer.mozilla.org][7])
+
+Therefore:
+
+```text
+Resolved fetch promise
+```
+
+does not automatically mean:
+
+```text
+Successful business request
+```
+
+Every data-access boundary must explicitly interpret both:
+
+* transport completion;
+* HTTP and application outcome.
+
+---
+
+## 7.7.10.14 Request Cancellation
+
+An aborted request should normally not be reported as an application defect.
+
+Requests may be intentionally cancelled because:
+
+* the user navigated away;
+* the search term changed;
+* a newer request superseded the old request;
+* a timeout policy was reached;
+* the consuming component was removed.
+
+The platform's `AbortController` and `AbortSignal` interfaces can abort fetch operations, response-body consumption and streams. ([developer.mozilla.org][8])
+
+Cancellation should therefore be classified separately from failure telemetry.
+
+---
+
+## 7.7.10.15 Timeout Handling
+
+A timeout is not equivalent to a definitive business failure.
+
+The interface should communicate that the operation did not complete within the expected period and should provide a safe recovery path.
+
+Timeout handling should define:
+
+* which operations have time limits;
+* whether retry is safe;
+* whether the original operation may still have completed;
+* how duplicate mutation risk is avoided;
+* how the user can confirm the authoritative outcome.
+
+Mutation timeout messaging must not falsely claim that an operation failed if its final server outcome is unknown.
+
+---
+
+## 7.7.10.16 Retry Architecture
+
+Retries should occur only when:
+
+* the failure is plausibly temporary;
+* the request is safe to repeat;
+* the retry will not create duplicate business effects;
+* the user is informed when delay becomes meaningful.
+
+Retries should generally use:
+
+* bounded attempt counts;
+* increasing delay;
+* cancellation support;
+* jitter where many clients may retry simultaneously.
+
+The frontend should not repeatedly retry:
+
+* validation errors;
+* permission failures;
+* missing resources;
+* deterministic malformed requests.
+
+---
+
+## 7.7.10.17 Reset and Re-render Recovery
+
+A route or component boundary may offer a reset operation that attempts to render the failed subtree again.
+
+Reset is appropriate when:
+
+* the failure may have been transient;
+* required data may now be available;
+* component state can be safely reconstructed;
+* retrying does not duplicate a mutation.
+
+Reset is not a substitute for repairing persistent defects.
+
+Repeated reset failure should lead to a stable fallback and diagnostic recording rather than an infinite loop.
+
+---
+
+## 7.7.10.18 Mutation Recovery
+
+Mutation failures require greater care than read failures because the user may not know whether the operation completed.
+
+Examples include:
+
+* publishing an article;
+* deleting a draft;
+* uploading media;
+* changing permissions;
+* submitting a comment.
+
+The frontend must distinguish:
+
+```text
+Confirmed failure
+```
+
+from:
+
+```text
+Unknown outcome
+```
+
+For confirmed failure:
+
+* preserve input;
+* explain the failure;
+* permit safe correction or retry.
+
+For unknown outcome:
+
+* reconcile with backend truth;
+* refresh the affected resource;
+* avoid immediate blind resubmission;
+* inform the user that completion is being verified.
+
+---
+
+## 7.7.10.19 Optimistic Update Rollback
+
+An optimistic interface must retain enough prior state to reverse the speculative update.
+
+Conceptually:
+
+```text
+Capture previous state
+
+↓
+
+Apply optimistic state
+
+↓
+
+Send mutation
+
+├── Confirm → retain authoritative result
+└── Reject → restore or reconcile
+```
+
+Rollback should preserve user trust.
+
+The interface should not silently revert without explaining what happened when the change is user-visible.
+
+---
+
+## 7.7.10.20 Preserving User Work
+
+Error recovery must prioritize the protection of user-created content.
+
+This is especially important for:
+
+* article drafts;
+* notebook entries;
+* long comments;
+* profile biographies;
+* journey chapters;
+* media metadata.
+
+A recoverable network or server failure should not clear completed input.
+
+Where technically appropriate, recovery may use:
+
+* in-memory form preservation;
+* controlled draft persistence;
+* autosave checkpoints;
+* reconnection synchronization;
+* explicit copy or export fallback.
+
+Saving, syncing and publishing must remain visibly distinct states.
+
+---
+
+## 7.7.10.21 Editor Failure Containment
+
+The content editor is a high-value, high-complexity capability and requires dedicated containment.
+
+The editor architecture should isolate:
+
+* editing surface;
+* preview renderer;
+* media insertion;
+* autosave;
+* publishing controls.
+
+A preview-rendering failure should not erase draft content.
+
+A media failure should not crash the text editor.
+
+An autosave failure should not falsely indicate that the draft is safely stored.
+
+The editor should always expose the current save state:
+
+```text
+Unsaved
+
+Saving
+
+Saved
+
+Save failed
+
+Offline
+```
+
+---
+
+## 7.7.10.22 Partial Page Failure
+
+Pages containing several independently loaded regions should degrade partially rather than fail atomically.
+
+Example:
+
+```text
+Dashboard
+
+├── Recent drafts: available
+├── Analytics: unavailable
+├── Notifications: available
+└── Recommendations: unavailable
+```
+
+The fallback for each failed region should preserve layout stability and explain whether the user can retry.
+
+Partial failure is preferable when the remaining information retains meaningful user value.
+
+---
+
+## 7.7.10.23 Empty State Versus Error State
+
+An empty result and a failed request are different states.
+
+Examples:
+
+```text
+No comments exist
+```
+
+is not the same as:
+
+```text
+Comments could not be loaded
+```
+
+Similarly:
+
+```text
+No search results matched
+```
+
+is not the same as:
+
+```text
+Search service is unavailable
+```
+
+Combining these states hides defects and misleads users.
+
+Every data-driven component should define at least:
+
+* loading;
+* success with content;
+* success without content;
+* recoverable failure;
+* unavailable or terminal failure.
+
+---
+
+## 7.7.10.24 Fallback Design
+
+Fallback interfaces should be:
+
+* concise;
+* specific;
+* actionable;
+* visually stable;
+* accessible;
+* proportionate to the failed capability.
+
+A widget-level failure may say:
+
+```text
+Related articles could not be loaded.
+Try again.
+```
+
+A publishing failure may require:
+
+```text
+Your article was not published. Your draft is still available.
+Review the highlighted issue and submit again.
+```
+
+The architecture should avoid exposing:
+
+* stack traces;
+* internal identifiers;
+* database details;
+* framework error messages;
+* sensitive system information.
+
+Detailed disclosure rules belong to Volume 10.
+
+---
+
+## 7.7.10.25 Accessible Error Identification
+
+Errors must be communicated in text and associated with the relevant operation or control.
+
+WCAG 2.2 guidance requires that users be made aware when an input error occurs and be able to determine what is wrong; merely redisplaying the interface without explaining the failure is insufficient. ([W3C][9])
+
+Error communication must not depend only on:
+
+* red color;
+* an icon;
+* animation;
+* visual position.
+
+Where correction guidance is known and safe to provide, the interface should explain how to resolve the problem. ([W3C][10])
+
+---
+
+## 7.7.10.26 Status Announcements
+
+Dynamic error, success and progress messages should be exposed to assistive technologies without unnecessarily moving keyboard focus.
+
+WCAG's status-message guidance addresses content that users should be informed about without requiring focus to move to the newly inserted message. ([W3C][11])
+
+Appropriate mechanisms may include semantic status or alert behavior, selected according to urgency.
+
+The implementation must avoid:
+
+* announcing the same message repeatedly;
+* using urgent alerts for ordinary updates;
+* moving focus for every minor status change;
+* presenting messages that disappear before they can be understood.
+
+---
+
+## 7.7.10.27 Focus Recovery
+
+Focus should be moved only when doing so helps the user recover.
+
+Examples where focus movement may be appropriate:
+
+* a route-level error replaces the current interface;
+* a failed form submission has an error summary;
+* a modal operation fails and the relevant recovery control must be reached;
+* a deleted or unavailable element previously held focus.
+
+Focus order must remain logical and consistent with the content's operational sequence. ([W3C][12])
+
+For non-blocking status messages, announcement without focus movement is generally preferable.
+
+---
+
+## 7.7.10.28 Navigation Recovery
+
+Every route-level fallback should provide at least one safe navigation option.
+
+Depending on context, this may include:
+
+* retry current capability;
+* return to parent area;
+* open dashboard;
+* return to article listing;
+* navigate home;
+* continue with cached content.
+
+The browser's back operation should not be overridden unnecessarily.
+
+---
+
+## 7.7.10.29 Logging Boundary
+
+User-facing error handling and diagnostic logging are related but separate responsibilities.
+
+The interface needs enough information to help the user recover.
+
+Engineering telemetry needs enough information to diagnose the defect.
+
+Diagnostic context may include:
+
+* route;
+* feature;
+* operation;
+* release version;
+* boundary identifier;
+* correlation identifier;
+* network status;
+* retry count;
+* sanitized error category.
+
+Detailed frontend observability is defined in **7.7.15 Frontend Observability**.
+
+---
+
+## 7.7.10.30 Error Identity and Correlation
+
+Unexpected failures should receive a non-sensitive correlation reference where support or diagnosis benefits from it.
+
+Example:
+
+```text
+We could not load the editor.
+Reference: TWN-7F3K2
+```
+
+The reference should not expose:
+
+* internal sequential database identifiers;
+* stack traces;
+* tokens;
+* personal information.
+
+Its purpose is to connect a user-visible event to diagnostic records.
+
+---
+
+## 7.7.10.31 Development and Production Behavior
+
+Development environments should maximize diagnostic clarity.
+
+Production environments should maximize:
+
+* user safety;
+* recovery;
+* information minimization;
+* operational traceability.
+
+Development may expose:
+
+* stack traces;
+* source locations;
+* component traces.
+
+Production should expose:
+
+* understandable fallback messages;
+* safe recovery actions;
+* correlation references where useful.
+
+React 19 changed how caught and uncaught render errors are reported, including dedicated root-level callbacks for error reporting, so TWN's eventual implementation should follow the installed React version's official reporting interfaces rather than relying on historical console behavior. ([react.dev][13])
+
+---
+
+## 7.7.10.32 Degraded Operation
+
+When a non-critical dependency fails, TWN should continue in a reduced mode where useful.
+
+Examples:
+
+* disable recommendations while preserving articles;
+* preserve reading when reactions are unavailable;
+* allow local drafting while synchronization is temporarily unavailable;
+* hide analytics while preserving editorial workflows.
+
+Degraded operation must be explicit.
+
+The application should not present stale or partial information as fully current when freshness matters.
+
+---
+
+## 7.7.10.33 Recovery Loop Prevention
+
+Recovery mechanisms must not create loops.
+
+Avoid:
+
+```text
+Render fails
+
+↓
+
+Automatic reset
+
+↓
+
+Render fails
+
+↓
+
+Automatic reset forever
+```
+
+Each automatic recovery policy should have:
+
+* a bounded attempt count;
+* a terminal fallback;
+* logging;
+* a user-controlled next action.
+
+---
+
+## 7.7.10.34 Failure Testing Responsibilities
+
+Every major frontend capability should be tested under failure conditions.
+
+At minimum:
+
+* request rejected;
+* HTTP error response;
+* malformed response;
+* timeout;
+* cancellation;
+* missing resource;
+* permission rejection;
+* rendering exception;
+* retry success;
+* retry failure;
+* loss of connectivity;
+* recovery after connectivity returns.
+
+Testing details are specified in **7.7.14 Frontend Testing Strategy**.
+
+---
+
+## 7.7.10.35 Error Contract Ownership
+
+Each feature should document its known error outcomes.
+
+Example:
+
+```text
+Publish Article
+
+├── Draft invalid
+├── User unauthorized
+├── Publication conflict
+├── Media still processing
+├── Temporary service failure
+└── Unknown exception
+```
+
+The feature owns:
+
+* interpretation;
+* user message;
+* recovery action;
+* preservation of local work.
+
+Shared infrastructure may provide common error types and fallback primitives, but it must not erase feature-specific meaning.
+
+---
+
+## 7.7.10.36 Error Message Ownership
+
+Error messages should be defined close to the user workflow that understands them.
+
+Avoid centralizing all messages into a generic infrastructure file such as:
+
+```text
+ERROR_001 = Operation failed
+ERROR_002 = Invalid request
+```
+
+Infrastructure may supply common network messages, but feature modules should translate domain outcomes into language meaningful to users.
+
+---
+
+## 7.7.10.37 Anti-Patterns
+
+TWN must avoid:
+
+* treating expected validation failures as uncaught exceptions;
+* catching every exception and returning generic success-shaped results;
+* one global Error Boundary as the only containment layer;
+* boundaries around every small component;
+* displaying raw server or framework errors;
+* replacing failed data with misleading empty states;
+* clearing user input after a recoverable failure;
+* retrying non-idempotent operations blindly;
+* reporting intentional cancellations as defects;
+* assuming a resolved Fetch promise represents an HTTP success;
+* infinite automatic retries;
+* retry buttons that repeat unsafe mutations;
+* inaccessible error messages;
+* focus theft for minor background failures;
+* swallowing exceptions without telemetry;
+* allowing optional widgets to crash primary content.
+
+---
+
+## 7.7.10.38 Architecture Decision Record
+
+### Decision
+
+TWN adopts a layered error-containment and recovery architecture that separates expected operational outcomes from unexpected exceptions, isolates failures at route and capability boundaries, preserves user-created work and provides accessible, context-specific recovery.
+
+### Supporting decisions
+
+* Expected failures are returned and handled explicitly.
+* Unexpected rendering failures propagate to the nearest appropriate Error Boundary.
+* Major route segments receive dedicated containment.
+* A minimal global fallback protects the root application.
+* Missing resources use not-found handling rather than generic failure UI.
+* Network cancellation is separated from actual failure.
+* HTTP response status is checked explicitly.
+* Mutation recovery distinguishes confirmed failure from unknown outcome.
+* Optimistic updates retain rollback information.
+* User work survives recoverable failures wherever technically practical.
+* Error messages are accessible and workflow-specific.
+* Diagnostic information is recorded separately from user-facing messages.
+* Experimental framework APIs are not foundational dependencies.
+
+### Reasons
+
+* prevents minor failures from destroying entire pages;
+* provides clearer user recovery;
+* protects valuable draft content;
+* improves accessibility;
+* supports operational diagnosis;
+* reduces misleading generic errors;
+* avoids tight coupling to one framework's temporary conventions.
+
+### Positive consequences
+
+* resilient partial-page behavior;
+* clearer failure ownership;
+* safer mutation workflows;
+* more useful telemetry;
+* predictable route recovery;
+* improved user trust.
+
+### Costs and trade-offs
+
+* additional fallback components;
+* explicit modeling of known failure outcomes;
+* more failure-path testing;
+* careful mutation reconciliation;
+* discipline in boundary placement;
+* maintenance of accessible recovery messages.
+
+---
+
+# Completion Criteria
+
+This subsection is complete when:
+
+* expected errors and unexpected exceptions are explicitly distinguished;
+* the frontend error taxonomy is documented;
+* route, feature and global boundary responsibilities are defined;
+* not-found and authorization outcomes are separated from rendering failure;
+* Fetch and network error behavior is correctly represented;
+* cancellation and timeout handling are defined;
+* retry safety rules are documented;
+* mutation uncertainty and rollback are addressed;
+* user-work preservation requirements are established;
+* accessible error announcements and focus recovery are defined;
+* telemetry boundaries are identified;
+* degraded operation and loop prevention are documented;
+* anti-patterns are listed;
+* the architectural decision is captured.
+
+---
+
+## End of 7.7.10
+
+### Remaining before 7.7 is complete
+
+```text
+7.7.11 Frontend Performance Architecture
+7.7.12 Offline & Progressive Enhancement
+7.7.13 Accessibility Responsibilities
+7.7.14 Frontend Testing Strategy
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution Strategy
+7.7.17 Frontend Architecture Decision Record
+7.7.18 Frontend Completion Criteria
+```
+
+### Primary references reviewed
+
+* React official Error Boundary and rendering-error guidance. ([react.dev][1])
+* Current Next.js App Router error, global error and not-found conventions. ([nextjs.org][2])
+* MDN Fetch and cancellation behavior. ([developer.mozilla.org][8])
+* WCAG 2.2 error identification, correction and status-message guidance.
+
+[1]: https://react.dev/reference/react/Component?utm_source=chatgpt.com "Component"
+[2]: https://nextjs.org/docs/app/getting-started/error-handling?utm_source=chatgpt.com "Getting Started: Error Handling"
+[3]: https://react.dev/reference/eslint-plugin-react-hooks/lints/error-boundaries?utm_source=chatgpt.com "error-boundaries"
+[4]: https://nextjs.org/docs/app/api-reference/file-conventions/error?utm_source=chatgpt.com "File-system conventions: error.js"
+[5]: https://nextjs.org/docs/app/api-reference/file-conventions/not-found?utm_source=chatgpt.com "File-system conventions: not-found.js"
+[6]: https://nextjs.org/docs/app/api-reference/functions/unauthorized?utm_source=chatgpt.com "Functions: unauthorized"
+[7]: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch?utm_source=chatgpt.com "Using the Fetch API - MDN Web Docs"
+[8]: https://developer.mozilla.org/en-US/docs/Web/API/AbortController/abort?utm_source=chatgpt.com "AbortController: abort() method - Web APIs - MDN Web Docs"
+[9]: https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html?utm_source=chatgpt.com "Understanding Success Criterion 3.3.1: Error Identification"
+[10]: https://www.w3.org/WAI/WCAG22/Understanding/error-suggestion.html?utm_source=chatgpt.com "Understanding Success Criterion 3.3.3: Error Suggestion"
+[11]: https://www.w3.org/WAI/WCAG22/Understanding/status-messages.html?utm_source=chatgpt.com "Understanding Success Criterion 4.1.3: Status Messages"
+[12]: https://www.w3.org/WAI/WCAG22/Understanding/focus-order.html?utm_source=chatgpt.com "Understanding Success Criterion 2.4.3: Focus Order | WAI"
+[13]: https://react.dev/blog/2024/04/25/react-19-upgrade-guide?utm_source=chatgpt.com "React 19 Upgrade Guide"
+
+# Volume 7 – Technical Architecture
+
+## 7.7 Frontend Architecture
+
+### Progress
+
+Completed:
+
+```text
+7.7.1 Purpose, Scope & Frontend Philosophy
+7.7.2 Frontend Module Structure
+7.7.3 Rendering Strategy
+7.7.4 Routing Architecture
+7.7.5 Component Architecture
+7.7.6 State Management Architecture
+7.7.7 Data Fetching Architecture
+7.7.8 Frontend Domain Models
+7.7.9 Form Architecture
+7.7.10 Error Boundaries & Recovery
+```
+
+Current:
+
+```text
+7.7.11 Frontend Performance Architecture
+```
+
+Remaining:
+
+```text
+7.7.12 Offline & Progressive Enhancement
+7.7.13 Accessibility Responsibilities
+7.7.14 Frontend Testing Strategy
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution Strategy
+7.7.17 Frontend Architecture Decision Record
+7.7.18 Frontend Completion Criteria
+```
+
+---
+
+# 7.7.11 Frontend Performance Architecture
+
+**Status:** Frontend Architecture Specification
+
+**Parent chapter:** Volume 7 — Technical Architecture
+
+**Current scope:** Section 7.7 — Frontend Architecture
+
+**Applies to:** Every page, layout, component, route, interaction, rendering pipeline, media asset, network request and browser execution path within TWN.
+
+**Primary objective:** Define a performance architecture that delivers fast, responsive and resilient user experiences across low-end mobile devices, slow networks and modern desktop environments while preserving maintainability and avoiding premature optimization.
+
+---
+
+# Purpose
+
+This subsection defines:
+
+* performance philosophy;
+* measurable objectives;
+* rendering efficiency;
+* JavaScript execution;
+* network optimization;
+* media performance;
+* bundle strategy;
+* hydration;
+* interaction responsiveness;
+* long-term performance governance.
+
+This section is informed by:
+
+* Google Web Vitals guidance
+* web.dev performance documentation
+* React performance documentation
+* React Server Components architecture
+* Next.js App Router architecture
+* MDN Performance documentation
+* Chrome Aurora guidance
+
+Performance is treated as an architectural concern—not merely an optimization task performed near release.
+
+---
+
+# 7.7.11.1 Performance Philosophy
+
+Performance is a product feature.
+
+Users perceive:
+
+* speed;
+* responsiveness;
+* stability;
+* smoothness.
+
+They do not perceive:
+
+* framework choices;
+* clever abstractions;
+* implementation complexity.
+
+Every architectural decision should consider its performance implications.
+
+---
+
+# 7.7.11.2 Performance Goals
+
+Performance should be measurable.
+
+TWN should monitor objective metrics rather than relying on subjective impressions.
+
+Primary architectural metrics include:
+
+* Largest Contentful Paint (LCP)
+* Interaction to Next Paint (INP)
+* Cumulative Layout Shift (CLS)
+
+These Core Web Vitals provide standardized indicators of loading performance, responsiveness and visual stability.
+
+Additional engineering metrics include:
+
+* JavaScript bundle size;
+* hydration duration;
+* network latency;
+* render duration;
+* image loading performance;
+* navigation timing.
+
+---
+
+# 7.7.11.3 Performance Budget Philosophy
+
+Every page consumes a limited performance budget.
+
+That budget includes:
+
+* JavaScript;
+* CSS;
+* images;
+* fonts;
+* network requests;
+* browser memory;
+* CPU time.
+
+Performance regressions should be treated similarly to functional regressions.
+
+New features should justify their consumption of this budget.
+
+---
+
+# 7.7.11.4 Server-First Rendering
+
+Consistent with Section 7.7.3, server rendering should remain the default approach.
+
+Benefits include:
+
+* reduced client JavaScript;
+* earlier content availability;
+* improved SEO;
+* lower hydration cost;
+* better performance on low-powered devices.
+
+Client rendering should be introduced only where interaction requires it.
+
+---
+
+# 7.7.11.5 Minimize JavaScript
+
+JavaScript is one of the largest contributors to frontend performance costs.
+
+Downloaded JavaScript must be:
+
+* transferred;
+* parsed;
+* compiled;
+* executed;
+* retained in memory.
+
+Therefore:
+
+The fastest JavaScript is often JavaScript that is never sent to the browser.
+
+---
+
+# 7.7.11.6 Hydration Strategy
+
+Hydration should occur only where interactivity requires it.
+
+Avoid hydrating:
+
+* static articles;
+* documentation;
+* editorial content;
+* legal pages;
+* informational layouts.
+
+Hydration should focus on:
+
+* forms;
+* editors;
+* interactive widgets;
+* navigation controls;
+* dashboards.
+
+---
+
+# 7.7.11.7 Rendering Efficiency
+
+Rendering should avoid unnecessary work.
+
+Components should minimize:
+
+* repeated computation;
+* redundant rendering;
+* unnecessary state updates;
+* repeated DOM modifications.
+
+Rendering should remain predictable and efficient.
+
+---
+
+# 7.7.11.8 Bundle Architecture
+
+Bundles should follow feature boundaries established in Section 7.7.2.
+
+Avoid:
+
+* loading editor code on reading pages;
+* loading dashboard functionality for anonymous visitors;
+* loading moderation interfaces for ordinary users.
+
+Feature isolation reduces transferred code.
+
+---
+
+# 7.7.11.9 Code Splitting
+
+Large application features should be loaded on demand.
+
+Examples:
+
+* rich text editor;
+* analytics dashboard;
+* media management;
+* moderation console;
+* administrative tools.
+
+Users should not download functionality they never access.
+
+---
+
+# 7.7.11.10 Lazy Loading
+
+Resources should be loaded when they become necessary.
+
+Examples:
+
+* below-the-fold media;
+* expandable panels;
+* infrequently used dialogs;
+* secondary navigation panels.
+
+Lazy loading should improve overall responsiveness without introducing noticeable interaction delays.
+
+---
+
+# 7.7.11.11 Images
+
+Images frequently dominate page weight.
+
+The architecture should:
+
+* serve appropriately sized images;
+* avoid oversized assets;
+* defer off-screen images where appropriate;
+* preserve aspect ratios to prevent layout shifts;
+* provide responsive image variants.
+
+Images should be treated as performance-critical resources.
+
+---
+
+# 7.7.11.12 Fonts
+
+Fonts should minimize rendering delays.
+
+Architectural principles include:
+
+* limiting the number of font families;
+* limiting font weights;
+* preferring modern compressed formats;
+* avoiding unnecessary decorative fonts.
+
+Typography should balance aesthetics with loading performance.
+
+---
+
+# 7.7.11.13 CSS Strategy
+
+CSS should remain:
+
+* modular;
+* maintainable;
+* minimal.
+
+Avoid shipping large quantities of unused styles.
+
+Critical layout styles should become available early enough to prevent unstable rendering.
+
+---
+
+# 7.7.11.14 Layout Stability
+
+Unexpected layout movement damages usability.
+
+The architecture should prevent unnecessary layout shifts by:
+
+* reserving space for images;
+* reserving space for advertisements if introduced;
+* stabilizing asynchronous content;
+* avoiding late insertion of interface elements that push existing content.
+
+Visual stability directly influences user trust.
+
+---
+
+# 7.7.11.15 Network Efficiency
+
+The frontend should minimize:
+
+* request count;
+* transferred bytes;
+* duplicated requests;
+* unnecessary polling.
+
+Network efficiency should complement—not replace—effective caching.
+
+---
+
+# 7.7.11.16 Resource Prioritization
+
+Not every resource deserves equal loading priority.
+
+Priority order should generally favor:
+
+1. HTML
+2. Critical CSS
+3. Primary content
+4. Navigation
+5. Above-the-fold media
+6. Interactive controls
+7. Secondary enhancements
+
+Critical resources should not compete with optional functionality.
+
+---
+
+# 7.7.11.17 Third-Party Dependencies
+
+Every third-party dependency increases:
+
+* download size;
+* execution cost;
+* maintenance burden;
+* security exposure.
+
+Before introducing a dependency, evaluate:
+
+* bundle impact;
+* maintenance quality;
+* browser support;
+* necessity.
+
+The architecture favors fewer, well-maintained dependencies over numerous convenience libraries.
+
+---
+
+# 7.7.11.18 Browser Memory
+
+Performance includes memory usage.
+
+The frontend should avoid:
+
+* retaining unnecessary references;
+* long-lived detached objects;
+* excessive caches;
+* unused subscriptions.
+
+Memory should naturally return to the browser when features are no longer active.
+
+---
+
+# 7.7.11.19 Interaction Performance
+
+Interactions should remain responsive.
+
+Examples include:
+
+* opening dialogs;
+* typing in editors;
+* filtering lists;
+* searching;
+* scrolling;
+* expanding navigation.
+
+Lengthy synchronous work should not block user interaction.
+
+---
+
+# 7.7.11.20 Long Tasks
+
+Long-running JavaScript execution reduces responsiveness.
+
+Expensive computations should:
+
+* be minimized;
+* be deferred where appropriate;
+* avoid blocking the main thread unnecessarily.
+
+The interface should remain interactive during ordinary workflows.
+
+---
+
+# 7.7.11.21 Lists and Large Collections
+
+Large collections require careful rendering.
+
+Examples:
+
+* comments;
+* notifications;
+* activity feeds;
+* moderation queues;
+* search results.
+
+The architecture should avoid rendering large numbers of off-screen elements simultaneously.
+
+Where datasets become sufficiently large, appropriate techniques such as pagination or virtualization may be introduced based on measured need rather than assumption.
+
+---
+
+# 7.7.11.22 Scrolling Performance
+
+Scrolling should remain smooth.
+
+Avoid:
+
+* expensive scroll handlers;
+* unnecessary layout recalculation;
+* repeated DOM measurements.
+
+User interaction should remain fluid across supported devices.
+
+---
+
+# 7.7.11.23 Animation Performance
+
+Animations should support comprehension—not decoration.
+
+Animations should be:
+
+* purposeful;
+* lightweight;
+* interruptible;
+* respectful of reduced-motion preferences.
+
+Performance should never be sacrificed solely for visual effects.
+
+---
+
+# 7.7.11.24 Responsive Performance
+
+Performance expectations apply equally across:
+
+* desktop;
+* tablet;
+* mobile.
+
+The architecture should account for:
+
+* slower processors;
+* reduced memory;
+* constrained bandwidth;
+* battery limitations.
+
+Optimization should target realistic user devices, not only high-end hardware.
+
+---
+
+# 7.7.11.25 Background Activity
+
+Background work should remain limited.
+
+Examples include:
+
+* cache revalidation;
+* synchronization;
+* telemetry;
+* draft autosave.
+
+Background activity should avoid degrading the responsiveness of foreground user interactions.
+
+---
+
+# 7.7.11.26 Performance Monitoring
+
+Performance should be continuously observed.
+
+Metrics should include:
+
+* Core Web Vitals;
+* page load timings;
+* interaction latency;
+* rendering duration;
+* resource loading;
+* error impact.
+
+Measurement guides optimization priorities.
+
+Detailed telemetry architecture is specified in Section 7.7.15.
+
+---
+
+# 7.7.11.27 Performance Review Checklist
+
+Before approving a new feature, verify:
+
+* Does it increase JavaScript?
+* Does it increase network requests?
+* Can rendering remain server-first?
+* Can code be lazy-loaded?
+* Does it increase memory usage?
+* Does it affect Core Web Vitals?
+* Is the additional complexity justified by user value?
+
+---
+
+# 7.7.11.28 Performance Anti-Patterns
+
+Avoid:
+
+* shipping large client bundles unnecessarily;
+* rendering everything on the client by default;
+* excessive hydration;
+* downloading hidden features;
+* oversized images;
+* blocking JavaScript execution;
+* unnecessary animations;
+* repeated network requests;
+* premature optimization without measurement;
+* introducing dependencies without evaluating performance impact.
+
+---
+
+# 7.7.11.29 Architecture Decision Record
+
+## Decision
+
+TWN adopts a server-first, measurement-driven frontend performance architecture that minimizes JavaScript, prioritizes critical content, isolates feature bundles, and continuously evaluates performance using standardized user-centric metrics.
+
+### Supporting Decisions
+
+* Performance is treated as an architectural concern.
+* Server rendering remains the default.
+* JavaScript is minimized.
+* Hydration occurs only where required.
+* Bundles follow feature boundaries.
+* Resources are prioritized.
+* Images and fonts are optimized.
+* Third-party dependencies are carefully evaluated.
+* Performance decisions are guided by measurement rather than intuition.
+
+### Reasons
+
+* improved responsiveness;
+* reduced bandwidth consumption;
+* better accessibility;
+* stronger mobile experience;
+* simpler long-term maintenance;
+* improved Core Web Vitals.
+
+### Positive Consequences
+
+* faster loading;
+* improved interaction responsiveness;
+* reduced memory consumption;
+* smaller downloads;
+* scalable frontend architecture.
+
+### Costs and Trade-offs
+
+* additional planning for resource loading;
+* ongoing performance monitoring;
+* discipline in dependency selection;
+* occasional refactoring as performance budgets evolve.
+
+---
+
+# Completion Criteria
+
+This subsection is complete when:
+
+* performance philosophy is documented;
+* measurable objectives are established;
+* server-first rendering is reinforced;
+* JavaScript minimization principles are defined;
+* bundle and loading strategies are documented;
+* image and font strategies are established;
+* interaction responsiveness is addressed;
+* monitoring expectations are defined;
+* anti-patterns are identified;
+* an Architecture Decision Record captures the adopted performance strategy.
+
+---
+
+## End of 7.7.11
+
+### Architectural review
+
+This section intentionally focuses on **architectural principles** rather than framework-specific optimizations. For example, while Next.js currently provides features such as automatic image optimization, route prefetching, and partial rendering, those are implementation details that may evolve. The enduring architectural decisions are to minimize JavaScript, prioritize critical resources, measure with Core Web Vitals, isolate feature bundles, and optimize based on real user experience rather than synthetic benchmarks alone. These principles are consistent with current guidance from React, Next.js, Google's Web Vitals initiative, and web platform best practices, while remaining applicable even if TWN adopts additional clients or newer framework versions in the future.
+
+# Volume 7 – Technical Architecture
+
+## 7.7 Frontend Architecture
+
+### Progress
+
+Completed:
+
+```text
+7.7.1 Purpose, Scope & Frontend Philosophy
+7.7.2 Frontend Module Structure
+7.7.3 Rendering Strategy
+7.7.4 Routing Architecture
+7.7.5 Component Architecture
+7.7.6 State Management Architecture
+7.7.7 Data Fetching Architecture
+7.7.8 Frontend Domain Models
+7.7.9 Form Architecture
+7.7.10 Error Boundaries & Recovery
+7.7.11 Frontend Performance Architecture
+```
+
+Current:
+
+```text
+7.7.12 Offline & Progressive Enhancement
+```
+
+Remaining:
+
+```text
+7.7.13 Accessibility Responsibilities
+7.7.14 Frontend Testing Strategy
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution Strategy
+7.7.17 Frontend Architecture Decision Record
+7.7.18 Frontend Completion Criteria
+```
+
+---
+
+# 7.7.12 Offline & Progressive Enhancement
+
+**Status:** Frontend Architecture Specification
+
+**Parent Chapter:** Volume 7 – Technical Architecture
+
+**Current Scope:** Section 7.7 – Frontend Architecture
+
+**Applies To:** Every page, route, interactive feature, form, editor, media workflow, navigation flow and browser capability throughout TWN.
+
+**Primary Objective:** Define how TWN remains useful under unreliable connectivity, limited browser capabilities and partial feature support by embracing progressive enhancement and graceful degradation rather than assuming a permanently connected, JavaScript-enabled environment.
+
+---
+
+# Purpose
+
+This section defines:
+
+* progressive enhancement;
+* graceful degradation;
+* offline philosophy;
+* connectivity awareness;
+* capability detection;
+* browser resilience;
+* offline editing;
+* synchronization principles;
+* asset availability;
+* failure tolerance.
+
+This section is based on guidance from:
+
+* HTML Living Standard
+* MDN Web Docs
+* Progressive Web App (PWA) principles
+* W3C Web Application Best Practices
+* React documentation
+* Next.js architecture
+* Google's web.dev Progressive Web App guidance
+
+This section intentionally **does not prescribe implementing a full Progressive Web App (PWA)**.
+
+Offline capability is treated as a product decision—not a framework requirement.
+
+---
+
+# 7.7.12.1 Progressive Enhancement Philosophy
+
+Progressive Enhancement is the architectural principle that the application should begin with the most universally supported web capabilities and layer richer functionality only where the user's browser and environment support it.
+
+The experience should remain functional without assuming:
+
+* JavaScript;
+* high bandwidth;
+* permanent connectivity;
+* powerful hardware;
+* the latest browser features.
+
+Enhancements improve the experience.
+
+They should not become mandatory prerequisites for core functionality.
+
+---
+
+# 7.7.12.2 Baseline Experience
+
+Every feature should define its minimum usable experience.
+
+Examples:
+
+Reading an article:
+
+Minimum:
+
+* HTML content
+* navigation
+* readable typography
+
+Enhanced:
+
+* reading progress
+* reactions
+* sharing
+* bookmarks
+* animations
+
+Failure of enhanced capabilities should not prevent reading.
+
+---
+
+# 7.7.12.3 Enhancement Layers
+
+TWN should think in layers.
+
+```text
+Content
+
+↓
+
+Navigation
+
+↓
+
+Interaction
+
+↓
+
+Rich Interaction
+
+↓
+
+Advanced Features
+```
+
+Each layer builds upon the previous one.
+
+Removing one layer should not collapse the layers beneath it.
+
+---
+
+# 7.7.12.4 HTML as the Foundation
+
+HTML remains the foundation of the application.
+
+Core content should remain understandable through semantic HTML before enhancement occurs.
+
+This supports:
+
+* accessibility;
+* indexing;
+* resilience;
+* maintainability.
+
+---
+
+# 7.7.12.5 CSS Enhancement
+
+CSS enhances presentation.
+
+The absence of advanced CSS features should not prevent:
+
+* reading;
+* navigation;
+* interaction.
+
+Modern enhancements should gracefully fall back when unsupported.
+
+---
+
+# 7.7.12.6 JavaScript Enhancement
+
+JavaScript enables richer experiences.
+
+Examples:
+
+* live previews;
+* autosave;
+* optimistic updates;
+* interactive dashboards;
+* editor tooling.
+
+Where technically feasible, core workflows should continue functioning without requiring JavaScript.
+
+---
+
+# 7.7.12.7 Browser Capability Detection
+
+The frontend should detect capabilities—not browsers.
+
+Avoid:
+
+```text
+If Chrome
+
+Else Firefox
+```
+
+Instead, determine whether the required capability exists.
+
+Examples:
+
+* Clipboard API
+* File System Access API
+* Web Share API
+* Intersection Observer
+* Resize Observer
+
+Capabilities evolve independently of browser brands.
+
+---
+
+# 7.7.12.8 Graceful Degradation
+
+If an advanced capability is unavailable, TWN should provide the next best experience rather than complete failure.
+
+Example:
+
+Preferred:
+
+```text
+Native Share API
+```
+
+Fallback:
+
+```text
+Copy Link
+```
+
+Fallback:
+
+```text
+Display Share URL
+```
+
+The user should remain able to complete the task.
+
+---
+
+# 7.7.12.9 Connectivity Awareness
+
+The frontend should recognize that connectivity changes over time.
+
+Possible states include:
+
+* online;
+* offline;
+* unstable;
+* reconnecting.
+
+The interface should communicate meaningful connectivity changes when they affect user workflows.
+
+Connectivity status should inform behavior, not overwhelm users with notifications.
+
+---
+
+# 7.7.12.10 Offline Philosophy
+
+Offline capability should be intentional.
+
+Not every feature needs to function offline.
+
+TWN should categorize capabilities.
+
+### Offline-friendly
+
+Examples:
+
+* reading previously loaded content;
+* editing an existing draft;
+* reviewing cached settings.
+
+### Connectivity-required
+
+Examples:
+
+* authentication;
+* publishing;
+* synchronization;
+* account management;
+* moderation actions.
+
+This distinction avoids unrealistic user expectations.
+
+---
+
+# 7.7.12.11 Cached Content
+
+Previously retrieved content may remain available during temporary connectivity loss where appropriate.
+
+Examples:
+
+* recently viewed articles;
+* notebook entries;
+* profile information;
+* navigation assets.
+
+The interface should clearly distinguish cached content from freshly synchronized content.
+
+Users should never be misled about content freshness.
+
+---
+
+# 7.7.12.12 Offline Draft Editing
+
+One of TWN's highest-value workflows is writing.
+
+When technically feasible, users editing:
+
+* articles;
+* notebook entries;
+* long-form reflections;
+
+should not lose work because connectivity changes.
+
+Offline editing should preserve:
+
+* content;
+* structure;
+* formatting.
+
+Synchronization should occur only when connectivity safely returns.
+
+---
+
+# 7.7.12.13 Synchronization Principles
+
+Synchronization should always reconcile with backend authority.
+
+The frontend should never assume:
+
+"My local copy automatically becomes the truth."
+
+Instead:
+
+```text
+Local Change
+
+↓
+
+Synchronization
+
+↓
+
+Backend Validation
+
+↓
+
+Authoritative State
+
+↓
+
+Frontend Update
+```
+
+Backend ownership remains consistent with Sections 7.7.6 and 7.7.7.
+
+---
+
+# 7.7.12.14 Conflict Awareness
+
+Offline editing introduces possible conflicts.
+
+Examples:
+
+* the same draft edited on two devices;
+* content modified by collaborators in the future;
+* server-side changes during offline work.
+
+The architecture should detect conflicts where possible.
+
+Silent overwriting should be avoided.
+
+Conflict resolution strategies belong primarily to the domain implementing the workflow.
+
+---
+
+# 7.7.12.15 Asset Availability
+
+Static assets necessary for basic operation should remain highly available.
+
+Examples:
+
+* typography;
+* navigation icons;
+* branding assets;
+* layout styles.
+
+Optional assets should not delay the availability of essential content.
+
+---
+
+# 7.7.12.16 Media Handling Offline
+
+Media uploads require connectivity.
+
+When offline:
+
+* preserve upload selection;
+* explain current limitations;
+* resume or restart uploads where feasible.
+
+The interface should avoid implying that media has been successfully stored remotely until backend confirmation exists.
+
+---
+
+# 7.7.12.17 Search Behavior
+
+Search experiences should clearly distinguish between:
+
+* searching cached content;
+* searching live content.
+
+If live search is unavailable because of connectivity loss, the interface should explain the limitation rather than displaying misleading empty results.
+
+---
+
+# 7.7.12.18 Background Synchronization
+
+Background synchronization should be treated as an enhancement rather than a requirement.
+
+If supported by the platform and product requirements, it may improve user experience.
+
+Core product workflows should not depend on background synchronization existing.
+
+---
+
+# 7.7.12.19 Browser Storage
+
+Temporary offline information may be stored locally when justified.
+
+Examples:
+
+* unsaved drafts;
+* form recovery;
+* pending uploads;
+* user preferences.
+
+Local storage mechanisms should:
+
+* support recovery;
+* avoid unnecessary duplication;
+* respect storage limitations;
+* preserve user privacy.
+
+Detailed storage architecture belongs to later technical volumes.
+
+---
+
+# 7.7.12.20 Recovery After Reconnection
+
+When connectivity returns:
+
+The frontend should:
+
+* identify pending work;
+* synchronize safely;
+* refresh stale information where appropriate;
+* communicate successful recovery.
+
+Recovery should be predictable and transparent.
+
+---
+
+# 7.7.12.21 Feature Availability
+
+Unavailable capabilities should be communicated clearly.
+
+Examples:
+
+Instead of:
+
+```text
+Button disabled
+```
+
+Prefer:
+
+```text
+Publishing requires an internet connection.
+```
+
+Users should understand why an action is unavailable.
+
+---
+
+# 7.7.12.22 Browser Compatibility
+
+The frontend should progressively adopt new platform capabilities.
+
+Support for newer browser APIs should improve user experience without excluding users on supported older browsers.
+
+Compatibility decisions should be reviewed periodically as browser support evolves.
+
+---
+
+# 7.7.12.23 Progressive Disclosure of Enhancements
+
+Advanced capabilities should appear only when relevant.
+
+Examples:
+
+* offline indicators;
+* synchronization controls;
+* advanced sharing;
+* installation prompts.
+
+Users should not be overwhelmed with browser-specific options.
+
+---
+
+# 7.7.12.24 User Trust
+
+Offline architecture is fundamentally about trust.
+
+The interface must accurately communicate:
+
+* saved locally;
+* synchronizing;
+* synchronized;
+* offline;
+* upload pending;
+* failed synchronization.
+
+Users should always understand the current state of their work.
+
+---
+
+# 7.7.12.25 Recovery Priority
+
+Recovery should prioritize:
+
+1. User-created content.
+2. Unsaved edits.
+3. Pending uploads.
+4. User preferences.
+5. Cached reading material.
+
+Decorative enhancements should never receive higher priority than user work.
+
+---
+
+# 7.7.12.26 Progressive Enhancement Review Checklist
+
+Before introducing a feature, ask:
+
+* Does it have a usable baseline?
+* Can it fail gracefully?
+* Does it require JavaScript?
+* Does it require connectivity?
+* Can users recover work after interruption?
+* Does it communicate capability limitations?
+* Does it remain accessible?
+
+---
+
+# 7.7.12.27 Anti-Patterns
+
+Avoid:
+
+* assuming permanent connectivity;
+* browser-specific logic instead of capability detection;
+* hiding unavailable functionality without explanation;
+* silently discarding offline edits;
+* overwriting backend data without reconciliation;
+* assuming local data is authoritative;
+* requiring advanced browser APIs for basic workflows;
+* confusing cached data with live data;
+* presenting synchronization as complete before backend confirmation.
+
+---
+
+# 7.7.12.28 Architecture Decision Record
+
+## Decision
+
+TWN adopts a progressive enhancement architecture that delivers a functional baseline experience across supported environments while layering richer capabilities only when browser features, connectivity and device resources allow.
+
+### Supporting Decisions
+
+* HTML remains the foundation.
+* JavaScript enhances rather than defines core functionality.
+* Connectivity is treated as variable.
+* Offline capability is intentional, not universal.
+* User-created content receives highest recovery priority.
+* Backend remains the authoritative source of truth.
+* Capability detection is preferred over browser detection.
+* Cached content is clearly distinguished from synchronized content.
+
+### Reasons
+
+* improved resilience;
+* better accessibility;
+* stronger mobile experience;
+* graceful operation on unreliable networks;
+* protection of user work;
+* future-proof browser compatibility.
+
+### Positive Consequences
+
+* reduced data loss;
+* improved reliability;
+* better experience on low-bandwidth networks;
+* clearer user expectations;
+* more maintainable frontend architecture.
+
+### Costs and Trade-offs
+
+* additional synchronization logic;
+* conflict detection complexity;
+* careful communication of synchronization state;
+* increased testing requirements for offline scenarios.
+
+---
+
+# Completion Criteria
+
+This subsection is complete when:
+
+* progressive enhancement philosophy is defined;
+* baseline and enhanced experiences are distinguished;
+* connectivity-aware behavior is documented;
+* offline capabilities are categorized;
+* synchronization principles are established;
+* capability detection guidelines are defined;
+* browser compatibility expectations are documented;
+* user-work recovery priorities are established;
+* anti-patterns are identified;
+* an Architecture Decision Record captures the adopted strategy.
+
+---
+
+## End of 7.7.12
+
+### Architectural review
+
+This section deliberately separates **Progressive Enhancement** from **Progressive Web Apps (PWAs)**. Many teams incorrectly equate the two, but they are distinct concepts. Progressive enhancement is a long-standing web architecture principle centered on resilient user experiences across varying capabilities, whereas a PWA is a set of optional technologies (such as service workers, manifests and installability) that may implement some of those goals. TWN's architecture therefore commits to progressive enhancement as a foundational principle while leaving the decision to implement PWA-specific features as a future product and platform decision rather than an architectural requirement. This aligns with current guidance from the web platform and avoids locking the product into a specific deployment model.
+
+Under the revised structure, we will finish the current frontend chapter in a compressed form, then retain only the Volume 7 chapters that define TWN’s actual system architecture. Detailed database, API, security, analytics and operational material will move to their dedicated volumes.
+
+# Volume 7 – Technical Architecture
+
+## 7.7 Frontend Architecture
+
+### Progress
+
+Completed:
+
+```text
+7.7.1  Purpose, Scope & Frontend Philosophy
+7.7.2  Frontend Module Structure
+7.7.3  Rendering Strategy
+7.7.4  Routing Architecture
+7.7.5  Component Architecture
+7.7.6  State Management Architecture
+7.7.7  Data Fetching Architecture
+7.7.8  Frontend Domain Models
+7.7.9  Form Architecture
+7.7.10 Error Boundaries & Recovery
+7.7.11 Frontend Performance Architecture
+7.7.12 Offline & Progressive Enhancement
+```
+
+Current:
+
+```text
+7.7.13 Accessibility Responsibilities
+```
+
+After this section, the remaining frontend material will be compressed into:
+
+```text
+7.7.14 Frontend Testing Strategy
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution, Consolidated ADR & Completion Checklist
+```
+
+The previous standalone sections 7.7.17 and 7.7.18 will be merged into 7.7.16.
+
+---
+
+# 7.7.13 Accessibility Responsibilities
+
+**Status:** Required Frontend Architecture Standard
+
+**Parent:** Volume 7 — Technical Architecture
+
+**Scope:** The responsibilities of frontend architecture, feature modules, components and content-rendering systems in ensuring that TWN remains perceivable, operable, understandable and robust.
+
+**Target:** TWN should aim for **WCAG 2.2 Level AA** across public pages and core authenticated workflows. Level AAA criteria may be adopted selectively where they provide significant benefit without creating disproportionate complexity. WCAG 2.2 remains the applicable W3C recommendation and includes requirements covering keyboard use, focus visibility, target size, error handling and accessible authentication. ([W3C][1])
+
+---
+
+## 7.7.13.1 Architectural Principle
+
+Accessibility is not a finishing task, optional enhancement or responsibility assigned only to the design system.
+
+It must be considered across:
+
+* information architecture;
+* semantic markup;
+* component design;
+* routing;
+* forms;
+* media;
+* dynamic updates;
+* editor workflows;
+* error recovery;
+* testing;
+* content authoring.
+
+A feature that technically works but cannot be used with a keyboard, screen reader, zoomed display or alternative input mechanism is incomplete.
+
+---
+
+## 7.7.13.2 Responsibility Model
+
+Accessibility responsibilities are distributed across four levels.
+
+### Platform level
+
+The frontend platform owns:
+
+* document structure;
+* language metadata;
+* page titles;
+* landmarks;
+* route-change behavior;
+* focus restoration;
+* global skip navigation;
+* shared accessibility utilities;
+* baseline testing tools.
+
+### Design-system level
+
+The design system owns:
+
+* accessible primitives;
+* focus styles;
+* contrast-compliant tokens;
+* interactive states;
+* typography;
+* target sizing;
+* reduced-motion behavior;
+* component documentation.
+
+### Feature level
+
+Each feature owns:
+
+* semantic workflow structure;
+* keyboard interaction;
+* understandable labels;
+* error handling;
+* status announcements;
+* content ordering;
+* feature-specific accessibility testing.
+
+### Editorial level
+
+Content creators own:
+
+* meaningful heading structure;
+* image descriptions;
+* descriptive link text;
+* captions and transcripts where required;
+* readable language;
+* avoidance of inaccessible embedded material.
+
+Detailed editorial rules belong in Volume 11.
+
+---
+
+## 7.7.13.3 Semantic HTML First
+
+Native HTML elements should be preferred whenever they express the required meaning and behavior.
+
+Examples include:
+
+* `button` for actions;
+* `a` for navigation;
+* heading elements for hierarchy;
+* `label` for form controls;
+* `nav`, `main`, `header`, `footer` and `aside` for landmarks;
+* lists for grouped items;
+* tables only for tabular data.
+
+Semantic HTML provides built-in browser and assistive-technology behavior and should be used before custom ARIA-based implementations. ([developer.mozilla.org][2])
+
+Avoid recreating native controls with generic elements such as:
+
+```html
+<div onclick="...">Publish</div>
+```
+
+when the platform already provides:
+
+```html
+<button type="submit">Publish</button>
+```
+
+---
+
+## 7.7.13.4 ARIA Usage
+
+ARIA should supplement missing semantics, not replace correct native HTML.
+
+ARIA may be necessary for:
+
+* custom dialogs;
+* composite widgets;
+* tabs;
+* live status regions;
+* expanded and collapsed state;
+* relationships not expressible through native markup.
+
+Custom widgets must follow established interaction patterns, including expected keyboard behavior, state updates and focus management. The WAI-ARIA Authoring Practices Guide provides reference patterns for such components. ([W3C][3])
+
+The architecture must avoid:
+
+* unnecessary roles;
+* conflicting ARIA and native semantics;
+* static ARIA state that no longer reflects the interface;
+* adding ARIA labels that hide better visible labels;
+* using ARIA as compensation for incorrect HTML.
+
+---
+
+## 7.7.13.5 Keyboard Operability
+
+Every interactive capability must be usable without a mouse or touchscreen.
+
+This includes:
+
+* navigation;
+* menus;
+* dialogs;
+* editors;
+* dropdowns;
+* forms;
+* carousels;
+* search;
+* moderation controls;
+* media interfaces.
+
+Keyboard access must support:
+
+* reaching controls in a logical order;
+* activating controls;
+* closing temporary surfaces;
+* escaping trapped contexts;
+* identifying current focus;
+* returning focus after a temporary interface closes.
+
+A web interface should be operable using only a keyboard, including for users who rely on screen readers or alternative input devices. ([developer.mozilla.org][4])
+
+---
+
+## 7.7.13.6 Focus Management
+
+Visible keyboard focus must never be removed without an equally usable replacement.
+
+Focus architecture should define:
+
+* where focus begins after route navigation;
+* where focus moves after opening a modal;
+* where focus returns after closing it;
+* how deleted controls are handled;
+* how validation errors are reached;
+* how route-level errors receive attention;
+* how skip links bypass repeated navigation.
+
+Focus should not move merely because new content appeared.
+
+It should move when:
+
+* a modal or blocking interface opens;
+* the current focused element disappears;
+* a major route transition requires orientation;
+* a form error summary needs immediate attention;
+* recovery would otherwise be difficult.
+
+---
+
+## 7.7.13.7 Focus Traps
+
+Temporary modal interfaces may contain focus while open.
+
+A focus trap must:
+
+1. move focus into the modal;
+2. retain focus within it;
+3. allow expected dismissal;
+4. restore focus to the invoking control;
+5. avoid trapping users permanently.
+
+Non-modal panels and ordinary page regions should not trap focus.
+
+---
+
+## 7.7.13.8 Reading and Source Order
+
+The DOM order should correspond to the intended reading and keyboard order.
+
+Visual CSS positioning must not create a misleading sequence.
+
+For example, if an article visually displays:
+
+```text
+Title
+Metadata
+Content
+Related articles
+```
+
+assistive technology should encounter substantially the same order.
+
+Content must not rely on CSS rearrangement to correct structurally disordered markup.
+
+---
+
+## 7.7.13.9 Heading Structure
+
+Each page should have a meaningful heading hierarchy.
+
+Rules:
+
+* pages should normally contain one principal heading;
+* heading levels should reflect structure;
+* headings should not be chosen merely for their visual size;
+* reusable components must not assume a fixed heading level without context;
+* hidden headings may be used for structural clarity when appropriate.
+
+The design system should separate heading appearance from semantic heading level.
+
+---
+
+## 7.7.13.10 Landmarks and Bypass Navigation
+
+Major page regions should be identifiable through semantic landmarks.
+
+Typical structure:
+
+```text
+Header
+Navigation
+Main content
+Complementary content
+Footer
+```
+
+A skip link should allow keyboard users to bypass repeated navigation and move directly to the primary content.
+
+Duplicate landmarks should receive meaningful labels where necessary.
+
+---
+
+## 7.7.13.11 Page Titles and Route Changes
+
+Every route must provide a descriptive page title.
+
+Titles should identify both:
+
+* the current page or resource;
+* the TWN product where useful.
+
+Examples:
+
+```text
+Writing in Public — The Notebook of a Tech Woman
+Edit Article — TWN
+Community Guidelines — TWN
+```
+
+Client-side route changes must provide equivalent orientation to traditional document navigation.
+
+The router integration should ensure that:
+
+* the document title changes;
+* focus behavior remains predictable;
+* loading and failure states are announced where necessary.
+
+---
+
+## 7.7.13.12 Forms
+
+Every form control must have an accessible name.
+
+Prefer visible labels.
+
+Placeholder text must not serve as the only label because it:
+
+* disappears during entry;
+* may have inadequate contrast;
+* does not reliably explain the field;
+* may be confused with entered content.
+
+Forms should provide:
+
+* clear required-field indicators;
+* instructions before the relevant input;
+* field-level errors;
+* an error summary for longer forms;
+* programmatic association between errors and controls;
+* preserved input after failed submission.
+
+The form architecture defined in 7.7.9 remains authoritative.
+
+---
+
+## 7.7.13.13 Validation and Error Messages
+
+Errors must:
+
+* identify the affected field or operation;
+* explain what went wrong;
+* suggest correction when known;
+* not rely solely on color;
+* be available to assistive technology;
+* remain visible long enough to understand.
+
+Bad:
+
+```text
+Invalid input
+```
+
+Better:
+
+```text
+Enter an email address in the format name@example.com.
+```
+
+Error messages must not expose internal implementation details.
+
+---
+
+## 7.7.13.14 Dynamic Status Messages
+
+Dynamic updates that do not receive focus may require programmatic announcements.
+
+Examples:
+
+* draft saved;
+* upload completed;
+* article published;
+* search results updated;
+* synchronization failed;
+* item added to bookmarks.
+
+The urgency must match the event.
+
+Routine updates should not use aggressive alerts that interrupt users repeatedly.
+
+Status announcements should remain concise and avoid duplicate announcements caused by re-rendering.
+
+---
+
+## 7.7.13.15 Dialogs and Overlays
+
+Dialogs must provide:
+
+* an accessible name;
+* appropriate dialog semantics;
+* intentional initial focus;
+* keyboard dismissal where appropriate;
+* focus containment;
+* focus restoration;
+* an understandable close control.
+
+The background interface should not remain interactable when a modal dialog blocks it.
+
+Opening a dialog must not unexpectedly erase user input or page context.
+
+---
+
+## 7.7.13.16 Menus and Custom Widgets
+
+Complex widgets should only be introduced where ordinary controls are insufficient.
+
+A visual group of navigation links does not automatically require application-menu behavior.
+
+For each custom widget, the feature must define:
+
+* supported keys;
+* focus movement;
+* selection behavior;
+* disabled-state behavior;
+* screen-reader semantics;
+* touch interaction.
+
+The implementation should follow a recognized WAI-ARIA pattern instead of inventing an unfamiliar interaction model. ([W3C][3])
+
+---
+
+## 7.7.13.17 Color and Contrast
+
+Information must not depend only on color.
+
+Examples:
+
+* selected items need more than a color change;
+* validation errors require text or iconography with labels;
+* status charts require distinguishable patterns or text;
+* links inside body text must remain identifiable.
+
+The design system must define contrast-compliant combinations for:
+
+* normal text;
+* large text;
+* controls;
+* focus indicators;
+* icons carrying meaning;
+* disabled and inactive states where applicable.
+
+Accessibility-approved color combinations should be represented as design tokens rather than repeatedly chosen at feature level.
+
+---
+
+## 7.7.13.18 Target Size
+
+Interactive controls must provide adequate pointer targets and spacing, especially on mobile.
+
+WCAG 2.2 Level AA defines a minimum target-size requirement of 24 by 24 CSS pixels, subject to documented exceptions. TWN should generally use larger practical targets for primary mobile interactions rather than designing to the minimum alone. ([W3C][5])
+
+Small icons should receive an enlarged clickable region without necessarily increasing their visual size.
+
+---
+
+## 7.7.13.19 Typography and Zoom
+
+Content should remain usable when users enlarge text or zoom the page.
+
+The frontend should avoid:
+
+* fixed-height text containers that clip content;
+* layouts that require horizontal scrolling for ordinary text;
+* controls whose labels disappear at larger sizes;
+* disabling browser zoom;
+* extremely long line lengths;
+* text embedded in images without necessity.
+
+Responsive layouts must account for text enlargement, not only narrower screens.
+
+---
+
+## 7.7.13.20 Motion and Animation
+
+Animations must respect reduced-motion preferences.
+
+Non-essential motion should be removed or reduced when the user expresses that preference.
+
+This applies to:
+
+* parallax;
+* page transitions;
+* animated backgrounds;
+* auto-scrolling;
+* loading effects;
+* decorative entrances;
+* the TWN hero’s ink and book animations.
+
+Reduced motion should not remove information or leave controls in an incomplete state.
+
+Essential state transitions may remain but should use less movement and shorter duration.
+
+---
+
+## 7.7.13.21 Images
+
+Images must be classified according to purpose.
+
+### Informative images
+
+Require meaningful alternative text conveying the information or purpose.
+
+### Decorative images
+
+Should normally be ignored by assistive technology.
+
+### Functional images
+
+Require an accessible name describing the action rather than merely the image.
+
+### Complex images
+
+Charts, diagrams and infographics require an equivalent explanation, data table or detailed description appropriate to their content.
+
+Alternative text should not repeat surrounding text unnecessarily.
+
+---
+
+## 7.7.13.22 Audio and Video
+
+Where audio or video is introduced, the responsible feature must consider:
+
+* captions;
+* transcripts;
+* audio descriptions where necessary;
+* keyboard-accessible media controls;
+* no unexpected autoplay with sound;
+* a clear mechanism to pause or stop;
+* visible playback state.
+
+Detailed content-production standards belong in the Editorial Handbook.
+
+---
+
+## 7.7.13.23 Links and Buttons
+
+Links navigate.
+
+Buttons perform actions.
+
+The frontend must not use one while presenting it as the other merely for styling convenience.
+
+Link text should communicate its destination or purpose.
+
+Avoid repeated vague labels such as:
+
+```text
+Click here
+Read more
+Learn more
+```
+
+when they cannot be understood from programmatic context.
+
+Icon-only buttons require an accessible name.
+
+---
+
+## 7.7.13.24 Tables
+
+Tables should be used only for genuine row-and-column relationships.
+
+Accessible tables require:
+
+* captions where appropriate;
+* header cells;
+* clear row and column association;
+* simple structures where possible;
+* responsive behavior that preserves meaning.
+
+Layout must not be built with data tables.
+
+---
+
+## 7.7.13.25 Article and Long-Form Reading Experience
+
+Because TWN is primarily a reading and writing platform, long-form content accessibility is a core requirement.
+
+Article pages should provide:
+
+* readable typography;
+* appropriate line height;
+* manageable line length;
+* structured headings;
+* descriptive links;
+* zoom resilience;
+* strong foreground/background contrast;
+* reduced distraction;
+* keyboard-accessible footnotes and references;
+* meaningful media alternatives.
+
+Reading enhancements must not obstruct access to the article itself.
+
+---
+
+## 7.7.13.26 Rich-Text Editor
+
+The editor is one of the highest-risk accessibility components.
+
+It must support:
+
+* keyboard entry and navigation;
+* visible focus;
+* understandable toolbar controls;
+* accessible names for formatting actions;
+* meaningful formatting state;
+* heading and list semantics;
+* non-pointer media insertion;
+* error and save-state announcements;
+* recovery without loss of content.
+
+The selected editor dependency must have credible accessibility support.
+
+TWN should not build a custom content-editable framework unless there is a proven product requirement that existing maintained solutions cannot satisfy.
+
+---
+
+## 7.7.13.27 Authentication Workflows
+
+Authentication must not depend solely on:
+
+* memory tests;
+* puzzles;
+* inaccessible CAPTCHAs;
+* copy-blocking;
+* forced transcription;
+* complex cognitive tasks without alternatives.
+
+Password managers and paste operations should not be blocked without a compelling and validated reason.
+
+WCAG 2.2 includes accessible authentication requirements intended to reduce unnecessary cognitive-function tests in login workflows. ([W3C][5])
+
+Detailed authentication architecture remains in Volume 10.
+
+---
+
+## 7.7.13.28 Loading States
+
+Loading states should indicate:
+
+* what is loading;
+* whether existing content remains usable;
+* whether the user should wait;
+* whether cancellation or retry is available.
+
+Skeleton interfaces should not create excessive assistive-technology noise.
+
+Loading indicators must not remain indefinitely without transitioning to success, empty or failure states.
+
+---
+
+## 7.7.13.29 Hidden Content
+
+Content may be visually hidden for assistive technology where necessary, but hidden utilities must use a tested shared implementation.
+
+Avoid hiding meaningful content using techniques that also remove it from accessibility APIs.
+
+Collapsed, modal and inactive interface regions must accurately expose their current availability.
+
+---
+
+## 7.7.13.30 Responsive Accessibility
+
+Mobile layouts must retain:
+
+* logical reading order;
+* clear controls;
+* adequate target sizes;
+* visible focus;
+* zoom support;
+* understandable navigation;
+* access to all essential actions.
+
+A control must not become unavailable simply because the layout changed.
+
+Touch-only gestures require an alternative where the same action cannot be completed through a simple pointer or keyboard interaction.
+
+---
+
+## 7.7.13.31 Automated and Manual Testing
+
+Automated accessibility tools are required but insufficient.
+
+Automated checks can identify issues such as:
+
+* missing labels;
+* invalid ARIA;
+* some contrast failures;
+* missing alternative text;
+* structural defects.
+
+They cannot reliably determine:
+
+* whether alternative text is meaningful;
+* whether focus order makes sense;
+* whether a workflow is understandable;
+* whether announcements are useful;
+* whether keyboard interaction feels coherent.
+
+Minimum manual verification should include:
+
+1. Keyboard-only navigation.
+2. Focus visibility and order.
+3. Zoomed and narrow layouts.
+4. Reduced-motion preference.
+5. At least one screen-reader smoke test for critical workflows.
+6. Form errors and recovery.
+7. Route changes and dialogs.
+
+W3C and MDN guidance both emphasize testing keyboard behavior and assistive-technology interaction rather than relying only on code inspection. ([W3C][6])
+
+---
+
+## 7.7.13.32 Critical Accessibility Journeys
+
+The following workflows require accessibility verification before release:
+
+* navigate and read an article;
+* navigate between major sections;
+* search and review results;
+* sign in and sign out;
+* create and edit a draft;
+* save and recover writing;
+* publish content;
+* upload media;
+* submit a community contribution;
+* report or moderate content;
+* recover from validation and network errors.
+
+Not every browser and assistive-technology combination must be tested for every release, but the core journeys must remain covered by a documented representative matrix.
+
+---
+
+## 7.7.13.33 Dependency Evaluation
+
+A frontend dependency should not be adopted solely because it is visually impressive or development-friendly.
+
+Interactive dependencies should be evaluated for:
+
+* semantic output;
+* keyboard support;
+* focus behavior;
+* screen-reader compatibility;
+* reduced-motion support;
+* accessible documentation;
+* maintenance activity;
+* known accessibility defects.
+
+A dependency with inaccessible foundational behavior creates recurring repair costs across the product.
+
+---
+
+## 7.7.13.34 Accessibility Exceptions
+
+Any deliberate exception must document:
+
+* the affected workflow;
+* the unmet requirement;
+* user impact;
+* reason;
+* temporary mitigation;
+* responsible owner;
+* planned resolution.
+
+“Too difficult” or “the library behaves that way” is not an architectural exemption.
+
+Critical workflows must not ship with unresolved barriers unless explicitly accepted as a release risk.
+
+---
+
+## 7.7.13.35 Minimum Release Gate
+
+A frontend feature may not be considered complete when any of the following is true:
+
+* core actions are inaccessible by keyboard;
+* keyboard focus is invisible;
+* controls lack accessible names;
+* content order becomes incoherent;
+* forms do not identify errors;
+* user-created content cannot be recovered because an error is inaccessible;
+* essential information relies only on color;
+* modal interfaces trap users;
+* text becomes unusable under reasonable zoom;
+* critical images lack meaningful alternatives;
+* motion ignores reduced-motion preferences where it can cause substantial discomfort;
+* automated testing reports serious unresolved violations.
+
+---
+
+## 7.7.13.36 Anti-Patterns
+
+TWN must avoid:
+
+* adding accessibility only after development;
+* using generic elements as buttons;
+* removing focus outlines;
+* positive `tabindex` values to repair poor structure;
+* browser detection for accessibility behavior;
+* ARIA where native HTML is sufficient;
+* inaccessible custom widgets;
+* color-only status indicators;
+* placeholders as labels;
+* auto-playing disruptive media;
+* mouse-only interactions;
+* drag-only operations;
+* announcing every render change;
+* arbitrary focus movement;
+* inaccessible CAPTCHA as the only verification route;
+* design tokens with unverified contrast;
+* treating automated tests as proof of accessibility.
+
+---
+
+# Architecture Decision Record
+
+## Decision
+
+TWN adopts WCAG 2.2 Level AA as the frontend accessibility target for public content and core workflows.
+
+Accessibility will be implemented through:
+
+* semantic HTML;
+* accessible shared primitives;
+* keyboard-first operability;
+* explicit focus management;
+* accessible forms and status communication;
+* resilient text and responsive layouts;
+* reduced-motion support;
+* appropriate media alternatives;
+* automated and manual testing.
+
+## Reasons
+
+* TWN is a reading, writing and community platform.
+* Core content must remain available to users with different abilities and devices.
+* Retrofitting accessibility after feature development is expensive and unreliable.
+* Shared accessible foundations reduce repeated feature-level work.
+* Many accessibility practices also improve mobile usability, resilience and general product quality.
+
+## Consequences
+
+Positive:
+
+* broader product access;
+* stronger semantic structure;
+* better keyboard and mobile usability;
+* lower future remediation cost;
+* more reliable components;
+* clearer completion criteria.
+
+Costs:
+
+* stricter component review;
+* additional manual testing;
+* fewer acceptable third-party dependencies;
+* more care around complex widgets and rich-text editing.
+
+---
+
+# Completion Criteria
+
+This subsection is complete when:
+
+* WCAG 2.2 Level AA is established as the target;
+* accessibility ownership is distributed across platform, design system, features and editorial work;
+* semantic HTML and ARIA responsibilities are defined;
+* keyboard and focus requirements are documented;
+* form, media, motion, route and responsive responsibilities are covered;
+* critical accessibility journeys are identified;
+* automated and manual testing responsibilities are defined;
+* a minimum release gate is established;
+* anti-patterns and exceptions are documented;
+* the architectural decision is recorded.
+
+---
+
+## End of 7.7.13
+
+### Remaining condensed frontend sections
+
+```text
+7.7.14 Frontend Testing Strategy
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution, Consolidated ADR & Completion Checklist
+```
+
+[1]: https://www.w3.org/TR/WCAG22/?utm_source=chatgpt.com "Web Content Accessibility Guidelines (WCAG) 2.2"
+[2]: https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Accessibility/HTML?utm_source=chatgpt.com "HTML: A good basis for accessibility - Learn web development"
+[3]: https://www.w3.org/WAI/ARIA/apg/?utm_source=chatgpt.com "ARIA Authoring Practices Guide | APG | WAI"
+[4]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/Guides/Understanding_WCAG/Keyboard?utm_source=chatgpt.com "Keyboard accessible - MDN Web Docs - Mozilla"
+[5]: https://www.w3.org/WAI/standards-guidelines/wcag/new-in-22/?utm_source=chatgpt.com "What's New in WCAG 2.2 | Web Accessibility Initiative (WAI)"
+[6]: https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/?utm_source=chatgpt.com "Developing a Keyboard Interface | APG | WAI"
+
+# Volume 7 – Technical Architecture
+
+## 7.7 Frontend Architecture
+
+### Progress
+
+Completed:
+
+```text
+7.7.1  Purpose, Scope & Frontend Philosophy
+7.7.2  Frontend Module Structure
+7.7.3  Rendering Strategy
+7.7.4  Routing Architecture
+7.7.5  Component Architecture
+7.7.6  State Management Architecture
+7.7.7  Data Fetching Architecture
+7.7.8  Frontend Domain Models
+7.7.9  Form Architecture
+7.7.10 Error Boundaries & Recovery
+7.7.11 Frontend Performance Architecture
+7.7.12 Offline & Progressive Enhancement
+7.7.13 Accessibility Responsibilities
+```
+
+Current:
+
+```text
+7.7.14 Frontend Testing Strategy
+```
+
+Remaining:
+
+```text
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution, Consolidated ADR & Completion Checklist
+```
+
+---
+
+# 7.7.14 Frontend Testing Strategy
+
+**Status:** Required Frontend Architecture Standard
+
+**Parent:** Volume 7 – Technical Architecture
+
+**Objective:** Define the testing responsibilities of the frontend architecture, ensuring TWN delivers reliable features while avoiding unnecessary testing overhead.
+
+---
+
+# Purpose
+
+Frontend testing exists to increase confidence—not to maximize the number of tests.
+
+The objective is to detect regressions before users do while keeping the test suite maintainable, fast and valuable.
+
+Testing should validate:
+
+* user behaviour;
+* critical workflows;
+* business expectations;
+* component reliability;
+* accessibility;
+* integration between frontend modules.
+
+It should avoid testing framework internals or implementation details.
+
+---
+
+# 7.7.14.1 Testing Philosophy
+
+TWN adopts the principle:
+
+> **Test behaviour, not implementation.**
+
+A user never cares:
+
+* what hook was used;
+* how many components exist;
+* what state library powers the interface.
+
+Users care that:
+
+* publishing works;
+* drafts save;
+* search returns results;
+* navigation functions;
+* forms validate correctly.
+
+Tests should therefore mirror user expectations.
+
+---
+
+# 7.7.14.2 Testing Pyramid
+
+Frontend testing should follow a balanced pyramid.
+
+```text
+               End-to-End
+             Integration
+           Component Tests
+          Utility / Unit Tests
+```
+
+The largest investment should be in fast, deterministic tests.
+
+A small number of end-to-end tests should protect the most valuable user journeys.
+
+---
+
+# 7.7.14.3 Unit Testing
+
+Unit tests should verify isolated logic that can be evaluated independently.
+
+Suitable candidates include:
+
+* formatting utilities;
+* validation rules;
+* helper functions;
+* domain transformations;
+* custom hooks with meaningful logic;
+* state reducers;
+* filtering algorithms.
+
+Avoid unit-testing trivial getters, constants or framework behaviour.
+
+---
+
+# 7.7.14.4 Component Testing
+
+Components should be tested through their public behaviour.
+
+Tests should verify:
+
+* rendering;
+* interaction;
+* state changes;
+* accessibility attributes;
+* conditional behaviour;
+* loading states;
+* error states.
+
+Tests should avoid depending on:
+
+* internal state variables;
+* CSS class names;
+* implementation-specific DOM structure.
+
+A component should remain freely refactorable if its observable behaviour does not change.
+
+---
+
+# 7.7.14.5 Integration Testing
+
+Integration tests verify that multiple frontend modules work together correctly.
+
+Typical examples include:
+
+* form submission;
+* API interaction;
+* authentication flow;
+* editor behaviour;
+* search interface;
+* pagination;
+* optimistic updates;
+* error recovery.
+
+Integration tests provide significantly more value than excessive isolated component tests.
+
+---
+
+# 7.7.14.6 End-to-End Testing
+
+End-to-end (E2E) tests should protect only the application's highest-value workflows.
+
+The goal is confidence—not exhaustive browser automation.
+
+Critical journeys include:
+
+* sign in;
+* sign out;
+* create a draft;
+* edit a draft;
+* publish content;
+* upload media;
+* search for content;
+* update profile;
+* recover from validation errors;
+* navigate major sections.
+
+These represent the workflows whose failure would have the greatest impact on users.
+
+---
+
+# 7.7.14.7 Accessibility Testing
+
+Accessibility forms part of the testing strategy rather than an isolated activity.
+
+Each major feature should verify:
+
+* keyboard navigation;
+* focus behaviour;
+* accessible names;
+* semantic structure;
+* visible focus;
+* form validation;
+* screen reader announcements where applicable.
+
+Automated accessibility tools should supplement—but not replace—manual verification.
+
+---
+
+# 7.7.14.8 Visual Regression
+
+Visual regression testing may be introduced as the design system matures.
+
+Suitable candidates include:
+
+* typography;
+* spacing;
+* buttons;
+* forms;
+* cards;
+* navigation;
+* dialogs.
+
+It should focus on reusable UI primitives rather than every page variation.
+
+---
+
+# 7.7.14.9 Error Scenario Testing
+
+Every critical workflow should be exercised under failure conditions.
+
+Examples:
+
+* network interruption;
+* API failure;
+* unauthorized access;
+* validation failure;
+* timeout;
+* missing resource;
+* upload failure.
+
+The objective is to confirm graceful recovery rather than application crashes.
+
+---
+
+# 7.7.14.10 Responsive Testing
+
+Critical workflows should be verified across representative viewport sizes.
+
+At minimum:
+
+* mobile;
+* tablet;
+* desktop.
+
+Testing should confirm:
+
+* layout stability;
+* navigation;
+* touch targets;
+* readability;
+* form usability.
+
+---
+
+# 7.7.14.11 Browser Compatibility
+
+TWN should officially support a defined set of modern browsers.
+
+Testing every browser version is unnecessary.
+
+The supported browser matrix should be documented and reviewed periodically as browser usage evolves.
+
+---
+
+# 7.7.14.12 Performance Verification
+
+Testing should include basic performance verification for important pages.
+
+Examples:
+
+* bundle growth;
+* rendering regressions;
+* interaction latency;
+* loading performance.
+
+Detailed performance monitoring belongs to the observability strategy rather than the testing suite.
+
+---
+
+# 7.7.14.13 Mocking Strategy
+
+Mock external systems—not internal application logic.
+
+Suitable mocks include:
+
+* APIs;
+* authentication providers;
+* email services;
+* third-party integrations;
+* analytics.
+
+Avoid mocking:
+
+* components being tested;
+* domain logic;
+* state management behaviour.
+
+Excessive mocking often produces unrealistic tests.
+
+---
+
+# 7.7.14.14 Test Data
+
+Test data should be:
+
+* predictable;
+* reusable;
+* representative;
+* isolated.
+
+Avoid depending on production data or manually maintained datasets.
+
+Shared factories and fixtures should generate consistent test scenarios.
+
+---
+
+# 7.7.14.15 Continuous Testing
+
+Tests should execute automatically during development and continuous integration.
+
+The minimum pipeline should include:
+
+* type checking;
+* linting;
+* unit tests;
+* integration tests;
+* critical end-to-end tests.
+
+A release should not proceed when mandatory quality gates fail.
+
+---
+
+# 7.7.14.16 What Not to Test
+
+Avoid spending engineering effort testing:
+
+* framework internals;
+* third-party libraries;
+* trivial styling;
+* implementation details;
+* generated code;
+* constants without behaviour;
+* browser APIs already covered by browser vendors.
+
+Testing should concentrate on TWN's own behaviour.
+
+---
+
+# 7.7.14.17 Release Gate
+
+Before a feature is considered complete:
+
+✓ Core workflows pass.
+
+✓ Critical accessibility checks pass.
+
+✓ No known blocking regressions exist.
+
+✓ Error recovery functions correctly.
+
+✓ Responsive layouts remain usable.
+
+✓ Automated quality checks succeed.
+
+---
+
+# 7.7.14.18 Anti-Patterns
+
+Avoid:
+
+* testing implementation details;
+* snapshot-heavy test suites with little behavioural value;
+* duplicating the same test across multiple levels;
+* brittle selector-based tests;
+* excessive mocking;
+* browser-specific assumptions;
+* testing everything equally.
+
+Testing effort should correspond to business risk.
+
+---
+
+# Architecture Decision Record
+
+## Decision
+
+TWN adopts a behaviour-driven frontend testing strategy emphasizing user workflows, accessibility and integration over implementation-specific verification.
+
+### Supporting Decisions
+
+* Behaviour is tested rather than implementation.
+* Unit tests focus on meaningful logic.
+* Components are validated through observable behaviour.
+* Integration testing forms the core of frontend confidence.
+* End-to-end testing protects only critical user journeys.
+* Accessibility testing is mandatory.
+* Automated quality gates protect releases.
+
+### Reasons
+
+* lower maintenance cost;
+* higher confidence;
+* easier refactoring;
+* better developer productivity;
+* improved release reliability.
+
+### Consequences
+
+Positive:
+
+* stable deployments;
+* maintainable tests;
+* confidence during refactoring;
+* reduced regression risk.
+
+Trade-offs:
+
+* requires disciplined test selection;
+* some edge cases remain dependent on manual exploratory testing;
+* automated tests cannot replace human usability evaluation.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* the testing philosophy is defined;
+* responsibilities of unit, component, integration and E2E testing are documented;
+* accessibility testing requirements are established;
+* mocking and test data strategies are defined;
+* release quality gates are documented;
+* testing anti-patterns are identified;
+* the Architecture Decision Record is recorded.
+
+---
+
+## End of 7.7.14
+
+### Remaining Frontend Architecture
+
+```text
+7.7.15 Frontend Observability
+7.7.16 Frontend Evolution, Consolidated ADR & Completion Checklist
+```
+
+This completes the testing strategy in a concise form without duplicating material that will be covered in later dedicated volumes (such as detailed CI/CD, quality engineering, and release management). The remaining two sections can also be completed in a similarly condensed manner before we move on to the next major architecture chapter.
+
+# Volume 7 – Technical Architecture
+
+## 7.7 Frontend Architecture
+
+### Progress
+
+Completed:
+
+```text
+7.7.1  Purpose, Scope & Frontend Philosophy
+7.7.2  Frontend Module Structure
+7.7.3  Rendering Strategy
+7.7.4  Routing Architecture
+7.7.5  Component Architecture
+7.7.6  State Management Architecture
+7.7.7  Data Fetching Architecture
+7.7.8  Frontend Domain Models
+7.7.9  Form Architecture
+7.7.10 Error Boundaries & Recovery
+7.7.11 Frontend Performance Architecture
+7.7.12 Offline & Progressive Enhancement
+7.7.13 Accessibility Responsibilities
+7.7.14 Frontend Testing Strategy
+```
+
+Current:
+
+```text
+7.7.15 Frontend Observability
+```
+
+Remaining:
+
+```text
+7.7.16 Frontend Evolution, Consolidated ADR & Completion Checklist
+```
+
+---
+
+# 7.7.15 Frontend Observability
+
+**Status:** Required Frontend Architecture Standard
+
+**Parent:** Volume 7 – Technical Architecture
+
+**Scope:** Browser-side diagnostics, error visibility, performance signals and operational context required to understand how the TWN frontend behaves in real user environments.
+
+**Objective:** Ensure that frontend failures and significant performance regressions can be detected, investigated and resolved without collecting excessive personal information or creating an operational burden unsuitable for a one-developer product.
+
+---
+
+# Purpose
+
+Testing confirms expected behaviour before release.
+
+Frontend observability reveals what happens after release.
+
+The production frontend operates across:
+
+* different browsers;
+* different devices;
+* different connection qualities;
+* different screen sizes;
+* different user workflows;
+* browser extensions;
+* interrupted sessions;
+* stale cached assets;
+* third-party service failures.
+
+Many of these conditions cannot be reproduced completely during development.
+
+Frontend observability should therefore answer four practical questions:
+
+1. What failed?
+2. Where did it fail?
+3. Which release introduced or exposed the problem?
+4. How much user impact did it create?
+
+Observability must remain proportionate to TWN’s size, budget and operational capacity.
+
+---
+
+# 7.7.15.1 Observability Philosophy
+
+TWN should collect only signals that support a real operational decision.
+
+Observability is not the collection of every possible browser event.
+
+The architecture should prefer:
+
+* actionable data;
+* meaningful grouping;
+* low maintenance;
+* privacy protection;
+* controlled cost;
+* clear ownership.
+
+A signal that nobody reviews, understands or acts upon has little architectural value.
+
+---
+
+# 7.7.15.2 Minimum Observability Model
+
+The frontend requires four categories of operational visibility:
+
+```text
+Errors
+Performance
+Release Context
+Workflow Health
+```
+
+### Errors
+
+What failed in the browser?
+
+### Performance
+
+Did important pages and interactions become slower?
+
+### Release context
+
+Which deployed version produced the behaviour?
+
+### Workflow health
+
+Are users successfully completing critical actions?
+
+Detailed business analytics belongs in Volume 15.
+
+---
+
+# 7.7.15.3 Error Visibility
+
+Unexpected frontend errors should be reportable from production.
+
+Examples include:
+
+* rendering exceptions;
+* unhandled promise rejections;
+* route failures;
+* hydration failures;
+* client-side mutation failures;
+* editor crashes;
+* unrecoverable state errors;
+* third-party integration failures.
+
+Expected user-facing errors should not automatically be treated as application defects.
+
+For example:
+
+```text
+Incorrect password
+Validation failed
+Article not found
+Permission denied
+```
+
+These are controlled outcomes unless their frequency or surrounding behaviour indicates a separate problem.
+
+---
+
+# 7.7.15.4 Error Classification
+
+Reported errors should be classified so that unrelated failures are not grouped together.
+
+Useful categories include:
+
+* rendering error;
+* network error;
+* data transformation error;
+* authorization failure;
+* upload failure;
+* editor failure;
+* route error;
+* dependency failure;
+* unknown error.
+
+Classification should remain stable enough to support filtering and trend analysis.
+
+---
+
+# 7.7.15.5 Error Context
+
+A useful frontend error report may include:
+
+* error type;
+* sanitized error message;
+* stack trace where available;
+* route or feature;
+* release identifier;
+* browser family and version;
+* operating-system family;
+* viewport category;
+* online or offline state;
+* correlation identifier;
+* relevant operation;
+* occurrence time.
+
+It should not automatically include:
+
+* article body content;
+* form values;
+* passwords;
+* tokens;
+* email addresses;
+* private messages;
+* draft text;
+* uploaded file contents;
+* full request payloads;
+* sensitive URL parameters.
+
+Diagnostic usefulness must not override privacy.
+
+---
+
+# 7.7.15.6 Error Grouping
+
+Repeated instances of the same underlying defect should be grouped.
+
+Grouping may use combinations of:
+
+* exception type;
+* normalized message;
+* stack location;
+* route;
+* feature;
+* release.
+
+Without grouping, one defect affecting many users can create hundreds of separate records and obscure the real problem.
+
+Grouping logic should avoid merging unrelated failures simply because their messages appear similar.
+
+---
+
+# 7.7.15.7 Error Severity
+
+Not all errors require the same response.
+
+Suggested severity levels:
+
+### Critical
+
+Prevents core product operation for many users.
+
+Examples:
+
+* public pages cannot render;
+* authentication is unusable;
+* drafts cannot be saved;
+* publishing is broken.
+
+### High
+
+Breaks a major feature with limited or no workaround.
+
+### Medium
+
+Affects a secondary capability or a smaller user segment.
+
+### Low
+
+Produces limited disruption or cosmetic impact.
+
+Severity should reflect user impact, not how alarming an exception message appears.
+
+---
+
+# 7.7.15.8 Error Boundaries and Reporting
+
+Error Boundaries should report unexpected rendering failures through the shared observability interface.
+
+They should include:
+
+* the affected capability region;
+* the current release;
+* the route;
+* recoverability state;
+* correlation information where available.
+
+The user-facing boundary and the diagnostic report serve different purposes.
+
+The boundary should help the user recover.
+
+The report should help the developer investigate.
+
+Detailed recovery behaviour remains defined in Section 7.7.10.
+
+---
+
+# 7.7.15.9 Network Failure Observation
+
+Network failures should be categorized carefully.
+
+The frontend should distinguish where possible between:
+
+* offline state;
+* connection interruption;
+* timeout;
+* DNS or transport failure;
+* non-successful HTTP response;
+* request cancellation;
+* server rejection;
+* rate limiting.
+
+A user intentionally cancelling a request should not be recorded as an operational failure.
+
+Temporary connectivity problems should not create excessive duplicate reports.
+
+---
+
+# 7.7.15.10 Mutation Failure Observation
+
+Critical mutations deserve stronger visibility than ordinary content reads.
+
+Examples:
+
+* saving a draft;
+* publishing an article;
+* uploading media;
+* submitting community content;
+* changing account settings;
+* performing a moderation action.
+
+The frontend should observe whether the operation:
+
+```text
+Started
+Succeeded
+Failed
+Was cancelled
+Was retried
+```
+
+Payload contents should not be captured unless explicitly safe and necessary.
+
+---
+
+# 7.7.15.11 User Work Protection Signals
+
+Because TWN contains writing workflows, observability should identify situations that threaten user-created work.
+
+Important signals include:
+
+* repeated draft-save failures;
+* local recovery activation;
+* synchronization conflicts;
+* upload interruption;
+* editor crash during an unsaved session;
+* failure to restore a local draft.
+
+These signals should describe the event without exposing the user’s writing.
+
+---
+
+# 7.7.15.12 Performance Signals
+
+The frontend should observe performance at two levels.
+
+### Page experience
+
+Examples:
+
+* initial loading;
+* visible content stability;
+* responsiveness;
+* route transitions.
+
+### Feature experience
+
+Examples:
+
+* editor startup;
+* search response;
+* media upload preparation;
+* draft save latency;
+* opening moderation tools.
+
+The objective is not to produce a laboratory benchmark for every component.
+
+It is to identify meaningful regressions in actual user experience.
+
+---
+
+# 7.7.15.13 Core Web Performance Indicators
+
+TWN should observe established browser performance indicators for important public pages.
+
+These should help identify:
+
+* slow content display;
+* delayed interaction response;
+* layout instability.
+
+Measurements should be segmented where useful by:
+
+* route group;
+* device category;
+* connection quality;
+* release.
+
+Aggregated measurements are generally more useful than inspecting isolated individual values.
+
+---
+
+# 7.7.15.14 Feature Timing
+
+Critical frontend operations may define explicit timing measurements.
+
+Examples:
+
+```text
+Draft save requested → confirmation received
+
+Search submitted → results rendered
+
+Route selected → primary content available
+
+Upload selected → upload ready
+
+Editor opened → editing available
+```
+
+Only operations tied to real product decisions should receive dedicated timing instrumentation.
+
+---
+
+# 7.7.15.15 Long Tasks and Interaction Problems
+
+The frontend should provide visibility into major responsiveness problems where practical.
+
+Signals may include:
+
+* long main-thread tasks;
+* frozen editor interactions;
+* slow list rendering;
+* delayed navigation response;
+* expensive client-side transformations.
+
+These signals should support investigation of real usability problems rather than collecting every browser scheduling detail.
+
+---
+
+# 7.7.15.16 Release Identification
+
+Every production frontend release should have a unique identifier.
+
+The identifier may correspond to:
+
+* deployment ID;
+* commit hash;
+* build number;
+* release version.
+
+Error and performance reports should include this identifier.
+
+Without release context, it becomes difficult to determine whether:
+
+* a defect is new;
+* a fix has reached production;
+* an old cached bundle is still in use;
+* a rollback resolved the issue.
+
+---
+
+# 7.7.15.17 Source Maps
+
+Production errors are difficult to investigate when stack traces refer only to bundled and minified code.
+
+Where supported by the chosen monitoring approach, source maps should enable readable stack traces.
+
+Source maps must be handled carefully.
+
+They should not be exposed publicly where doing so would reveal unnecessary implementation detail.
+
+The deployment process should associate source maps with the correct release.
+
+---
+
+# 7.7.15.18 Correlation Identifiers
+
+A frontend operation may receive or generate a correlation identifier that connects:
+
+```text
+Browser action
+API request
+Backend processing
+Error or response
+```
+
+This helps investigate failures that cross system boundaries.
+
+The frontend should display or retain the identifier only where it improves support or diagnosis.
+
+It should not expose internal infrastructure information unnecessarily.
+
+Detailed distributed tracing belongs in the later observability treatment rather than this frontend subsection.
+
+---
+
+# 7.7.15.19 Breadcrumbs
+
+A limited sequence of recent technical events may help explain how an error occurred.
+
+Examples:
+
+* route changed;
+* dialog opened;
+* draft save started;
+* connection lost;
+* request failed;
+* retry attempted.
+
+Breadcrumbs should use event names rather than sensitive content.
+
+Good:
+
+```text
+draft_save_started
+route_changed:/editor
+network_state:offline
+```
+
+Avoid:
+
+```text
+draft_title: My private reflection
+draft_body: ...
+email: ...
+```
+
+---
+
+# 7.7.15.20 Session Context
+
+Session-level context may help determine whether failures are isolated or repeated.
+
+Useful non-sensitive context can include:
+
+* anonymous session identifier;
+* authenticated or unauthenticated state;
+* role category where operationally necessary;
+* feature flags;
+* release;
+* locale.
+
+Direct personal identity should not be collected by default for technical error reporting.
+
+Where support requires linking a report to a known account, this must be intentional and access-controlled.
+
+---
+
+# 7.7.15.21 Privacy by Design
+
+Frontend observability must follow data-minimization principles.
+
+Before collecting a field, ask:
+
+1. Does this field help identify or resolve a real problem?
+2. Can the same result be achieved using less sensitive data?
+3. How long must the field be retained?
+4. Who can access it?
+5. Could it expose private writing or account information?
+
+Observability tools must be treated as external data processors when applicable.
+
+Detailed privacy governance belongs in Volume 10.
+
+---
+
+# 7.7.15.22 Data Redaction
+
+The shared observability layer should redact or reject sensitive values.
+
+Redaction should cover:
+
+* authorization headers;
+* session tokens;
+* cookies;
+* passwords;
+* secret query parameters;
+* draft content;
+* private user text;
+* uploaded file contents;
+* full request and response bodies.
+
+Feature teams should not send arbitrary objects directly to monitoring systems.
+
+---
+
+# 7.7.15.23 Sampling
+
+High-volume events may require sampling.
+
+Sampling can reduce:
+
+* storage;
+* cost;
+* operational noise;
+* duplicate records.
+
+However, critical failures should not be sampled so aggressively that rare severe defects disappear.
+
+A practical approach is:
+
+* preserve all critical error groups within reasonable limits;
+* sample routine performance measurements;
+* reduce repeated identical low-value events;
+* increase sampling temporarily during investigation.
+
+---
+
+# 7.7.15.24 Noise Control
+
+Observability systems become ineffective when routine events overwhelm meaningful failures.
+
+Noise-control rules should suppress or reduce:
+
+* expected cancellations;
+* harmless browser-extension errors;
+* repeated offline failures;
+* known unsupported-environment issues;
+* duplicate reports from retry loops;
+* non-actionable third-party warnings.
+
+Suppression must be documented so that real failures are not silently hidden.
+
+---
+
+# 7.7.15.25 Alerting
+
+Not every recorded event should create an alert.
+
+Alerts should exist only for conditions requiring timely action.
+
+Examples:
+
+* sharp increase in rendering failures;
+* sustained draft-save failure rate;
+* publishing failures across users;
+* severe performance regression on major routes;
+* widespread authentication failure.
+
+A one-developer project should prefer a small number of high-confidence alerts over constant notifications.
+
+---
+
+# 7.7.15.26 Alert Thresholds
+
+Alerts should use impact-based thresholds rather than triggering on every occurrence.
+
+Possible factors include:
+
+* number of affected sessions;
+* percentage failure rate;
+* duration;
+* affected workflow;
+* release correlation;
+* severity.
+
+Thresholds should be adjusted using real production behaviour rather than guessed once and never reviewed.
+
+---
+
+# 7.7.15.27 Dashboard Philosophy
+
+TWN does not require a large collection of dashboards.
+
+The minimum operational view should answer:
+
+* Are critical frontend errors increasing?
+* Are core workflows succeeding?
+* Did the latest release create regressions?
+* Are important pages becoming slower?
+* Are users losing or failing to save work?
+
+A dashboard that does not support a decision should not be maintained.
+
+---
+
+# 7.7.15.28 Critical Frontend Health Indicators
+
+The initial frontend health set should remain small.
+
+Recommended indicators:
+
+```text
+Unexpected frontend error rate
+Draft-save failure rate
+Publishing failure rate
+Media-upload failure rate
+Critical route availability
+Performance of major public routes
+Performance of the editor
+```
+
+Additional signals should be introduced only when product evidence justifies them.
+
+---
+
+# 7.7.15.29 Development and Production Behaviour
+
+Development environments should provide maximum diagnostic detail.
+
+Production environments should provide:
+
+* sanitized reports;
+* grouped failures;
+* release context;
+* user-safe messages;
+* minimal sensitive data.
+
+Production users should not see:
+
+* stack traces;
+* internal paths;
+* raw server errors;
+* dependency details;
+* debugging objects.
+
+---
+
+# 7.7.15.30 Local Logging
+
+Browser console logging may be useful during development.
+
+Production code should avoid uncontrolled logging because it can:
+
+* expose sensitive information;
+* create noise;
+* reduce performance;
+* confuse support investigations.
+
+Production logging should use a shared abstraction with clear severity and redaction behaviour.
+
+---
+
+# 7.7.15.31 Feature Ownership
+
+Every significant feature should define:
+
+* which failures are expected;
+* which failures are exceptional;
+* what should be observed;
+* what must be redacted;
+* which metric indicates basic health;
+* what recovery path exists.
+
+The platform provides shared observability mechanisms.
+
+Features remain responsible for meaningful event definitions.
+
+---
+
+# 7.7.15.32 Observability Interface
+
+Frontend modules should not depend directly on a monitoring vendor throughout the codebase.
+
+They should use a shared internal interface for operations such as:
+
+```text
+captureError
+recordEvent
+recordTiming
+setReleaseContext
+setAnonymousSessionContext
+```
+
+This allows:
+
+* vendor replacement;
+* testing;
+* centralized redaction;
+* consistent naming;
+* controlled sampling;
+* easier local development.
+
+The abstraction should remain small and should not become an internal monitoring framework.
+
+---
+
+# 7.7.15.33 Provider Independence
+
+TWN should avoid coupling product logic to one observability provider.
+
+A provider may be replaced because of:
+
+* pricing;
+* privacy requirements;
+* technical limitations;
+* product growth;
+* service closure.
+
+Provider independence does not require supporting multiple systems simultaneously.
+
+It requires keeping vendor-specific integration near the observability boundary.
+
+---
+
+# 7.7.15.34 Retention
+
+Diagnostic information should not be kept indefinitely.
+
+Retention should reflect:
+
+* operational value;
+* privacy risk;
+* provider cost;
+* incident-investigation requirements.
+
+Shorter retention is generally appropriate for raw browser events.
+
+Aggregated trends may remain useful for longer periods if they do not contain personal information.
+
+---
+
+# 7.7.15.35 Operational Review
+
+Frontend observability should be reviewed:
+
+* after major releases;
+* after incidents;
+* when repeated user complaints appear;
+* when monitoring cost increases;
+* when new critical workflows launch.
+
+The review should remove obsolete signals as well as add necessary ones.
+
+---
+
+# 7.7.15.36 Incident Support
+
+When a frontend incident occurs, observability should support the following sequence:
+
+```text
+Detect
+
+↓
+
+Assess impact
+
+↓
+
+Identify affected release or feature
+
+↓
+
+Mitigate or roll back
+
+↓
+
+Verify recovery
+
+↓
+
+Document the cause and prevention
+```
+
+Observability is successful when it shortens this process.
+
+It is not successful merely because large amounts of telemetry were collected.
+
+---
+
+# 7.7.15.37 Minimum Initial Implementation
+
+For TWN’s first reliable release, frontend observability should include:
+
+### Required
+
+* unexpected error capture;
+* unhandled rejection capture;
+* route and feature context;
+* release identifier;
+* source-map support where available;
+* privacy-safe environment context;
+* monitoring of draft-save and publishing failures;
+* basic public-page performance measurement.
+
+### Recommended
+
+* error grouping;
+* critical alerting;
+* upload-failure measurement;
+* editor performance timing;
+* correlation identifiers.
+
+### Later
+
+* detailed interaction tracing;
+* advanced session replay;
+* broad custom telemetry;
+* extensive product dashboards;
+* complex distributed tracing.
+
+Session replay should not be introduced casually because writing and editorial interfaces may contain highly sensitive content.
+
+---
+
+# 7.7.15.38 Anti-Patterns
+
+TWN must avoid:
+
+* recording every click;
+* sending complete application state;
+* capturing private draft content;
+* treating expected validation failures as crashes;
+* alerting on every individual exception;
+* storing production logs indefinitely;
+* exposing stack traces to users;
+* coupling features directly to one monitoring vendor;
+* collecting telemetry with no operational owner;
+* relying only on user complaints to discover failures;
+* creating dashboards nobody reviews;
+* enabling session replay without strict masking and a justified need;
+* measuring vanity metrics instead of workflow health;
+* logging access tokens, cookies or request bodies;
+* confusing analytics with technical observability.
+
+---
+
+# Architecture Decision Record
+
+## Decision
+
+TWN adopts a minimal, privacy-conscious frontend observability architecture focused on:
+
+* unexpected errors;
+* critical workflow failures;
+* meaningful performance regressions;
+* release context;
+* protection of user-created work.
+
+Frontend modules will report through a small shared observability interface rather than depending directly on a monitoring provider.
+
+## Supporting Decisions
+
+* Error reports must be sanitized.
+* Release identifiers accompany production diagnostics.
+* Critical writing operations receive enhanced visibility.
+* Expected operational outcomes are separated from defects.
+* Alerts are reserved for actionable user impact.
+* Sampling and grouping control cost and noise.
+* Private article and draft content must not be collected.
+* Advanced replay and tracing remain deferred until justified.
+
+## Reasons
+
+* browser failures cannot all be reproduced before release;
+* TWN requires visibility into draft and publishing reliability;
+* a one-developer project cannot maintain excessive telemetry;
+* privacy risk is especially high in writing interfaces;
+* provider independence reduces long-term lock-in.
+
+## Positive Consequences
+
+* production failures become easier to detect;
+* releases can be compared;
+* critical workflow regressions become visible;
+* user reports can be investigated more effectively;
+* monitoring cost remains controlled;
+* sensitive writing receives stronger protection.
+
+## Costs and Trade-offs
+
+* observability integration requires maintenance;
+* some rare failures may remain difficult to reproduce;
+* strict redaction can remove context that might otherwise aid diagnosis;
+* thresholds require periodic adjustment;
+* provider abstraction introduces a small additional layer.
+
+---
+
+# Completion Criteria
+
+This subsection is complete when:
+
+* the purpose and scope of frontend observability are defined;
+* errors, performance, release context and workflow health are covered;
+* unexpected and expected failures are distinguished;
+* error context and grouping requirements are documented;
+* user-work protection signals are defined;
+* release identification and source-map responsibilities are established;
+* privacy, redaction, sampling and retention rules are documented;
+* alerting and dashboard principles are defined;
+* the minimum initial implementation is prioritized;
+* provider independence is established;
+* anti-patterns are identified;
+* the architectural decision is recorded.
+
+---
+
+## End of 7.7.15
+
+### Remaining Frontend Architecture
+
+```text
+7.7.16 Frontend Evolution, Consolidated ADR & Completion Checklist
+```
+
+# Volume 7 – Technical Architecture
+
+## 7.7 Frontend Architecture
+
+### Progress
+
+Completed:
+
+```text
+7.7.1  Purpose, Scope & Frontend Philosophy
+7.7.2  Frontend Module Structure
+7.7.3  Rendering Strategy
+7.7.4  Routing Architecture
+7.7.5  Component Architecture
+7.7.6  State Management Architecture
+7.7.7  Data Fetching Architecture
+7.7.8  Frontend Domain Models
+7.7.9  Form Architecture
+7.7.10 Error Boundaries & Recovery
+7.7.11 Frontend Performance Architecture
+7.7.12 Offline & Progressive Enhancement
+7.7.13 Accessibility Responsibilities
+7.7.14 Frontend Testing Strategy
+7.7.15 Frontend Observability
+```
+
+Current:
+
+```text
+7.7.16 Frontend Evolution, Consolidated Architecture Decision Record & Completion Checklist
+```
+
+---
+
+# 7.7.16 Frontend Evolution, Consolidated Architecture Decision Record & Completion Checklist
+
+**Status:** Final Frontend Architecture Standard
+
+**Parent:** Volume 7 – Technical Architecture
+
+**Objective:** Define how the TWN frontend should evolve over many years without accumulating unnecessary technical debt while summarizing the architectural decisions that govern the frontend.
+
+---
+
+# Purpose
+
+Software architecture is never static.
+
+Browsers evolve.
+
+Frameworks evolve.
+
+Libraries disappear.
+
+New standards emerge.
+
+User expectations change.
+
+The objective of frontend evolution is **not** to continually rewrite the application.
+
+It is to ensure the application can evolve safely while protecting existing functionality, user experience and maintainability.
+
+---
+
+# 7.7.16.1 Evolution Philosophy
+
+TWN adopts an **evolutionary architecture**.
+
+The frontend should improve continuously through small, controlled changes rather than periodic complete rewrites.
+
+Architecture should favour:
+
+* gradual improvement;
+* backward compatibility where reasonable;
+* isolated replacements;
+* measurable improvements;
+* stable user experience.
+
+Large rewrites should be treated as a last resort.
+
+---
+
+# 7.7.16.2 Long-Term Stability
+
+Every architectural decision should optimise for long-term maintenance.
+
+The frontend should remain understandable after:
+
+* one year;
+* three years;
+* five years;
+* ten years.
+
+Future contributors should understand:
+
+* why a decision exists;
+* what problem it solved;
+* what assumptions it depends upon.
+
+Architecture should outlive individual frameworks wherever practical.
+
+---
+
+# 7.7.16.3 Dependency Strategy
+
+Dependencies should solve genuine problems.
+
+Before introducing a new dependency, evaluate:
+
+* Does it remove significant complexity?
+* Is it actively maintained?
+* Does it follow modern web standards?
+* Does it support accessibility?
+* Does it support TypeScript?
+* Is the community healthy?
+* Is migration away from it feasible?
+
+Every dependency introduces:
+
+* maintenance;
+* upgrades;
+* security review;
+* documentation;
+* operational risk.
+
+The best dependency is often the one that never becomes necessary.
+
+---
+
+# 7.7.16.4 Upgrade Philosophy
+
+Framework and library upgrades should occur incrementally.
+
+Avoid:
+
+```text
+Five years without upgrades
+
+↓
+
+Massive migration project
+
+↓
+
+Months of instability
+```
+
+Prefer:
+
+```text
+Regular review
+
+↓
+
+Small upgrades
+
+↓
+
+Continuous compatibility
+```
+
+Incremental upgrades reduce:
+
+* migration cost;
+* release risk;
+* accumulated technical debt.
+
+---
+
+# 7.7.16.5 Deprecation Strategy
+
+No significant frontend capability should disappear unexpectedly.
+
+Deprecation should follow a predictable lifecycle:
+
+```text
+Supported
+
+↓
+
+Deprecated
+
+↓
+
+Migration Available
+
+↓
+
+Removal
+```
+
+Where user-facing behaviour changes significantly, communication should accompany the transition.
+
+---
+
+# 7.7.16.6 Technical Debt
+
+Technical debt should be treated as an intentional engineering decision—not an accident.
+
+Each known debt item should document:
+
+* description;
+* reason;
+* impact;
+* owner;
+* priority;
+* planned resolution.
+
+Hidden technical debt eventually becomes architectural debt.
+
+---
+
+# 7.7.16.7 Refactoring Principles
+
+Refactoring should preserve external behaviour.
+
+Good refactoring:
+
+* simplifies implementation;
+* improves readability;
+* reduces duplication;
+* increases testability;
+* improves maintainability.
+
+Refactoring should not introduce unnecessary product changes simply because code is being reorganized.
+
+---
+
+# 7.7.16.8 Future Browser Features
+
+The frontend should progressively adopt mature web platform capabilities.
+
+New APIs should be evaluated based on:
+
+* browser support;
+* accessibility;
+* stability;
+* maintenance cost;
+* measurable user benefit.
+
+New browser features should improve existing workflows rather than forcing architectural redesign.
+
+---
+
+# 7.7.16.9 Framework Independence
+
+Although TWN is built with Next.js and React, the architecture should avoid unnecessary framework coupling.
+
+Business logic should remain independent of:
+
+* routing implementation;
+* rendering implementation;
+* component library;
+* monitoring vendor;
+* styling solution.
+
+The framework should support the architecture—not define it.
+
+---
+
+# 7.7.16.10 Documentation
+
+Architecture documentation should evolve alongside the codebase.
+
+Major frontend changes should update:
+
+* architectural diagrams;
+* decision records;
+* module responsibilities;
+* migration notes;
+* developer onboarding documentation.
+
+Outdated documentation is often more harmful than missing documentation.
+
+---
+
+# 7.7.16.11 Architecture Reviews
+
+The frontend architecture should be reviewed periodically.
+
+Recommended review triggers include:
+
+* major framework releases;
+* significant product expansion;
+* recurring production incidents;
+* performance regressions;
+* accessibility audits;
+* dependency replacement;
+* infrastructure changes.
+
+Reviews should evaluate whether current architectural decisions remain appropriate.
+
+---
+
+# 7.7.16.12 Consolidated Architecture Decision Record
+
+The following decisions define the TWN frontend architecture.
+
+### Rendering
+
+* Server-first rendering.
+* Client rendering only where interaction requires it.
+
+### Components
+
+* Small, composable, feature-oriented components.
+
+### State
+
+* Local state by default.
+* Shared state only when necessary.
+
+### Data
+
+* Backend remains the source of truth.
+* Frontend models represent—not redefine—domain rules.
+
+### Forms
+
+* HTML-first.
+* Progressive enhancement.
+* Layered validation.
+
+### Error Handling
+
+* Expected errors handled explicitly.
+* Unexpected failures isolated through Error Boundaries.
+
+### Performance
+
+* Performance considered a product feature.
+* JavaScript minimized.
+* Progressive loading.
+
+### Offline
+
+* Progressive enhancement.
+* Offline capability introduced intentionally.
+* User-created work prioritised.
+
+### Accessibility
+
+* WCAG 2.2 AA target.
+* Keyboard-first interaction.
+* Semantic HTML.
+
+### Testing
+
+* Behaviour-driven testing.
+* Integration-first confidence.
+* Critical E2E journeys.
+
+### Observability
+
+* Privacy-first telemetry.
+* Workflow-focused monitoring.
+* Shared observability interface.
+
+These decisions form the architectural baseline for every future frontend feature.
+
+---
+
+# 7.7.16.13 Frontend Readiness Checklist
+
+Before a feature is merged into the main branch, confirm:
+
+### Architecture
+
+✓ Fits existing module boundaries.
+
+✓ Respects frontend responsibilities.
+
+✓ Does not duplicate existing functionality.
+
+---
+
+### User Experience
+
+✓ Responsive.
+
+✓ Accessible.
+
+✓ Consistent with the design system.
+
+✓ Progressive enhancement maintained.
+
+---
+
+### Performance
+
+✓ No unnecessary client rendering.
+
+✓ No unnecessary bundle growth.
+
+✓ Acceptable loading behaviour.
+
+---
+
+### Quality
+
+✓ Behaviour tested.
+
+✓ Accessibility verified.
+
+✓ Error handling implemented.
+
+✓ Recovery paths defined.
+
+---
+
+### Operations
+
+✓ Errors observable.
+
+✓ Release compatible.
+
+✓ No sensitive telemetry.
+
+---
+
+### Maintainability
+
+✓ Documented where necessary.
+
+✓ Naming conventions respected.
+
+✓ No avoidable technical debt introduced.
+
+---
+
+# 7.7.16.14 Frontend Completion Criteria
+
+The frontend architecture is considered complete when it provides guidance for:
+
+* application structure;
+* rendering;
+* routing;
+* components;
+* state management;
+* data fetching;
+* domain modelling;
+* forms;
+* error handling;
+* performance;
+* offline behaviour;
+* accessibility;
+* testing;
+* observability;
+* long-term evolution.
+
+Future frontend work should extend these principles rather than redefining them.
+
+---
+
+# 7.7.16.15 Anti-Patterns
+
+Avoid:
+
+* framework rewrites without measurable justification;
+* introducing dependencies to solve minor problems;
+* architectural decisions based on temporary trends;
+* bypassing shared components for convenience;
+* mixing business rules into presentation;
+* duplicating domain logic in the browser;
+* allowing technical debt to remain undocumented;
+* ignoring accessibility during new feature development;
+* adding telemetry without operational purpose;
+* evolving the frontend without updating architectural documentation.
+
+---
+
+# Final Architecture Decision Record
+
+## Decision
+
+TWN adopts a **server-first, progressively enhanced, component-driven frontend architecture** that emphasizes simplicity, accessibility, maintainability and long-term evolution.
+
+The frontend exists to present information, facilitate interaction and provide a resilient user experience while the backend remains the authoritative source of business logic and data integrity.
+
+## Core Architectural Principles
+
+The TWN frontend shall:
+
+* favour server rendering over unnecessary client execution;
+* compose small reusable feature-oriented components;
+* minimise shared state;
+* progressively enhance the web platform rather than replace it;
+* use semantic HTML as the foundation;
+* protect user-created work above all other frontend concerns;
+* isolate failures through layered error handling;
+* optimise for Core Web Vitals and real user experience;
+* remain observable without compromising user privacy;
+* evolve incrementally through documented architectural decisions.
+
+## Expected Outcomes
+
+This architecture provides:
+
+* maintainable codebases;
+* predictable feature development;
+* lower operational complexity;
+* reduced technical debt;
+* better accessibility;
+* better performance;
+* easier onboarding for future contributors;
+* sustainable long-term growth.
+
+---
+
+# End of 7.7 Frontend Architecture
+
+## Architectural Review
+
+The Frontend Architecture chapter establishes **how TWN is built**, not **how it is deployed**, **how APIs are designed**, **how databases are structured** or **how security is implemented**. Those concerns intentionally belong to later dedicated volumes. By limiting this chapter to frontend responsibilities, the blueprint avoids duplication while providing a complete architectural foundation for every future user-facing feature.
+
+---
+
+## ✅ Volume 7 Status
+
+With the revised structure, **Frontend Architecture (7.7)** is now complete.
+
+The next chapter should no longer be **API Architecture** or **Database Architecture**, as those are moving to Volumes 8 and 9.
+
+The next architecture chapter should instead be **7.8 CMS Architecture**, because the CMS is a core application subsystem unique to TWN and belongs within the system architecture rather than the dedicated Database or API volumes. This keeps Volume 7 focused on the architecture of the product itself and avoids repeating material that will be covered in later volumes.
+
+# Volume 7 — Technical Architecture
+
+# Chapter 7.8 — Content Management System (CMS) Architecture
+
+**Version:** 1.0
+**Status:** Canonical Architecture
+**Owner:** TWN Engineering
+**Related Volumes:**
+
+* Volume 8 — Database Architecture
+* Volume 9 — API Architecture
+* Volume 10 — Security Architecture
+* Volume 11 — Editorial Governance
+* Volume 15 — Observability & Analytics
+
+---
+
+# 7.8.1 Executive Summary
+
+The **Content Management System (CMS)** is the operational heart of **The Notebook of a Tech Woman (TWN)**.
+
+Unlike traditional business websites where content merely supports the product, **content is the product**.
+
+Every article...
+
+Every notebook entry...
+
+Every journey...
+
+Every reflection...
+
+Every shared page...
+
+Every editorial revision...
+
+exists because the CMS makes it possible.
+
+For TWN, the CMS is not simply an administration panel.
+
+It is the platform through which knowledge is created, refined, preserved and eventually shared with readers.
+
+Consequently, the architecture of the CMS has a direct influence on:
+
+* editorial quality;
+* publishing reliability;
+* user trust;
+* long-term maintainability;
+* future platform evolution.
+
+A poorly designed CMS eventually forces editors to adapt to technical limitations.
+
+A well-designed CMS disappears into the background, allowing writers to focus entirely on creating knowledge.
+
+This chapter establishes the architectural principles that will ensure TWN's CMS remains stable for many years while continuing to evolve with the platform.
+
+---
+
+# 7.8.2 Purpose
+
+The purpose of the CMS Architecture is to define **how content is managed**, not how it is stored or rendered.
+
+Its responsibilities include:
+
+* creating content;
+* editing content;
+* organising content;
+* validating content;
+* publishing content;
+* scheduling content;
+* preserving editorial history;
+* protecting author work.
+
+It intentionally avoids implementation details that belong elsewhere.
+
+---
+
+# 7.8.3 Scope
+
+This chapter defines the conceptual architecture governing TWN's publishing system.
+
+Included:
+
+* editorial workflows;
+* content lifecycle;
+* domain boundaries;
+* versioning strategy;
+* draft management;
+* publishing;
+* metadata;
+* extensibility;
+* architectural decisions.
+
+Excluded:
+
+* database schemas;
+* API endpoints;
+* authentication;
+* authorization;
+* infrastructure;
+* deployment;
+* search indexing.
+
+Those subjects have dedicated volumes.
+
+---
+
+# 7.8.4 Why TWN Uses a Custom CMS
+
+One of the earliest architectural decisions made during TWN's design was **not** to build the platform around an existing CMS such as WordPress, Ghost or Strapi.
+
+This decision was not based on the belief that existing systems are inadequate.
+
+Rather, it reflects the unique nature of TWN.
+
+TWN is neither:
+
+* a news website,
+* a marketing site,
+* an online magazine,
+* nor a generic blogging platform.
+
+It combines characteristics from several different products:
+
+* Medium
+* Notion
+* Substack
+* GitBook
+* Hashnode
+* personal journals
+* knowledge bases
+
+while introducing concepts that are unique to TWN, including:
+
+* Notebook Entries
+* Journeys
+* Journey Chapters
+* Margin Notes
+* Shared Pages
+
+No existing CMS models these domains naturally without extensive customization.
+
+Attempting to force TWN into an existing content model would introduce unnecessary complexity and long-term constraints.
+
+Instead, the CMS is designed around **TWN's editorial model**, allowing the platform to evolve without inheriting assumptions made for unrelated products.
+
+---
+
+# 7.8.5 CMS Vision
+
+The vision for the TWN CMS is simple.
+
+> **Writers should think about ideas—not software.**
+
+When an author opens the editor, the platform should disappear.
+
+The writer should not have to think about:
+
+* database transactions;
+* rendering engines;
+* autosave algorithms;
+* storage layers;
+* version histories;
+* publishing pipelines.
+
+Those responsibilities belong entirely to the CMS.
+
+The architecture exists to absorb complexity so that creativity remains uninterrupted.
+
+Every architectural decision should therefore support one of three goals:
+
+1. Reduce friction while writing.
+2. Protect user-created work.
+3. Preserve knowledge over time.
+
+If a feature does not improve one of these goals, its inclusion should be questioned.
+
+---
+
+# 7.8.6 Architectural Principles
+
+The TWN CMS is built upon a small number of enduring principles.
+
+These principles should outlive frameworks, programming languages and infrastructure choices.
+
+---
+
+## Principle 1 — Content is the Primary Asset
+
+Everything else exists to support content.
+
+Infrastructure exists for content.
+
+Databases exist for content.
+
+Search exists for content.
+
+Analytics exist for content.
+
+The CMS therefore optimizes for protecting and improving editorial work rather than maximizing technical sophistication.
+
+---
+
+## Principle 2 — Authors Come Before Administrators
+
+Many CMS platforms prioritize administrative flexibility.
+
+TWN prioritizes author experience.
+
+The editor should feel calm.
+
+Focused.
+
+Predictable.
+
+Writing should never resemble configuring enterprise software.
+
+Administrative capabilities should exist, but they must not dominate the everyday writing experience.
+
+---
+
+## Principle 3 — Structure Before Presentation
+
+Content should describe meaning.
+
+Presentation should describe appearance.
+
+An author writes:
+
+* Heading
+* Paragraph
+* Quote
+* Callout
+* Code Block
+* Image
+* List
+
+—not:
+
+* 24px bold text
+* blue background
+* left margin
+* shadow level three
+
+The CMS stores semantic structure.
+
+The frontend determines visual presentation.
+
+This separation allows TWN to redesign its interface without rewriting published content.
+
+---
+
+## Principle 4 — Long-Term Preservation
+
+Content created today should remain understandable years from now.
+
+The CMS should avoid storing information that depends on temporary frontend implementations.
+
+For example, content should never depend on:
+
+* CSS class names;
+* React component structures;
+* frontend layout assumptions;
+* temporary design systems.
+
+Knowledge should outlive technology.
+
+---
+
+## Principle 5 — Protect User Work
+
+Nothing is more valuable than a user's writing.
+
+The architecture therefore treats content loss as a critical system failure.
+
+Every subsystem should assume interruptions can happen:
+
+* browser crashes;
+* power failures;
+* internet loss;
+* accidental tab closure;
+* server outages.
+
+The CMS should always prioritize preserving work before introducing convenience features.
+
+---
+
+## Principle 6 — Progressive Evolution
+
+The CMS should evolve continuously.
+
+New content types.
+
+New workflows.
+
+New publishing models.
+
+New editorial capabilities.
+
+These should be introduced incrementally without forcing platform-wide rewrites.
+
+Architecture should encourage extension rather than replacement.
+
+---
+
+# 7.8.7 Quality Attributes
+
+The CMS is expected to optimize the following quality attributes.
+
+| Quality         | Priority | Why it Matters                                   |
+| --------------- | -------- | ------------------------------------------------ |
+| Reliability     | Critical | Publishing failures directly affect trust        |
+| Recoverability  | Critical | User writing must never be lost                  |
+| Maintainability | Critical | TWN will evolve over many years                  |
+| Usability       | High     | Writers spend hours inside the editor            |
+| Extensibility   | High     | New content types will be added                  |
+| Performance     | High     | Editing must feel instantaneous                  |
+| Accessibility   | High     | Editorial tools must be usable by everyone       |
+| Security        | High     | Drafts and unpublished work require protection   |
+| Observability   | Medium   | Editorial issues must be diagnosable             |
+| Scalability     | Medium   | Growth should not require architectural redesign |
+
+These quality attributes guide every architectural decision made throughout this chapter.
+
+---
+
+# 7.8.8 CMS Context Within TWN
+
+At the highest level, the CMS occupies the center of the platform.
+
+```text
+                     Readers
+                         │
+                         ▼
+                  Public Website
+                         │
+                         ▼
+────────────────────────────────────────
+            Presentation Layer
+────────────────────────────────────────
+                         │
+                         ▼
+                TWN CMS Core
+     ┌────────────────────────────┐
+     │ Editorial Workflows        │
+     │ Draft Management           │
+     │ Publishing                 │
+     │ Version History            │
+     │ Content Validation         │
+     │ Metadata                   │
+     └────────────────────────────┘
+                         │
+        ┌────────────────┼────────────────┐
+        ▼                ▼                ▼
+   Database         Search          Media System
+ (Vol. 8)          (Vol. 7.9)      (Vol. 7.11)
+```
+
+The CMS does not own every subsystem.
+
+Instead, it coordinates editorial operations while delegating specialized responsibilities to other architectural domains.
+
+---
+
+# Architecture Decision Record — ADR 7.8.001
+
+## Title
+
+TWN shall implement a custom domain-driven Content Management System.
+
+---
+
+## Status
+
+Accepted
+
+---
+
+## Context
+
+Generic CMS platforms assume a relatively uniform content model centered around pages or posts.
+
+TWN introduces multiple editorial domains with distinct behaviors, workflows and relationships.
+
+Attempting to adapt these concepts into a generic CMS would introduce unnecessary complexity and long-term maintenance costs.
+
+---
+
+## Decision
+
+A custom CMS will be developed specifically for TWN's editorial model.
+
+The CMS will remain independent of presentation, APIs and storage technologies.
+
+---
+
+## Consequences
+
+### Positive
+
+* Better alignment with TWN's publishing philosophy.
+* Simpler editorial workflows.
+* Easier long-term evolution.
+* Reduced architectural compromise.
+* Domain-specific optimization.
+
+### Trade-offs
+
+* Higher initial engineering effort.
+* Greater responsibility for long-term maintenance.
+* Fewer off-the-shelf plugins.
+* More architectural decisions must be owned internally.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* the purpose of the CMS is clearly defined;
+* architectural scope is established;
+* guiding principles are documented;
+* quality attributes are identified;
+* the CMS is positioned within the wider TWN architecture;
+* the rationale for a custom CMS is formally recorded.
+
+---
+
+**Next Section:** **7.8.9 CMS Domain Model** (This begins the detailed architecture of every TWN content type, their relationships, boundaries, lifecycle, and how they interact without coupling.)
+
+# 7.8.9 CMS Domain Model
+
+---
+
+## Purpose
+
+The CMS Domain Model defines **what kinds of content exist within TWN, how they relate to one another, and the responsibilities of each domain**.
+
+This section does **not** define tables, collections, or database schemas. Those belong to **Volume 8**.
+
+Instead, it establishes the business language of the platform.
+
+Every future developer should be able to answer:
+
+* What is an Article?
+* What is a Journey?
+* Why is a Notebook Entry different from an Article?
+* Can a Margin Note exist independently?
+* What relationships are allowed?
+
+without reading implementation code.
+
+The domain model becomes the common vocabulary shared by:
+
+* developers;
+* designers;
+* editors;
+* product owners;
+* documentation.
+
+---
+
+# Why a Domain Model Matters
+
+One of the biggest causes of architectural decay is allowing technical implementation to define business concepts.
+
+For example:
+
+> "Everything is just a Page."
+
+While this may simplify early development, it creates increasing complexity as the platform evolves.
+
+Soon the application begins asking questions such as:
+
+* Is this page actually an article?
+* Is this page secretly a journey?
+* Is this page behaving like a notebook?
+* Why does this page have chapters?
+* Why does this page support comments but another does not?
+
+Eventually the generic model becomes impossible to maintain.
+
+TWN avoids this problem by giving each concept its own identity from the beginning.
+
+---
+
+# Domain-Driven Design Philosophy
+
+The CMS adopts a **Domain-Driven Design (DDD)** approach.
+
+This means the software should reflect the language used by the people who create and manage content.
+
+Editors do not say:
+
+> "Create a new Page entity."
+
+They say:
+
+> "Create a Journey."
+
+or
+
+> "Write a Notebook Entry."
+
+or
+
+> "Publish an Article."
+
+The architecture should therefore use these same concepts.
+
+The domain language becomes the software language.
+
+---
+
+# Core Content Domains
+
+The first version of TWN officially recognizes seven primary content domains.
+
+```text id="k1lty0"
+Article
+
+Notebook Entry
+
+Journey
+
+Journey Chapter
+
+Shared Page
+
+Margin Note
+
+Static Page
+```
+
+Each domain represents a different publishing experience.
+
+They should never be treated as interchangeable simply because they all contain text.
+
+---
+
+# Domain Overview
+
+```text id="r3c8tt"
+                     Content
+                         │
+ ┌───────────────┬───────────────┬──────────────┐
+ │               │               │              │
+ ▼               ▼               ▼              ▼
+Articles   Notebook Entries   Journeys   Static Pages
+                                 │
+                                 ▼
+                       Journey Chapters
+
+Shared Pages
+
+Margin Notes
+```
+
+Each domain owns its own lifecycle, validation rules and editorial behaviour.
+
+---
+
+# Article Domain
+
+## Purpose
+
+Articles represent TWN's primary long-form published content.
+
+They are intended for:
+
+* tutorials;
+* essays;
+* technical writing;
+* opinion pieces;
+* educational resources;
+* research.
+
+Articles are considered permanent knowledge assets.
+
+They should prioritize:
+
+* quality;
+* references;
+* structure;
+* discoverability.
+
+---
+
+## Characteristics
+
+Articles normally include:
+
+* title;
+* summary;
+* cover image;
+* categories;
+* tags;
+* body;
+* references;
+* estimated reading time;
+* publication metadata.
+
+Future versions may introduce additional editorial capabilities without changing the core identity of an Article.
+
+---
+
+## Responsibilities
+
+Articles are responsible for communicating complete ideas.
+
+They should not be fragmented into multiple chapters unless they intentionally become a Journey.
+
+---
+
+# Notebook Entry Domain
+
+## Purpose
+
+Notebook Entries represent personal observations, ideas and reflections.
+
+Unlike Articles, they are intentionally less formal.
+
+They capture thinking in progress.
+
+Examples include:
+
+* lessons learned;
+* development notes;
+* conference reflections;
+* personal discoveries;
+* career experiences;
+* unfinished ideas.
+
+Notebook Entries give readers access to the thinking process rather than only polished conclusions.
+
+---
+
+## Characteristics
+
+Notebook Entries generally:
+
+* require less editorial overhead;
+* evolve naturally;
+* encourage authenticity;
+* preserve chronology.
+
+They should feel like opening someone's notebook rather than reading a textbook.
+
+---
+
+## Responsibilities
+
+Notebook Entries should prioritize:
+
+* authenticity;
+* speed of publishing;
+* simplicity;
+* personal voice.
+
+---
+
+# Journey Domain
+
+## Purpose
+
+Journeys model long-running learning experiences.
+
+Unlike Articles, Journeys unfold over time.
+
+Examples include:
+
+* learning Go;
+* building TWN publicly;
+* career transition;
+* OMLA fellowship reflections;
+* startup building.
+
+A Journey represents an evolving narrative rather than a single publication.
+
+---
+
+## Characteristics
+
+A Journey:
+
+* has an identity;
+* contains multiple chapters;
+* progresses chronologically;
+* may span months or years.
+
+Readers should be able to follow the complete evolution of an idea.
+
+---
+
+## Responsibilities
+
+Journeys coordinate:
+
+* chapter ordering;
+* progression;
+* completion state;
+* navigation.
+
+They do not contain the detailed content themselves.
+
+That responsibility belongs to Journey Chapters.
+
+---
+
+# Journey Chapter Domain
+
+Journey Chapters represent individual entries within a Journey.
+
+Each chapter:
+
+* belongs to exactly one Journey;
+* has its own publication state;
+* may be drafted independently;
+* may be revised independently.
+
+Journey Chapters should behave similarly to Articles while inheriting their broader narrative context from the parent Journey.
+
+---
+
+# Shared Page Domain
+
+Shared Pages allow members of the TWN community to contribute curated knowledge.
+
+Unlike Articles, they are collaborative in nature.
+
+Potential examples include:
+
+* community guides;
+* resource collections;
+* curated recommendations;
+* collaborative documentation.
+
+Future governance rules are defined in Volume 11.
+
+---
+
+# Margin Note Domain
+
+Margin Notes are intentionally lightweight.
+
+They represent:
+
+* quick thoughts;
+* observations;
+* quotes;
+* short reactions;
+* questions.
+
+They should never compete with Notebook Entries.
+
+Instead, they complement them.
+
+Readers should feel as though they are reading annotations in the margin of a physical notebook.
+
+---
+
+# Static Page Domain
+
+Static Pages represent content that supports the platform itself rather than editorial publishing.
+
+Examples include:
+
+* About
+* Privacy
+* Terms
+* Contact
+* Community Guidelines
+
+Static Pages generally change infrequently.
+
+They have simpler workflows than editorial domains.
+
+---
+
+# Domain Relationships
+
+Relationships between domains should remain explicit.
+
+```text id="x5o7a9"
+Journey
+   │
+   ├──────────► Journey Chapters
+
+Article
+   │
+   └──────────► Media
+
+Notebook Entry
+   │
+   └──────────► Media
+
+Shared Page
+   │
+   └──────────► Media
+```
+
+Content domains should never become deeply dependent upon one another.
+
+Loose coupling improves long-term maintainability.
+
+---
+
+# Domain Independence
+
+One of the fundamental architectural rules of TWN is:
+
+> **Each domain owns its own behaviour.**
+
+For example:
+
+Adding chapter navigation to Journeys must not affect Articles.
+
+Adding mood indicators to Notebook Entries must not require changes to Shared Pages.
+
+Adding collaborative editing to Shared Pages must not modify the Journey model.
+
+Each domain evolves independently.
+
+---
+
+# Shared Capabilities
+
+Although domains remain independent, several capabilities are intentionally shared.
+
+These include:
+
+* drafts;
+* publishing;
+* version history;
+* metadata;
+* media attachments;
+* scheduling;
+* visibility;
+* SEO support where applicable.
+
+These capabilities are provided by the CMS platform rather than duplicated within each domain.
+
+---
+
+# Anti-Patterns
+
+The CMS must avoid:
+
+* representing every content type as a generic page;
+* forcing unrelated domains to share unnecessary properties;
+* coupling editorial behaviour between domains;
+* embedding presentation logic inside domain models;
+* allowing one content type to assume the lifecycle of another;
+* using inheritance where composition better represents the relationship.
+
+---
+
+# Architecture Decision Record — ADR 7.8.002
+
+## Title
+
+Model TWN using explicit editorial domains rather than a universal "Page" abstraction.
+
+### Status
+
+Accepted.
+
+### Context
+
+TWN contains multiple publishing experiences with distinct editorial requirements.
+
+Treating all content as one generic entity would simplify early development but introduce increasing complexity and ambiguity over time.
+
+### Decision
+
+Each editorial concept is represented as an independent domain with clearly defined responsibilities and relationships.
+
+Shared capabilities are provided through common platform services rather than inheritance.
+
+### Consequences
+
+**Positive**
+
+* Clear business language.
+* Better maintainability.
+* Independent evolution of features.
+* Reduced accidental coupling.
+* Easier onboarding for developers and editors.
+
+**Trade-offs**
+
+* More initial architectural design.
+* Additional domain definitions to maintain.
+* Greater emphasis on consistency across shared platform capabilities.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* all primary TWN content domains are defined;
+* the purpose of each domain is documented;
+* relationships between domains are explicit;
+* domain independence is established;
+* shared capabilities are identified;
+* anti-patterns are documented;
+* the architectural decision is formally recorded.
+
+
+# 7.8.10 Editorial Workflow Architecture
+
+---
+
+## Purpose
+
+The CMS does more than store content.
+
+It manages the entire editorial journey of that content—from the moment an idea is conceived until it is eventually archived.
+
+An editorial workflow provides structure to this journey.
+
+Without a defined workflow:
+
+* content may be published prematurely;
+* reviews become inconsistent;
+* revisions are difficult to track;
+* scheduling becomes unreliable;
+* collaboration becomes confusing.
+
+The purpose of the Editorial Workflow Architecture is to ensure that every piece of content follows a predictable, auditable and recoverable lifecycle while remaining flexible enough to accommodate future editorial growth.
+
+---
+
+# Editorial Philosophy
+
+TWN is built on the belief that **good writing is iterative**.
+
+Very few articles are perfect on the first attempt.
+
+Ideas evolve.
+
+Research expands.
+
+Examples improve.
+
+Language becomes clearer.
+
+The CMS should therefore encourage refinement rather than rushing authors toward publication.
+
+Publishing is viewed as the final stage of an editorial process—not the beginning.
+
+---
+
+# Workflow Objectives
+
+The editorial workflow should provide:
+
+* predictable progression;
+* clear ownership;
+* safe editing;
+* recoverability;
+* future collaboration;
+* transparent publishing.
+
+Every workflow decision should reduce uncertainty for authors.
+
+---
+
+# Workflow Overview
+
+Every editorial domain shares the same high-level workflow while retaining domain-specific validation rules.
+
+```text
+             Create
+
+                │
+
+                ▼
+
+             Draft
+
+                │
+
+      ┌─────────┴─────────┐
+      │                   │
+      ▼                   ▼
+
+Continue Editing      Delete Draft
+
+      │
+      ▼
+
+Ready for Review
+
+      │
+      ▼
+
+Editorial Review
+
+      │
+ ┌────┴────┐
+ │         │
+ ▼         ▼
+
+Approved  Changes Requested
+
+ │             │
+ ▼             │
+Schedule       │
+ │             │
+ ▼             │
+Publish ◄──────┘
+
+ │
+ ▼
+
+Published
+
+ │
+ ▼
+
+Updated
+
+ │
+ ▼
+
+Archived
+```
+
+This lifecycle should remain consistent across the platform.
+
+---
+
+# Editorial State Machine
+
+The workflow is modeled as a **state machine**.
+
+Each state has:
+
+* allowed actions;
+* validation rules;
+* transition requirements.
+
+Content should never jump arbitrarily between states.
+
+Explicit transitions make behaviour predictable and auditable.
+
+---
+
+# State: Draft
+
+## Purpose
+
+Draft is the default state for all newly created content.
+
+A draft is private working material.
+
+It is expected to be incomplete.
+
+It may contain:
+
+* unfinished paragraphs;
+* incomplete research;
+* placeholder images;
+* missing references;
+* temporary notes.
+
+No assumptions should be made about draft quality.
+
+---
+
+## Responsibilities
+
+Drafts must support:
+
+* unlimited editing;
+* autosave;
+* version history;
+* metadata updates;
+* media attachment;
+* preview generation.
+
+The system should optimize for author freedom during this stage.
+
+---
+
+# State: Ready for Review
+
+This state indicates that the author believes the content is sufficiently complete for evaluation.
+
+The CMS should perform preliminary validation before allowing this transition.
+
+Typical checks include:
+
+* title present;
+* required metadata completed;
+* structural integrity;
+* broken internal references;
+* missing required fields.
+
+The CMS should reject obviously incomplete submissions while allowing editorial judgement for subjective quality.
+
+---
+
+# State: Editorial Review
+
+The review state separates **writing** from **publication**.
+
+Initially, TWN may operate as a single-author platform.
+
+However, the architecture is designed to accommodate future roles such as:
+
+* editor;
+* reviewer;
+* moderator;
+* guest author.
+
+By introducing a review state now, the workflow remains stable as collaboration grows.
+
+---
+
+# Review Outcomes
+
+A review may produce several outcomes.
+
+### Approved
+
+The content satisfies editorial requirements and may proceed toward publication.
+
+### Changes Requested
+
+The reviewer identifies issues that should be addressed before publication.
+
+Examples include:
+
+* factual corrections;
+* missing citations;
+* formatting inconsistencies;
+* accessibility concerns;
+* editorial clarity.
+
+The content returns to Draft while preserving all review notes.
+
+### Rejected
+
+In rare cases, content may be permanently rejected due to policy violations or duplication.
+
+The original draft should remain recoverable unless intentionally deleted.
+
+---
+
+# State: Scheduled
+
+Scheduling separates **editorial completion** from **public release**.
+
+A scheduled item has been approved but awaits publication.
+
+Scheduling enables:
+
+* coordinated releases;
+* event-based publishing;
+* series management;
+* timezone-aware publication.
+
+Scheduled content should remain editable.
+
+However, significant edits may require re-validation before publication.
+
+---
+
+# State: Published
+
+Publication marks the transition from private editorial work to public knowledge.
+
+Once published:
+
+* URLs become stable;
+* readers may access the content;
+* search indexing may occur;
+* notifications may be generated;
+* analytics begin collecting usage.
+
+Publishing should be treated as a transactional operation.
+
+Partial publication must never occur.
+
+---
+
+# State: Updated
+
+Published content is expected to evolve.
+
+Corrections.
+
+Additional examples.
+
+Improved explanations.
+
+New references.
+
+Updated screenshots.
+
+Rather than replacing history, updates should preserve previous revisions whenever appropriate.
+
+Readers should always receive the latest approved version.
+
+---
+
+# State: Archived
+
+Archival removes content from normal discovery while preserving historical integrity.
+
+Reasons for archival may include:
+
+* outdated information;
+* deprecated technology;
+* superseded guidance;
+* completed announcements.
+
+Archival is **not deletion**.
+
+Archived content remains part of the platform's institutional memory.
+
+---
+
+# Workflow Validation
+
+Each transition should define explicit validation rules.
+
+For example:
+
+```text
+Draft
+↓
+
+Minimum metadata
+
+↓
+
+Ready for Review
+
+↓
+
+Editorial approval
+
+↓
+
+Scheduled
+
+↓
+
+Publication window reached
+
+↓
+
+Published
+```
+
+Validation ensures consistency without restricting editorial creativity.
+
+---
+
+# Workflow Permissions
+
+The architecture separates **workflow state** from **permissions**.
+
+Workflow defines:
+
+* what may happen.
+
+Permissions define:
+
+* who may perform it.
+
+This distinction allows future role expansion without redesigning workflows.
+
+Permission models are defined in **Volume 10**.
+
+---
+
+# Editorial Notifications
+
+Workflow transitions may generate internal events.
+
+Examples include:
+
+* review requested;
+* review completed;
+* publication scheduled;
+* publication successful;
+* archival completed.
+
+The workflow architecture defines **when** these events occur.
+
+Notification delivery mechanisms are documented in **Section 7.13**.
+
+---
+
+# Autosave Integration
+
+Autosave is considered part of the editorial workflow rather than merely an editor feature.
+
+During the Draft state:
+
+* changes should be periodically preserved;
+* interrupted sessions should be recoverable;
+* authors should receive clear save status indicators.
+
+Autosave should never publish content.
+
+Its sole responsibility is protecting work in progress.
+
+---
+
+# Workflow Recovery
+
+The CMS should anticipate interruptions at every stage.
+
+Recovery scenarios include:
+
+* browser crashes;
+* accidental navigation;
+* network failures;
+* interrupted uploads;
+* device restarts.
+
+Recovery should restore authors to the nearest safe editorial state with minimal loss of work.
+
+---
+
+# Future Collaborative Editing
+
+The initial implementation assumes a single active editor.
+
+However, the workflow should not prevent future support for:
+
+* simultaneous editing;
+* editorial assignments;
+* review queues;
+* approval chains;
+* publication ownership.
+
+These capabilities should be added without changing the fundamental workflow model.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* publishing directly from unsaved drafts;
+* allowing arbitrary state transitions;
+* combining review and publication into one action;
+* deleting rejected work automatically;
+* hiding workflow state from authors;
+* coupling editorial workflow to frontend implementation;
+* assuming a permanent single-author platform.
+
+---
+
+# Architecture Decision Record — ADR 7.8.003
+
+## Title
+
+Adopt a state-driven editorial workflow for all TWN content domains.
+
+### Status
+
+Accepted.
+
+### Context
+
+As TWN grows, content creation will become more collaborative and editorially complex.
+
+A consistent workflow provides predictability, auditability and future extensibility.
+
+### Decision
+
+All editorial content shall progress through explicit workflow states with validated transitions.
+
+Workflow behaviour remains independent of permission models and frontend implementation.
+
+### Consequences
+
+**Positive**
+
+* Consistent publishing experience.
+* Easier collaboration.
+* Better auditability.
+* Safer publishing.
+* Future-proof role expansion.
+
+**Trade-offs**
+
+* Slightly more workflow complexity.
+* Additional transition validation.
+* More explicit state management.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* the editorial workflow is defined;
+* all major workflow states are documented;
+* transition rules are established;
+* workflow validation is introduced;
+* permissions are separated from workflow logic;
+* autosave and recovery are integrated;
+* collaborative growth is anticipated;
+* anti-patterns are documented;
+* the architectural decision is formally recorded.
+
+# 7.8.11 Draft, Autosave and Version History Architecture
+
+---
+
+## Purpose
+
+Writing is not a linear activity.
+
+Authors pause.
+
+Rewrite paragraphs.
+
+Delete sections.
+
+Change their minds.
+
+Experiment with ideas.
+
+Close the browser accidentally.
+
+Lose their internet connection.
+
+Move between devices.
+
+Unlike many systems where losing data is merely inconvenient, **losing writing destroys trust**.
+
+For TWN, protecting user-created work is not simply an editor feature.
+
+It is one of the platform's most important architectural responsibilities.
+
+This section defines how drafts, autosave and version history work together to ensure that no meaningful work is unintentionally lost.
+
+---
+
+# Editorial Philosophy
+
+The CMS should assume that interruptions are inevitable.
+
+The system should never assume:
+
+* continuous internet connectivity;
+* uninterrupted browser sessions;
+* successful API requests;
+* perfect hardware;
+* perfect users.
+
+Instead, it should assume that failures will happen and prepare for them before they occur.
+
+The architecture should favour resilience over convenience.
+
+---
+
+# Core Objectives
+
+The draft system exists to achieve five objectives.
+
+1. Protect user work.
+2. Minimize accidental data loss.
+3. Allow experimentation without risk.
+4. Preserve meaningful editorial history.
+5. Enable confident long-form writing.
+
+Everything else is secondary.
+
+---
+
+# Draft as a First-Class Resource
+
+A draft is not an unpublished article.
+
+It is its own domain resource.
+
+A draft possesses:
+
+* identity;
+* metadata;
+* body content;
+* attachments;
+* revision history;
+* editorial state;
+* timestamps.
+
+Treating drafts as temporary files inevitably leads to fragile recovery mechanisms.
+
+Instead, drafts should be considered durable editorial assets until intentionally discarded.
+
+---
+
+# Draft Lifecycle
+
+Every draft follows a predictable lifecycle.
+
+```text
+Create Draft
+      │
+      ▼
+Active Draft
+      │
+      ├─────────────► Autosave
+      │
+      ▼
+Manual Save
+      │
+      ▼
+Ready for Review
+      │
+      ▼
+Published
+      │
+      ▼
+Archived
+```
+
+A draft should remain identifiable throughout its lifecycle.
+
+Publishing transforms the editorial state, not the identity.
+
+---
+
+# Draft Identity
+
+Every draft should receive a stable identifier immediately upon creation.
+
+The identifier should remain constant regardless of changes to:
+
+* title;
+* slug;
+* category;
+* publication state;
+* metadata.
+
+This allows:
+
+* reliable recovery;
+* revision tracking;
+* media association;
+* future collaboration;
+* audit history.
+
+Identity should never depend on the document title.
+
+Titles change.
+
+Identity does not.
+
+---
+
+# Draft Ownership
+
+Every draft has exactly one editorial owner.
+
+The owner is responsible for:
+
+* creating the draft;
+* managing revisions;
+* requesting review;
+* initiating publication.
+
+Future collaborative editing may temporarily assign additional editors, but ownership remains explicit.
+
+Ownership simplifies:
+
+* permissions;
+* notifications;
+* accountability;
+* recovery.
+
+---
+
+# Autosave Philosophy
+
+Autosave exists to protect thought, not to replace intentional saving.
+
+The architecture distinguishes between:
+
+* **editor persistence**, where changes are preserved automatically; and
+* **editor intent**, where the author explicitly decides that a meaningful milestone has been reached.
+
+This distinction ensures that accidental edits do not automatically become significant revisions while still preventing data loss.
+
+---
+
+# Autosave Behaviour
+
+Autosave should operate quietly in the background.
+
+It should never interrupt writing with unnecessary prompts.
+
+Instead, it should provide subtle feedback such as:
+
+* Saving…
+* Saved
+* Offline
+* Retry required
+
+Authors should always understand the current persistence state without being distracted.
+
+---
+
+# Autosave Triggers
+
+Autosave should be triggered by meaningful editorial activity rather than rigid time intervals alone.
+
+Examples include:
+
+* paragraph edits;
+* title changes;
+* metadata updates;
+* image insertion;
+* code block modifications;
+* structural changes.
+
+The implementation should intelligently debounce rapid edits to avoid unnecessary network traffic while ensuring that recent work is preserved promptly.
+
+---
+
+# Autosave States
+
+The editor should maintain a clear internal model of autosave status.
+
+```text
+Idle
+
+↓
+
+Modified
+
+↓
+
+Saving
+
+↓
+
+Saved
+
+↓
+
+Modified
+
+↓
+
+Saving
+```
+
+If saving fails, the state becomes:
+
+```text
+Save Failed
+
+↓
+
+Retry Pending
+
+↓
+
+Recovered
+```
+
+This state machine provides predictable behaviour for both users and developers.
+
+---
+
+# Save Status Indicators
+
+The CMS should communicate save status using simple language.
+
+Recommended indicators include:
+
+* All changes saved.
+* Saving…
+* Offline – changes stored locally.
+* Unable to save. Retrying…
+* Action required.
+
+Avoid technical messages such as:
+
+> HTTP 500
+
+or
+
+> Mutation failed.
+
+The editor should translate technical failures into meaningful editorial feedback.
+
+---
+
+# Manual Save
+
+Although autosave is the primary protection mechanism, manual save remains valuable.
+
+Manual save allows authors to intentionally mark progress.
+
+Examples include:
+
+* completing a section;
+* finishing research;
+* preparing for review;
+* ending a writing session.
+
+Manual saves provide psychological confidence while remaining compatible with autosave.
+
+---
+
+# Local Recovery
+
+The browser should maintain a temporary recovery mechanism whenever safe to do so.
+
+If:
+
+* the browser crashes;
+* the tab closes unexpectedly;
+* connectivity is interrupted;
+
+the editor should attempt to restore unsynchronized work on reopening.
+
+Recovery should prioritise preserving user effort rather than enforcing perfect synchronization.
+
+---
+
+# Server Persistence
+
+Long-term preservation belongs to the server.
+
+Local storage is considered a temporary resilience layer rather than the authoritative source.
+
+The architecture therefore distinguishes between:
+
+**Local Recovery**
+
+Protects against immediate browser interruptions.
+
+**Server Draft**
+
+Provides durable persistence across sessions and devices.
+
+The server remains the canonical editorial record.
+
+---
+
+# Version History Philosophy
+
+Saving and versioning are different concepts.
+
+Autosave preserves work.
+
+Version history preserves editorial evolution.
+
+Every minor keystroke should not become a permanent revision.
+
+Instead, revisions should represent meaningful changes in the document's development.
+
+---
+
+# Revision Model
+
+A revision is a snapshot of editorial state.
+
+Each revision captures:
+
+* content;
+* metadata;
+* timestamp;
+* author;
+* editorial state.
+
+Revisions should remain immutable once created.
+
+Editing produces a new revision rather than modifying historical ones.
+
+This guarantees the integrity of editorial history.
+
+---
+
+# Revision Timeline
+
+```text
+Revision 1
+      │
+Revision 2
+      │
+Revision 3
+      │
+Revision 4
+      │
+Current Version
+```
+
+The timeline forms a chronological history of the document's evolution.
+
+Authors should be able to understand how their work changed over time.
+
+---
+
+# Restoring Revisions
+
+Restoration should never overwrite history.
+
+Instead:
+
+```text
+Revision 4
+
+↓
+
+Restore Revision 2
+
+↓
+
+Revision 5
+(Current = Revision 2 content)
+```
+
+This preserves:
+
+* chronological accuracy;
+* auditability;
+* editorial confidence.
+
+History should never disappear simply because an earlier revision was restored.
+
+---
+
+# Meaningful Revisions
+
+The CMS should avoid generating excessive revision noise.
+
+Examples of insignificant changes include:
+
+* correcting a single typo;
+* changing whitespace;
+* adjusting formatting.
+
+Meaningful revisions typically involve:
+
+* structural edits;
+* new sections;
+* rewritten arguments;
+* editorial review outcomes;
+* publication changes.
+
+Implementation details for revision thresholds belong to later engineering documentation.
+
+---
+
+# Draft Recovery Dashboard
+
+Authors should have access to a clear overview of their active work.
+
+The dashboard may include:
+
+* active drafts;
+* recently edited content;
+* unsaved recovery items;
+* scheduled publications;
+* review requests.
+
+The objective is to reduce anxiety by making unfinished work visible and recoverable.
+
+---
+
+# Conflict Detection
+
+Although the initial TWN implementation assumes a single editor, the architecture should anticipate future collaboration.
+
+Conflicts may arise when:
+
+* multiple devices edit the same draft;
+* collaborative editing is introduced;
+* delayed synchronization occurs.
+
+The CMS should detect potential conflicts rather than silently overwriting content.
+
+Conflict resolution strategies will evolve as collaborative capabilities mature.
+
+---
+
+# Draft Deletion
+
+Deleting a draft should be an intentional editorial action.
+
+The architecture should avoid irreversible deletion during ordinary workflows.
+
+Recommended lifecycle:
+
+```text
+Active Draft
+
+↓
+
+Move to Trash
+
+↓
+
+Recovery Period
+
+↓
+
+Permanent Deletion
+```
+
+This mirrors the philosophy of protecting user-created work.
+
+---
+
+# Anti-Patterns
+
+The CMS must avoid:
+
+* relying solely on manual saving;
+* silently discarding unsaved work;
+* treating browser storage as permanent persistence;
+* overwriting revision history;
+* deleting drafts immediately;
+* exposing technical persistence failures directly to authors;
+* creating a revision for every keystroke;
+* restoring old revisions by rewriting history.
+
+---
+
+# Architecture Decision Record — ADR 7.8.004
+
+## Title
+
+Treat drafts and revision history as durable editorial resources.
+
+### Status
+
+Accepted.
+
+### Context
+
+Long-form writing is central to TWN. Losing user work or obscuring editorial history would undermine confidence in the platform.
+
+### Decision
+
+Drafts shall be first-class CMS resources with stable identities, durable server persistence, background autosave, local recovery, immutable revision history and recoverable deletion.
+
+### Consequences
+
+**Positive**
+
+* Strong protection against data loss.
+* Higher author confidence.
+* Reliable editorial history.
+* Better foundation for future collaboration.
+* Consistent recovery behaviour.
+
+**Trade-offs**
+
+* Increased implementation complexity.
+* Additional storage requirements.
+* More sophisticated synchronization logic.
+* Revision management overhead.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* drafts are defined as first-class editorial resources;
+* autosave philosophy and behaviour are documented;
+* local and server persistence responsibilities are separated;
+* version history principles are established;
+* revision restoration preserves history;
+* conflict detection is anticipated;
+* recoverable deletion is defined;
+* anti-patterns are documented;
+* the architectural decision is formally recorded.
+
+---
+# 7.8.12 Block-Based Content Architecture
+
+---
+
+## Purpose
+
+One of the most important architectural decisions for TWN is **how content is represented internally**.
+
+A traditional CMS stores content as a large block of formatted HTML or Markdown.
+
+While this approach is simple, it couples editorial content to a specific presentation format and limits future evolution.
+
+TWN adopts a **block-based content architecture**.
+
+Instead of storing a document as one continuous piece of formatted text, the CMS stores it as a sequence of semantic content blocks.
+
+Each block represents **meaning**, not appearance.
+
+This enables:
+
+* flexible rendering;
+* accessibility;
+* structured editing;
+* future AI capabilities;
+* reusable components;
+* multi-platform publishing.
+
+---
+
+# Why Block-Based Content?
+
+A writer does not think in HTML.
+
+They think in concepts.
+
+For example:
+
+* "This is a heading."
+* "This is an image."
+* "This is a quote."
+* "This is a warning."
+* "This is a code example."
+
+Those concepts become the building blocks of the document.
+
+The CMS should preserve those concepts instead of flattening everything into markup.
+
+---
+
+# Editorial Philosophy
+
+The editor should feel like writing in a notebook.
+
+Not like editing HTML.
+
+Authors should focus entirely on ideas.
+
+The CMS should translate those ideas into structured content.
+
+This architecture allows TWN to redesign its frontend years later without rewriting a single article.
+
+---
+
+# What Is a Block?
+
+A block is the smallest independently meaningful unit of content.
+
+Examples include:
+
+```text
+Paragraph
+
+Heading
+
+Image
+
+Quote
+
+Code Block
+
+Table
+
+List
+
+Callout
+
+Divider
+
+Video
+
+Embed
+
+Footnote
+```
+
+Each block has:
+
+* a unique identity;
+* a semantic type;
+* its own data;
+* optional metadata.
+
+Blocks should never depend on neighbouring blocks for their meaning.
+
+---
+
+# Document Structure
+
+A document is an ordered collection of blocks.
+
+```text
+Document
+
+│
+
+├── Heading
+
+├── Paragraph
+
+├── Paragraph
+
+├── Image
+
+├── Quote
+
+├── Code Block
+
+├── Callout
+
+├── Paragraph
+
+└── References
+```
+
+The CMS stores the structure.
+
+The frontend decides how to display it.
+
+---
+
+# Why Not Store HTML?
+
+Storing raw HTML introduces several long-term problems.
+
+HTML describes presentation.
+
+The CMS should describe content.
+
+Problems include:
+
+* difficult validation;
+* inconsistent rendering;
+* accessibility issues;
+* harder migrations;
+* limited reuse;
+* security concerns.
+
+Instead, the CMS should preserve structured information that can later be rendered into HTML, mobile layouts, emails or other formats.
+
+---
+
+# Why Not Store Markdown Alone?
+
+Markdown is excellent for writing.
+
+However, it has limitations as an internal architectural representation.
+
+Examples:
+
+* interactive callouts;
+* reusable components;
+* rich media;
+* structured embeds;
+* future AI processing;
+* advanced metadata.
+
+Markdown may remain an import/export format.
+
+It should not define TWN's internal content model.
+
+---
+
+# Canonical Representation
+
+The CMS maintains one canonical representation of every document.
+
+Everything else becomes a rendering concern.
+
+For example:
+
+```text
+Canonical Document
+
+↓
+
+Website
+
+↓
+
+Mobile App
+
+↓
+
+Email
+
+↓
+
+RSS
+
+↓
+
+PDF
+
+↓
+
+Future AI Systems
+```
+
+There should never be multiple competing versions of the same content.
+
+---
+
+# Core Block Types
+
+Version 1 of TWN supports a deliberately small set of block types.
+
+## Text
+
+For ordinary body content.
+
+---
+
+## Heading
+
+Represents document hierarchy.
+
+Never font size.
+
+---
+
+## Quote
+
+Represents cited quotations.
+
+Not merely italic text.
+
+---
+
+## Code
+
+Represents executable or illustrative code.
+
+Supports:
+
+* syntax highlighting;
+* copy functionality;
+* accessibility.
+
+---
+
+## Image
+
+Represents visual content.
+
+Includes:
+
+* alternative text;
+* caption;
+* attribution;
+* licensing metadata where applicable.
+
+---
+
+## List
+
+Represents ordered and unordered collections.
+
+Not manually typed bullet characters.
+
+---
+
+## Divider
+
+Separates logical sections.
+
+Purely structural.
+
+---
+
+## Callout
+
+Highlights important information.
+
+Examples:
+
+* Tip
+* Warning
+* Note
+* Best Practice
+
+The meaning determines presentation.
+
+---
+
+## Table
+
+Represents structured tabular information.
+
+Should not be used for page layout.
+
+---
+
+## Video
+
+Represents embedded media.
+
+The CMS stores the media reference.
+
+Rendering belongs to the frontend.
+
+---
+
+## Embed
+
+Represents external interactive resources.
+
+Examples:
+
+* GitHub
+* YouTube
+* Figma
+* CodePen
+
+Support should be explicitly whitelisted rather than unrestricted.
+
+---
+
+## Footnote
+
+Represents supporting information without interrupting the primary reading flow.
+
+Footnotes improve:
+
+* academic writing;
+* technical documentation;
+* references.
+
+---
+
+# Block Identity
+
+Every block receives its own stable identifier.
+
+This enables:
+
+* precise editing;
+* revision tracking;
+* collaborative editing;
+* future comments on specific sections;
+* analytics at the block level.
+
+Deleting one paragraph should not require rebuilding the entire document.
+
+---
+
+# Block Ordering
+
+Documents preserve block order explicitly.
+
+Moving a block changes its position—not its identity.
+
+This distinction simplifies:
+
+* drag-and-drop editing;
+* undo operations;
+* collaboration;
+* version comparison.
+
+---
+
+# Nested Blocks
+
+Some blocks may contain children.
+
+Examples include:
+
+```text
+List
+
+├── Item
+
+├── Item
+
+└── Item
+```
+
+or
+
+```text
+Callout
+
+└── Paragraph
+```
+
+Nesting should remain shallow.
+
+Deeply nested structures become difficult to edit, render and maintain.
+
+---
+
+# Block Validation
+
+Each block validates itself independently.
+
+Examples:
+
+Image:
+
+* source exists;
+* alt text provided where required.
+
+Heading:
+
+* valid hierarchy.
+
+Code:
+
+* language specified where appropriate.
+
+Quote:
+
+* attribution supported.
+
+This prevents one invalid block from corrupting the entire document.
+
+---
+
+# Reusable Blocks
+
+Some blocks may become reusable assets.
+
+Examples include:
+
+* disclaimer;
+* newsletter signup;
+* author biography;
+* sponsored notice;
+* citation style.
+
+The CMS should distinguish reusable components from document-specific content.
+
+Updating a reusable block should follow explicit editorial rules to avoid unintended changes across published documents.
+
+---
+
+# Block Extensibility
+
+The architecture should support introducing new block types without redesigning the editor.
+
+Future examples include:
+
+* timelines;
+* interactive diagrams;
+* quizzes;
+* AI-generated summaries;
+* polls;
+* mathematics;
+* Mermaid diagrams.
+
+New block types should integrate through the existing block model rather than introducing parallel content systems.
+
+---
+
+# Rendering Independence
+
+Blocks never determine their visual appearance.
+
+For example:
+
+```text
+Heading Level 2
+```
+
+does not specify:
+
+* font;
+* colour;
+* spacing.
+
+The design system controls presentation.
+
+This separation ensures visual consistency across the platform.
+
+---
+
+# Accessibility
+
+Semantic blocks naturally improve accessibility.
+
+For example:
+
+Heading
+
+↓
+
+HTML Heading
+
+↓
+
+Screen Reader Navigation
+
+Rather than relying on manually formatted text, the CMS preserves document meaning.
+
+Accessibility therefore becomes an architectural property instead of an editorial burden.
+
+---
+
+# AI Readiness
+
+One long-term advantage of structured blocks is compatibility with future AI features.
+
+Examples include:
+
+* automatic summaries;
+* semantic search;
+* intelligent recommendations;
+* content translation;
+* reading assistants;
+* knowledge extraction.
+
+AI systems understand structured content more reliably than arbitrary HTML.
+
+The CMS therefore treats semantic structure as a long-term investment.
+
+---
+
+# Future Multi-Platform Publishing
+
+Because the canonical representation remains presentation-independent, the same document may eventually power:
+
+* TWN website;
+* mobile application;
+* newsletters;
+* PDFs;
+* e-books;
+* APIs;
+* AI assistants;
+* offline readers.
+
+No rewriting should be required.
+
+Only different rendering pipelines.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* storing presentation-specific HTML as the primary document;
+* allowing arbitrary embedded scripts;
+* deeply nested block hierarchies;
+* creating duplicate representations of the same document;
+* tightly coupling block types to frontend components;
+* using visual styling instead of semantic meaning;
+* introducing new block types without editorial justification.
+
+---
+
+# Architecture Decision Record — ADR 7.8.005
+
+## Title
+
+Adopt a semantic block-based content architecture as the canonical representation for all TWN editorial content.
+
+### Status
+
+Accepted.
+
+### Context
+
+TWN requires a content model capable of supporting long-form publishing, structured editing, accessibility, future AI capabilities and multi-platform rendering.
+
+Traditional HTML- or Markdown-centric storage would constrain long-term evolution.
+
+### Decision
+
+All editorial content shall be stored as structured semantic blocks.
+
+Presentation formats such as HTML, Markdown or PDF shall be generated from this canonical representation rather than serving as the source of truth.
+
+### Consequences
+
+**Positive**
+
+* Clear separation of content and presentation.
+* Easier accessibility compliance.
+* Improved editor capabilities.
+* Better support for AI and structured search.
+* Flexible rendering across multiple platforms.
+* Extensible architecture for future content types.
+
+**Trade-offs**
+
+* More sophisticated editor implementation.
+* Additional serialization and rendering logic.
+* Increased complexity compared with plain Markdown.
+* Careful migration strategy required for future block types.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* the rationale for a block-based architecture is established;
+* semantic block concepts are defined;
+* canonical document representation is documented;
+* supported block types are identified;
+* validation and extensibility principles are established;
+* rendering independence is defined;
+* accessibility and AI readiness are considered;
+* anti-patterns are documented;
+* the architectural decision is formally recorded.
+
+---
+
+# 7.8.13 Media Integration Architecture
+
+---
+
+## Purpose
+
+Media is an essential component of knowledge.
+
+An image can explain an idea more effectively than paragraphs of text.
+
+A diagram can simplify a complex architecture.
+
+A video can demonstrate concepts that static text cannot.
+
+However, media should **support content**, not dominate it.
+
+The purpose of this architecture is to define how media becomes a first-class editorial asset within TWN while remaining independent of storage providers, frontend implementations and delivery mechanisms.
+
+This section focuses on **how the CMS manages media**, not where media is physically stored. Storage architecture is defined in **Section 7.10**, while database implementation belongs to **Volume 8**.
+
+---
+
+# Editorial Philosophy
+
+Media exists to improve understanding.
+
+Every uploaded asset should have a clear editorial purpose.
+
+The CMS should discourage decorative media that does not improve communication.
+
+When an editor asks:
+
+> "Should I upload this image?"
+
+the guiding question should be:
+
+> **"Does this help the reader understand something they could not understand as easily through text alone?"**
+
+Media should increase clarity, not visual noise.
+
+---
+
+# Media as a Domain Resource
+
+The CMS treats media as an independent domain resource.
+
+An image does not belong exclusively to an article.
+
+A video does not belong exclusively to a journey.
+
+Instead, media exists independently and may be referenced by multiple content domains.
+
+This prevents unnecessary duplication and simplifies long-term management.
+
+---
+
+# Media Domain Overview
+
+```text id="7jpm4o"
+                 Media Library
+                      │
+      ┌───────────────┼───────────────┐
+      ▼               ▼               ▼
+    Images         Videos        Documents
+      │               │               │
+      └───────────────┼───────────────┘
+                      ▼
+            Editorial Content
+```
+
+Content references media.
+
+It does not own it.
+
+---
+
+# Supported Media Types
+
+Version 1 of TWN should support the following categories.
+
+## Images
+
+Examples:
+
+* photographs;
+* screenshots;
+* illustrations;
+* diagrams;
+* charts.
+
+---
+
+## Videos
+
+Examples:
+
+* tutorials;
+* demonstrations;
+* conference talks;
+* presentations.
+
+The CMS should generally reference hosted video rather than storing large video files directly during early platform stages.
+
+---
+
+## Documents
+
+Examples:
+
+* PDFs;
+* white papers;
+* research papers;
+* downloadable resources.
+
+---
+
+## Audio
+
+Future support may include:
+
+* podcasts;
+* interviews;
+* narrated articles.
+
+---
+
+## Attachments
+
+General supporting resources.
+
+Examples:
+
+* ZIP archives;
+* templates;
+* datasets;
+* configuration files.
+
+Attachment support should be explicitly controlled.
+
+---
+
+# Media Identity
+
+Every media asset receives a permanent identity.
+
+Changing:
+
+* filename;
+* storage provider;
+* optimization format;
+* delivery URL;
+
+must never change the media identity itself.
+
+Stable identity enables:
+
+* reuse;
+* revision tracking;
+* migration;
+* analytics;
+* future CDN replacement.
+
+---
+
+# Media Metadata
+
+Media contains much more than a file.
+
+Each asset should maintain metadata describing:
+
+* title;
+* description;
+* alternative text;
+* caption;
+* attribution;
+* creator;
+* copyright status;
+* license;
+* upload date;
+* owner;
+* dimensions (where applicable);
+* duration (where applicable);
+* language (where applicable).
+
+Metadata transforms media into a reusable editorial asset.
+
+---
+
+# Media Ownership
+
+Each uploaded asset should have an explicit owner.
+
+Ownership supports:
+
+* accountability;
+* moderation;
+* attribution;
+* permissions;
+* auditing.
+
+Ownership does not necessarily imply exclusive usage rights.
+
+Other content may reference the same asset according to editorial policy.
+
+---
+
+# Media Reuse
+
+The architecture encourages reuse.
+
+For example:
+
+A diagram explaining React Server Components may appear in:
+
+* an Article;
+* a Journey Chapter;
+* a Shared Page.
+
+The CMS should reference the existing asset rather than requiring duplicate uploads.
+
+Benefits include:
+
+* reduced storage;
+* easier updates;
+* consistent attribution;
+* simplified licensing.
+
+---
+
+# Featured Media
+
+Some content domains support a designated featured asset.
+
+Examples include:
+
+* Article cover image;
+* Journey cover image;
+* Notebook illustration.
+
+Featured media is a relationship, not a separate media type.
+
+Replacing a featured image should not require replacing the underlying asset.
+
+---
+
+# Embedded Media
+
+The CMS distinguishes between uploaded media and embedded media.
+
+Uploaded media becomes part of the TWN media library.
+
+Embedded media references external resources.
+
+Examples:
+
+* YouTube;
+* Vimeo;
+* Figma;
+* GitHub;
+* CodePen.
+
+The CMS should support only approved providers.
+
+Arbitrary iframe embedding increases security and maintenance risks.
+
+---
+
+# Media Lifecycle
+
+Every media asset follows a lifecycle.
+
+```text id="k9s4z2"
+Uploaded
+
+↓
+
+Processing
+
+↓
+
+Available
+
+↓
+
+Referenced
+
+↓
+
+Archived
+
+↓
+
+Deleted
+```
+
+Processing may include:
+
+* optimization;
+* metadata extraction;
+* thumbnail generation;
+* virus scanning;
+* validation.
+
+The CMS should not expose assets publicly until processing completes successfully.
+
+---
+
+# Media Validation
+
+Every uploaded asset should pass validation before becoming available.
+
+Typical checks include:
+
+* supported format;
+* file integrity;
+* size limitations;
+* security scanning;
+* metadata completeness;
+* licensing information where required.
+
+Validation rules may evolve without changing the overall architecture.
+
+---
+
+# Image Optimization
+
+The CMS should treat image optimization as an editorial quality feature.
+
+Optimization goals include:
+
+* reduced bandwidth;
+* faster loading;
+* responsive delivery;
+* preservation of visual quality.
+
+Authors should not manually optimize every upload.
+
+Optimization should occur automatically through the media pipeline defined in Section **7.10**.
+
+---
+
+# Accessibility Requirements
+
+Media accessibility is mandatory.
+
+Images intended to communicate meaning require descriptive alternative text.
+
+Decorative images should be explicitly marked as decorative.
+
+Videos should support:
+
+* captions;
+* transcripts where appropriate.
+
+Audio should eventually support textual alternatives.
+
+Accessibility metadata belongs to the media asset itself rather than individual articles whenever possible.
+
+---
+
+# Licensing and Attribution
+
+Every media asset should have a clearly defined licensing status.
+
+Examples include:
+
+* Original work.
+* Creative Commons.
+* Public Domain.
+* Licensed commercial asset.
+* Third-party permission.
+
+Where attribution is required, the CMS should preserve it as structured metadata rather than relying on authors to remember it manually.
+
+This becomes especially important for future Wikimedia-related content and educational publishing.
+
+---
+
+# Media Relationships
+
+Media may be referenced by multiple domains.
+
+```text id="q6yx7m"
+Image
+
+│
+
+├── Article
+
+├── Notebook Entry
+
+├── Journey Chapter
+
+└── Shared Page
+```
+
+Deleting an article must not automatically delete shared media.
+
+Relationship management belongs to the CMS.
+
+Asset lifecycle remains independent.
+
+---
+
+# Orphaned Media
+
+The CMS should detect media assets that are no longer referenced.
+
+However, automatic deletion should be avoided.
+
+Reasons include:
+
+* future reuse;
+* historical revisions;
+* scheduled publications;
+* accidental removal.
+
+Editors should review orphaned assets before permanent deletion.
+
+---
+
+# Media Replacement
+
+Replacing an asset should not silently modify historical publications.
+
+For example:
+
+Replacing an image in an article should update only that article unless the editor explicitly chooses to replace the shared asset globally.
+
+This distinction prevents unintended editorial changes.
+
+---
+
+# Future AI Integration
+
+Structured media metadata enables future capabilities such as:
+
+* automatic alt text suggestions;
+* image classification;
+* duplicate detection;
+* semantic search;
+* content recommendations.
+
+The CMS should preserve sufficient metadata to support these capabilities without making AI a dependency of the editorial workflow.
+
+---
+
+# Media Governance
+
+The CMS architecture supports future governance policies including:
+
+* moderation queues;
+* copyright review;
+* duplicate detection;
+* inappropriate content reporting;
+* editorial approval.
+
+Governance rules themselves belong to **Volume 11**.
+
+The CMS simply provides the architectural foundation.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* storing media directly inside documents;
+* duplicating identical uploads;
+* allowing unrestricted embed providers;
+* relying on filenames as identifiers;
+* ignoring licensing metadata;
+* exposing unprocessed uploads publicly;
+* tightly coupling media to one content type;
+* deleting shared assets automatically;
+* requiring editors to manually optimize images.
+
+---
+
+# Architecture Decision Record — ADR 7.8.006
+
+## Title
+
+Treat media as an independent editorial domain with reusable, metadata-rich assets.
+
+### Status
+
+Accepted.
+
+### Context
+
+Media is reused across multiple editorial domains and requires governance, accessibility and licensing independent of any individual publication.
+
+Embedding media directly into content would create duplication, inconsistent metadata and maintenance challenges.
+
+### Decision
+
+All media shall exist as first-class CMS resources with stable identities, structured metadata and independent lifecycles.
+
+Editorial content references media rather than owning it.
+
+### Consequences
+
+**Positive**
+
+* Reusable media library.
+* Improved accessibility.
+* Better licensing compliance.
+* Reduced duplication.
+* Simpler migrations between storage providers.
+* Foundation for future AI-assisted media management.
+
+**Trade-offs**
+
+* Additional metadata management.
+* More complex relationship handling.
+* Separate media lifecycle to maintain.
+* Greater editorial discipline required during uploads.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* media is defined as an independent editorial resource;
+* supported media categories are documented;
+* metadata and ownership principles are established;
+* validation and lifecycle rules are defined;
+* reuse and relationship management are documented;
+* accessibility and licensing requirements are incorporated;
+* future AI and governance considerations are acknowledged;
+* anti-patterns are identified;
+* the architectural decision is formally recorded.
+
+---
+# 7.8.14 Content Relationships and Knowledge Graph Architecture
+
+---
+
+## Purpose
+
+Knowledge becomes significantly more valuable when ideas are connected.
+
+Traditional blogging platforms treat every post as an isolated document.
+
+Readers consume one article, leave the page, and rarely discover how that article relates to the rest of the site's knowledge.
+
+This approach fragments learning.
+
+TWN rejects this model.
+
+The platform is designed as a **living knowledge ecosystem**, where every piece of content can become part of a larger network of ideas.
+
+The purpose of this architecture is to define how content relationships are represented, maintained, and evolved without creating unnecessary coupling between editorial domains.
+
+---
+
+# Editorial Philosophy
+
+A notebook is not a collection of disconnected pages.
+
+Ideas naturally reference other ideas.
+
+Questions lead to answers.
+
+Experiences inspire reflections.
+
+Reflections become articles.
+
+Articles become journeys.
+
+Journeys generate new notebook entries.
+
+The CMS should preserve these intellectual relationships.
+
+Readers should feel they are exploring a connected body of knowledge rather than browsing unrelated posts.
+
+---
+
+# Knowledge Graph Philosophy
+
+Internally, TWN should think of content as a graph rather than a hierarchy.
+
+Instead of asking:
+
+> "Which page contains this content?"
+
+the platform should ask:
+
+> "How is this idea connected to everything else?"
+
+This subtle shift transforms TWN from a publishing platform into a knowledge platform.
+
+---
+
+# Relationship Principles
+
+Every relationship should satisfy four principles.
+
+## Explicit
+
+Relationships should be intentionally created.
+
+The CMS should avoid guessing important editorial relationships.
+
+---
+
+## Meaningful
+
+Relationships should improve understanding.
+
+They should not exist merely to increase internal links.
+
+---
+
+## Independent
+
+Relationships must not create dependencies.
+
+Deleting one article should not corrupt another article that references it.
+
+---
+
+## Extensible
+
+New relationship types should be added without redesigning the entire content model.
+
+---
+
+# Knowledge Graph Overview
+
+```text id="kgraph1"
+                     Author
+                        │
+                        │
+                        ▼
+                    Article
+                   ╱   │   ╲
+                  ╱    │    ╲
+                 ▼     ▼     ▼
+          Journey   Tag   Category
+             │               │
+             ▼               ▼
+     Journey Chapter     Notebook Entry
+             │               │
+             └──────┬────────┘
+                    ▼
+              Margin Note
+
+```
+
+The graph represents conceptual relationships rather than physical storage.
+
+The database implementation belongs to **Volume 8**.
+
+---
+
+# Types of Relationships
+
+The CMS recognises multiple relationship categories.
+
+Each category has a distinct purpose.
+
+---
+
+# Parent–Child Relationships
+
+These represent structural ownership.
+
+Examples include:
+
+Journey
+
+↓
+
+Journey Chapter
+
+A chapter cannot exist without its parent journey.
+
+This relationship is hierarchical.
+
+---
+
+# Reference Relationships
+
+One piece of content may reference another without owning it.
+
+Examples:
+
+An article references:
+
+* another article;
+* a notebook entry;
+* a journey;
+* a shared page.
+
+Reference relationships remain loose.
+
+Removing one resource should not automatically delete another.
+
+---
+
+# Related Content
+
+Related content is editorially curated.
+
+Unlike automatic recommendations, these relationships express deliberate intellectual connections.
+
+Examples:
+
+"This article expands upon..."
+
+"Read before this."
+
+"Continue with..."
+
+Readers should experience a guided learning path.
+
+---
+
+# Series Relationships
+
+Some content belongs to a sequence.
+
+Examples:
+
+Part 1
+
+↓
+
+Part 2
+
+↓
+
+Part 3
+
+Series relationships preserve reading order without requiring the content to become a Journey.
+
+---
+
+# Citation Relationships
+
+Articles may formally cite:
+
+* books;
+* research papers;
+* standards;
+* external websites;
+* other TWN publications.
+
+Citations differ from references.
+
+A citation supports factual claims.
+
+A reference simply points readers elsewhere.
+
+This distinction becomes increasingly important as TWN publishes more technical and research-oriented content.
+
+---
+
+# Author Relationships
+
+Content is created by authors.
+
+However, ownership and authorship should remain separate concepts.
+
+Examples:
+
+Original author.
+
+Guest contributor.
+
+Editor.
+
+Reviewer.
+
+Translator.
+
+Future collaborative workflows should distinguish these roles explicitly.
+
+---
+
+# Category Relationships
+
+Categories provide broad editorial organization.
+
+Every content item may belong to one or more categories.
+
+Categories answer:
+
+> "What broad subject is this about?"
+
+Examples:
+
+* Software Engineering
+* AI
+* Career
+* Leadership
+* Robotics
+
+Categories should remain relatively stable over time.
+
+---
+
+# Tag Relationships
+
+Tags provide fine-grained discovery.
+
+Unlike categories, tags evolve naturally as new topics emerge.
+
+Examples:
+
+* Next.js
+* React
+* Go
+* Docker
+* Kubernetes
+* OMLA
+* Wikimedia
+
+Tags improve search and navigation but should not replace categories.
+
+---
+
+# Journey Relationships
+
+Journeys introduce temporal relationships.
+
+Readers should understand:
+
+where a chapter belongs,
+
+what came before,
+
+what comes next,
+
+how the overall learning experience progresses.
+
+This transforms isolated publications into continuous narratives.
+
+---
+
+# Notebook Relationships
+
+Notebook Entries frequently become the seeds of future articles.
+
+The CMS should allow editors to express relationships such as:
+
+Notebook Entry
+
+↓
+
+Inspired
+
+↓
+
+Article
+
+This preserves the evolution of ideas.
+
+Readers interested in the writing process can explore both.
+
+---
+
+# Margin Note Relationships
+
+Margin Notes exist alongside longer publications.
+
+They may annotate:
+
+* Articles;
+* Notebook Entries;
+* Journey Chapters.
+
+Unlike comments, Margin Notes remain editorial rather than conversational.
+
+They represent the author's own annotations.
+
+---
+
+# Shared Page Relationships
+
+Shared Pages often aggregate knowledge rather than create new knowledge.
+
+Examples include:
+
+* curated learning resources;
+* reading lists;
+* tool collections;
+* recommended courses.
+
+Shared Pages therefore maintain many reference relationships while owning very little original content.
+
+---
+
+# Media Relationships
+
+Media relationships were introduced in Section 7.8.13.
+
+The Knowledge Graph extends those concepts.
+
+An image may support:
+
+multiple articles,
+
+multiple journeys,
+
+multiple notebook entries.
+
+The graph should represent these associations without duplicating media.
+
+---
+
+# External Relationships
+
+The CMS should support structured references to external resources.
+
+Examples:
+
+* GitHub repositories;
+* RFCs;
+* MDN documentation;
+* research papers;
+* official specifications.
+
+External resources enrich TWN without becoming part of its internal domain model.
+
+---
+
+# Relationship Direction
+
+Relationships should define direction explicitly.
+
+Example:
+
+```text id="relationshipdirection"
+Notebook Entry
+
+↓
+
+Inspired
+
+↓
+
+Article
+```
+
+This is not equivalent to:
+
+Article
+
+↓
+
+Inspired
+
+↓
+
+Notebook Entry
+
+Meaning depends on direction.
+
+---
+
+# Relationship Metadata
+
+Relationships may contain their own metadata.
+
+Examples:
+
+* creation date;
+* relationship type;
+* editorial notes;
+* confidence level;
+* ordering information.
+
+The relationship itself becomes a meaningful editorial asset.
+
+---
+
+# Broken Relationships
+
+Deleting content should not silently destroy knowledge.
+
+If a referenced resource disappears, the CMS should detect the broken relationship.
+
+Possible responses include:
+
+* warning editors;
+* suggesting replacements;
+* preserving historical references;
+* marking unresolved links.
+
+Readers should never encounter unexplained dead relationships.
+
+---
+
+# Relationship Discovery
+
+The CMS should eventually assist editors by suggesting possible relationships.
+
+Examples:
+
+"This article references concepts discussed in..."
+
+"This notebook entry appears related to..."
+
+Suggestions should remain advisory.
+
+Editors make the final decision.
+
+Editorial judgement always overrides automation.
+
+---
+
+# Knowledge Navigation
+
+Because relationships form a graph, readers should navigate knowledge naturally.
+
+Possible navigation experiences include:
+
+Related Reading
+
+Referenced By
+
+Journey Progress
+
+Inspired From
+
+Further Reading
+
+Continue Learning
+
+These experiences emerge from the architecture rather than being manually duplicated throughout the site.
+
+---
+
+# Future Knowledge Graph Capabilities
+
+The graph architecture enables future features including:
+
+* semantic search;
+* concept maps;
+* AI-assisted recommendations;
+* dependency visualization;
+* prerequisite learning paths;
+* automatic reading sequences;
+* topic exploration.
+
+The CMS should preserve sufficient structure today to support these capabilities tomorrow.
+
+---
+
+# Relationship Integrity
+
+The CMS should periodically verify:
+
+* invalid references;
+* orphaned entities;
+* duplicate relationships;
+* circular structures where inappropriate;
+* inconsistent relationship types.
+
+Relationship integrity contributes directly to editorial quality.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* treating relationships as simple hyperlinks;
+* automatically generating editorial relationships without review;
+* tightly coupling related content;
+* duplicating relationship information across multiple resources;
+* confusing categories with tags;
+* confusing citations with references;
+* using relationships solely for SEO purposes;
+* creating hidden dependencies between content domains.
+
+---
+
+# Architecture Decision Record — ADR 7.8.007
+
+## Title
+
+Represent TWN content as an interconnected knowledge graph rather than isolated publications.
+
+### Status
+
+Accepted.
+
+### Context
+
+The long-term vision of TWN is to become a learning platform where ideas evolve and connect over time.
+
+A traditional page-centric model cannot adequately express these intellectual relationships.
+
+### Decision
+
+All editorial relationships shall be represented explicitly within the CMS as structured graph relationships.
+
+These relationships remain independent of storage implementation and presentation while supporting future discovery, navigation and AI-assisted capabilities.
+
+### Consequences
+
+**Positive**
+
+* Richer reader experience.
+* Improved knowledge discovery.
+* Better editorial organization.
+* Strong foundation for semantic search.
+* Supports future AI capabilities.
+* Enables advanced navigation experiences.
+
+**Trade-offs**
+
+* More complex editorial tooling.
+* Additional relationship management.
+* Greater validation requirements.
+* Increased architectural complexity compared with traditional blogs.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* the knowledge graph philosophy is established;
+* relationship principles are documented;
+* all primary relationship types are defined;
+* relationship direction and metadata are addressed;
+* relationship integrity requirements are documented;
+* future knowledge graph capabilities are anticipated;
+* anti-patterns are identified;
+* the architectural decision is formally recorded.
+
+---
+
+# 7.8.15 Editorial Metadata Architecture
+
+---
+
+## Purpose
+
+Metadata is often treated as an afterthought.
+
+Many Content Management Systems expose metadata as a collection of miscellaneous fields placed somewhere near the bottom of an editor:
+
+* Title
+* Description
+* Slug
+* SEO
+* Keywords
+
+The result is predictable.
+
+Metadata becomes inconsistent.
+
+Fields are left empty.
+
+Search quality deteriorates.
+
+Content becomes difficult to organize.
+
+Future migrations become expensive.
+
+TWN rejects this approach.
+
+Metadata is **not supplementary information**.
+
+Metadata is the information that allows content to be understood, organized, discovered, governed, and reused.
+
+Without metadata, content becomes isolated text.
+
+With metadata, content becomes knowledge.
+
+---
+
+# Editorial Philosophy
+
+Every document tells two stories.
+
+The first is what the reader sees.
+
+The second is what the platform understands.
+
+Metadata represents the second story.
+
+Readers may never see it directly.
+
+Search engines depend on it.
+
+Recommendation systems depend on it.
+
+Publishing workflows depend on it.
+
+Analytics depend on it.
+
+Future AI capabilities depend on it.
+
+For TWN, metadata is treated as a first-class architectural concern.
+
+---
+
+# Metadata Principles
+
+The CMS adopts several principles governing metadata.
+
+## Principle 1 — Metadata Describes, It Does Not Decorate
+
+Metadata exists to describe a document.
+
+It should never be added purely for visual purposes.
+
+Every metadata field should answer a meaningful editorial or technical question.
+
+---
+
+## Principle 2 — Metadata Should Be Structured
+
+Metadata should never be stored as arbitrary text when its meaning can be expressed structurally.
+
+For example:
+
+Instead of:
+
+> "React, Next.js, JavaScript"
+
+store:
+
+* React
+* Next.js
+* JavaScript
+
+as independent entities.
+
+Structured metadata enables validation, discovery and future automation.
+
+---
+
+## Principle 3 — Metadata Belongs to the Document
+
+Metadata is part of the content.
+
+It should travel with the document regardless of:
+
+* frontend;
+* storage provider;
+* rendering platform;
+* export format.
+
+A document exported five years from now should still carry its metadata.
+
+---
+
+## Principle 4 — Metadata Evolves
+
+Metadata is not static.
+
+Categories change.
+
+Tags evolve.
+
+Reading time changes after edits.
+
+Canonical URLs may change.
+
+The architecture should support controlled evolution while preserving historical integrity where appropriate.
+
+---
+
+# Metadata Categories
+
+Editorial metadata can be divided into several conceptual groups.
+
+```text
+Editorial
+
+Publishing
+
+Discovery
+
+Classification
+
+Ownership
+
+Localization
+
+Governance
+
+Analytics
+
+AI
+```
+
+Each group serves a different architectural purpose.
+
+---
+
+# Editorial Metadata
+
+Editorial metadata describes the document itself.
+
+Examples include:
+
+* title;
+* subtitle;
+* summary;
+* excerpt;
+* featured media;
+* estimated reading time;
+* content type.
+
+This information helps both authors and readers understand what the document is about.
+
+---
+
+# Title
+
+Every editorial document should possess exactly one primary title.
+
+The title should satisfy several objectives.
+
+It should:
+
+* communicate purpose;
+* remain concise;
+* be human-readable;
+* support discovery.
+
+Titles are editorial assets.
+
+They should not function as technical identifiers.
+
+Changing a title should never affect document identity.
+
+---
+
+# Subtitle
+
+Subtitles provide additional context when the title alone is insufficient.
+
+They should complement the title rather than repeat it.
+
+Subtitles are optional.
+
+---
+
+# Summary
+
+Every major publication should contain a concise summary.
+
+The summary supports:
+
+* previews;
+* search;
+* newsletters;
+* recommendations;
+* social sharing.
+
+Summaries should be written for humans.
+
+Automatic summarization may assist authors in the future but should not replace editorial judgement.
+
+---
+
+# Excerpt
+
+An excerpt differs from a summary.
+
+A summary explains the document.
+
+An excerpt reproduces part of the document.
+
+The CMS should treat these as distinct concepts.
+
+---
+
+# Reading Time
+
+Estimated reading time is editorial metadata.
+
+It should be calculated automatically.
+
+Manual editing should rarely be necessary.
+
+Reading time assists readers in planning their reading experience.
+
+---
+
+# Publishing Metadata
+
+Publishing metadata describes the publication lifecycle.
+
+Examples include:
+
+* creation date;
+* publication date;
+* last modification;
+* scheduled publication;
+* archival date.
+
+These timestamps should remain immutable where appropriate.
+
+For example:
+
+Creation date should never change.
+
+Last modified should update automatically.
+
+---
+
+# Publication Status
+
+Publication status reflects workflow state.
+
+Examples include:
+
+* Draft;
+* Review;
+* Scheduled;
+* Published;
+* Archived.
+
+Workflow behaviour is defined in Section 7.8.10.
+
+Metadata simply records the current state.
+
+---
+
+# Visibility
+
+Visibility determines who may access the document.
+
+Potential values include:
+
+* Public;
+* Private;
+* Unlisted;
+* Members Only;
+* Future Subscription Tiers.
+
+Visibility should remain independent of publication status.
+
+A document may be:
+
+Published
+
+*
+
+Private.
+
+These concepts should never be conflated.
+
+---
+
+# Canonical URL
+
+Every published document should have one canonical public location.
+
+Canonical URLs support:
+
+* search engines;
+* citation;
+* duplicate prevention;
+* long-term stability.
+
+Changing URLs should be rare.
+
+When necessary, redirection strategies belong to the routing architecture.
+
+---
+
+# Slug
+
+A slug provides a human-readable URL component.
+
+For example:
+
+```
+understanding-react-server-components
+```
+
+The slug should prioritize readability over technical uniqueness.
+
+The document identifier remains the canonical identity.
+
+---
+
+# Classification Metadata
+
+Classification organizes knowledge.
+
+Primary classification mechanisms include:
+
+* categories;
+* tags;
+* journeys;
+* collections.
+
+These systems complement rather than replace one another.
+
+---
+
+# Categories
+
+Categories answer:
+
+> "Which broad area of knowledge does this belong to?"
+
+Examples include:
+
+* Software Engineering;
+* Career Development;
+* Robotics;
+* Artificial Intelligence.
+
+Categories should change infrequently.
+
+---
+
+# Tags
+
+Tags answer:
+
+> "Which specific topics are discussed?"
+
+Examples:
+
+* Go;
+* Docker;
+* PostgreSQL;
+* React;
+* Git.
+
+Tags evolve naturally as technology evolves.
+
+---
+
+# Collections
+
+Collections group documents around a shared editorial purpose.
+
+Examples:
+
+* Beginner Guides;
+* Staff Picks;
+* Learning Paths;
+* Recommended Reading.
+
+Collections differ from categories because membership is intentionally curated.
+
+---
+
+# Journey Association
+
+Metadata should indicate whether a document belongs to a Journey.
+
+If so, additional information may include:
+
+* Journey identifier;
+* chapter order;
+* progression status.
+
+Journey behaviour itself belongs to the Journey domain.
+
+---
+
+# Ownership Metadata
+
+Ownership metadata records responsibility.
+
+Examples include:
+
+* original author;
+* editor;
+* reviewer;
+* translator;
+* contributor.
+
+Future collaborative workflows depend upon explicit ownership metadata.
+
+---
+
+# Localization Metadata
+
+The architecture should anticipate multilingual publishing.
+
+Localization metadata may include:
+
+* language;
+* translation status;
+* source language;
+* translated from;
+* regional variants.
+
+This enables TWN to expand internationally without redesigning its content model.
+
+---
+
+# Governance Metadata
+
+Governance metadata supports editorial management.
+
+Examples include:
+
+* review status;
+* policy compliance;
+* moderation notes;
+* copyright verification;
+* legal review.
+
+Readers rarely see this information.
+
+Editors rely on it extensively.
+
+---
+
+# Analytics Metadata
+
+Analytics should never modify editorial content.
+
+Instead, the CMS should maintain metadata supporting future analytics integration.
+
+Examples:
+
+* publication channel;
+* campaign association;
+* experiment identifiers;
+* recommendation source.
+
+Actual analytics implementation belongs to Volume 15.
+
+---
+
+# AI Metadata
+
+Future AI systems require additional structured context.
+
+Potential metadata includes:
+
+* difficulty level;
+* prerequisite knowledge;
+* intended audience;
+* learning objectives;
+* concept relationships;
+* educational outcomes.
+
+This information improves:
+
+* recommendation quality;
+* summarization;
+* tutoring;
+* semantic search.
+
+AI metadata should remain optional until supported by mature editorial workflows.
+
+---
+
+# Metadata Validation
+
+Metadata should be validated according to its purpose.
+
+Examples:
+
+Title:
+
+* required.
+
+Language:
+
+* supported value.
+
+Slug:
+
+* valid format.
+
+Canonical URL:
+
+* unique.
+
+Categories:
+
+* existing entity.
+
+Validation improves consistency without reducing editorial flexibility.
+
+---
+
+# Metadata Inheritance
+
+Some metadata may be inherited.
+
+For example:
+
+Journey
+
+↓
+
+Default Language
+
+↓
+
+Journey Chapters
+
+However, inherited metadata should remain overridable where editorially appropriate.
+
+Inheritance exists to reduce repetitive work, not to remove editorial control.
+
+---
+
+# Metadata Versioning
+
+Metadata evolves alongside content.
+
+Changes such as:
+
+* title updates;
+* category changes;
+* publication dates;
+* featured media replacement;
+
+should participate in revision history where they materially affect the document.
+
+Metadata is part of the editorial record.
+
+---
+
+# Metadata Extensibility
+
+The metadata model should support future expansion without breaking existing documents.
+
+Examples:
+
+* sponsorship metadata;
+* educational standards;
+* accessibility scores;
+* citation quality metrics;
+* sustainability classifications.
+
+New metadata should integrate through structured extension mechanisms rather than ad hoc fields.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* treating metadata as optional decoration;
+* storing structured concepts as free text;
+* coupling metadata to frontend implementation;
+* using titles as document identifiers;
+* duplicating metadata across unrelated systems;
+* exposing internal governance metadata publicly by default;
+* adding metadata fields without a defined editorial purpose;
+* relying on SEO plugins to define metadata architecture.
+
+---
+
+# Architecture Decision Record — ADR 7.8.008
+
+## Title
+
+Treat editorial metadata as a first-class architectural domain.
+
+### Status
+
+Accepted.
+
+### Context
+
+Metadata underpins discovery, governance, publishing, accessibility, analytics and future AI capabilities.
+
+Treating metadata as miscellaneous document fields leads to inconsistency and limits platform evolution.
+
+### Decision
+
+All editorial metadata shall be modeled as structured, validated, extensible information independent of presentation, storage implementation and rendering technologies.
+
+Metadata shall evolve alongside editorial content while preserving historical integrity where appropriate.
+
+### Consequences
+
+**Positive**
+
+* Improved discoverability.
+* Better editorial governance.
+* Enhanced interoperability.
+* Strong foundation for multilingual publishing.
+* AI-ready content model.
+* Consistent platform-wide organization.
+
+**Trade-offs**
+
+* Increased editorial responsibility.
+* More validation rules.
+* Larger metadata model.
+* Additional migration considerations for future changes.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* metadata philosophy is established;
+* metadata categories are defined;
+* editorial, publishing, classification, governance and AI metadata are documented;
+* validation, inheritance and versioning principles are established;
+* extensibility requirements are defined;
+* anti-patterns are identified;
+* the architectural decision is formally recorded.
+
+---
+
+The earlier sections were architectural synthesis based on established CMS and software-design patterns; I was not performing live research for each section. For this continuation, I reviewed official WordPress, Strapi, Contentful, and OWASP documentation to pressure-test the extension model. The important lesson is that extensibility is valuable, but unrestricted plugins create coupling, compatibility, security, and supply-chain risks. TWN should therefore begin with **controlled internal modules**, not an open public plugin marketplace. ([WordPress Developer Resources][1])
+
+# 7.8.16 CMS Extension and Plugin Architecture
+
+---
+
+## Purpose
+
+TWN will evolve.
+
+New editorial needs will emerge.
+
+New content blocks will be introduced.
+
+External services may need to be integrated.
+
+Editorial teams may eventually require capabilities that were not anticipated during the platform's initial development.
+
+A rigid CMS would force every new capability into the core application.
+
+An unrestricted plugin system, however, would introduce a different category of problems:
+
+* unpredictable behaviour;
+* security vulnerabilities;
+* dependency conflicts;
+* performance degradation;
+* abandoned extensions;
+* incompatible upgrades;
+* unclear ownership.
+
+The purpose of the CMS Extension and Plugin Architecture is to allow TWN to evolve without allowing extensions to erode the integrity of the core platform.
+
+The architecture therefore balances two requirements:
+
+1. The CMS must remain extensible.
+2. The CMS core must remain authoritative and stable.
+
+---
+
+# Architectural Position
+
+TWN should not begin as an open plugin ecosystem.
+
+Its initial extension model should support:
+
+* first-party modules;
+* explicitly approved integrations;
+* controlled editor extensions;
+* registered block types;
+* internal lifecycle hooks;
+* feature packages maintained with the platform.
+
+A public marketplace may be considered only after TWN possesses mature:
+
+* permission isolation;
+* extension governance;
+* compatibility testing;
+* dependency monitoring;
+* recovery mechanisms;
+* security review processes.
+
+This is intentionally more conservative than ecosystems where arbitrary plugins execute inside the main application runtime.
+
+WordPress demonstrates the power of predefined hooks for extension, while Strapi exposes formal server extension surfaces such as lifecycle hooks, routes, controllers, services, and policies. Contentful similarly limits applications to recognized installation definitions and UI locations. These systems reinforce the value of explicit extension points rather than informal modification of core code. ([WordPress Developer Resources][1])
+
+---
+
+# Core Principle
+
+> Extensions may add capabilities, but they must not redefine the fundamental meaning of the CMS.
+
+An extension may:
+
+* register a block;
+* add a validation rule;
+* respond to an editorial event;
+* contribute an editor panel;
+* connect an approved external service;
+* add an export format.
+
+An extension must not:
+
+* bypass workflow rules;
+* weaken permissions;
+* rewrite document identity;
+* modify historical revisions;
+* publish content without authorization;
+* directly alter another extension's private state;
+* replace foundational domain rules.
+
+---
+
+# Extension Architecture Overview
+
+```text
+                       TWN CMS Core
+                            │
+          ┌─────────────────┼─────────────────┐
+          │                 │                 │
+          ▼                 ▼                 ▼
+    Domain Services   Extension Registry   Event System
+          │                 │                 │
+          └─────────────────┼─────────────────┘
+                            │
+         ┌──────────────────┼──────────────────┐
+         │                  │                  │
+         ▼                  ▼                  ▼
+   Editor Extensions   Content Extensions   Integrations
+         │                  │                  │
+         ▼                  ▼                  ▼
+   Panels and Tools    Blocks and Rules   External Services
+```
+
+All extensions interact with the core through published contracts.
+
+They should never depend on undocumented implementation details.
+
+---
+
+# Extension Categories
+
+The CMS recognises several extension categories.
+
+Each category has different responsibilities and risk levels.
+
+---
+
+## Core Modules
+
+Core modules provide foundational TWN capabilities.
+
+Examples include:
+
+* editorial workflow;
+* revisions;
+* media management;
+* metadata;
+* relationships;
+* authentication integration;
+* publication orchestration.
+
+Core modules are not optional plugins.
+
+They form part of the trusted platform boundary.
+
+Their interfaces may be modular internally, but disabling them must not leave the CMS in an invalid state.
+
+---
+
+## First-Party Feature Modules
+
+First-party feature modules add capabilities maintained by the TWN project.
+
+Examples may include:
+
+* newsletter publishing;
+* journey progression tools;
+* citation management;
+* editorial analytics;
+* translation workflows;
+* AI-assisted drafting;
+* moderation queues.
+
+These modules are optional from a product perspective but trusted from an architectural perspective.
+
+They should follow the same contracts imposed on future third-party extensions.
+
+The core team should not use privileged shortcuts merely because it owns the module.
+
+---
+
+## Editor Extensions
+
+Editor extensions enhance the author's workspace.
+
+Examples include:
+
+* sidebar panels;
+* metadata inspectors;
+* citation pickers;
+* media browsers;
+* readability feedback;
+* link validation tools;
+* preview controls.
+
+Contentful's App Framework illustrates the value of explicit UI extension locations such as entry editors, fields, sidebars, dialogs, pages, and home views. TWN should similarly define approved editor surfaces rather than allowing extensions to manipulate arbitrary interface regions. ([contentful.com][2])
+
+---
+
+## Block Extensions
+
+Block extensions register new semantic content blocks.
+
+Examples may include:
+
+* diagrams;
+* timelines;
+* quizzes;
+* mathematical expressions;
+* code playgrounds;
+* comparison cards;
+* interactive demonstrations.
+
+Every block extension must provide a complete architectural contract.
+
+That contract should describe:
+
+* block type identity;
+* data schema;
+* validation rules;
+* editor representation;
+* read-only rendering contract;
+* accessibility requirements;
+* migration policy;
+* export behaviour;
+* unsupported-client fallback.
+
+A block extension is not complete merely because it renders correctly in the editor.
+
+It must remain interpretable throughout the content lifecycle.
+
+---
+
+## Workflow Extensions
+
+Workflow extensions add approved behaviour around editorial transitions.
+
+Examples include:
+
+* requiring legal review for sponsored content;
+* requesting translation review;
+* notifying an editor after submission;
+* initiating a publication checklist.
+
+Workflow extensions must not invent arbitrary hidden states.
+
+They may contribute requirements or actions to the established state machine, but the core workflow engine remains authoritative.
+
+---
+
+## Validation Extensions
+
+Validation extensions evaluate content or metadata.
+
+Examples include:
+
+* broken-link detection;
+* required citation checks;
+* accessibility checks;
+* licensing verification;
+* language-specific rules.
+
+Validation results should distinguish between:
+
+* error;
+* warning;
+* recommendation;
+* informational notice.
+
+Extensions must not present subjective advice as a mandatory system failure unless platform policy explicitly authorizes that rule.
+
+---
+
+## Integration Extensions
+
+Integration extensions connect TWN to external systems.
+
+Examples include:
+
+* email providers;
+* analytics platforms;
+* search services;
+* storage providers;
+* social publishing services;
+* translation platforms;
+* AI providers.
+
+Integration extensions should operate through anti-corruption layers.
+
+The CMS domain must not adopt an external provider's vocabulary as its own.
+
+For example:
+
+```text
+CMS Publication Event
+          │
+          ▼
+Newsletter Integration Adapter
+          │
+          ▼
+External Email Provider
+```
+
+The CMS understands publication.
+
+The adapter understands the provider's API.
+
+---
+
+## Import and Export Extensions
+
+Import and export extensions translate between the canonical TWN content model and external formats.
+
+Potential formats include:
+
+* Markdown;
+* HTML;
+* JSON;
+* RSS;
+* PDF;
+* EPUB;
+* external CMS exports.
+
+Importers must convert external content into validated TWN domains.
+
+They must not create a permanent second source of truth.
+
+Exporters must never mutate the canonical document.
+
+---
+
+# Extension Registry
+
+Every extension should be registered before it becomes active.
+
+The registry is the authoritative catalogue of extension capabilities.
+
+A registration record should conceptually include:
+
+* unique extension identifier;
+* human-readable name;
+* version;
+* provider;
+* extension category;
+* required CMS compatibility range;
+* declared capabilities;
+* required permissions;
+* dependencies;
+* configuration schema;
+* migration information;
+* lifecycle entry points;
+* status;
+* integrity information.
+
+The registry prevents invisible functionality from entering the application.
+
+---
+
+# Extension Manifest
+
+Each extension should provide a declarative manifest.
+
+The manifest describes what the extension intends to do before its code is executed.
+
+Conceptually:
+
+```text
+Extension Manifest
+
+├── Identity
+├── Version
+├── Compatibility
+├── Capabilities
+├── Permissions
+├── Dependencies
+├── Configuration
+├── UI Locations
+├── Event Subscriptions
+├── Data Ownership
+└── Migration Requirements
+```
+
+A manifest allows the platform to:
+
+* validate compatibility;
+* request administrative approval;
+* display permissions;
+* detect conflicts;
+* plan upgrades;
+* disable unsupported extensions.
+
+The manifest is an architectural contract, not merely package metadata.
+
+---
+
+# Capability-Based Access
+
+Extensions should receive only the capabilities they require.
+
+An image optimization extension may need:
+
+* read access to media metadata;
+* access to source image content;
+* permission to create derivatives.
+
+It should not automatically receive:
+
+* publication permissions;
+* user management access;
+* draft deletion rights;
+* unrestricted database access.
+
+This is the principle of least privilege applied to CMS extensibility.
+
+---
+
+# Extension Permissions
+
+Permissions should be explicit and understandable.
+
+Examples include:
+
+* read editorial content;
+* modify draft metadata;
+* register blocks;
+* listen to publication events;
+* request media processing;
+* create notifications;
+* call approved external services.
+
+Permissions should be evaluated at runtime.
+
+Declaring a capability in a manifest does not guarantee that it will be granted.
+
+---
+
+# No Direct Database Access
+
+Extensions must not access the CMS database directly.
+
+Direct access would allow an extension to:
+
+* bypass validation;
+* corrupt revision history;
+* create invalid relationships;
+* ignore permissions;
+* depend on private schemas.
+
+Instead, extensions interact through domain services or approved APIs.
+
+```text
+Extension
+    │
+    ▼
+Approved CMS Contract
+    │
+    ▼
+Domain Service
+    │
+    ▼
+Persistence Layer
+```
+
+This boundary allows the database architecture to evolve without breaking extensions.
+
+---
+
+# Extension Points
+
+An extension point is a predefined location where additional behaviour may be attached.
+
+TWN should maintain a deliberately small, documented set of extension points.
+
+Potential extension points include:
+
+* editor initialization;
+* block registration;
+* metadata registration;
+* draft validation;
+* review request;
+* pre-publication validation;
+* post-publication event;
+* archival event;
+* media processing completion;
+* export request;
+* administrative dashboard contribution.
+
+WordPress hooks demonstrate how predefined interaction points can decouple extensions from core code, but TWN should avoid exposing an unlimited number of unstable internal events. Every public extension point becomes a compatibility commitment. ([WordPress Developer Resources][1])
+
+---
+
+# Commands, Queries and Events
+
+Extension interactions should distinguish among three concepts.
+
+## Commands
+
+A command requests that the CMS perform an action.
+
+Examples:
+
+* validate this document;
+* create a media derivative;
+* schedule this publication;
+* export this article.
+
+A command may succeed or fail.
+
+---
+
+## Queries
+
+A query requests information without changing state.
+
+Examples:
+
+* retrieve document metadata;
+* list active categories;
+* inspect current workflow state.
+
+Queries must not create side effects.
+
+---
+
+## Events
+
+An event announces that something has already happened.
+
+Examples:
+
+* draft saved;
+* review requested;
+* content published;
+* media processed.
+
+An event is not a command.
+
+Extensions may react to events, but they should not reinterpret history.
+
+---
+
+# Synchronous and Asynchronous Extensions
+
+Some extension behaviour must complete immediately.
+
+Other behaviour should occur asynchronously.
+
+## Appropriate Synchronous Behaviour
+
+* validating a required field;
+* rendering an editor panel;
+* checking a local block schema;
+* evaluating a permission.
+
+## Appropriate Asynchronous Behaviour
+
+* sending newsletters;
+* generating media derivatives;
+* notifying external services;
+* computing embeddings;
+* producing exports;
+* performing large link checks.
+
+Long-running extension work should not block the editorial interface or publication transaction unless its result is explicitly required for publication safety.
+
+Queue and background-processing architecture is defined in **Section 7.12**.
+
+---
+
+# Publication Safety Boundary
+
+Publication is a high-integrity operation.
+
+Extensions may contribute pre-publication validations, but the core publication service makes the final decision.
+
+The publication transaction should not depend blindly on arbitrary extension code.
+
+A failing optional extension must not necessarily prevent publication.
+
+Each publication hook should therefore be classified as:
+
+* mandatory;
+* advisory;
+* post-publication;
+* retryable;
+* non-blocking.
+
+Example:
+
+```text
+Publish Request
+      │
+      ▼
+Core Validation
+      │
+      ├── Mandatory Extension Checks
+      │
+      ├── Advisory Extension Checks
+      │
+      ▼
+Core Publication Transaction
+      │
+      ▼
+Publication Event
+      │
+      └── Non-Blocking Extension Reactions
+```
+
+---
+
+# Extension Failure Isolation
+
+One failing extension should not crash the entire CMS.
+
+The platform should contain failures through:
+
+* timeouts;
+* error boundaries;
+* retry policies;
+* circuit breakers where appropriate;
+* isolated background jobs;
+* structured error reporting;
+* automatic disabling after repeated critical failures.
+
+Failure policy should depend on the extension's role.
+
+A failed readability suggestion is inconvenient.
+
+A failed permissions module is security-critical.
+
+These failures cannot be treated equally.
+
+---
+
+# Extension Health
+
+The CMS should maintain visibility into extension health.
+
+Relevant signals include:
+
+* activation status;
+* compatibility state;
+* recent failures;
+* execution duration;
+* pending migrations;
+* permission changes;
+* unavailable dependencies;
+* deprecated APIs.
+
+An administrator should be able to determine whether an extension is:
+
+* healthy;
+* degraded;
+* incompatible;
+* disabled;
+* awaiting configuration.
+
+---
+
+# Extension Lifecycle
+
+Every extension follows a controlled lifecycle.
+
+```text
+Discovered
+    │
+    ▼
+Validated
+    │
+    ▼
+Approved
+    │
+    ▼
+Installed
+    │
+    ▼
+Configured
+    │
+    ▼
+Activated
+    │
+    ▼
+Updated
+    │
+    ▼
+Disabled
+    │
+    ▼
+Uninstalled
+```
+
+Each transition should be explicit.
+
+---
+
+# Installation
+
+Installation makes extension code and metadata available.
+
+It should not automatically grant permissions or activate behaviour.
+
+The platform should validate:
+
+* package integrity;
+* manifest validity;
+* compatibility;
+* dependency constraints;
+* required migrations;
+* prohibited capabilities.
+
+---
+
+# Activation
+
+Activation enables the extension.
+
+Before activation, the system should confirm:
+
+* required configuration exists;
+* permissions are approved;
+* migrations succeeded;
+* dependencies are active;
+* compatibility constraints are satisfied.
+
+WordPress formally distinguishes activation, deactivation, and uninstall lifecycle hooks. TWN should preserve the same conceptual separation while preventing extensions from performing uncontrolled setup operations. ([WordPress Developer Resources][3])
+
+---
+
+# Deactivation
+
+Deactivation stops extension behaviour without deleting its data.
+
+This provides a safe diagnostic and recovery mechanism.
+
+Disabling an extension should not make unrelated content unreadable.
+
+For block extensions, the CMS must retain a fallback representation so documents remain accessible even when the original editing extension is unavailable.
+
+---
+
+# Uninstallation
+
+Uninstallation removes an extension from the active platform.
+
+It must not automatically destroy extension-owned content.
+
+Before removal, the CMS should determine:
+
+* whether content depends on the extension;
+* whether data export is required;
+* whether replacement blocks exist;
+* whether configuration should be retained;
+* whether cleanup is reversible.
+
+Destructive cleanup should require explicit confirmation.
+
+---
+
+# Extension-Owned Data
+
+Extensions may require their own state.
+
+Examples include:
+
+* integration credentials;
+* processing status;
+* cached external identifiers;
+* extension-specific settings.
+
+Extension-owned state must remain separated from core domain state.
+
+An extension must not insert arbitrary fields into foundational entities.
+
+Instead, it may associate namespaced data through approved extension storage contracts.
+
+---
+
+# Data Portability
+
+Extension data should remain exportable.
+
+The platform should avoid creating content that becomes permanently inaccessible when an extension is removed.
+
+For every extension-owned content structure, the architecture should define:
+
+* canonical meaning;
+* fallback form;
+* export format;
+* migration path;
+* deletion policy.
+
+---
+
+# Block Extension Fallbacks
+
+A document must remain readable even when a custom block renderer is unavailable.
+
+Every block extension should define at least one fallback:
+
+* plain text;
+* static HTML;
+* image representation;
+* downloadable source;
+* unsupported-block notice with preserved data.
+
+The fallback should preserve meaning, even when interactivity is lost.
+
+Example:
+
+```text
+Interactive Code Playground
+            │
+            ▼
+Unsupported Environment
+            │
+            ▼
+Static Code Block + Explanation
+```
+
+---
+
+# Version Compatibility
+
+Extensions should declare the range of CMS contract versions they support.
+
+Compatibility must be based on public extension contracts rather than application release numbers alone.
+
+The platform should distinguish:
+
+* compatible;
+* compatible with warnings;
+* deprecated;
+* incompatible;
+* unverified.
+
+An incompatible extension should not be activated automatically.
+
+---
+
+# Semantic Versioning
+
+Published extension contracts should follow predictable versioning.
+
+Conceptually:
+
+* patch changes preserve behaviour;
+* minor changes add backward-compatible capabilities;
+* major changes may break compatibility.
+
+The exact versioning policy belongs to engineering governance, but the architectural requirement is clear:
+
+> Extension compatibility must be explicit and machine-evaluable.
+
+---
+
+# Contract Deprecation
+
+Public extension contracts cannot remain unchanged forever.
+
+The CMS should support staged deprecation.
+
+```text
+Active Contract
+      │
+      ▼
+Deprecated with Replacement
+      │
+      ▼
+Warning Period
+      │
+      ▼
+Migration Window
+      │
+      ▼
+Removal in Major Version
+```
+
+Deprecation notices should include:
+
+* affected capability;
+* replacement contract;
+* migration guidance;
+* removal target;
+* compatibility impact.
+
+---
+
+# Extension Migrations
+
+Extensions may need to migrate their own data.
+
+Migration execution must be:
+
+* versioned;
+* ordered;
+* observable;
+* retryable where safe;
+* reversible where practical;
+* isolated from unrelated extension data.
+
+An extension migration must not rewrite core CMS schemas without an approved platform migration.
+
+---
+
+# Configuration Architecture
+
+Extensions should declare structured configuration schemas.
+
+Configuration may include:
+
+* enabled capabilities;
+* provider credentials;
+* editorial defaults;
+* feature toggles;
+* environment-specific settings.
+
+Configuration should be validated before activation.
+
+Secrets must never be stored in ordinary editorial content or exposed to client-side editor extensions.
+
+---
+
+# External Network Access
+
+Extensions should not receive unrestricted outbound network access by default.
+
+Integration extensions should declare:
+
+* target services;
+* required endpoints;
+* data transmitted;
+* authentication method;
+* retry behaviour;
+* failure policy.
+
+This enables governance and privacy review.
+
+---
+
+# Security Boundary
+
+Extensions are executable dependencies.
+
+They therefore expand the platform's attack surface.
+
+The architecture must assume that an extension may be:
+
+* vulnerable;
+* compromised;
+* abandoned;
+* misconfigured;
+* overly permissive;
+* malicious.
+
+OWASP identifies known vulnerabilities, outdated or unmaintained software, untracked dependencies, and licence risk among major open-source software risks. OWASP's 2025 guidance also recommends acquiring components from trusted sources, monitoring vulnerabilities, and using software composition or SBOM-based controls. ([owasp.org][4])
+
+---
+
+# Extension Security Requirements
+
+Every installable extension should be subject to controls such as:
+
+* trusted source verification;
+* integrity verification;
+* dependency scanning;
+* static analysis;
+* permission review;
+* secret detection;
+* vulnerability monitoring;
+* licence review;
+* update provenance;
+* audit logging.
+
+Security approval should be renewed when an extension requests new permissions.
+
+---
+
+# Software Bill of Materials
+
+The platform should maintain visibility into extension dependencies.
+
+An SBOM or equivalent component inventory should identify:
+
+* direct dependencies;
+* transitive dependencies;
+* versions;
+* licences;
+* known vulnerabilities.
+
+This capability is particularly important because an apparently simple extension may introduce a large dependency tree.
+
+---
+
+# Extension Trust Levels
+
+Not every extension should receive the same level of trust.
+
+A possible trust model includes:
+
+## Core Trusted
+
+Maintained as part of the platform.
+
+## First-Party Approved
+
+Maintained by TWN but independently deployable.
+
+## Partner Approved
+
+Externally maintained but formally reviewed.
+
+## Experimental
+
+Enabled only in controlled environments.
+
+## Untrusted
+
+Not eligible for installation.
+
+Trust level should influence:
+
+* available permissions;
+* review requirements;
+* update policy;
+* runtime isolation;
+* production eligibility.
+
+---
+
+# Public Marketplace Position
+
+TWN should not establish a public plugin marketplace during its initial architecture stages.
+
+A marketplace would require capabilities beyond extension loading, including:
+
+* publisher verification;
+* package signing;
+* malware review;
+* vulnerability response;
+* licence enforcement;
+* compatibility testing;
+* dispute handling;
+* abuse reporting;
+* abandoned-plugin policy;
+* emergency revocation.
+
+Without these controls, a marketplace would shift unacceptable risk onto TWN authors and readers.
+
+---
+
+# Build-Time Versus Runtime Extensions
+
+The platform should distinguish between extensions bundled during deployment and extensions loaded dynamically at runtime.
+
+## Build-Time Extensions
+
+Advantages:
+
+* simpler security model;
+* predictable dependency graph;
+* stronger type validation;
+* easier testing;
+* controlled deployment.
+
+Disadvantages:
+
+* deployment required for changes;
+* less flexible installation.
+
+## Runtime Extensions
+
+Advantages:
+
+* independent activation;
+* faster integration;
+* greater ecosystem flexibility.
+
+Disadvantages:
+
+* larger attack surface;
+* more complex isolation;
+* compatibility uncertainty;
+* operational complexity.
+
+TWN should favour **build-time or deployment-time extensions initially**.
+
+Dynamic runtime plugins should be introduced only when platform isolation and governance justify the additional complexity.
+
+---
+
+# Extension Testing
+
+Every extension should be tested at several levels.
+
+## Contract Tests
+
+Confirm that the extension complies with public CMS contracts.
+
+## Compatibility Tests
+
+Confirm supported CMS versions and environments.
+
+## Integration Tests
+
+Confirm correct interaction with CMS workflows.
+
+## Failure Tests
+
+Confirm graceful behaviour when dependencies fail.
+
+## Migration Tests
+
+Confirm data upgrades and rollback behaviour.
+
+## Security Tests
+
+Evaluate permissions, dependencies and unsafe input handling.
+
+An extension should not be considered production-ready merely because its main feature works.
+
+---
+
+# Extension Observability
+
+Extension activity should be observable without exposing sensitive editorial content.
+
+The platform should capture:
+
+* extension identity;
+* operation type;
+* execution time;
+* outcome;
+* error classification;
+* correlation identifier;
+* retry count.
+
+Observability must enable diagnosis while respecting privacy and secret-handling rules.
+
+---
+
+# Performance Budgets
+
+Extensions should operate within defined performance budgets.
+
+Potential controls include:
+
+* maximum synchronous execution time;
+* memory constraints;
+* API-call limits;
+* background-job concurrency;
+* editor bundle-size thresholds;
+* rate limits.
+
+An extension should not degrade the authoring experience for the entire CMS.
+
+---
+
+# Extension Conflict Management
+
+Two extensions may attempt to contribute incompatible behaviour.
+
+Examples include:
+
+* registering the same block identifier;
+* controlling the same editor location;
+* defining contradictory validation rules;
+* subscribing to the same event with incompatible assumptions.
+
+The registry should detect obvious conflicts during activation.
+
+Conflict resolution should prioritize:
+
+1. core invariants;
+2. explicit platform policy;
+3. trust level;
+4. administrator choice.
+
+Activation should fail safely when a conflict cannot be resolved.
+
+---
+
+# Feature Flags and Experimental Extensions
+
+Experimental capabilities should be introduced through feature flags rather than permanent core changes.
+
+Feature flags allow TWN to:
+
+* test new editor tools;
+* limit access to selected users;
+* compare alternative workflows;
+* disable unstable functionality;
+* collect operational evidence.
+
+A feature flag is not a substitute for extension contracts.
+
+It controls availability, not architecture.
+
+---
+
+# Extension Governance
+
+Every extension requires an accountable owner.
+
+Governance metadata should identify:
+
+* maintainer;
+* repository;
+* support status;
+* last reviewed date;
+* security contact;
+* licence;
+* deprecation status;
+* replacement plan.
+
+Extensions without active ownership should be considered operational risks.
+
+---
+
+# Decision Framework for New Extensions
+
+Before creating an extension, the platform should ask:
+
+1. Is this capability part of the essential CMS domain?
+2. Is it optional for most installations?
+3. Does it require independent release cycles?
+4. Does it depend on an external provider?
+5. Can it operate through existing contracts?
+6. What happens when it fails?
+7. What happens when it is removed?
+8. Who owns its maintenance?
+9. What permissions does it require?
+10. Can its data be exported or migrated?
+
+Not every feature should become a plugin.
+
+Excessive modularity can be as damaging as excessive centralization.
+
+---
+
+# When a Capability Belongs in Core
+
+A capability belongs in the CMS core when removing it would undermine fundamental platform integrity.
+
+Examples include:
+
+* document identity;
+* authorization enforcement;
+* revision preservation;
+* workflow state integrity;
+* canonical content validation;
+* publication transactions;
+* audit foundations.
+
+These responsibilities must not depend on optional extensions.
+
+---
+
+# When a Capability Belongs in an Extension
+
+A capability is a good extension candidate when it:
+
+* serves a specialized workflow;
+* depends on an external service;
+* changes independently of the CMS core;
+* can fail without corrupting content;
+* can be disabled without breaking foundational behaviour;
+* communicates through stable contracts.
+
+---
+
+# Anti-Patterns
+
+The CMS must avoid:
+
+* allowing extensions to modify core database tables directly;
+* exposing undocumented internal APIs;
+* loading arbitrary code from unknown sources;
+* granting all permissions by default;
+* treating every feature as a plugin;
+* allowing extensions to bypass publication rules;
+* permitting custom blocks without fallback representations;
+* executing long-running extension logic synchronously;
+* deleting extension data automatically during deactivation;
+* activating incompatible extensions;
+* trusting package popularity as a security guarantee;
+* allowing abandoned extensions to remain indefinitely in production;
+* introducing a marketplace before governance exists;
+* coupling foundational CMS behaviour to external providers.
+
+---
+
+# Architecture Decision Record — ADR 7.8.009
+
+## Title
+
+Adopt a controlled, contract-based extension architecture rather than an unrestricted plugin ecosystem.
+
+### Status
+
+Accepted.
+
+### Context
+
+TWN requires long-term extensibility for editor tools, blocks, integrations, validation, workflows, imports, and exports.
+
+An unrestricted plugin model would allow rapid expansion but would also introduce significant security, compatibility, performance, maintenance, and governance risks.
+
+The initial TWN platform has neither the need nor the operational maturity required to support arbitrary third-party runtime plugins safely.
+
+### Decision
+
+TWN shall provide documented extension contracts through:
+
+* a central extension registry;
+* declarative manifests;
+* explicit extension points;
+* capability-based permissions;
+* domain service APIs;
+* editor locations;
+* block registration contracts;
+* commands, queries, and events;
+* controlled lifecycle management.
+
+Initial extensions shall be first-party, build-time, or deployment-time modules.
+
+Extensions shall not receive direct database access, unrestricted permissions, or authority over core domain invariants.
+
+A public plugin marketplace and arbitrary runtime plugin loading are deferred until security isolation, compatibility testing, package governance, and emergency revocation capabilities exist.
+
+### Consequences
+
+**Positive**
+
+* Core CMS integrity remains protected.
+* Extension behaviour becomes inspectable.
+* Compatibility can be evaluated before activation.
+* Permissions can follow least-privilege principles.
+* External integrations remain isolated from the domain.
+* Extensions can evolve without requiring permanent core coupling.
+* Future ecosystem growth remains possible.
+
+**Trade-offs**
+
+* Extension development requires stricter contracts.
+* Initial installation flexibility is lower.
+* Some changes require a new deployment.
+* The platform team must maintain extension APIs.
+* Deprecation and compatibility policies create governance work.
+* Public community extensions cannot be accepted casually.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* extension categories are distinguished;
+* core and optional responsibilities are separated;
+* the extension registry and manifest are defined;
+* capability-based permissions are established;
+* direct database access is prohibited;
+* commands, queries, events, and extension points are differentiated;
+* installation, activation, deactivation, and removal are documented;
+* extension-owned data and fallback behaviour are defined;
+* compatibility, versioning, and deprecation are addressed;
+* security and supply-chain controls are established;
+* build-time and runtime extension models are compared;
+* extension testing, health, observability, and governance are included;
+* public marketplace support is intentionally deferred;
+* anti-patterns are documented;
+* the architectural decision is formally recorded.
+
+---
+
+## End of 7.8.16
+
+# 7.8.17 Preview Architecture
+
+---
+
+## Purpose
+
+Authors must be able to understand how content will appear before it becomes public.
+
+A preview system seems simple when described as:
+
+> Show the unpublished article using the public layout.
+
+In practice, preview architecture crosses several sensitive boundaries:
+
+* unpublished content access;
+* authentication;
+* frontend rendering;
+* draft revisions;
+* media availability;
+* URL generation;
+* caching;
+* device simulation;
+* scheduled content;
+* external sharing.
+
+A poorly designed preview system may expose private drafts, display stale content, or differ significantly from the eventual published result.
+
+The purpose of Preview Architecture is to ensure that authors can inspect an accurate representation of content without weakening publication security.
+
+---
+
+# Preview Principle
+
+> Preview should use the real rendering pipeline with controlled access to unpublished data.
+
+The CMS should avoid maintaining a separate approximation of the public page.
+
+A separate preview renderer will eventually drift from production.
+
+Instead, preview and publication should share:
+
+* document transformation;
+* block rendering;
+* design-system components;
+* metadata interpretation;
+* media handling;
+* accessibility semantics.
+
+The difference lies primarily in data access and caching policy.
+
+---
+
+# Preview Context
+
+```text
+Author
+   │
+   ▼
+CMS Editor
+   │
+   ▼
+Preview Request
+   │
+   ├── Authorize
+   ├── Resolve Draft Revision
+   ├── Generate Preview Context
+   ▼
+Public Rendering Application
+   │
+   ▼
+Protected Preview Response
+```
+
+The public application may render the page, but it must not gain unrestricted access to all drafts.
+
+---
+
+# Preview Subject
+
+A preview should identify exactly what is being previewed.
+
+The subject includes:
+
+* content identity;
+* revision identity;
+* locale;
+* rendering channel;
+* device mode where relevant;
+* preview expiration;
+* requesting principal.
+
+Previewing “the article” is insufficient because the current draft may continue changing while a preview is open.
+
+---
+
+# Revision-Accurate Preview
+
+Every preview should correspond to a known revision or draft snapshot.
+
+This prevents ambiguity.
+
+```text
+Draft Revision 18
+        │
+        ▼
+Preview Token
+        │
+        ▼
+Rendered Revision 18
+```
+
+If the author edits the draft afterward, the CMS may either:
+
+* refresh the preview to a newer snapshot; or
+* indicate that a newer version is available.
+
+The system must not silently combine blocks from different save states.
+
+---
+
+# Preview Modes
+
+The architecture may support several preview modes.
+
+## Live Draft Preview
+
+Reflects the latest safely persisted draft.
+
+## Revision Preview
+
+Displays a specific historical revision.
+
+## Scheduled Preview
+
+Displays content using the state intended for its scheduled publication.
+
+## Localization Preview
+
+Displays a specific language or regional variant.
+
+## Channel Preview
+
+Displays how content may appear on:
+
+* the website;
+* email;
+* RSS;
+* future mobile clients.
+
+Each mode should use the canonical content model.
+
+---
+
+# Preview Authorization
+
+Possessing a content URL should not grant preview access.
+
+Authorization should evaluate:
+
+* user identity;
+* editorial permission;
+* document visibility;
+* token validity;
+* expiration;
+* requested revision;
+* sharing policy.
+
+Preview authorization should be scoped to the smallest necessary resource.
+
+A preview token for one article must not permit access to other drafts.
+
+---
+
+# Shareable Previews
+
+TWN may eventually allow authors to share previews with reviewers who do not possess CMS accounts.
+
+Such previews require additional safeguards:
+
+* unguessable token;
+* limited lifetime;
+* resource scope;
+* explicit revocation;
+* no indexing;
+* no access escalation;
+* optional access logging.
+
+Shareable preview URLs should never become permanent substitutes for publication.
+
+---
+
+# Preview Tokens
+
+Preview tokens should represent temporary authorization, not document identity.
+
+A token should conceptually bind:
+
+* document;
+* revision;
+* permitted action;
+* expiration;
+* issuer;
+* audience.
+
+Tokens should not contain sensitive draft content.
+
+---
+
+# Search Engine Isolation
+
+Preview responses must not be indexed.
+
+The architecture should apply multiple protections rather than relying on one mechanism.
+
+Examples include:
+
+* authentication or valid token requirement;
+* noindex directives;
+* cache restrictions;
+* exclusion from sitemaps;
+* no public discovery links.
+
+Security must not depend solely on `robots.txt`.
+
+---
+
+# Cache Behaviour
+
+Published pages benefit from aggressive caching.
+
+Draft previews do not.
+
+Preview responses should prevent draft content from entering public caches.
+
+The caching layer must distinguish:
+
+```text
+Published Content
+        │
+        ▼
+Public Cache Allowed
+```
+
+from:
+
+```text
+Preview Content
+        │
+        ▼
+Private or Bypassed Cache
+```
+
+A preview request must never poison the public cache for the canonical URL.
+
+---
+
+# Media in Preview
+
+Drafts may reference media that is not yet public.
+
+The preview system should render such media through temporary authorized access.
+
+Previewing an unpublished image must not accidentally make the asset globally accessible.
+
+Media authorization therefore participates in preview context.
+
+---
+
+# Unavailable Blocks
+
+An extension or renderer may be unavailable in a preview environment.
+
+The preview should fail visibly and locally.
+
+It should display an editorial diagnostic such as:
+
+```text
+This block could not be previewed.
+The stored content remains intact.
+```
+
+It must not omit the block silently.
+
+---
+
+# Preview Accuracy
+
+Preview cannot guarantee identical behaviour across every reader environment.
+
+However, it should accurately represent:
+
+* content order;
+* layout structure;
+* typography system;
+* media placement;
+* metadata;
+* block semantics;
+* responsive behaviour;
+* internal links.
+
+Differences caused by personalization, live external embeds, or reader-specific settings should be disclosed when material.
+
+---
+
+# Responsive Preview
+
+The editor may provide viewport simulations for common device classes.
+
+These simulations help identify:
+
+* overflow;
+* unreadable tables;
+* image cropping;
+* long headings;
+* block responsiveness.
+
+They should not be presented as exact representations of every physical device.
+
+---
+
+# Preview and External Integrations
+
+Previewing content should not trigger real publication side effects.
+
+It must not:
+
+* send newsletters;
+* notify subscribers;
+* post to social media;
+* update search indexes;
+* increment public publication counters;
+* create permanent canonical URLs;
+* invoke production webhooks intended for publication.
+
+Preview is a read operation.
+
+---
+
+# Preview Failure Modes
+
+The system should distinguish among:
+
+* authorization failure;
+* expired preview;
+* missing revision;
+* rendering failure;
+* unavailable media;
+* unsupported block;
+* temporary infrastructure failure.
+
+Each failure should provide actionable information without exposing internal implementation details.
+
+---
+
+# Preview Auditability
+
+Sensitive shareable previews may be recorded in the audit system.
+
+Relevant events include:
+
+* preview created;
+* preview opened;
+* token revoked;
+* preview expired.
+
+Audit depth should remain proportional to risk and privacy requirements.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* rendering previews with a separate template system;
+* previewing unsaved memory that has no stable snapshot;
+* exposing drafts through predictable URLs;
+* allowing preview pages into public caches;
+* relying only on obscurity for protection;
+* triggering publication side effects during preview;
+* granting one token access to all drafts;
+* allowing permanent shareable preview links;
+* silently hiding unsupported blocks;
+* treating responsive simulation as perfect device emulation.
+
+---
+
+# Architecture Decision Record — ADR 7.8.010
+
+## Title
+
+Render protected previews through the production rendering pipeline using revision-scoped authorization.
+
+### Status
+
+Accepted.
+
+### Context
+
+Authors need accurate previews of unpublished and scheduled content.
+
+Maintaining a separate preview renderer would create presentation drift, while exposing ordinary draft endpoints would create unacceptable privacy and security risks.
+
+### Decision
+
+TWN previews shall use the same canonical content transformation and rendering contracts as published pages.
+
+Each preview shall resolve a defined draft snapshot or revision and require resource-scoped, time-limited authorization.
+
+Preview responses shall bypass public caches, remain excluded from indexing, and suppress all publication side effects.
+
+### Consequences
+
+**Positive**
+
+* High visual consistency between preview and publication.
+* Reduced duplication in rendering logic.
+* Stronger protection of unpublished work.
+* Revision-specific review becomes possible.
+* Future channel previews can reuse canonical content.
+
+**Trade-offs**
+
+* Preview authorization crosses CMS and frontend boundaries.
+* Private draft media requires protected delivery.
+* Cache configuration becomes more complex.
+* External reviewers require token lifecycle management.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* preview and publication rendering are aligned;
+* preview subjects are revision-specific;
+* authorization and token scope are defined;
+* shareable preview safeguards are established;
+* cache and indexing isolation are documented;
+* private media handling is included;
+* preview side effects are prohibited;
+* failure modes and auditability are addressed;
+* anti-patterns are documented;
+* the architectural decision is formally recorded.
+
+---
+
+## End of 7.8.17
+
+**Next Section: 7.8.18 Content Validation and Editorial Quality Architecture.**
+
+[1]: https://developer.wordpress.org/plugins/hooks/?utm_source=chatgpt.com "Hooks – Plugin Handbook - WordPress Developer Resources"
+[2]: https://www.contentful.com/developers/docs/extensibility/app-framework/locations/?utm_source=chatgpt.com "App Locations"
+[3]: https://developer.wordpress.org/plugins/plugin-basics/?utm_source=chatgpt.com "Plugin Basics – Plugin Handbook | Developer.WordPress.org"
+[4]: https://owasp.org/Top10/2025/A03_2025-Software_Supply_Chain_Failures/?utm_source=chatgpt.com "A03 Software Supply Chain Failures - OWASP Top 10:2025"
+
+I am. The last section is an example of that—I deliberately incorporated ideas from WordPress' hook architecture, Strapi's extension boundaries, Contentful's App Framework, and OWASP's software supply-chain guidance instead of inventing an extension model from scratch. Going forward, I'll continue doing that where external architectural knowledge materially improves the blueprint, rather than just generating prose.
+
+One thing I'd also point out from an architect's perspective: **this blueprint should not merely document TWN; it should be opinionated.** It should explain *why* a decision was made, *why alternatives were rejected*, and *how the architecture can survive for 10+ years*. That's the standard I'm aiming for.
+
+---
+
+# 7.8.18 Content Validation and Editorial Quality Architecture
+
+---
+
+## Purpose
+
+Publishing is not merely the act of making content visible.
+
+It is the act of declaring that content has reached an acceptable level of quality.
+
+Many Content Management Systems limit validation to technical correctness:
+
+* required fields completed;
+* valid URLs;
+* accepted image formats;
+* maximum upload sizes.
+
+While these checks are necessary, they are insufficient for a knowledge platform.
+
+TWN is designed around the belief that **editorial quality is an architectural concern, not merely an editorial habit**.
+
+The purpose of this architecture is to define how the CMS evaluates the integrity, consistency, completeness and quality of content before and after publication without replacing human editorial judgement.
+
+---
+
+# Editorial Philosophy
+
+A CMS should not attempt to become an editor.
+
+Nor should it become a passive storage system.
+
+Instead, it should function as an intelligent assistant that continuously helps authors produce better work while respecting editorial autonomy.
+
+The CMS identifies problems.
+
+Editors decide whether those problems matter.
+
+This distinction is fundamental.
+
+---
+
+# Validation Objectives
+
+The validation architecture exists to achieve several goals.
+
+* Prevent technically invalid content.
+* Encourage editorial consistency.
+* Improve accessibility.
+* Reduce publication errors.
+* Support future AI-assisted review.
+* Maintain platform-wide quality standards.
+* Protect reader trust.
+
+These objectives extend beyond simple form validation.
+
+---
+
+# Validation Layers
+
+Validation should occur at multiple architectural layers.
+
+```text
+                Editorial Content
+                       │
+        ┌──────────────┼──────────────┐
+        ▼              ▼              ▼
+ Structural      Editorial      Publication
+ Validation      Validation     Validation
+        │              │              │
+        └──────────────┼──────────────┘
+                       ▼
+                Quality Report
+                       │
+                       ▼
+              Editorial Decision
+```
+
+Each layer answers a different question.
+
+---
+
+# Layer 1 — Structural Validation
+
+Structural validation verifies that content is internally consistent.
+
+Examples include:
+
+* required title exists;
+* document has valid identity;
+* metadata is complete;
+* referenced media exists;
+* block hierarchy is valid;
+* unsupported block types are absent;
+* required relationships exist.
+
+Structural validation answers:
+
+> "Can this document exist safely inside the CMS?"
+
+---
+
+# Layer 2 — Editorial Validation
+
+Editorial validation evaluates writing quality from a platform perspective.
+
+Examples include:
+
+* missing summaries;
+* excessively short introductions;
+* duplicated headings;
+* inconsistent heading hierarchy;
+* missing image captions;
+* missing alternative text;
+* incomplete references;
+* overly long titles.
+
+These are editorial recommendations rather than technical failures.
+
+---
+
+# Layer 3 — Publication Validation
+
+Publication validation evaluates whether the content satisfies platform publication requirements.
+
+Examples include:
+
+* publication date valid;
+* workflow approved;
+* required reviews completed;
+* visibility configuration valid;
+* legal review complete where applicable;
+* featured media available;
+* canonical URL available.
+
+Publication validation determines whether publication may proceed.
+
+---
+
+# Validation Pipeline
+
+Validation should operate as a pipeline.
+
+```text
+Draft Saved
+      │
+      ▼
+Structural Validation
+      │
+      ▼
+Editorial Validation
+      │
+      ▼
+Accessibility Validation
+      │
+      ▼
+Publication Validation
+      │
+      ▼
+Quality Report
+```
+
+Each stage contributes findings.
+
+The pipeline should continue where possible instead of stopping after the first issue, allowing authors to address multiple concerns in a single editing cycle.
+
+---
+
+# Validation Severity Levels
+
+Not every issue deserves the same response.
+
+The architecture distinguishes four levels.
+
+## Error
+
+The document violates a mandatory platform rule.
+
+Examples:
+
+* missing title;
+* corrupted block structure;
+* invalid workflow state;
+* duplicate canonical identifier.
+
+Errors prevent publication.
+
+---
+
+## Warning
+
+The content is technically valid but contains issues that deserve editorial attention.
+
+Examples:
+
+* missing featured image;
+* unusually short summary;
+* broken internal reference;
+* missing alt text.
+
+Warnings should be visible but should not automatically block publication unless platform policy requires it.
+
+---
+
+## Recommendation
+
+Suggestions intended to improve quality.
+
+Examples:
+
+* consider adding references;
+* introduction may be too brief;
+* paragraph length is unusually long;
+* consider adding related reading.
+
+Recommendations support authors without becoming prescriptive.
+
+---
+
+## Information
+
+Contextual observations that may help the author.
+
+Examples:
+
+* estimated reading time increased;
+* document contains ten images;
+* publication scheduled in two days.
+
+Informational notices have no impact on workflow.
+
+---
+
+# Rule Categories
+
+Validation rules fall into several architectural domains.
+
+## Document Rules
+
+Concern the document as a whole.
+
+Examples:
+
+* title uniqueness;
+* summary availability;
+* publication metadata.
+
+---
+
+## Block Rules
+
+Evaluate individual content blocks.
+
+Examples:
+
+* image requires alternative text;
+* code block specifies language;
+* heading hierarchy remains valid.
+
+---
+
+## Relationship Rules
+
+Evaluate references and graph integrity.
+
+Examples:
+
+* missing related content;
+* broken internal references;
+* orphaned journey chapter.
+
+---
+
+## Media Rules
+
+Evaluate media quality.
+
+Examples:
+
+* oversized image;
+* unsupported format;
+* missing attribution.
+
+---
+
+## Accessibility Rules
+
+Evaluate inclusivity.
+
+Examples:
+
+* insufficient image descriptions;
+* skipped heading levels;
+* missing captions.
+
+Accessibility is not an optional enhancement.
+
+It is a core editorial quality attribute.
+
+---
+
+## Governance Rules
+
+Support organizational policy.
+
+Examples:
+
+* copyright review required;
+* sponsored disclosure missing;
+* legal approval pending.
+
+These rules may vary according to publication type.
+
+---
+
+# Progressive Validation
+
+Validation should be progressive.
+
+The CMS should provide feedback while authors write rather than waiting until publication.
+
+Examples include:
+
+* instant heading validation;
+* immediate slug conflicts;
+* live accessibility suggestions;
+* broken link detection after insertion.
+
+This reduces cognitive load and encourages iterative improvement.
+
+---
+
+# Context-Aware Validation
+
+Not every rule applies to every document.
+
+For example:
+
+A Margin Note should not require:
+
+* a featured image;
+* a table of contents;
+* multiple references.
+
+A research article may require all three.
+
+Validation should therefore consider:
+
+* content domain;
+* workflow stage;
+* publication channel;
+* audience;
+* organizational policy.
+
+Context-aware validation reduces unnecessary friction.
+
+---
+
+# Editorial Checklists
+
+Different publication types may define structured checklists.
+
+For example:
+
+**Technical Article**
+
+* Introduction complete
+* Code examples verified
+* References included
+* Images optimized
+* Accessibility reviewed
+
+**Journey Chapter**
+
+* Previous chapter linked
+* Next chapter configured
+* Progression metadata complete
+* Learning objectives defined
+
+Checklists help standardize editorial practice without hard-coding every requirement into the CMS.
+
+---
+
+# Human Override
+
+Editorial authority ultimately belongs to humans.
+
+There are legitimate reasons to publish despite warnings.
+
+For example:
+
+* an urgent security advisory;
+* a developing news update;
+* intentionally minimal content;
+* an opinion piece.
+
+The architecture should therefore allow authorized editors to acknowledge or override non-mandatory findings while preserving an audit trail of that decision.
+
+---
+
+# Validation Performance
+
+Validation should not make writing feel slow.
+
+Rules should be classified according to execution cost.
+
+**Immediate**
+
+* required fields;
+* heading hierarchy;
+* metadata.
+
+**Deferred**
+
+* large link crawls;
+* plagiarism detection;
+* AI-assisted review;
+* extensive media analysis.
+
+Expensive validations should execute asynchronously where possible and update the quality report when complete.
+
+---
+
+# Quality Score
+
+The CMS may calculate an overall editorial quality score.
+
+However, this score should be treated as a navigational aid rather than an objective measure of writing excellence.
+
+A mathematically high score does not necessarily indicate insightful writing.
+
+Likewise, a low score may simply reflect a short announcement or experimental note.
+
+The architecture therefore discourages ranking authors by quality score alone.
+
+---
+
+# AI-Assisted Validation
+
+Future AI systems may contribute observations such as:
+
+* clarity analysis;
+* repetition detection;
+* terminology consistency;
+* tone consistency;
+* reading difficulty estimation;
+* missing explanations;
+* citation suggestions.
+
+AI should augment editorial review rather than replace it.
+
+AI findings should be clearly identified as suggestions and never be silently transformed into publication requirements.
+
+---
+
+# Continuous Quality Monitoring
+
+Validation should not stop after publication.
+
+Background processes may periodically identify:
+
+* newly broken links;
+* outdated references;
+* deprecated technologies;
+* inaccessible external resources;
+* licensing changes.
+
+This allows TWN to maintain long-term quality instead of treating publication as the end of the editorial lifecycle.
+
+---
+
+# Validation Extensibility
+
+The validation engine should allow new rules to be introduced without modifying the core validation pipeline.
+
+Each rule should declare:
+
+* scope;
+* severity;
+* dependencies;
+* execution stage;
+* applicable content types.
+
+This supports gradual evolution of editorial standards.
+
+---
+
+# Validation Transparency
+
+Authors should understand why a rule exists.
+
+Each finding should provide:
+
+* a concise explanation;
+* the affected content;
+* the reason for the rule;
+* suggested remediation;
+* links to editorial guidance where appropriate.
+
+Opaque validation messages discourage learning.
+
+Transparent validation strengthens editorial confidence.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* treating validation as simple form checking;
+* blocking publication for subjective stylistic preferences;
+* hiding validation logic from authors;
+* running expensive validation synchronously during every keystroke;
+* assigning arbitrary quality scores without explanation;
+* allowing AI to publish automatically;
+* conflating warnings with errors;
+* making validation rules dependent on frontend implementation.
+
+---
+
+# Architecture Decision Record — ADR 7.8.011
+
+## Title
+
+Adopt a layered, context-aware validation architecture that supports editorial quality without replacing human judgement.
+
+### Status
+
+Accepted.
+
+### Context
+
+TWN requires stronger editorial guarantees than those provided by traditional CMS field validation. The platform must balance technical correctness, accessibility, governance and writing quality while preserving editorial flexibility.
+
+### Decision
+
+The CMS shall evaluate content through a layered validation pipeline consisting of structural, editorial, accessibility, governance and publication validation. Findings shall be classified by severity and presented transparently to authors. Human editors retain final authority over non-mandatory recommendations.
+
+### Consequences
+
+**Positive**
+
+* Higher editorial consistency.
+* Earlier detection of content issues.
+* Improved accessibility compliance.
+* Better governance support.
+* Foundation for future AI-assisted review.
+* Extensible validation model.
+
+**Trade-offs**
+
+* More sophisticated validation engine.
+* Additional rule maintenance.
+* Increased implementation complexity.
+* Editorial training required to interpret validation results.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* validation objectives are defined;
+* layered validation architecture is established;
+* severity levels are documented;
+* context-aware validation is introduced;
+* editorial checklists and overrides are supported;
+* performance considerations are addressed;
+* AI-assisted validation is positioned appropriately;
+* transparency and extensibility principles are documented;
+* anti-patterns are identified;
+* the architectural decision is formally recorded.
+
+---
+
+## End of 7.8.18
+
+**Next Section:** **7.8.19 Multi-language and Localization Architecture**, which will define how TWN evolves from an English-first platform into a multilingual knowledge ecosystem without duplicating content or compromising editorial integrity. This section will cover translation workflows, localized metadata, language negotiation, fallback strategies, canonical relationships between translations, and future community translation models.
+
+# Additional Architecture Volumes and Cross-Cutting Chapters
+
+As the TWN architecture blueprint has evolved, it has become clear that documenting only the application architecture is insufficient to ensure the platform remains maintainable, scalable and understandable over the next decade.
+
+Enterprise software systems succeed not only because of good code, but because of disciplined architectural governance, explicit decision making, operational readiness and continuous evolution.
+
+To achieve this, the TWN Architecture Handbook shall include several cross-cutting architectural chapters that complement the functional and technical volumes.
+
+These chapters define how architectural decisions are made, how quality is preserved, how risks are managed, and how the system evolves without compromising its foundational principles.
+
+These chapters are intentionally technology-agnostic and apply across every subsystem within TWN.
+
+---
+
+# 1. Architecture Principles
+
+## Purpose
+
+Architecture Principles define the fundamental rules that govern every technical decision made within TWN.
+
+Unlike implementation guidelines, principles are long-lived.
+
+They should remain valid regardless of programming language, framework, cloud provider or frontend technology.
+
+Every architectural decision should be evaluated against these principles.
+
+If a proposed solution violates a principle, it must provide exceptionally strong justification and be formally documented through an Architectural Decision Record (ADR).
+
+Examples of principles include:
+
+* Content is the primary asset.
+* Domain models take precedence over infrastructure concerns.
+* Simplicity is preferred over unnecessary abstraction.
+* Explicitness is preferred over implicit behaviour.
+* APIs are contracts.
+* Security is designed into the system, not added afterwards.
+* Accessibility is a functional requirement.
+* Every component should fail safely.
+* Human editorial judgement always overrides automation.
+* AI augments users rather than replacing them.
+
+Architecture Principles become the constitution of the TWN platform.
+
+---
+
+# 2. Architecture Decision Record (ADR) Index
+
+## Purpose
+
+Every significant architectural decision should be documented.
+
+Over time, contributors often remember *what* the architecture is but forget *why* it became that way.
+
+The ADR Index preserves architectural reasoning.
+
+Each ADR records:
+
+* problem statement;
+* context;
+* considered alternatives;
+* chosen solution;
+* consequences;
+* future review requirements.
+
+Rather than scattering ADRs throughout the documentation, the handbook should also contain a master index allowing contributors to trace every important decision throughout the platform.
+
+---
+
+# 3. Risk Register
+
+## Purpose
+
+Every software architecture contains risk.
+
+Ignoring risk does not eliminate it.
+
+The Risk Register documents architectural risks before they become production incidents.
+
+Each risk should include:
+
+* description;
+* likelihood;
+* impact;
+* mitigation strategy;
+* contingency plan;
+* owner;
+* review schedule.
+
+Examples include:
+
+* vendor lock-in;
+* AI provider outages;
+* dependency abandonment;
+* database scaling limits;
+* editor complexity;
+* search indexing delays.
+
+The Risk Register should evolve continuously throughout the life of the project.
+
+---
+
+# 4. Technical Debt Strategy
+
+## Purpose
+
+Technical debt is inevitable.
+
+Undocumented technical debt is dangerous.
+
+The blueprint should define:
+
+* acceptable debt;
+* unacceptable debt;
+* temporary architectural compromises;
+* debt prioritization;
+* debt repayment strategies.
+
+This allows the project to move quickly without permanently sacrificing architectural quality.
+
+---
+
+# 5. Architecture Evolution Roadmap
+
+## Purpose
+
+Architecture should evolve intentionally.
+
+The roadmap documents how TWN grows through multiple maturity stages.
+
+Example milestones:
+
+Stage 1
+
+Single developer.
+
+Stage 2
+
+Small editorial team.
+
+Stage 3
+
+Thousands of users.
+
+Stage 4
+
+Global publishing platform.
+
+Stage 5
+
+Large contributor ecosystem.
+
+Each stage identifies:
+
+* infrastructure changes;
+* scaling requirements;
+* architectural transitions;
+* deprecated assumptions.
+
+---
+
+# 6. Failure Scenarios
+
+## Purpose
+
+Architectures should be designed for failure.
+
+Not perfection.
+
+This chapter documents expected behaviour during failures.
+
+Examples include:
+
+* database unavailable;
+* cache unavailable;
+* search offline;
+* storage failure;
+* AI provider unavailable;
+* notification service outage;
+* network partition;
+* corrupted media;
+* partial deployment.
+
+Each scenario defines:
+
+* expected behaviour;
+* degraded functionality;
+* recovery strategy;
+* user experience.
+
+---
+
+# 7. Architecture Trade-Off Catalogue
+
+## Purpose
+
+Every architectural decision involves compromise.
+
+This chapter explains why TWN rejected alternative approaches.
+
+Examples:
+
+Why PostgreSQL instead of MongoDB?
+
+Why Block Architecture instead of Markdown?
+
+Why Domain-Driven Design?
+
+Why Background Queues?
+
+Why Event-Driven Components?
+
+Future contributors should understand the reasoning before proposing replacements.
+
+---
+
+# 8. Architecture Fitness Functions
+
+## Purpose
+
+Architectures gradually drift.
+
+Fitness Functions continuously verify architectural integrity.
+
+Examples include:
+
+* no circular domain dependencies;
+* API boundary validation;
+* accessibility requirements;
+* performance budgets;
+* package dependency rules;
+* security policy compliance.
+
+These become automated architectural tests.
+
+---
+
+# 9. Threat Modelling
+
+## Purpose
+
+Security should be architectural.
+
+Not reactive.
+
+Threat modelling identifies possible attacks before implementation.
+
+Recommended methodology:
+
+STRIDE
+
+* Spoofing
+* Tampering
+* Repudiation
+* Information Disclosure
+* Denial of Service
+* Elevation of Privilege
+
+Threat models should exist for every critical subsystem.
+
+---
+
+# 10. Architectural Constraints
+
+## Purpose
+
+Some decisions should never be reconsidered without major review.
+
+Examples:
+
+* Core domains never access infrastructure directly.
+* Extensions never bypass permissions.
+* Domain services never depend on frontend frameworks.
+* IDs are immutable.
+* Published content is never edited destructively.
+
+These constraints protect architectural integrity.
+
+---
+
+# 11. Build vs Buy Decision Register
+
+## Purpose
+
+Every external dependency represents an architectural commitment.
+
+This chapter documents why TWN builds some capabilities while purchasing or integrating others.
+
+Examples:
+
+Authentication
+
+Search
+
+AI
+
+Storage
+
+Payments
+
+Email
+
+Analytics
+
+Future contributors should understand the rationale before replacing providers.
+
+---
+
+# 12. Cost Architecture
+
+## Purpose
+
+Architecture influences operating costs.
+
+The blueprint should identify:
+
+* expensive services;
+* scaling costs;
+* storage growth;
+* CDN usage;
+* AI inference costs;
+* bandwidth;
+* observability expenses.
+
+Architectural decisions should consider long-term financial sustainability.
+
+---
+
+# 13. Performance Budgets
+
+## Purpose
+
+Performance is an architectural quality attribute.
+
+Rather than vague goals such as "fast," the platform should define measurable budgets.
+
+Examples include:
+
+* homepage load time;
+* editor startup;
+* API latency;
+* database queries;
+* media processing;
+* search response;
+* publication latency.
+
+Every new feature should respect these budgets.
+
+---
+
+# 14. Scalability Milestones
+
+## Purpose
+
+Scaling should be planned rather than reactive.
+
+The blueprint should define architectural transitions at meaningful thresholds.
+
+Examples:
+
+1,000 users
+
+10,000 users
+
+100,000 users
+
+1 million users
+
+Each milestone documents:
+
+* infrastructure changes;
+* caching strategy;
+* indexing strategy;
+* deployment architecture;
+* operational complexity.
+
+---
+
+# 15. Operational Runbooks
+
+## Purpose
+
+Architecture includes operations.
+
+Runbooks describe how engineers respond to incidents.
+
+Examples:
+
+* restore backups;
+* rollback deployment;
+* rotate secrets;
+* rebuild search index;
+* recover failed queue;
+* replace storage provider.
+
+These documents reduce downtime during emergencies.
+
+---
+
+# 16. Architecture Governance
+
+## Purpose
+
+Architectures require stewardship.
+
+This chapter defines:
+
+* who approves architectural changes;
+* ADR review process;
+* deprecation process;
+* proposal workflow;
+* architecture review meetings;
+* documentation ownership.
+
+Governance ensures the architecture remains coherent as the project grows.
+
+---
+
+# Conclusion
+
+These chapters transform the TWN Architecture Handbook from a detailed software specification into a complete enterprise architecture reference.
+
+They document not only **what the system is**, but also:
+
+* why it exists in its current form;
+* how it should evolve;
+* how it should be protected;
+* how contributors should make future decisions;
+* how operational excellence is maintained over time.
+
+By treating architecture as a continuously governed discipline rather than a one-time design exercise, TWN positions itself to remain maintainable, adaptable and resilient throughout its lifetime.
+
+You're right. I drifted into meta discussion instead of continuing the blueprint. Let's continue directly with **Section 7.8.19** in the same handbook style.
+
+---
+
+# 7.8.19 Multi-language and Localization Architecture
+
+---
+
+## Purpose
+
+Knowledge should not be limited by language.
+
+Although TWN begins as an English-first platform, its long-term vision is to become a global knowledge ecosystem capable of supporting multiple languages, regional variations and culturally appropriate editorial experiences.
+
+Localization is therefore not an optional feature.
+
+It is an architectural capability that must be designed into the CMS from the beginning.
+
+Retrofitting multilingual support into an existing CMS often results in:
+
+* duplicated content;
+* inconsistent translations;
+* broken relationships;
+* fragmented search;
+* confusing editorial workflows;
+* poor SEO;
+* complex maintenance.
+
+This architecture defines how TWN supports multilingual publishing while preserving a single coherent knowledge graph.
+
+---
+
+# Vision
+
+The objective is **not** to build multiple independent websites.
+
+The objective is to build **one knowledge platform capable of expressing knowledge in multiple languages**.
+
+Readers should experience TWN as one platform.
+
+Editors should manage one knowledge base.
+
+Search engines should understand one canonical ecosystem.
+
+Languages become different expressions of the same knowledge rather than separate repositories.
+
+---
+
+# Architectural Philosophy
+
+Translation should preserve meaning.
+
+Not necessarily words.
+
+Different audiences may require:
+
+* different examples;
+* localized screenshots;
+* regional terminology;
+* cultural context;
+* localized references.
+
+Therefore, TWN distinguishes between:
+
+**Translation**
+
+and
+
+**Localization**
+
+Translation changes language.
+
+Localization adapts knowledge for a particular audience.
+
+These are related but distinct editorial processes.
+
+---
+
+# Localization Principles
+
+The architecture follows several foundational principles.
+
+## Principle 1 — One Knowledge Base
+
+Knowledge exists once.
+
+Languages express that knowledge.
+
+The CMS should avoid creating isolated content silos.
+
+---
+
+## Principle 2 — Language Is Metadata
+
+Language describes content.
+
+It does not define its identity.
+
+Changing language should never create a new conceptual document.
+
+---
+
+## Principle 3 — Every Translation Is Independent
+
+A translated document is not merely a copy.
+
+Editors must be able to:
+
+* improve wording;
+* replace examples;
+* update screenshots;
+* reference local regulations;
+* cite regional resources.
+
+Translation should preserve meaning while allowing editorial independence.
+
+---
+
+## Principle 4 — Relationships Cross Languages
+
+Knowledge relationships should survive translation.
+
+If an English article belongs to a Journey,
+
+its French translation belongs to the translated Journey.
+
+The knowledge graph should remain connected regardless of language.
+
+---
+
+# Language Model
+
+The CMS should distinguish four concepts.
+
+```text
+Knowledge Item
+
+↓
+
+Language Variant
+
+↓
+
+Regional Variant
+
+↓
+
+Published Representation
+```
+
+This separation prevents language from becoming tightly coupled to document identity.
+
+---
+
+# Canonical Knowledge Item
+
+Every multilingual publication begins with a canonical knowledge item.
+
+The canonical item represents the underlying concept.
+
+Examples:
+
+```text
+Understanding Event-Driven Architecture
+```
+
+This concept exists independently of language.
+
+It may later be expressed as:
+
+* English
+* French
+* Spanish
+* German
+* Arabic
+
+All of these remain connected to the same conceptual entity.
+
+---
+
+# Language Variant
+
+Each language receives its own editorial document.
+
+Example:
+
+```text
+Knowledge Item
+
+│
+
+├── English
+
+├── French
+
+├── Spanish
+
+└── German
+```
+
+Each variant contains:
+
+* translated title;
+* translated body;
+* translated metadata;
+* localized media where required.
+
+Variants remain linked without sharing mutable content.
+
+---
+
+# Regional Variants
+
+Sometimes language alone is insufficient.
+
+Example:
+
+English
+
+↓
+
+English (United Kingdom)
+
+↓
+
+English (United States)
+
+↓
+
+English (Australia)
+
+Although mutually intelligible, terminology, regulations and examples may differ significantly.
+
+The architecture should therefore support regional variants without requiring separate language systems.
+
+---
+
+# Translation Relationships
+
+Translations form explicit relationships.
+
+```text
+English
+
+⇄ French
+
+⇄ Spanish
+
+⇄ German
+```
+
+These are not hyperlinks.
+
+They are structured editorial relationships.
+
+This allows readers to switch languages while remaining on the same conceptual content.
+
+---
+
+# Translation Workflow
+
+Translation should follow a defined workflow.
+
+```text
+Original Published
+
+↓
+
+Translation Requested
+
+↓
+
+Translation Draft
+
+↓
+
+Review
+
+↓
+
+Localized Review
+
+↓
+
+Published Translation
+```
+
+Translation is therefore an editorial workflow rather than a file-copy operation.
+
+---
+
+# Source Language
+
+Every translated document should record:
+
+* source document;
+* source language;
+* source revision.
+
+This allows editors to understand exactly which version was translated.
+
+---
+
+# Translation Currency
+
+Source documents evolve.
+
+Translations may become outdated.
+
+The CMS should therefore track translation currency.
+
+Example:
+
+```text
+English Revision 24
+
+↓
+
+French based on Revision 19
+
+↓
+
+Translation Outdated
+```
+
+Editors should immediately know when translations no longer reflect the latest knowledge.
+
+---
+
+# Translation Status
+
+Each language variant should possess an explicit status.
+
+Examples include:
+
+* Not Started
+* Requested
+* In Progress
+* Awaiting Review
+* Published
+* Outdated
+* Archived
+
+Status belongs to the translation relationship rather than the canonical knowledge item.
+
+---
+
+# Partial Translation
+
+Some publications may intentionally remain partially translated.
+
+Examples include:
+
+* untranslated code comments;
+* product names;
+* API terminology;
+* standards;
+* technical acronyms.
+
+The architecture should support partial localization without forcing artificial translation.
+
+---
+
+# Localized Metadata
+
+Metadata should be categorized.
+
+Some metadata is language-independent.
+
+Examples:
+
+* creation date;
+* author;
+* publication workflow;
+* canonical identity.
+
+Other metadata is language-specific.
+
+Examples:
+
+* title;
+* summary;
+* slug;
+* SEO description;
+* keywords.
+
+The CMS should distinguish these categories explicitly.
+
+---
+
+# Localized Media
+
+Some media requires localization.
+
+Examples include:
+
+* screenshots;
+* diagrams;
+* interface illustrations;
+* subtitles.
+
+Other media remains universal.
+
+Examples:
+
+* photographs;
+* logos;
+* architectural diagrams with no language.
+
+Media relationships should therefore support language-specific alternatives where necessary.
+
+---
+
+# Categories and Tags
+
+Categories may be localized.
+
+Their conceptual identity should remain constant.
+
+Example:
+
+```text
+Category
+
+↓
+
+Software Engineering
+
+↓
+
+Génie Logiciel
+```
+
+The category remains one entity with multiple localized labels.
+
+Tags follow the same principle.
+
+---
+
+# URLs
+
+Each language should possess stable URLs.
+
+Example:
+
+```text
+/en/articles/event-driven-architecture
+
+/fr/articles/architecture-orientee-evenements
+```
+
+URL localization improves usability while preserving canonical relationships.
+
+---
+
+# Search
+
+Search should operate at multiple levels.
+
+Readers may:
+
+Search within one language.
+
+Search across all languages.
+
+Search translated equivalents.
+
+Search canonical concepts.
+
+Search architecture belongs to Chapter **7.9**, but localization requirements must be considered here.
+
+---
+
+# Navigation
+
+Readers should switch languages without losing context.
+
+Example:
+
+English Article
+
+↓
+
+Switch Language
+
+↓
+
+French Version
+
+↓
+
+Same Knowledge Item
+
+Navigation should never redirect readers to the homepage simply because the language changed.
+
+---
+
+# Missing Translation Strategy
+
+Not every article will exist in every language.
+
+When a translation is unavailable, the CMS should support configurable fallback behaviour.
+
+Possible strategies include:
+
+* display original language;
+* notify reader translation is unavailable;
+* offer machine translation (future);
+* allow translation requests.
+
+The platform should avoid dead ends.
+
+---
+
+# Machine Translation
+
+Machine translation may accelerate editorial workflows.
+
+However, automatically translated content should never be considered published knowledge without human review.
+
+AI-generated translations should enter the workflow as drafts.
+
+Human editors remain responsible for publication.
+
+---
+
+# Knowledge Graph Integration
+
+Translations participate fully in the knowledge graph.
+
+Relationships should resolve conceptually rather than linguistically.
+
+Example:
+
+English Article
+
+↓
+
+Related French Journey
+
+↓
+
+Localized Notebook Entry
+
+The graph should adapt naturally to the reader's language where possible.
+
+---
+
+# APIs
+
+Localization should be exposed consistently through the CMS API.
+
+Consumers should be able to request:
+
+* default language;
+* specific language;
+* fallback behaviour;
+* available translations.
+
+The API should expose language as part of the resource representation rather than requiring clients to infer it.
+
+---
+
+# Future Community Translation
+
+The architecture should support future community contributions.
+
+Potential workflow:
+
+Community Suggestion
+
+↓
+
+Editorial Review
+
+↓
+
+Approval
+
+↓
+
+Publication
+
+Community translation should enhance scalability without compromising editorial quality.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* treating each language as a separate website;
+* duplicating knowledge without canonical relationships;
+* storing language inside document identity;
+* automatically publishing machine translations;
+* forcing identical wording across all locales;
+* breaking journeys when translations are incomplete;
+* losing relationship integrity during localization;
+* coupling localization logic to frontend routing.
+
+---
+
+# Architecture Decision Record — ADR 7.8.012
+
+## Title
+
+Model multilingual content as language variants of a canonical knowledge item.
+
+### Status
+
+Accepted.
+
+### Context
+
+TWN is intended to become a multilingual knowledge platform. Traditional CMS implementations often duplicate content for each language, resulting in fragmented editorial workflows, inconsistent metadata and broken knowledge relationships.
+
+### Decision
+
+The CMS shall separate conceptual knowledge from language representation.
+
+Each knowledge item shall have one canonical identity with one or more language variants.
+
+Translations shall participate in normal editorial workflows, preserve independent revision histories and remain explicitly linked to their source concepts.
+
+Localization shall support language-specific metadata, media and regional adaptations while maintaining a unified knowledge graph.
+
+### Consequences
+
+**Positive**
+
+* Unified multilingual knowledge ecosystem.
+* Reduced duplication.
+* Consistent editorial workflows.
+* Better SEO and discoverability.
+* Translation freshness tracking.
+* Strong foundation for future community localization.
+
+**Trade-offs**
+
+* More sophisticated domain model.
+* Increased relationship management.
+* Additional translation workflows.
+* More complex search and navigation logic.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* multilingual architecture is defined;
+* translation and localization are distinguished;
+* canonical knowledge items are introduced;
+* language variants and regional variants are documented;
+* translation workflows are established;
+* localized metadata and media are addressed;
+* fallback strategies are defined;
+* future community translation is considered;
+* anti-patterns are documented;
+* the architectural decision is formally recorded.
+
+---
+
+## End of 7.8.19
+
+**Architect's note:** I intentionally modeled this after how mature headless CMSs (such as Contentful, Sanity, and Strapi) separate localization concerns while also borrowing concepts from knowledge graphs rather than traditional page-based CMSs. I **did not** adopt WordPress' "one post per language" approach because it fragments the domain model and weakens long-term knowledge relationships, which conflicts with TWN's vision.
+
+# 7.8.20 Import, Export and Content Portability Architecture
+
+---
+
+# Purpose
+
+Knowledge should never become trapped inside the software that created it.
+
+One of the most common failures of Content Management Systems is treating content as an implementation detail rather than a long-term organizational asset. Over time, organizations become dependent on proprietary storage formats, tightly coupled editor structures and platform-specific workflows, making migration expensive, risky or impossible.
+
+TWN rejects this philosophy.
+
+The CMS shall be designed so that content can enter the platform from multiple sources, move between systems with minimal information loss, and remain usable long after individual technologies have been replaced.
+
+Import and export are therefore architectural capabilities rather than convenience features.
+
+---
+
+# Why Content Portability Matters
+
+Knowledge often survives far longer than the software used to create it.
+
+A single article may remain valuable for decades, while frameworks, databases, editors and infrastructure evolve multiple times during the same period.
+
+Without portability:
+
+* organizations become locked into vendors;
+* migrations become prohibitively expensive;
+* historical knowledge is lost;
+* interoperability becomes difficult;
+* editorial productivity decreases;
+* long-term preservation is compromised.
+
+The architecture therefore treats portability as a first-class quality attribute alongside security, scalability and maintainability.
+
+---
+
+# Architectural Principles
+
+The import and export architecture is governed by the following principles.
+
+## Principle 1 — Content Owns the Platform
+
+The platform exists to serve content.
+
+Content should never be permanently dependent on the CMS that stores it.
+
+---
+
+## Principle 2 — Canonical Representation
+
+Internally, every document should be represented using a single canonical content model.
+
+All importers convert external formats into this representation.
+
+All exporters generate external formats from this representation.
+
+This prevents exponential conversion complexity.
+
+---
+
+## Principle 3 — Lossless Conversion Where Possible
+
+Conversions should preserve:
+
+* structure;
+* meaning;
+* metadata;
+* relationships;
+* revisions;
+* media references.
+
+Whenever complete preservation is impossible, the system must explicitly report the information that cannot be retained.
+
+Silent data loss is unacceptable.
+
+---
+
+## Principle 4 — Platform Independence
+
+Importers and exporters should not depend on frontend implementations.
+
+Content portability belongs to the CMS domain rather than presentation layers.
+
+---
+
+## Principle 5 — Deterministic Transformations
+
+The same input should always produce the same canonical representation.
+
+Likewise, exporting the same document under identical conditions should always produce identical output.
+
+Deterministic transformations improve reproducibility and simplify testing.
+
+---
+
+# Canonical Content Representation
+
+Every external format is translated into the internal TWN document model before any editorial operations occur.
+
+```text
+Markdown
+HTML
+Word
+Notion
+Ghost
+WordPress
+Obsidian
+JSON
+
+        │
+        ▼
+
+ Import Adapters
+
+        │
+        ▼
+
+Canonical TWN Document
+
+        │
+        ▼
+
+Editorial Workflow
+
+        │
+        ▼
+
+Export Adapters
+
+        │
+        ▼
+
+PDF
+EPUB
+Markdown
+HTML
+RSS
+JSON
+Static Site
+```
+
+This architecture ensures that editors interact with one consistent representation regardless of content origin.
+
+---
+
+# Import Architecture
+
+Importing content is a staged transformation process rather than a simple file upload.
+
+Each import passes through several architectural phases.
+
+```text
+Source
+
+↓
+
+Parser
+
+↓
+
+Structure Extraction
+
+↓
+
+Metadata Extraction
+
+↓
+
+Media Resolution
+
+↓
+
+Relationship Mapping
+
+↓
+
+Validation
+
+↓
+
+Canonical Document
+
+↓
+
+Draft Creation
+```
+
+Each stage is isolated and independently testable.
+
+---
+
+# Export Architecture
+
+Exporting follows the reverse flow.
+
+```text
+Canonical Document
+
+↓
+
+Document Resolver
+
+↓
+
+Content Transformation
+
+↓
+
+Media Packaging
+
+↓
+
+Metadata Rendering
+
+↓
+
+Format Generator
+
+↓
+
+Output Package
+```
+
+Exporters should never modify the stored canonical representation.
+
+They produce read-only representations of existing knowledge.
+
+---
+
+# Import Pipeline
+
+The import pipeline consists of several sequential stages.
+
+## Stage 1 — Source Detection
+
+The CMS identifies the incoming format.
+
+Possible inputs include:
+
+* uploaded files;
+* external APIs;
+* archives;
+* repositories;
+* migration packages.
+
+---
+
+## Stage 2 — Parsing
+
+The parser converts source syntax into a structured intermediate representation.
+
+Parsing should be tolerant of minor formatting inconsistencies while rejecting malformed or unsafe content.
+
+---
+
+## Stage 3 — Normalization
+
+Normalization removes platform-specific inconsistencies.
+
+Examples include:
+
+* heading normalization;
+* whitespace normalization;
+* encoding normalization;
+* date normalization;
+* identifier normalization.
+
+---
+
+## Stage 4 — Block Conversion
+
+Imported structures are mapped into TWN's canonical block model.
+
+For example:
+
+* Markdown headings become Heading Blocks.
+* Images become Image Blocks.
+* Tables become Table Blocks.
+* Callouts become Callout Blocks.
+
+Unsupported constructs should be preserved where possible using generic fallback blocks.
+
+---
+
+## Stage 5 — Metadata Mapping
+
+Metadata is extracted and mapped to canonical fields.
+
+Examples include:
+
+* title;
+* author;
+* publication date;
+* tags;
+* categories;
+* language;
+* summary.
+
+---
+
+## Stage 6 — Media Resolution
+
+Media assets are imported separately.
+
+The importer should:
+
+* detect duplicates;
+* preserve filenames where appropriate;
+* calculate checksums;
+* maintain attribution metadata.
+
+---
+
+## Stage 7 — Validation
+
+Imported content is validated using the CMS validation architecture described in Section 7.8.18.
+
+Issues are reported before editorial review begins.
+
+---
+
+## Stage 8 — Draft Creation
+
+Successfully imported content becomes an editable draft rather than immediately entering the publication workflow.
+
+Human review remains mandatory.
+
+---
+
+# Export Pipeline
+
+The export pipeline mirrors the import process.
+
+1. Resolve canonical document.
+2. Load related assets.
+3. Resolve localized metadata.
+4. Render content blocks.
+5. Generate target format.
+6. Package assets.
+7. Validate generated output.
+8. Deliver export.
+
+---
+
+# Supported Import Sources
+
+The architecture is intentionally extensible.
+
+Initial support should include the following formats.
+
+## Markdown
+
+Markdown provides excellent interoperability for technical writing.
+
+Supported features include:
+
+* headings;
+* lists;
+* code blocks;
+* tables;
+* block quotes;
+* links;
+* images.
+
+---
+
+## HTML
+
+HTML import supports migration from existing websites.
+
+The importer should extract semantic structure rather than preserving presentational markup.
+
+---
+
+## Microsoft Word
+
+Word remains a common authoring environment.
+
+The importer should preserve:
+
+* headings;
+* emphasis;
+* tables;
+* lists;
+* images;
+* comments where appropriate.
+
+Formatting that has no semantic meaning should be discarded.
+
+---
+
+## Notion
+
+The architecture should support importing Notion pages through structured APIs where available.
+
+Preserved elements should include:
+
+* nested blocks;
+* databases where representable;
+* images;
+* callouts;
+* code blocks.
+
+---
+
+## Ghost
+
+Ghost exports should preserve:
+
+* articles;
+* tags;
+* metadata;
+* publication dates;
+* featured images.
+
+---
+
+## WordPress
+
+WordPress migration should support:
+
+* posts;
+* pages;
+* categories;
+* tags;
+* featured media;
+* authors;
+* slugs.
+
+Platform-specific shortcodes should be converted where possible or flagged for manual review.
+
+---
+
+## Obsidian
+
+Obsidian import should preserve:
+
+* Markdown;
+* wikilinks;
+* frontmatter;
+* backlinks where representable;
+* attachments.
+
+---
+
+## JSON
+
+JSON import provides an integration mechanism for external systems and future automation.
+
+Supported schemas should be versioned and formally documented.
+
+---
+
+# Supported Export Targets
+
+## Markdown
+
+Optimized for developer workflows and Git-based publishing.
+
+---
+
+## HTML
+
+Produces semantic HTML suitable for archival or external publication.
+
+---
+
+## PDF
+
+Designed for printable and offline reading.
+
+PDF generation should preserve layout while remaining accessible.
+
+---
+
+## EPUB
+
+Supports digital publishing and long-form reading.
+
+---
+
+## RSS
+
+Allows syndication of published content.
+
+RSS generation should respect publication visibility and scheduling rules.
+
+---
+
+## JSON
+
+Provides machine-readable access for integrations and migrations.
+
+The exported schema should remain versioned to preserve backward compatibility.
+
+---
+
+## Static Site
+
+The CMS should support exporting complete static site packages suitable for deployment on static hosting platforms.
+
+---
+
+# Media Migration
+
+Media migration should preserve:
+
+* original files;
+* checksums;
+* dimensions;
+* MIME types;
+* captions;
+* alt text;
+* attribution;
+* licensing information.
+
+Duplicate assets should be detected using content hashes rather than filenames.
+
+---
+
+# Metadata Mapping
+
+Importers should translate external metadata into the canonical schema.
+
+When exact mappings do not exist, the importer should:
+
+* preserve original values;
+* store unmapped fields separately;
+* notify editors of unresolved metadata.
+
+No metadata should be discarded without explicit reporting.
+
+---
+
+# Relationship Preservation
+
+Relationships between content should survive migration whenever possible.
+
+Examples include:
+
+* internal links;
+* related articles;
+* parent-child relationships;
+* references;
+* collections.
+
+Broken relationships should be identified during validation.
+
+---
+
+# Journey Preservation
+
+Journeys are first-class domain entities.
+
+When importing Journey content, the importer should preserve:
+
+* journey identity;
+* chapter order;
+* progression;
+* dependencies;
+* cross-references.
+
+If the source system lacks Journey concepts, the importer should recommend, rather than infer, Journey structures.
+
+---
+
+# Block Conversion Strategy
+
+Every importer should map external structures to canonical blocks.
+
+Where no direct mapping exists, the architecture should favour graceful degradation over data loss.
+
+For example:
+
+```text
+Unsupported Widget
+
+↓
+
+Generic Embed Block
+
+↓
+
+Editorial Review
+```
+
+Fallback blocks preserve information until an editor determines the most appropriate representation.
+
+---
+
+# Validation During Import
+
+Imported content shall pass through the validation pipeline before entering editorial workflows.
+
+Validation includes:
+
+* structural integrity;
+* metadata completeness;
+* accessibility;
+* relationship consistency;
+* media availability;
+* unsupported constructs.
+
+Import should never bypass editorial quality controls.
+
+---
+
+# Lossless vs Lossy Conversion
+
+Not every format supports identical capabilities.
+
+The architecture distinguishes between:
+
+**Lossless Conversion**
+
+All information is preserved.
+
+**Lossy Conversion**
+
+Some information cannot be represented in the target format.
+
+Whenever a lossy conversion occurs, the exporter must provide a detailed report describing the omitted or transformed elements.
+
+---
+
+# Round-Trip Editing
+
+Where practical, exported content should be capable of being re-imported without significant degradation.
+
+This property, known as round-trip fidelity, enables collaborative workflows across multiple tools.
+
+Perfect fidelity is not always achievable, but avoidable information loss should be minimized.
+
+---
+
+# Import Preview
+
+Before committing imported content, editors should be able to review:
+
+* detected structure;
+* mapped metadata;
+* imported media;
+* validation findings;
+* unsupported elements;
+* conversion warnings.
+
+Preview reduces accidental corruption during migration.
+
+---
+
+# Export Templates
+
+Exporters may support configurable templates for different publishing contexts.
+
+Examples include:
+
+* branded PDF reports;
+* ebook layouts;
+* documentation bundles;
+* newsletter formats.
+
+Templates affect presentation only and must not modify canonical content.
+
+---
+
+# Bulk Migration
+
+Large-scale migrations should execute asynchronously through background processing.
+
+Bulk imports should support:
+
+* batching;
+* resumable execution;
+* progress tracking;
+* retry mechanisms;
+* detailed migration logs.
+
+This prevents long-running imports from impacting normal editorial operations.
+
+---
+
+# Version Compatibility
+
+Importers and exporters should declare supported schema versions explicitly.
+
+Version negotiation should allow older packages to remain importable where feasible.
+
+Backward compatibility should be preserved whenever practical, while deprecated formats follow a documented sunset policy.
+
+---
+
+# Future Connectors
+
+The architecture should allow additional connectors without modifying the core import/export engine.
+
+Potential future connectors include:
+
+* Google Docs;
+* Confluence;
+* Git repositories;
+* SharePoint;
+* Dropbox Paper;
+* Medium;
+* Substack;
+* custom enterprise APIs.
+
+Each connector should implement a common import/export contract.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* coupling import logic directly to editor components;
+* storing proprietary source formats as canonical content;
+* silently discarding unsupported data;
+* importing directly into published states;
+* treating filenames as stable identifiers;
+* hardcoding format-specific behaviour into the core CMS;
+* allowing exporters to mutate stored content;
+* creating one-off migration scripts that bypass the canonical import pipeline.
+
+---
+
+# Architecture Decision Record — ADR 7.8.013
+
+## Title
+
+Adopt a canonical content representation with adapter-based import and export pipelines.
+
+### Status
+
+Accepted.
+
+### Context
+
+TWN must support long-term content preservation, interoperability and migration across multiple publishing platforms. Direct format-to-format conversions create maintenance complexity and increase the risk of inconsistent behaviour.
+
+### Decision
+
+All imported content shall be transformed into a canonical TWN document model before entering editorial workflows. Likewise, all exported content shall be generated from the canonical representation using dedicated export adapters. Import and export operations shall preserve structure, metadata, relationships and media wherever technically possible, while explicitly reporting any unavoidable information loss.
+
+### Consequences
+
+**Positive**
+
+* Eliminates vendor lock-in.
+* Simplifies support for new formats.
+* Centralizes validation and editorial workflows.
+* Improves long-term maintainability.
+* Enables consistent import and export behaviour across all supported platforms.
+
+**Trade-offs**
+
+* Additional transformation layer.
+* Greater implementation complexity.
+* Ongoing maintenance of import/export adapters.
+* Requires comprehensive mapping and compatibility testing for external formats.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* portability principles are defined;
+* canonical content representation is established;
+* import and export architectures are documented;
+* import and export pipelines are specified;
+* supported source and target formats are identified;
+* media, metadata and relationship preservation strategies are defined;
+* validation and migration workflows are integrated;
+* lossless and lossy conversion strategies are distinguished;
+* future extensibility is supported through adapter-based connectors;
+* anti-patterns are documented; and
+* the architectural decision is formally recorded.
+
+---
+
+## End of 7.8.20
+
+**Next Section:** **7.8.21 Headless CMS and Content Delivery Architecture**. This chapter will define how the CMS exposes content through APIs, delivery services and content contracts while remaining independent of any single frontend application.
+
+# 7.8.21 Headless CMS and Content Delivery Architecture
+
+---
+
+# Purpose
+
+The TWN CMS is the authoritative source of content, not the system responsible for rendering every user experience.
+
+Modern digital platforms rarely serve content to a single application. A single body of knowledge may need to be consumed simultaneously by:
+
+* the TWN website;
+* mobile applications;
+* administrative dashboards;
+* newsletters;
+* RSS feeds;
+* search indexing services;
+* AI assistants;
+* partner integrations;
+* future desktop applications;
+* voice interfaces.
+
+The CMS must therefore separate **content management** from **content presentation**.
+
+This section defines the architecture that enables TWN to operate as a Headless CMS while remaining capable of supporting future presentation channels without architectural redesign.
+
+---
+
+# Architectural Vision
+
+The CMS should answer one question exceptionally well:
+
+> "What is the correct representation of this knowledge?"
+
+It should not concern itself with:
+
+* HTML layout;
+* frontend routing;
+* CSS styling;
+* JavaScript execution;
+* animation;
+* device-specific rendering.
+
+Those responsibilities belong to consuming applications.
+
+The CMS owns knowledge.
+
+Applications own experiences.
+
+---
+
+# Why Headless Architecture
+
+Traditional CMS platforms tightly couple:
+
+```text
+Content
+
+↓
+
+Templates
+
+↓
+
+Rendering
+
+↓
+
+Website
+```
+
+This coupling creates several long-term limitations:
+
+* frontend redesigns require CMS changes;
+* mobile applications duplicate business logic;
+* APIs become secondary concerns;
+* new channels require significant engineering effort;
+* content becomes dependent on presentation.
+
+TWN instead adopts the following architecture:
+
+```text
+                CMS
+
+                  │
+
+        ┌─────────┼─────────┐
+
+        ▼         ▼         ▼
+
+ Website      Mobile      APIs
+
+        ▼         ▼         ▼
+
+ Newsletter  Search   AI Clients
+```
+
+The CMS becomes the central source of truth for every delivery channel.
+
+---
+
+# Architectural Principles
+
+## Principle 1 — Content First
+
+Knowledge exists independently of presentation.
+
+Rendering is a consumer responsibility.
+
+---
+
+## Principle 2 — API First
+
+Every capability exposed to the TWN website should be available through documented APIs.
+
+Internal consumers should not receive privileged architectural shortcuts.
+
+---
+
+## Principle 3 — Channel Independence
+
+The CMS should never assume:
+
+* screen size;
+* browser;
+* device;
+* rendering engine;
+* frontend framework.
+
+---
+
+## Principle 4 — Stable Contracts
+
+Consumers depend on API contracts rather than implementation details.
+
+Breaking API changes require explicit versioning.
+
+---
+
+## Principle 5 — Presentation Agnostic
+
+The CMS stores semantic information rather than visual layout.
+
+For example:
+
+Correct:
+
+> Heading Level 2
+
+Incorrect:
+
+> Blue 24px Heading
+
+Presentation belongs to consuming applications.
+
+---
+
+# Headless Context
+
+```text
+                    Editors
+
+                       │
+
+                TWN CMS Core
+
+                       │
+
+         ┌─────────────┼─────────────┐
+
+         ▼             ▼             ▼
+
+     REST API      GraphQL API   Webhooks
+
+         │             │             │
+
+         ▼             ▼             ▼
+
+ Website      Mobile App     External Systems
+
+         ▼             ▼             ▼
+
+ AI Clients   Search Engine   Newsletter
+```
+
+The CMS publishes structured knowledge.
+
+Consumers decide how that knowledge is experienced.
+
+---
+
+# Separation of Responsibilities
+
+The architecture explicitly separates concerns.
+
+| CMS Responsibilities   | Consumer Responsibilities |
+| ---------------------- | ------------------------- |
+| Content storage        | User interface            |
+| Editorial workflow     | Navigation                |
+| Metadata               | Styling                   |
+| Validation             | Animations                |
+| Version history        | Responsive layout         |
+| Localization           | User interaction          |
+| Permissions            | Client-side caching       |
+| Search indexing events | Rendering                 |
+
+This separation minimizes coupling between backend and frontend evolution.
+
+---
+
+# Content Delivery Model
+
+Content should be delivered through structured resources rather than rendered pages.
+
+Example:
+
+```text
+Article
+
+↓
+
+Structured Document
+
+↓
+
+API Response
+
+↓
+
+Frontend Renderer
+
+↓
+
+User Interface
+```
+
+The CMS provides meaning.
+
+The frontend provides presentation.
+
+---
+
+# Resource-Oriented Architecture
+
+Every published entity should be treated as a resource.
+
+Examples include:
+
+* Article
+* Journey
+* Journey Chapter
+* Notebook Entry
+* Shared Page
+* Margin Note
+* Category
+* Tag
+* Author
+* Media Asset
+
+Each resource should expose:
+
+* identity;
+* metadata;
+* relationships;
+* permissions where applicable;
+* available actions.
+
+---
+
+# API Styles
+
+The architecture supports multiple delivery mechanisms.
+
+## REST
+
+Optimized for:
+
+* public APIs;
+* integrations;
+* simplicity;
+* caching;
+* predictable resources.
+
+---
+
+## GraphQL
+
+Optimized for:
+
+* complex frontend applications;
+* nested relationships;
+* reducing over-fetching;
+* flexible queries.
+
+GraphQL complements rather than replaces REST.
+
+---
+
+## Webhooks
+
+Webhooks provide event-driven integration.
+
+Examples include:
+
+* article published;
+* article archived;
+* media uploaded;
+* translation completed;
+* journey updated.
+
+External systems receive notifications without polling.
+
+---
+
+# Content Contracts
+
+Consumers should rely on explicit contracts rather than inferred structures.
+
+Every resource should define:
+
+* required fields;
+* optional fields;
+* relationships;
+* supported operations;
+* version information.
+
+Contracts form the foundation of long-term compatibility.
+
+---
+
+# Versioned APIs
+
+API evolution is inevitable.
+
+Breaking changes should never occur silently.
+
+The architecture therefore requires explicit API versioning.
+
+Example:
+
+```text
+/api/v1/articles
+
+/api/v2/articles
+```
+
+Older versions should remain supported according to the platform's deprecation policy.
+
+---
+
+# Content Serialization
+
+Before delivery, canonical content is serialized into transport-friendly representations.
+
+Serialization should preserve:
+
+* block hierarchy;
+* metadata;
+* relationships;
+* localization;
+* identifiers.
+
+Serialization must not introduce presentation-specific information.
+
+---
+
+# Field Projection
+
+Consumers rarely require every field.
+
+The API should support selective field projection.
+
+Example:
+
+```text
+Article
+
+↓
+
+title
+
+summary
+
+slug
+
+coverImage
+```
+
+Reducing unnecessary data improves network efficiency and application performance.
+
+---
+
+# Relationship Expansion
+
+Consumers may request related resources.
+
+Example:
+
+```text
+Article
+
+↓
+
+Author
+
+↓
+
+Journey
+
+↓
+
+Related Articles
+```
+
+Relationship expansion should be configurable to prevent excessive payload sizes.
+
+---
+
+# Pagination
+
+Large collections should never be returned as a single response.
+
+Pagination should support:
+
+* page-based navigation where appropriate;
+* cursor-based pagination for dynamic datasets;
+* deterministic ordering.
+
+The chosen strategy should remain consistent across endpoints.
+
+---
+
+# Filtering
+
+Consumers should filter resources using supported query parameters.
+
+Examples include:
+
+* publication status;
+* category;
+* author;
+* language;
+* tag;
+* journey;
+* publication date.
+
+Filtering should operate on indexed fields wherever possible.
+
+---
+
+# Sorting
+
+Resources may be sorted by:
+
+* publication date;
+* update date;
+* popularity;
+* title;
+* custom editorial ordering.
+
+Sorting behaviour should be deterministic and documented.
+
+---
+
+# Content Delivery Optimization
+
+The CMS should optimize responses without compromising correctness.
+
+Optimization strategies include:
+
+* compression;
+* conditional requests;
+* cache validation;
+* partial responses;
+* efficient serialization.
+
+These optimizations remain transparent to editorial workflows.
+
+---
+
+# Caching Strategy
+
+Caching improves scalability but must never compromise content correctness.
+
+The architecture distinguishes multiple cache layers.
+
+```text
+CMS
+
+↓
+
+Application Cache
+
+↓
+
+CDN
+
+↓
+
+Browser Cache
+```
+
+Cache invalidation should be event-driven.
+
+Publishing new content should invalidate only the affected resources rather than clearing the entire cache.
+
+---
+
+# Preview Delivery
+
+Preview content should bypass public caches.
+
+Preview APIs must:
+
+* authenticate requests;
+* isolate draft content;
+* prevent indexing;
+* avoid cache pollution.
+
+This complements the preview architecture defined in Section 7.8.17.
+
+---
+
+# Content Security
+
+Only published content should be exposed through public delivery APIs.
+
+Drafts require authenticated access with appropriate permissions.
+
+Sensitive metadata should never be leaked through serialization.
+
+Examples include:
+
+* internal notes;
+* workflow comments;
+* moderation history;
+* unpublished revisions.
+
+---
+
+# Rate Limiting
+
+Public APIs should enforce configurable rate limits to protect platform stability.
+
+Limits may vary according to:
+
+* authentication level;
+* consumer type;
+* endpoint sensitivity.
+
+Rate limiting should degrade gracefully rather than abruptly disrupting legitimate clients.
+
+---
+
+# Content Delivery Events
+
+Major lifecycle events should be published internally.
+
+Examples include:
+
+* ArticlePublished
+* ArticleUpdated
+* TranslationPublished
+* JourneyArchived
+* MediaReplaced
+
+These events support downstream systems such as search indexing, analytics and notification services without tightly coupling them to the CMS.
+
+---
+
+# Future Delivery Channels
+
+The architecture should remain adaptable to future channels.
+
+Potential consumers include:
+
+* desktop applications;
+* browser extensions;
+* wearable devices;
+* voice assistants;
+* AI copilots;
+* educational platforms;
+* digital signage;
+* e-book readers.
+
+No architectural changes should be required to support new consumers beyond implementing appropriate clients.
+
+---
+
+# Failure Scenarios
+
+The delivery architecture should degrade predictably.
+
+| Failure                        | Expected Behaviour                                                |
+| ------------------------------ | ----------------------------------------------------------------- |
+| Frontend unavailable           | APIs continue serving content to other consumers.                 |
+| Website deployment fails       | CMS remains fully operational.                                    |
+| Mobile application unavailable | Web experience unaffected.                                        |
+| CDN unavailable                | Origin serves content with reduced performance.                   |
+| Webhook delivery fails         | Retry using durable queues without blocking publication.          |
+| GraphQL service unavailable    | REST endpoints continue operating independently where applicable. |
+
+Failure isolation prevents a single delivery mechanism from affecting the entire platform.
+
+---
+
+# Observability
+
+Content delivery should expose measurable operational metrics, including:
+
+* request latency;
+* cache hit ratio;
+* serialization duration;
+* API error rates;
+* webhook success rates;
+* payload sizes;
+* throughput by endpoint.
+
+These metrics support capacity planning and operational monitoring.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* coupling CMS logic to frontend frameworks;
+* embedding presentation markup into stored content;
+* exposing unpublished content through public APIs;
+* breaking API contracts without versioning;
+* allowing consumers to depend on undocumented fields;
+* returning unbounded collections;
+* tightly coupling integrations through synchronous dependencies;
+* exposing internal database structures directly through APIs.
+
+---
+
+# Architecture Decision Record — ADR 7.8.014
+
+## Title
+
+Adopt a Headless, API-First Content Delivery Architecture.
+
+### Status
+
+Accepted.
+
+### Context
+
+TWN is expected to serve multiple present and future delivery channels beyond its primary website. A tightly coupled CMS would limit frontend evolution, complicate integrations and increase long-term maintenance costs.
+
+### Decision
+
+The CMS shall function as a headless content platform that exposes structured knowledge through stable, versioned APIs and event-driven integrations. Content management responsibilities shall remain independent of presentation concerns, allowing multiple consumers to render the same canonical knowledge according to their own requirements.
+
+### Consequences
+
+**Positive**
+
+* Decoupled frontend and backend evolution.
+* Improved interoperability.
+* Easier support for future platforms.
+* Stable integration contracts.
+* Better scalability through independent delivery channels.
+* Strong foundation for API-driven ecosystems.
+
+**Trade-offs**
+
+* Increased API governance requirements.
+* Additional operational complexity.
+* Greater emphasis on contract versioning.
+* Need for robust documentation and developer tooling.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* the headless architecture is defined;
+* responsibilities between CMS and consumers are separated;
+* API-first principles are established;
+* content delivery mechanisms are documented;
+* versioning and contract strategies are defined;
+* caching, security and optimization concerns are addressed;
+* future delivery channels are considered;
+* failure scenarios are documented;
+* anti-patterns are identified; and
+* the architectural decision is formally recorded.
+
+---
+
+## End of 7.8.21
+
+**Next Section:** **7.8.22 Editorial Analytics and Content Intelligence Architecture**, which will define how TWN measures content quality, editorial performance and reader engagement while respecting privacy, supporting data-informed decision-making and enabling future AI-assisted insights.
+
+# 7.8.22 Editorial Analytics and Content Intelligence Architecture
+
+---
+
+# Purpose
+
+Publishing content is only the beginning of its lifecycle.
+
+To continuously improve the quality, relevance and impact of knowledge, TWN requires an architecture capable of measuring editorial processes, understanding reader engagement and generating actionable insights without compromising user privacy or editorial independence.
+
+Editorial Analytics is not intended to optimize for clicks or sensationalism.
+
+Its purpose is to help editors answer questions such as:
+
+* Which content is helping readers?
+* Which knowledge is becoming outdated?
+* Which editorial workflows are inefficient?
+* Where are contributors struggling?
+* Which Journeys are incomplete?
+* Which topics are underserved?
+* What knowledge should be expanded?
+
+This section defines the architectural foundation for collecting, processing and presenting editorial intelligence across the platform.
+
+---
+
+# Architectural Vision
+
+The analytics architecture should transform operational data into editorial knowledge.
+
+Rather than encouraging editors to maximize page views alone, the platform should emphasize indicators that reflect the long-term value of published knowledge.
+
+Editorial decisions should remain guided by mission and quality, with analytics serving as evidence rather than authority.
+
+---
+
+# Why Editorial Analytics
+
+Without meaningful analytics:
+
+* editorial decisions become subjective;
+* workflow bottlenecks remain hidden;
+* outdated content accumulates unnoticed;
+* contributors receive little feedback;
+* long-term platform growth becomes difficult to evaluate.
+
+Analytics should therefore improve editorial decision-making rather than replace it.
+
+---
+
+# Architectural Principles
+
+## Principle 1 — Mission Before Metrics
+
+Success should not be measured solely through popularity.
+
+High-quality educational content may have lower traffic than trending topics while providing greater long-term value.
+
+Analytics should support the platform's mission rather than distort it.
+
+---
+
+## Principle 2 — Privacy by Design
+
+Editorial analytics should minimize personal data collection.
+
+Where possible:
+
+* aggregate data;
+* anonymize identifiers;
+* avoid unnecessary tracking;
+* respect user consent;
+* comply with applicable privacy regulations.
+
+The system should measure content performance without becoming a surveillance platform.
+
+---
+
+## Principle 3 — Actionable Insights
+
+Metrics without context provide little value.
+
+Every dashboard should help answer a meaningful editorial question.
+
+---
+
+## Principle 4 — Explainability
+
+Editors should understand:
+
+* how metrics are calculated;
+* where data originates;
+* how frequently values update;
+* known limitations.
+
+Opaque analytics undermine trust.
+
+---
+
+## Principle 5 — Separation of Concerns
+
+Analytics should observe editorial workflows rather than influence them directly.
+
+Publishing must never depend upon analytics availability.
+
+---
+
+# Analytics Architecture
+
+```text
+Editorial Events
+
+        │
+
+        ▼
+
+Event Collection
+
+        │
+
+        ▼
+
+Event Processing
+
+        │
+
+        ▼
+
+Analytics Store
+
+        │
+
+ ┌──────┼────────┐
+
+ ▼      ▼        ▼
+
+Dashboards Reports AI Insights
+```
+
+Analytics consume events generated throughout the platform without tightly coupling themselves to operational services.
+
+---
+
+# Event Sources
+
+Editorial analytics may consume events from multiple domains.
+
+Examples include:
+
+* article created;
+* draft saved;
+* article published;
+* translation completed;
+* review requested;
+* review approved;
+* Journey updated;
+* media uploaded;
+* content archived;
+* search performed.
+
+Each event contributes to the platform's understanding of editorial activity.
+
+---
+
+# Reader Interaction Events
+
+Subject to privacy preferences, the platform may collect anonymized interaction events such as:
+
+* article viewed;
+* reading completed;
+* scroll depth;
+* internal link followed;
+* Journey progression;
+* search query executed;
+* download initiated;
+* language switched.
+
+Interaction events should avoid identifying individual readers unless explicitly required and consented to.
+
+---
+
+# Editorial Metrics
+
+The CMS should expose metrics describing editorial operations rather than individual behaviour.
+
+Examples include:
+
+* drafts awaiting review;
+* average review duration;
+* publication frequency;
+* translation backlog;
+* content update frequency;
+* archived content ratio;
+* revision frequency.
+
+These metrics help editors improve processes rather than monitor individuals.
+
+---
+
+# Content Quality Indicators
+
+Quality indicators assist editors in identifying content requiring attention.
+
+Examples include:
+
+* missing summaries;
+* broken internal links;
+* outdated references;
+* accessibility issues;
+* untranslated content;
+* orphaned articles;
+* stale media;
+* incomplete Journeys.
+
+Quality indicators complement the validation architecture described in Section 7.8.18.
+
+---
+
+# Reader Engagement Metrics
+
+Reader engagement should extend beyond page views.
+
+Meaningful indicators include:
+
+* estimated reading completion;
+* return readership;
+* Journey completion rate;
+* related article navigation;
+* bookmark frequency;
+* sharing activity where applicable;
+* newsletter subscriptions originating from content.
+
+Engagement should reflect educational value rather than entertainment alone.
+
+---
+
+# Journey Analytics
+
+Journeys are a core domain concept within TWN.
+
+The analytics architecture should therefore expose Journey-specific insights.
+
+Examples include:
+
+* Journey completion rates;
+* chapter abandonment points;
+* average progression time;
+* frequently revisited chapters;
+* missing prerequisite knowledge.
+
+These insights help authors improve learning experiences.
+
+---
+
+# Localization Analytics
+
+For multilingual content, the platform should provide insights such as:
+
+* translation coverage;
+* outdated translations;
+* language popularity;
+* localization completion time;
+* untranslated high-impact content.
+
+Localization metrics support editorial planning rather than ranking languages.
+
+---
+
+# Search Analytics
+
+Search behaviour provides valuable editorial intelligence.
+
+Metrics may include:
+
+* most common queries;
+* searches producing no results;
+* frequently selected results;
+* abandoned searches;
+* trending topics.
+
+These insights help identify gaps within the knowledge base.
+
+---
+
+# Editorial Dashboards
+
+Different roles require different perspectives.
+
+## Author Dashboard
+
+Examples include:
+
+* recent publications;
+* draft status;
+* review feedback;
+* Journey progress;
+* translation requests.
+
+---
+
+## Editor Dashboard
+
+Examples include:
+
+* review queue;
+* publication calendar;
+* validation issues;
+* pending approvals;
+* translation backlog.
+
+---
+
+## Administrator Dashboard
+
+Examples include:
+
+* platform activity;
+* contributor growth;
+* storage trends;
+* publication statistics;
+* operational health.
+
+Dashboards should expose information relevant to responsibilities rather than overwhelming users with unnecessary metrics.
+
+---
+
+# Reporting
+
+Reports summarize longer-term trends.
+
+Examples include:
+
+* monthly editorial activity;
+* quarterly publication growth;
+* annual content expansion;
+* localization progress;
+* contributor participation.
+
+Reports support strategic planning rather than day-to-day operations.
+
+---
+
+# Content Intelligence
+
+Analytics become content intelligence when multiple observations are synthesized into actionable recommendations.
+
+Examples include:
+
+* articles requiring updates;
+* duplicate topics;
+* missing prerequisite content;
+* emerging subject areas;
+* highly referenced but outdated knowledge.
+
+Content intelligence assists editorial planning without automatically modifying content.
+
+---
+
+# AI-Assisted Insights
+
+Future AI capabilities may analyze editorial data to suggest:
+
+* potential content gaps;
+* Journey improvements;
+* related reading recommendations;
+* editorial workload balancing;
+* content consolidation opportunities.
+
+AI-generated insights should always be presented as recommendations requiring human evaluation.
+
+---
+
+# Real-Time vs Historical Analytics
+
+The architecture distinguishes between two categories of analytics.
+
+## Real-Time
+
+Examples include:
+
+* active review queue;
+* publication events;
+* current editorial workload.
+
+Real-time analytics support operational awareness.
+
+---
+
+## Historical
+
+Examples include:
+
+* annual publishing trends;
+* contributor growth;
+* content aging;
+* localization progress.
+
+Historical analytics support strategic decision-making.
+
+---
+
+# Data Retention
+
+Analytics data should follow explicit retention policies.
+
+Different categories of data may have different retention periods based on:
+
+* operational usefulness;
+* legal obligations;
+* privacy considerations;
+* storage costs.
+
+Retention policies should be transparent and consistently enforced.
+
+---
+
+# Data Quality
+
+Editorial intelligence depends upon reliable data.
+
+The architecture should monitor:
+
+* missing events;
+* duplicate events;
+* inconsistent timestamps;
+* failed processing;
+* delayed aggregation.
+
+Poor-quality analytics should be identified rather than silently reported.
+
+---
+
+# Failure Isolation
+
+Analytics failures must not interrupt publishing workflows.
+
+If the analytics subsystem becomes unavailable:
+
+* content creation continues;
+* publishing continues;
+* editorial workflows continue;
+* events are buffered or retried where appropriate.
+
+Analytics should observe the platform, not control it.
+
+---
+
+# Extensibility
+
+The analytics architecture should support future metrics without requiring modifications to existing editorial workflows.
+
+New event consumers, dashboards and reports should be developed independently through well-defined interfaces.
+
+---
+
+# Security
+
+Access to analytics should follow the principle of least privilege.
+
+Examples include:
+
+* authors viewing only their own editorial metrics;
+* editors viewing publication metrics for managed content;
+* administrators accessing platform-wide analytics.
+
+Sensitive operational information should not be publicly exposed.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* optimizing editorial decisions solely for page views;
+* collecting unnecessary personal information;
+* exposing contributor performance as competitive leaderboards;
+* tightly coupling analytics to publishing workflows;
+* allowing analytics failures to interrupt content delivery;
+* generating AI recommendations without explaining their basis;
+* retaining analytics indefinitely without policy.
+
+---
+
+# Architecture Decision Record — ADR 7.8.015
+
+## Title
+
+Adopt an Event-Driven Editorial Analytics Architecture Focused on Knowledge Quality.
+
+### Status
+
+Accepted.
+
+### Context
+
+TWN requires visibility into editorial workflows, content quality and reader engagement while preserving contributor autonomy and reader privacy. Traditional web analytics emphasize traffic metrics that do not align with the platform's educational mission.
+
+### Decision
+
+The platform shall implement an event-driven analytics architecture that collects editorial and reader interaction events, processes them independently of operational workflows and presents role-specific dashboards, reports and content intelligence. Metrics shall prioritize editorial quality, knowledge growth and learning outcomes over raw popularity.
+
+### Consequences
+
+**Positive**
+
+* Data-informed editorial planning.
+* Improved workflow visibility.
+* Better identification of outdated or incomplete knowledge.
+* Foundation for future AI-assisted editorial insights.
+* Strong separation between operational systems and analytics.
+
+**Trade-offs**
+
+* Additional infrastructure for event processing and aggregation.
+* Ongoing governance of analytics definitions.
+* Increased storage requirements for historical events.
+* Need for privacy-aware data management.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* the purpose of editorial analytics is defined;
+* architectural principles are established;
+* event-driven analytics architecture is documented;
+* editorial, reader, Journey and localization metrics are identified;
+* dashboards and reporting strategies are defined;
+* content intelligence and AI-assisted insights are positioned appropriately;
+* privacy, security and retention concerns are addressed;
+* failure isolation and extensibility are documented;
+* anti-patterns are identified; and
+* the architectural decision is formally recorded.
+
+---
+
+## End of 7.8.22
+
+**Next Section:** **7.8.23 CMS Security Architecture**, which will consolidate security concerns specific to the CMS domain, including authentication, authorization, content protection, auditability, secure publishing workflows, secret management, API security and defense-in-depth for editorial operations.
+
+# 7.8.23 CMS Security Architecture
+
+---
+
+# Purpose
+
+The CMS is the most privileged component within the TWN platform.
+
+Unlike public-facing applications that primarily consume published knowledge, the CMS has authority to:
+
+* create content;
+* modify content;
+* publish content;
+* archive knowledge;
+* manage media;
+* administer users;
+* configure workflows;
+* expose APIs;
+* manage localization;
+* operate integrations.
+
+A compromise of the CMS is therefore equivalent to a compromise of the platform's integrity.
+
+The purpose of this architecture is to define a comprehensive security model that protects editorial operations, preserves content integrity, safeguards sensitive information and supports secure collaboration without unnecessarily hindering productivity.
+
+Security is treated as a cross-cutting architectural quality attribute rather than a collection of isolated features.
+
+---
+
+# Security Vision
+
+The TWN CMS shall implement **defense in depth**, ensuring that no single security control is solely responsible for protecting critical assets.
+
+Instead, multiple complementary layers shall work together to reduce the likelihood and impact of compromise.
+
+Security mechanisms should be:
+
+* proactive rather than reactive;
+* layered rather than centralized;
+* transparent where appropriate;
+* auditable;
+* resilient;
+* continuously evolving.
+
+---
+
+# Security Objectives
+
+The CMS security architecture shall achieve the following objectives:
+
+* protect editorial accounts;
+* preserve content integrity;
+* prevent unauthorized publication;
+* secure APIs;
+* protect media assets;
+* safeguard configuration;
+* secure integrations;
+* preserve auditability;
+* minimize attack surfaces;
+* support regulatory compliance where applicable.
+
+---
+
+# Security Principles
+
+## Principle 1 — Least Privilege
+
+Every user, service and integration shall receive only the permissions necessary to perform its responsibilities.
+
+Additional privileges shall require explicit authorization.
+
+---
+
+## Principle 2 — Default Deny
+
+Access shall be denied unless explicitly granted.
+
+Security policies should begin from zero trust rather than inherited trust.
+
+---
+
+## Principle 3 — Defense in Depth
+
+Critical operations shall be protected by multiple independent controls.
+
+Examples include:
+
+* authentication;
+* authorization;
+* workflow approval;
+* auditing;
+* monitoring.
+
+Failure of one control should not immediately compromise the system.
+
+---
+
+## Principle 4 — Secure by Default
+
+The default configuration should represent the safest operational state.
+
+Security should not depend upon administrators remembering to enable optional protections.
+
+---
+
+## Principle 5 — Assume Breach
+
+The architecture assumes that some attacks will succeed.
+
+Therefore, detection, containment, recovery and auditability are as important as prevention.
+
+---
+
+# Security Domains
+
+CMS security spans multiple domains.
+
+```text
+Identity
+
+↓
+
+Authentication
+
+↓
+
+Authorization
+
+↓
+
+Content Protection
+
+↓
+
+Infrastructure Security
+
+↓
+
+Audit & Monitoring
+
+↓
+
+Incident Response
+```
+
+Each domain contributes to the overall security posture.
+
+---
+
+# Protected Assets
+
+The architecture identifies several high-value assets.
+
+Examples include:
+
+* unpublished content;
+* published knowledge;
+* editorial workflows;
+* media library;
+* localization data;
+* API credentials;
+* configuration;
+* audit logs;
+* user accounts;
+* integration secrets.
+
+Security controls should prioritize these assets according to business impact.
+
+---
+
+# Identity Management
+
+Every actor interacting with the CMS shall possess a verifiable identity.
+
+Actors include:
+
+* authors;
+* editors;
+* administrators;
+* reviewers;
+* translators;
+* automated services;
+* external integrations.
+
+Anonymous access to administrative capabilities is prohibited.
+
+---
+
+# Authentication
+
+Authentication verifies identity before any authorization decisions occur.
+
+The architecture should support:
+
+* username and password;
+* passkeys;
+* OAuth providers;
+* enterprise SSO (future);
+* service accounts.
+
+Authentication mechanisms should be extensible without affecting authorization policies.
+
+---
+
+# Multi-Factor Authentication
+
+Multi-Factor Authentication (MFA) significantly reduces account compromise.
+
+The architecture shall support MFA for privileged accounts.
+
+Mandatory MFA should apply to:
+
+* administrators;
+* platform owners;
+* security administrators.
+
+Other roles may adopt MFA according to organizational policy.
+
+Recovery procedures should be documented to prevent account lockout while maintaining security.
+
+---
+
+# Session Management
+
+Authenticated sessions should be:
+
+* cryptographically secure;
+* time-limited;
+* revocable;
+* device-aware where appropriate.
+
+Session expiration should balance usability with security.
+
+Sensitive actions may require recent re-authentication.
+
+---
+
+# Authorization
+
+Authorization determines what authenticated identities are permitted to do.
+
+Authorization decisions should consider:
+
+* user role;
+* permissions;
+* ownership;
+* workflow state;
+* resource visibility.
+
+Authorization logic should remain centralized rather than duplicated across services.
+
+---
+
+# Role-Based Access Control
+
+The CMS adopts Role-Based Access Control (RBAC) as its primary authorization model.
+
+Illustrative roles include:
+
+* Reader
+* Contributor
+* Author
+* Reviewer
+* Editor
+* Translator
+* Media Manager
+* Administrator
+* System Administrator
+
+Roles represent responsibilities rather than organizational titles.
+
+---
+
+# Fine-Grained Permissions
+
+Roles should be composed of explicit permissions.
+
+Examples include:
+
+* create article;
+* edit draft;
+* publish article;
+* archive article;
+* manage media;
+* approve translation;
+* configure workflows;
+* manage integrations.
+
+Fine-grained permissions allow future expansion without redesigning the authorization model.
+
+---
+
+# Resource Ownership
+
+Ownership provides an additional authorization layer.
+
+Examples include:
+
+* authors editing their own drafts;
+* reviewers accessing assigned reviews;
+* translators modifying assigned translations.
+
+Ownership should complement rather than replace role-based permissions.
+
+---
+
+# Secure Editorial Workflow
+
+Publishing is one of the most sensitive CMS operations.
+
+The workflow should prevent:
+
+* unauthorized publication;
+* accidental publication;
+* workflow bypass;
+* hidden modifications.
+
+Publication authority should require appropriate workflow state transitions and permissions.
+
+---
+
+# Content Integrity
+
+Published content should remain trustworthy.
+
+Integrity mechanisms include:
+
+* immutable revision history;
+* checksums where appropriate;
+* audit logging;
+* controlled publication workflows.
+
+Editors should always be able to determine:
+
+* who changed content;
+* when changes occurred;
+* what changed;
+* why changes occurred where documented.
+
+---
+
+# Media Security
+
+Media uploads present significant attack surfaces.
+
+The CMS should validate:
+
+* file type;
+* MIME type;
+* file size;
+* image integrity;
+* malicious payloads where supported.
+
+Executable content should never be stored within publicly accessible media directories.
+
+---
+
+# API Security
+
+All CMS APIs shall enforce:
+
+* authentication where required;
+* authorization;
+* rate limiting;
+* input validation;
+* output filtering;
+* audit logging.
+
+Public APIs should expose only published resources unless explicitly configured otherwise.
+
+---
+
+# Input Validation
+
+Every externally supplied value should be considered untrusted.
+
+Validation should occur before processing.
+
+Examples include:
+
+* uploaded files;
+* API payloads;
+* form submissions;
+* search parameters;
+* query filters.
+
+Validation complements, but does not replace, output encoding and authorization.
+
+---
+
+# Output Encoding
+
+Content rendered into browsers or external systems should be encoded appropriately to reduce risks such as cross-site scripting (XSS).
+
+Encoding strategies depend upon output context and should be implemented consistently across delivery channels.
+
+---
+
+# Secret Management
+
+Sensitive secrets should never be hardcoded.
+
+Examples include:
+
+* API keys;
+* database credentials;
+* encryption keys;
+* webhook secrets;
+* cloud credentials.
+
+Secrets should be managed through dedicated secret management mechanisms and rotated according to operational policy.
+
+---
+
+# Encryption
+
+Sensitive information should be protected in transit and at rest.
+
+Examples include:
+
+* encrypted network communication;
+* encrypted credential storage;
+* encrypted backups where appropriate.
+
+Passwords shall never be stored in reversible form.
+
+---
+
+# Audit Logging
+
+Security-sensitive events should generate immutable audit records.
+
+Examples include:
+
+* login;
+* failed login;
+* permission changes;
+* publication;
+* deletion;
+* configuration changes;
+* secret updates;
+* workflow overrides.
+
+Audit logs support incident investigation and compliance activities.
+
+---
+
+# Monitoring
+
+Security monitoring should detect abnormal behaviour.
+
+Examples include:
+
+* repeated failed logins;
+* unusual publication activity;
+* excessive API requests;
+* privilege escalation attempts;
+* suspicious integration behaviour.
+
+Monitoring should prioritize actionable alerts over excessive noise.
+
+---
+
+# Rate Limiting
+
+Administrative endpoints should implement configurable rate limits.
+
+Different thresholds may apply to:
+
+* authentication;
+* search;
+* API requests;
+* media uploads.
+
+Rate limiting reduces abuse without unnecessarily impacting legitimate users.
+
+---
+
+# Backup Security
+
+Backups should receive security protections equivalent to production systems.
+
+Backups should be:
+
+* encrypted where appropriate;
+* access controlled;
+* regularly tested;
+* retained according to policy.
+
+A backup that cannot be restored is not a reliable backup.
+
+---
+
+# Incident Response
+
+The CMS security architecture should support structured incident response.
+
+Typical phases include:
+
+1. Detection.
+2. Containment.
+3. Investigation.
+4. Recovery.
+5. Post-incident review.
+
+The architecture should facilitate these activities through comprehensive logging and clear operational procedures.
+
+---
+
+# Third-Party Integrations
+
+External integrations increase the attack surface.
+
+Every integration should be evaluated according to:
+
+* required permissions;
+* trust level;
+* data exchanged;
+* authentication method;
+* operational necessity.
+
+Unused integrations should be removed rather than left dormant.
+
+---
+
+# Security Testing
+
+Security should be continuously evaluated.
+
+Recommended activities include:
+
+* dependency scanning;
+* static analysis;
+* dynamic testing;
+* penetration testing;
+* configuration review;
+* secret scanning.
+
+Security testing complements functional testing throughout the development lifecycle.
+
+---
+
+# Privacy Considerations
+
+The CMS should collect only the information necessary to perform editorial functions.
+
+Personal data should be:
+
+* minimized;
+* protected;
+* retained according to policy;
+* processed transparently.
+
+Privacy and security should reinforce rather than compete with one another.
+
+---
+
+# Future Security Enhancements
+
+Future iterations may introduce:
+
+* hardware security keys;
+* adaptive authentication;
+* anomaly detection;
+* delegated administration;
+* policy-as-code;
+* automated secret rotation.
+
+The architecture should remain extensible without requiring redesign of existing security controls.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* hardcoding credentials in source code;
+* granting administrative privileges by default;
+* bypassing workflow authorization;
+* exposing draft content through public APIs;
+* storing passwords in plaintext;
+* relying solely on frontend authorization;
+* disabling audit logging for convenience;
+* trusting client-side validation;
+* using shared administrative accounts.
+
+---
+
+# Architecture Decision Record — ADR 7.8.016
+
+## Title
+
+Adopt a Defense-in-Depth Security Architecture for the CMS.
+
+### Status
+
+Accepted.
+
+### Context
+
+The CMS represents the most privileged component within TWN and therefore constitutes a primary target for malicious activity. A single security mechanism is insufficient to protect editorial workflows, content integrity and platform administration.
+
+### Decision
+
+The CMS shall implement a defense-in-depth architecture composed of layered authentication, authorization, workflow controls, secure APIs, audit logging, monitoring, encryption and least-privilege access. Security controls shall be centralized, extensible and independently auditable while preserving usability for legitimate editorial workflows.
+
+### Consequences
+
+**Positive**
+
+* Stronger protection of editorial assets.
+* Reduced likelihood of privilege escalation.
+* Improved incident investigation.
+* Better resilience against common attack vectors.
+* Foundation for future security enhancements.
+
+**Trade-offs**
+
+* Increased implementation and operational complexity.
+* Additional administrative overhead.
+* More comprehensive security testing requirements.
+* User onboarding may require additional authentication steps for privileged roles.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* security objectives are defined;
+* foundational security principles are established;
+* identity, authentication and authorization architectures are documented;
+* editorial workflow protection is addressed;
+* API, media and secret management security are specified;
+* audit logging, monitoring and incident response are documented;
+* privacy and future extensibility are considered;
+* anti-patterns are identified; and
+* the architectural decision is formally recorded.
+
+---
+
+## End of 7.8.23
+
+**Next Section:** **7.8.24 CMS Observability and Audit Architecture**, which will define how the CMS records operational events, exposes telemetry, supports debugging, enables compliance and provides complete traceability across editorial workflows and system operations.
+
+# 7.8.24 CMS Observability and Audit Architecture
+
+---
+
+# Purpose
+
+A production CMS must not operate as a black box.
+
+As TWN grows in complexity, contributors, integrations, workflows and services will generate millions of events throughout the lifetime of the platform. Without comprehensive observability, failures become difficult to detect, investigations become unreliable and operational confidence declines.
+
+The purpose of this architecture is to ensure that every significant operational activity within the CMS can be observed, measured, traced and audited without compromising system performance or user privacy.
+
+Observability provides operational understanding.
+
+Auditability provides historical accountability.
+
+Although related, these are distinct architectural capabilities.
+
+---
+
+# Architectural Vision
+
+The CMS should answer questions such as:
+
+Operational Questions
+
+* Is the CMS healthy?
+* Why is publishing slow?
+* Which service is failing?
+* Why did this API return an error?
+* Why was an import delayed?
+* Which queue is overloaded?
+
+Audit Questions
+
+* Who published this article?
+* Who changed this workflow?
+* When was this media replaced?
+* Which administrator modified permissions?
+* Which revision introduced this error?
+
+Observability focuses on system behaviour.
+
+Auditability focuses on historical accountability.
+
+---
+
+# Architectural Objectives
+
+The observability architecture shall:
+
+* improve operational visibility;
+* simplify debugging;
+* support incident response;
+* detect abnormal behaviour;
+* improve reliability;
+* provide measurable service health;
+* preserve editorial accountability;
+* support governance and compliance.
+
+---
+
+# Observability Principles
+
+## Principle 1 — Observe Without Interference
+
+Observability systems should monitor production behaviour without changing application behaviour.
+
+Instrumentation must never alter business logic.
+
+---
+
+## Principle 2 — Every Important Event Leaves Evidence
+
+Significant operations should produce observable records.
+
+Invisible behaviour is difficult to investigate.
+
+---
+
+## Principle 3 — Correlation Over Isolation
+
+Individual events become significantly more valuable when they can be connected.
+
+Logs, metrics and traces should share correlation identifiers wherever practical.
+
+---
+
+## Principle 4 — Audit Records Are Immutable
+
+Audit history should never be modified after creation.
+
+Corrections should create additional records rather than altering existing ones.
+
+---
+
+## Principle 5 — Operational Data Has Different Lifecycles
+
+Metrics, logs, traces and audit records have different purposes.
+
+The architecture should treat them independently.
+
+---
+
+# Observability Architecture
+
+```text
+                    CMS
+
+                     │
+
+      ┌──────────────┼──────────────┐
+
+      ▼              ▼              ▼
+
+    Logs          Metrics        Traces
+
+      │              │              │
+
+      └──────────────┼──────────────┘
+
+                     ▼
+
+            Observability Platform
+
+                     │
+
+        ┌────────────┼─────────────┐
+
+        ▼            ▼             ▼
+
+ Dashboards      Alerts      Investigations
+```
+
+Observability should aggregate multiple telemetry sources into a unified operational view.
+
+---
+
+# The Three Pillars of Observability
+
+The architecture adopts the industry-standard observability model consisting of:
+
+* Logs
+* Metrics
+* Distributed Traces
+
+Each pillar answers different operational questions.
+
+---
+
+# Logs
+
+Logs record discrete events.
+
+Examples include:
+
+* article published;
+* login failed;
+* workflow approved;
+* API request rejected;
+* import completed;
+* media uploaded.
+
+Logs answer:
+
+> "What happened?"
+
+Logs should be structured rather than free-form whenever possible.
+
+---
+
+# Structured Logging
+
+Every log entry should contain standardized fields.
+
+Examples include:
+
+* timestamp;
+* severity;
+* service;
+* environment;
+* correlation ID;
+* request ID;
+* user ID where appropriate;
+* event type;
+* resource identifier.
+
+Structured logs simplify searching, filtering and automated analysis.
+
+---
+
+# Log Levels
+
+The CMS should adopt consistent logging levels.
+
+## DEBUG
+
+Detailed diagnostic information.
+
+Enabled primarily during development or controlled troubleshooting.
+
+---
+
+## INFO
+
+Normal operational events.
+
+Examples:
+
+* publication completed;
+* translation approved;
+* scheduled task executed.
+
+---
+
+## WARN
+
+Unexpected but recoverable situations.
+
+Examples:
+
+* missing optional metadata;
+* retry initiated;
+* degraded external integration.
+
+---
+
+## ERROR
+
+Failures requiring investigation.
+
+Examples:
+
+* database transaction failed;
+* publication aborted;
+* queue processing failed.
+
+---
+
+## FATAL
+
+Critical failures preventing normal operation.
+
+These should be rare.
+
+---
+
+# Metrics
+
+Metrics measure quantitative behaviour over time.
+
+Examples include:
+
+* API latency;
+* requests per second;
+* publication throughput;
+* import duration;
+* queue depth;
+* active editors;
+* cache hit ratio.
+
+Metrics answer:
+
+> "How is the system performing?"
+
+---
+
+# Key Performance Indicators
+
+The CMS should expose operational KPIs such as:
+
+Editorial KPIs
+
+* publications per day;
+* review duration;
+* translation backlog;
+* draft growth.
+
+Operational KPIs
+
+* uptime;
+* error rate;
+* average response time;
+* storage utilization;
+* search latency.
+
+These metrics support operational planning and capacity management.
+
+---
+
+# Distributed Tracing
+
+Modern requests frequently traverse multiple services.
+
+Tracing records the complete execution path.
+
+Example:
+
+```text
+User
+
+↓
+
+API Gateway
+
+↓
+
+CMS Service
+
+↓
+
+Permission Service
+
+↓
+
+Database
+
+↓
+
+Search Index
+
+↓
+
+Response
+```
+
+Tracing answers:
+
+> "Where did time go?"
+
+This capability becomes increasingly valuable as the platform adopts additional services.
+
+---
+
+# Correlation Identifiers
+
+Every significant request should receive a unique correlation identifier.
+
+Example:
+
+```text
+Request
+
+↓
+
+Correlation ID
+
+↓
+
+Logs
+
+↓
+
+Metrics
+
+↓
+
+Trace
+```
+
+Correlation IDs allow engineers to reconstruct complete request lifecycles.
+
+---
+
+# Audit Architecture
+
+Audit records differ from operational logs.
+
+Logs explain system behaviour.
+
+Audit records explain human actions.
+
+Examples include:
+
+* article published;
+* article restored;
+* permission granted;
+* role removed;
+* workflow overridden;
+* translation deleted;
+* configuration changed.
+
+Audit records support accountability rather than troubleshooting.
+
+---
+
+# Audit Events
+
+Every audit event should capture:
+
+* event identifier;
+* timestamp;
+* actor;
+* resource;
+* action;
+* previous state;
+* new state;
+* reason where supplied.
+
+This enables complete reconstruction of historical actions.
+
+---
+
+# Revision Audit
+
+Editorial revisions should maintain immutable history.
+
+Editors should be able to determine:
+
+* who changed content;
+* when changes occurred;
+* what changed;
+* why changes occurred if documented.
+
+Revision history complements workflow history rather than replacing it.
+
+---
+
+# Administrative Audit
+
+Administrative activities require enhanced visibility.
+
+Examples include:
+
+* permission modifications;
+* authentication policy changes;
+* workflow configuration updates;
+* extension installation;
+* integration configuration.
+
+These events may have greater security significance than editorial changes.
+
+---
+
+# Observability Dashboards
+
+Different operational roles require different dashboards.
+
+## Editorial Dashboard
+
+Examples:
+
+* publication queue;
+* pending reviews;
+* workflow throughput.
+
+---
+
+## Operations Dashboard
+
+Examples:
+
+* infrastructure health;
+* queue processing;
+* storage utilization;
+* API latency.
+
+---
+
+## Security Dashboard
+
+Examples:
+
+* failed logins;
+* privilege changes;
+* suspicious activity;
+* audit anomalies.
+
+Dashboards should present actionable information rather than excessive detail.
+
+---
+
+# Alerting
+
+Not every event requires an alert.
+
+Alerts should indicate conditions requiring timely attention.
+
+Examples include:
+
+* publication failures exceed threshold;
+* database unavailable;
+* authentication failures spike unexpectedly;
+* queue processing stops;
+* storage approaches capacity.
+
+Poorly designed alerts contribute to alert fatigue.
+
+---
+
+# Health Checks
+
+Each service should expose health information.
+
+Typical categories include:
+
+## Liveness
+
+Is the service running?
+
+---
+
+## Readiness
+
+Can the service accept requests?
+
+---
+
+## Dependency Health
+
+Can the service reach critical dependencies?
+
+Health checks support orchestration and automated recovery.
+
+---
+
+# Failure Investigation
+
+The architecture should support systematic investigation.
+
+Typical investigation workflow:
+
+Incident
+
+↓
+
+Alert
+
+↓
+
+Trace
+
+↓
+
+Logs
+
+↓
+
+Metrics
+
+↓
+
+Root Cause
+
+↓
+
+Resolution
+
+Observability should reduce investigation time by connecting relevant evidence.
+
+---
+
+# Data Retention
+
+Different telemetry types require different retention strategies.
+
+Illustrative examples:
+
+| Data Type     | Typical Retention Objective |
+| ------------- | --------------------------- |
+| Metrics       | Medium-term trend analysis  |
+| Logs          | Operational troubleshooting |
+| Traces        | Short-term diagnostics      |
+| Audit Records | Long-term accountability    |
+
+Actual retention periods should be defined by operational policy, legal obligations and storage considerations.
+
+---
+
+# Privacy
+
+Observability systems should minimize unnecessary personal information.
+
+Logs should avoid:
+
+* passwords;
+* authentication secrets;
+* tokens;
+* payment information;
+* confidential content unless explicitly required for investigation.
+
+Sensitive values should be redacted before storage.
+
+---
+
+# Performance Impact
+
+Instrumentation should remain lightweight.
+
+Observability should not significantly increase:
+
+* response time;
+* memory consumption;
+* database load;
+* storage growth.
+
+Sampling strategies may be applied where full collection becomes impractical.
+
+---
+
+# Integration with Incident Response
+
+Observability provides the foundation for incident management.
+
+When incidents occur, responders should have immediate access to:
+
+* metrics;
+* logs;
+* traces;
+* audit records;
+* deployment history.
+
+These data sources enable rapid diagnosis and recovery.
+
+---
+
+# Future Enhancements
+
+The architecture should support future capabilities such as:
+
+* anomaly detection;
+* predictive failure analysis;
+* AI-assisted root cause analysis;
+* intelligent alert prioritization;
+* automated incident summaries;
+* service dependency visualization.
+
+These enhancements should build upon the existing telemetry architecture rather than replacing it.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* relying exclusively on application logs;
+* logging sensitive credentials or secrets;
+* generating excessive low-value log volume;
+* modifying audit history;
+* coupling observability logic to business logic;
+* alerting on every warning;
+* collecting telemetry without defined operational purpose;
+* treating audit logs as substitutes for backups or revision history.
+
+---
+
+# Architecture Decision Record — ADR 7.8.017
+
+## Title
+
+Adopt a Unified Observability and Immutable Audit Architecture.
+
+### Status
+
+Accepted.
+
+### Context
+
+As TWN evolves into a distributed platform with multiple editorial workflows, integrations and operational services, troubleshooting and governance require comprehensive visibility. Traditional logging alone is insufficient for modern operational and compliance needs.
+
+### Decision
+
+The CMS shall implement a unified observability architecture based on structured logs, metrics and distributed traces, complemented by an immutable audit subsystem for editorial and administrative actions. Operational telemetry and audit records shall remain logically separate while supporting correlation through shared identifiers and standardized event models.
+
+### Consequences
+
+**Positive**
+
+* Improved operational visibility.
+* Faster incident investigation.
+* Strong editorial accountability.
+* Better governance and compliance support.
+* Foundation for future intelligent monitoring.
+
+**Trade-offs**
+
+* Increased telemetry storage requirements.
+* Additional operational infrastructure.
+* Greater instrumentation effort.
+* Ongoing governance of telemetry quality.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* the purpose of observability and auditability is defined;
+* observability principles are established;
+* logs, metrics and tracing architectures are documented;
+* structured logging standards are defined;
+* audit architecture and immutable audit records are specified;
+* dashboards, alerting and health checks are documented;
+* retention, privacy and performance considerations are addressed;
+* anti-patterns are identified; and
+* the architectural decision is formally recorded.
+
+---
+
+## End of 7.8.24
+
+**Next Section:** **7.8.25 CMS Architecture Summary**, which will consolidate the CMS architecture, reaffirm key architectural decisions, summarize domain relationships, and establish the CMS as the editorial backbone of the TWN platform before transitioning to **Chapter 7.9 Search Architecture**.
+
+# Chapter 7.9 Search Architecture
+
+---
+
+# 7.9.1 Introduction
+
+---
+
+## Purpose
+
+The primary purpose of a knowledge platform is not simply to store information.
+
+Its purpose is to make knowledge discoverable.
+
+Knowledge that cannot be found is, for practical purposes, indistinguishable from knowledge that does not exist.
+
+As TWN grows from hundreds of articles to tens of thousands of interconnected knowledge objects—including Articles, Journeys, Journey Chapters, Notebook Entries, Shared Pages, Margin Notes, Media and future knowledge entities—the ability to efficiently locate relevant information becomes one of the defining characteristics of the platform.
+
+Search is therefore not an optional feature.
+
+It is a foundational architectural capability that determines how readers, contributors and intelligent systems interact with the knowledge ecosystem.
+
+---
+
+# Search Beyond Traditional Search
+
+Historically, search engines have been designed around matching keywords.
+
+A user provides words.
+
+The system searches an inverted index.
+
+Results containing similar words are returned.
+
+While effective for document retrieval, this approach becomes increasingly inadequate as knowledge bases evolve into interconnected systems of concepts rather than isolated documents.
+
+TWN is not designed to function as a collection of unrelated pages.
+
+It is designed as a living knowledge ecosystem.
+
+Readers are often searching for:
+
+* concepts rather than exact words;
+* ideas rather than document titles;
+* learning paths rather than individual articles;
+* relationships rather than isolated results.
+
+Consequently, the search architecture must evolve beyond traditional keyword retrieval.
+
+---
+
+# Search as a Knowledge Discovery System
+
+Within TWN, search should be understood as a knowledge discovery system rather than a document lookup utility.
+
+The objective is not merely to answer:
+
+> "Which documents contain these words?"
+
+Instead, the architecture should help answer questions such as:
+
+* Where should I begin learning this topic?
+* Which Journey teaches this concept?
+* Which article explains this prerequisite?
+* What should I read next?
+* Which Notebook Entries discuss this idea?
+* Is this concept available in my language?
+* Has this knowledge changed recently?
+* What related knowledge exists?
+
+The architectural emphasis therefore shifts from document retrieval toward knowledge exploration.
+
+---
+
+# Search Within the TWN Ecosystem
+
+Search operates across every major domain within TWN.
+
+```text
+                    Knowledge Platform
+
+                           │
+
+      ┌────────────────────┼────────────────────┐
+
+      ▼                    ▼                    ▼
+
+   Articles             Journeys          Notebook Entries
+
+      ▼                    ▼                    ▼
+
+ Shared Pages        Margin Notes          Media Assets
+
+      ▼
+
+ Knowledge Relationships
+
+      ▼
+
+      Search Architecture
+
+      ▼
+
+ Knowledge Discovery
+```
+
+Search is therefore not owned by any individual content type.
+
+It spans the entire knowledge graph.
+
+---
+
+# Architectural Vision
+
+The TWN Search Architecture shall evolve through multiple stages while maintaining a consistent architectural philosophy.
+
+The platform begins with robust structured search capabilities.
+
+Over time, additional intelligence layers will be introduced.
+
+```text
+Keyword Search
+
+↓
+
+Full-Text Search
+
+↓
+
+Faceted Discovery
+
+↓
+
+Knowledge Graph Search
+
+↓
+
+Semantic Search
+
+↓
+
+AI Retrieval
+
+↓
+
+Intelligent Discovery
+```
+
+Each stage builds upon the previous one without requiring architectural replacement.
+
+This incremental evolution minimizes risk while enabling continuous capability growth.
+
+---
+
+# Search Consumers
+
+Search serves multiple categories of users.
+
+## Readers
+
+Readers seek knowledge.
+
+Their priorities include:
+
+* relevance;
+* speed;
+* clarity;
+* recommendations;
+* learning progression.
+
+---
+
+## Authors
+
+Authors search existing knowledge before creating new content.
+
+They require:
+
+* duplicate detection;
+* related knowledge;
+* reference discovery;
+* media discovery.
+
+---
+
+## Editors
+
+Editors require operational search capabilities.
+
+Examples include:
+
+* unpublished drafts;
+* pending reviews;
+* translation status;
+* workflow state;
+* outdated content.
+
+Editorial search differs fundamentally from public search because it operates on privileged content.
+
+---
+
+## Administrators
+
+Administrators require platform-wide discovery.
+
+Examples include:
+
+* orphaned knowledge;
+* broken references;
+* unused media;
+* indexing health;
+* search analytics.
+
+---
+
+## AI Systems
+
+Future AI capabilities require structured retrieval rather than traditional search.
+
+Search therefore becomes one of the foundational components supporting Retrieval-Augmented Generation (RAG), semantic retrieval and intelligent assistants.
+
+The architecture developed in this chapter intentionally prepares the platform for those future capabilities.
+
+---
+
+# Search Design Principles
+
+The architecture is governed by several foundational principles.
+
+## Principle 1 — Knowledge First
+
+Search retrieves knowledge rather than pages.
+
+Documents are representations of knowledge.
+
+The retrieval engine should prioritize conceptual relevance over simple textual similarity.
+
+---
+
+## Principle 2 — Fast by Default
+
+Search should provide interactive performance.
+
+Readers should receive useful results with minimal perceived delay.
+
+Performance optimization should never compromise correctness.
+
+---
+
+## Principle 3 — Relevance Before Popularity
+
+Highly visited content is not necessarily the most appropriate content.
+
+Ranking should prioritize relevance to the user's intent before engagement metrics.
+
+Popularity may influence ranking only where appropriate.
+
+---
+
+## Principle 4 — Explainable Results
+
+Users should understand why important results appear.
+
+Examples include:
+
+* exact title match;
+* related Journey;
+* prerequisite article;
+* recently updated;
+* translated version.
+
+Explainability increases trust in search behaviour.
+
+---
+
+## Principle 5 — Incremental Intelligence
+
+The search architecture should become more intelligent over time without requiring replacement of earlier systems.
+
+Traditional search, semantic search and AI retrieval should coexist rather than compete.
+
+---
+
+## Principle 6 — Search Should Teach
+
+Unlike commercial search engines optimized primarily for rapid navigation, TWN search should actively support learning.
+
+The system should encourage exploration through:
+
+* related concepts;
+* prerequisite knowledge;
+* learning paths;
+* recommended Journeys;
+* complementary Notebook Entries.
+
+Search should help users discover knowledge they did not initially know existed.
+
+---
+
+# Search as a Cross-Cutting Architectural Domain
+
+Unlike the CMS, search does not own knowledge.
+
+Instead, it continuously observes the knowledge ecosystem.
+
+```text
+CMS
+
+↓
+
+Publication Events
+
+↓
+
+Indexing
+
+↓
+
+Search Index
+
+↓
+
+Discovery APIs
+
+↓
+
+Applications
+
+↓
+
+Readers
+```
+
+This separation ensures that publishing and search remain independently scalable while remaining operationally synchronized.
+
+---
+
+# Relationship to Previous Chapters
+
+The Search Architecture builds directly upon architectural decisions established earlier in Volume 7.
+
+Specifically:
+
+* **Chapter 7.8** provides the canonical content model that search indexes.
+* **Section 7.8.14** defines the knowledge graph that search traverses.
+* **Section 7.8.19** provides multilingual relationships required for language-aware discovery.
+* **Section 7.8.21** exposes content through APIs consumed by search services.
+* **Section 7.8.22** supplies analytics that may inform future ranking strategies.
+* **Section 7.8.24** provides observability mechanisms for monitoring indexing pipelines and query performance.
+
+Search therefore acts as a consumer of multiple architectural domains while remaining independent of their internal implementations.
+
+---
+
+# Scope of This Chapter
+
+This chapter defines the architecture responsible for discovering knowledge across the TWN ecosystem.
+
+Subsequent sections will examine:
+
+* search domain model;
+* indexing architecture;
+* full-text retrieval;
+* faceted navigation;
+* multilingual search;
+* knowledge graph traversal;
+* semantic search;
+* AI Retrieval-Augmented Generation (RAG);
+* recommendation architecture;
+* ranking strategies;
+* search APIs;
+* indexing pipelines;
+* scalability;
+* observability;
+* security;
+* future vector search.
+
+Collectively, these components establish search as the primary mechanism through which users and intelligent systems explore the knowledge managed by the CMS.
+
+---
+
+# End of 7.9.1
+
+**Next Section:** **7.9.2 Search Domain Model**, where the conceptual entities, bounded contexts, aggregates and relationships that form the foundation of TWN's search subsystem will be defined before addressing indexing and retrieval mechanics.
+
+# 7.9.2 Search Domain Model
+
+---
+
+# Purpose
+
+Before designing indexes, ranking algorithms, retrieval pipelines or search APIs, it is necessary to define **what the search system actually manages**.
+
+Search is not a database query engine.
+
+Nor is it simply an index of words.
+
+Within TWN, search is a dedicated domain responsible for transforming published knowledge into discoverable knowledge.
+
+Its domain model defines:
+
+* what may be indexed;
+* how knowledge is represented for retrieval;
+* how relationships influence discovery;
+* how search evolves independently from content management.
+
+This separation allows the CMS to remain responsible for editorial correctness while Search focuses exclusively on efficient, intelligent knowledge discovery.
+
+---
+
+# Why Search Has Its Own Domain
+
+A common architectural mistake is allowing search to directly depend on database tables.
+
+For example:
+
+```text
+Article Table
+
+↓
+
+SQL Query
+
+↓
+
+Search Results
+```
+
+This approach tightly couples discovery to storage.
+
+It creates several long-term problems:
+
+* poor scalability;
+* limited ranking capabilities;
+* difficult multilingual support;
+* inability to support semantic retrieval;
+* no independent evolution.
+
+TWN instead treats Search as an independent bounded context with its own domain model.
+
+---
+
+# Search Bounded Context
+
+Search consumes knowledge.
+
+It never owns knowledge.
+
+```text
+                   CMS Domain
+
+        Creates and Governs Knowledge
+
+                    │
+
+         Publication Domain Events
+
+                    │
+
+                    ▼
+
+             Search Bounded Context
+
+                    │
+
+        Builds Search Representations
+
+                    │
+
+                    ▼
+
+          Discovery & Retrieval APIs
+```
+
+The Search domain depends upon published knowledge but never modifies it.
+
+This directional dependency preserves architectural boundaries.
+
+---
+
+# Search Domain Responsibilities
+
+The Search domain is responsible for:
+
+* indexing published knowledge;
+* maintaining searchable representations;
+* ranking results;
+* supporting filtering;
+* processing queries;
+* suggesting related knowledge;
+* multilingual retrieval;
+* semantic retrieval (future);
+* recommendation inputs;
+* search analytics.
+
+The Search domain is **not** responsible for:
+
+* editing content;
+* workflow management;
+* publication;
+* permissions administration;
+* revision history;
+* media editing.
+
+Those remain CMS responsibilities.
+
+---
+
+# Core Domain Entities
+
+The Search Architecture introduces several domain entities.
+
+```text
+Search Query
+
+↓
+
+Search Request
+
+↓
+
+Search Index
+
+↓
+
+Search Document
+
+↓
+
+Search Result
+
+↓
+
+Result Collection
+```
+
+These entities exist independently from CMS entities.
+
+---
+
+# Search Query
+
+A Search Query represents the user's intent.
+
+Examples include:
+
+```
+Next.js
+
+Architecture
+
+AI
+
+Distributed Systems
+
+Event Sourcing
+```
+
+A query is more than raw text.
+
+It may contain:
+
+* keywords;
+* phrases;
+* operators;
+* filters;
+* language preferences;
+* sorting preferences.
+
+Future versions may also include semantic intent.
+
+---
+
+# Search Request
+
+A Search Request combines the query with contextual information.
+
+Examples include:
+
+* preferred language;
+* selected filters;
+* pagination;
+* authenticated user context;
+* requested content types.
+
+Illustratively:
+
+```text
+Query
+
++
+
+Language
+
++
+
+Filters
+
++
+
+Sort
+
++
+
+Pagination
+
+↓
+
+Search Request
+```
+
+This separation allows identical queries to produce different results depending on context.
+
+---
+
+# Search Document
+
+The Search Document is the canonical representation stored within the search index.
+
+It is **not** the CMS document.
+
+Instead, it is an optimized projection designed specifically for retrieval.
+
+A Search Document may contain:
+
+* identifier;
+* title;
+* summary;
+* searchable body;
+* tags;
+* categories;
+* Journey membership;
+* publication metadata;
+* language;
+* ranking signals.
+
+It intentionally excludes editorial information unnecessary for search.
+
+---
+
+# Why Search Documents Exist
+
+The CMS document represents editorial truth.
+
+The Search Document represents retrieval efficiency.
+
+Conflating these models leads to unnecessary complexity.
+
+For example:
+
+CMS stores:
+
+* revision history;
+* workflow state;
+* editor comments;
+* approval history;
+* unpublished drafts.
+
+Search rarely requires these fields.
+
+Creating a dedicated Search Document reduces index size, improves performance and allows independent optimization.
+
+---
+
+# Search Index
+
+A Search Index is a specialized structure optimized for retrieval rather than storage.
+
+Conceptually:
+
+```text
+Published Knowledge
+
+↓
+
+Search Projection
+
+↓
+
+Search Index
+```
+
+The index should be treated as a derived artifact.
+
+If lost, it can be rebuilt from canonical knowledge.
+
+The index is therefore disposable.
+
+Knowledge is not.
+
+---
+
+# Search Result
+
+A Search Result represents a candidate returned for a particular query.
+
+It contains:
+
+* resource identity;
+* relevance score;
+* matched fields;
+* snippet;
+* highlights;
+* explanation metadata.
+
+Search Results are temporary objects produced during retrieval.
+
+They are not stored permanently.
+
+---
+
+# Result Collection
+
+Individual Search Results are grouped into a Result Collection.
+
+The collection may include:
+
+* total result count;
+* pagination metadata;
+* applied filters;
+* aggregation data;
+* suggestions;
+* related searches.
+
+The Result Collection becomes the response consumed by applications.
+
+---
+
+# Searchable Resources
+
+Not every CMS entity must necessarily be searchable.
+
+The architecture distinguishes searchable resources explicitly.
+
+Initially supported resources include:
+
+* Articles;
+* Journeys;
+* Journey Chapters;
+* Notebook Entries;
+* Shared Pages;
+* Margin Notes;
+* Categories;
+* Tags;
+* Authors.
+
+Future resources may be introduced without redesigning the domain.
+
+---
+
+# Non-Searchable Resources
+
+Some entities should not participate directly in public search.
+
+Examples include:
+
+* drafts;
+* workflow comments;
+* audit logs;
+* unpublished revisions;
+* editor notes;
+* configuration records;
+* internal moderation data.
+
+These resources may participate in administrative search through separate indexes where appropriate.
+
+---
+
+# Search Resource Types
+
+Each searchable entity belongs to a resource type.
+
+```text
+Knowledge
+
+├── Article
+
+├── Journey
+
+├── Chapter
+
+├── Notebook Entry
+
+├── Shared Page
+
+└── Margin Note
+```
+
+Resource types allow:
+
+* filtering;
+* ranking adjustments;
+* presentation differences;
+* result grouping.
+
+---
+
+# Search Aggregates
+
+Within the Search domain, the primary aggregate is the **Indexed Resource**.
+
+Conceptually:
+
+```text
+Indexed Resource
+
+├── Search Document
+
+├── Metadata
+
+├── Ranking Signals
+
+├── Relationships
+
+└── Language Variants
+```
+
+Changes to this aggregate occur only through indexing operations.
+
+Applications never modify indexed resources directly.
+
+---
+
+# Search Relationships
+
+Search benefits from explicit relationships inherited from the knowledge graph.
+
+Examples include:
+
+* prerequisite knowledge;
+* related articles;
+* Journey membership;
+* translation equivalents;
+* author relationships;
+* category membership.
+
+These relationships enrich retrieval beyond keyword matching.
+
+---
+
+# Language Variants
+
+Each indexed resource may possess multiple language representations.
+
+Example:
+
+```text
+Indexed Resource
+
+├── English
+
+├── French
+
+├── Spanish
+```
+
+The Search domain indexes language variants independently while preserving conceptual identity.
+
+---
+
+# Search Metadata
+
+Metadata significantly influences retrieval quality.
+
+Examples include:
+
+* publication date;
+* language;
+* tags;
+* categories;
+* reading time;
+* content type;
+* visibility;
+* popularity indicators.
+
+Metadata should remain structured rather than embedded within searchable text.
+
+---
+
+# Ranking Signals
+
+Ranking signals are characteristics used to evaluate result relevance.
+
+Examples include:
+
+* textual relevance;
+* title matches;
+* freshness;
+* Journey importance;
+* editorial recommendations.
+
+Ranking signals belong to the Search domain rather than the CMS.
+
+Future chapters examine ranking in greater depth.
+
+---
+
+# Search State
+
+Every indexed resource progresses through several states.
+
+```text
+Published
+
+↓
+
+Queued
+
+↓
+
+Indexed
+
+↓
+
+Available
+
+↓
+
+Updated
+
+↓
+
+Reindexed
+
+↓
+
+Archived
+```
+
+State transitions are driven by publication events rather than editorial actions.
+
+---
+
+# Search Events
+
+The Search domain reacts to events generated elsewhere.
+
+Typical events include:
+
+* Article Published;
+* Article Updated;
+* Article Archived;
+* Translation Published;
+* Media Replaced;
+* Journey Updated.
+
+Search itself remains event-driven rather than polling the CMS.
+
+---
+
+# Search Value Objects
+
+Examples of value objects include:
+
+* Query;
+* Search Score;
+* Search Snippet;
+* Highlight;
+* Pagination Cursor;
+* Language Preference;
+* Search Filter.
+
+These objects have no independent lifecycle but contribute to search operations.
+
+---
+
+# Ubiquitous Language
+
+To maintain consistency across the platform, the following terminology is adopted.
+
+| Term              | Definition                                               |
+| ----------------- | -------------------------------------------------------- |
+| Search Query      | User's expressed search intent                           |
+| Search Request    | Query plus contextual parameters                         |
+| Search Document   | Indexed projection of published knowledge                |
+| Search Index      | Optimized retrieval structure                            |
+| Indexed Resource  | Search aggregate representing discoverable knowledge     |
+| Search Result     | Candidate returned by retrieval                          |
+| Result Collection | Structured response containing multiple results          |
+| Ranking Signal    | Attribute influencing relevance                          |
+| Search Projection | Transformation from CMS content to search representation |
+
+This ubiquitous language should be used consistently throughout the remainder of the Search Architecture.
+
+---
+
+# Relationship to the CMS Domain
+
+The Search domain consumes published knowledge but never becomes its source of truth.
+
+```text
+CMS
+
+↓
+
+Canonical Knowledge
+
+↓
+
+Projection
+
+↓
+
+Search Domain
+
+↓
+
+Search Index
+
+↓
+
+Applications
+```
+
+This architectural separation enables:
+
+* independent scaling;
+* independent optimization;
+* independent deployment;
+* independent recovery.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* querying CMS tables directly for every search;
+* indexing unpublished editorial data in public indexes;
+* using CMS entities as search entities;
+* tightly coupling search schemas to database schemas;
+* embedding ranking logic inside the CMS;
+* allowing search indexes to become the authoritative source of knowledge.
+
+---
+
+# Architecture Decision Record — ADR 7.9.001
+
+## Title
+
+Establish Search as an Independent Bounded Context with Its Own Domain Model.
+
+### Status
+
+Accepted.
+
+### Context
+
+As TWN evolves into a large-scale knowledge platform, search must support advanced retrieval capabilities that extend beyond simple database queries. Coupling search directly to the CMS domain would reduce scalability, complicate future semantic retrieval and inhibit architectural evolution.
+
+### Decision
+
+The platform shall model Search as an independent bounded context. Published knowledge shall be transformed into specialized Search Documents stored within dedicated search indexes. Search entities, aggregates and value objects shall remain independent of CMS entities while consuming publication events to maintain synchronization.
+
+### Consequences
+
+**Positive**
+
+* Clear separation of concerns.
+* Independent scalability.
+* Optimized retrieval models.
+* Foundation for semantic search and AI retrieval.
+* Easier evolution of ranking and indexing strategies.
+
+**Trade-offs**
+
+* Additional synchronization infrastructure.
+* Separate domain model to maintain.
+* Event-driven consistency rather than immediate consistency.
+* More sophisticated operational architecture.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* the Search bounded context is established;
+* domain responsibilities are clearly separated from the CMS;
+* core entities, aggregates and value objects are defined;
+* searchable resources and search documents are modeled;
+* relationships and language variants are incorporated;
+* the event-driven interaction with the CMS is documented;
+* ubiquitous language is established;
+* anti-patterns are identified; and
+* the architectural decision is formally recorded.
+
+---
+
+## End of 7.9.2
+
+**Next Section:** **7.9.3 Search Architecture Overview**, where the end-to-end architecture—including indexing pipelines, search services, query processing, ranking, caches and delivery APIs—will be introduced before diving into each subsystem in detail.
+
+# 7.9.3 Search Architecture Overview
+
+---
+
+# Purpose
+
+The Search Domain Model defines **what** the search subsystem manages.
+
+This section defines **how** the subsystem is organized.
+
+The Search Architecture establishes the end-to-end flow through which knowledge moves from publication in the CMS to discovery by readers, editors and intelligent services.
+
+Rather than acting as a single service, Search is designed as a collection of loosely coupled architectural components that cooperate to provide scalable, resilient and intelligent knowledge retrieval.
+
+Each component has a clearly defined responsibility, allowing the architecture to evolve incrementally without introducing unnecessary coupling between indexing, retrieval, ranking and delivery.
+
+---
+
+# Architectural Vision
+
+Search is an event-driven, distributed subsystem responsible for transforming canonical knowledge into optimized search representations.
+
+The architecture separates five major responsibilities:
+
+* Knowledge ingestion
+* Index construction
+* Query processing
+* Result ranking
+* Knowledge delivery
+
+This separation ensures that changes in one responsibility have minimal impact on the others.
+
+---
+
+# High-Level Architecture
+
+```text
+                   CMS
+
+                    │
+
+      Publication Domain Events
+
+                    │
+
+                    ▼
+
+          Indexing Pipeline
+
+                    │
+
+                    ▼
+
+          Search Processing
+
+        ┌─────────┼──────────┐
+
+        ▼         ▼          ▼
+
+   Search Index  Cache   Knowledge Graph
+
+        │         │          │
+
+        └─────────┼──────────┘
+
+                  ▼
+
+           Query Processor
+
+                  │
+
+                  ▼
+
+          Ranking Engine
+
+                  │
+
+                  ▼
+
+       Search API / Discovery API
+
+                  │
+
+        ┌─────────┼──────────┐
+
+        ▼         ▼          ▼
+
+ Website      Mobile      AI Services
+```
+
+This architecture intentionally separates indexing from querying so that content publication never blocks search requests.
+
+---
+
+# Architectural Layers
+
+The Search subsystem is composed of multiple architectural layers.
+
+```text
+Presentation Layer
+
+↓
+
+Search APIs
+
+↓
+
+Query Processing Layer
+
+↓
+
+Ranking Layer
+
+↓
+
+Retrieval Layer
+
+↓
+
+Search Storage Layer
+
+↓
+
+Indexing Layer
+
+↓
+
+CMS Integration Layer
+```
+
+Each layer communicates through stable contracts rather than implementation details.
+
+---
+
+# Layer Responsibilities
+
+| Layer            | Responsibility                               |
+| ---------------- | -------------------------------------------- |
+| CMS Integration  | Receives publication events                  |
+| Indexing         | Converts knowledge into searchable documents |
+| Storage          | Maintains optimized indexes                  |
+| Retrieval        | Executes searches against indexes            |
+| Ranking          | Orders retrieved candidates                  |
+| Query Processing | Understands search intent                    |
+| APIs             | Delivers results to clients                  |
+| Presentation     | Displays knowledge to users                  |
+
+---
+
+# Architectural Principles
+
+The Search subsystem follows several architectural principles.
+
+## Event-Driven Synchronization
+
+Search never polls the CMS.
+
+Instead, it reacts to publication events.
+
+Benefits include:
+
+* reduced database load;
+* faster synchronization;
+* improved scalability;
+* loose coupling.
+
+---
+
+## Read Optimization
+
+The Search subsystem is optimized for reading rather than writing.
+
+Writing occurs only through indexing.
+
+Reading occurs continuously.
+
+The architecture therefore prioritizes:
+
+* retrieval speed;
+* ranking efficiency;
+* cache utilization;
+* query optimization.
+
+---
+
+## Independent Scalability
+
+Each major component should scale independently.
+
+For example:
+
+```text
+Heavy Publishing
+
+↓
+
+Scale Indexing Workers
+
+──────────────
+
+Heavy Searching
+
+↓
+
+Scale Query Nodes
+```
+
+This avoids unnecessary infrastructure costs.
+
+---
+
+## Stateless Query Processing
+
+Search requests should remain stateless whenever possible.
+
+Each request contains sufficient context for execution.
+
+Advantages include:
+
+* horizontal scaling;
+* easier load balancing;
+* simplified recovery.
+
+Persistent state belongs within indexes rather than application servers.
+
+---
+
+# Component Overview
+
+The architecture consists of several major components.
+
+```text
+CMS Connector
+
+↓
+
+Indexer
+
+↓
+
+Search Index
+
+↓
+
+Query Engine
+
+↓
+
+Ranking Engine
+
+↓
+
+Recommendation Engine
+
+↓
+
+Search API
+```
+
+Each component may evolve independently.
+
+---
+
+# CMS Connector
+
+The CMS Connector consumes publication events.
+
+Examples include:
+
+* Article Published
+* Journey Updated
+* Translation Added
+* Margin Note Published
+* Media Updated
+
+Its sole responsibility is to initiate indexing workflows.
+
+---
+
+# Indexing Pipeline
+
+The Indexing Pipeline transforms editorial content into optimized Search Documents.
+
+Typical operations include:
+
+* normalization;
+* metadata extraction;
+* language detection;
+* relationship enrichment;
+* index generation.
+
+The pipeline produces artifacts specifically designed for retrieval rather than editing.
+
+---
+
+# Search Storage
+
+Search Storage maintains optimized indexes.
+
+Characteristics include:
+
+* read-optimized;
+* rebuildable;
+* versioned;
+* independently deployable.
+
+The storage layer should never become the canonical source of knowledge.
+
+---
+
+# Query Processor
+
+The Query Processor interprets user intent before retrieval begins.
+
+Responsibilities include:
+
+* parsing queries;
+* recognizing operators;
+* language normalization;
+* typo handling;
+* synonym expansion;
+* filter extraction.
+
+Future versions may also perform semantic interpretation.
+
+---
+
+# Retrieval Engine
+
+The Retrieval Engine identifies candidate knowledge objects matching the processed query.
+
+Its objective is recall rather than final ordering.
+
+The engine attempts to answer:
+
+> Which knowledge objects could satisfy this request?
+
+Ranking is performed later.
+
+---
+
+# Ranking Engine
+
+The Ranking Engine determines result order.
+
+Inputs include:
+
+* textual relevance;
+* metadata;
+* knowledge relationships;
+* freshness;
+* editorial signals.
+
+The Ranking Engine is intentionally isolated from retrieval so ranking strategies may evolve independently.
+
+---
+
+# Recommendation Engine
+
+Recommendations complement direct search.
+
+Rather than answering explicit queries, this component identifies knowledge that users may find valuable.
+
+Examples include:
+
+* related articles;
+* prerequisite reading;
+* continuation suggestions;
+* Journey recommendations.
+
+Recommendation is therefore an adjacent architectural capability rather than part of retrieval itself.
+
+---
+
+# Search API
+
+The Search API provides a stable interface for consuming applications.
+
+Responsibilities include:
+
+* receiving search requests;
+* validating inputs;
+* invoking query processing;
+* returning structured results.
+
+Applications never communicate directly with indexes.
+
+---
+
+# Supporting Components
+
+Several supporting components improve operational performance.
+
+These include:
+
+* cache services;
+* autocomplete indexes;
+* analytics collectors;
+* query logs;
+* monitoring agents;
+* indexing queues.
+
+Although secondary, these components significantly improve user experience and operational visibility.
+
+---
+
+# End-to-End Search Flow
+
+The complete architecture operates as follows.
+
+```text
+Editor Publishes Content
+
+↓
+
+CMS
+
+↓
+
+Publication Event
+
+↓
+
+Indexing Queue
+
+↓
+
+Indexer
+
+↓
+
+Search Document
+
+↓
+
+Search Index
+
+↓
+
+Reader Searches
+
+↓
+
+Query Processor
+
+↓
+
+Retrieval Engine
+
+↓
+
+Ranking Engine
+
+↓
+
+Search API
+
+↓
+
+Application
+
+↓
+
+Reader
+```
+
+This flow ensures that editorial activities remain independent from discovery operations.
+
+---
+
+# Architectural Boundaries
+
+Search maintains strict boundaries with neighboring domains.
+
+| Domain         | Relationship                    |
+| -------------- | ------------------------------- |
+| CMS            | Source of canonical knowledge   |
+| AI             | Consumes retrieved knowledge    |
+| API Layer      | Exposes search capabilities     |
+| Analytics      | Consumes search metrics         |
+| Recommendation | Uses search metadata            |
+| Security       | Provides authorization policies |
+
+No neighboring domain bypasses these contracts.
+
+---
+
+# Failure Isolation
+
+The architecture minimizes cascading failures.
+
+Examples include:
+
+* Indexing failures do not prevent existing searches.
+* Cache failures do not corrupt indexes.
+* Ranking failures fall back to baseline ordering.
+* Recommendation failures do not interrupt search.
+* Analytics failures do not affect retrieval.
+
+Graceful degradation is preferred over complete service interruption.
+
+---
+
+# Scalability Strategy
+
+Different workloads require different scaling strategies.
+
+```text
+Publishing Spike
+
+↓
+
+Scale Indexers
+
+──────────────
+
+Search Spike
+
+↓
+
+Scale Query Services
+
+──────────────
+
+Autocomplete Spike
+
+↓
+
+Scale Suggestion Cache
+```
+
+This architecture avoids scaling the entire subsystem for localized demand.
+
+---
+
+# Cross-Cutting Concerns
+
+Several architectural concerns apply across all search components.
+
+These include:
+
+* authentication;
+* authorization;
+* observability;
+* caching;
+* rate limiting;
+* resilience;
+* telemetry;
+* tracing.
+
+These concerns are implemented consistently across the subsystem rather than individually within each component.
+
+---
+
+# Architecture Decision Record — ADR 7.9.002
+
+## Title
+
+Adopt a Layered, Event-Driven Search Architecture.
+
+### Status
+
+Accepted.
+
+### Context
+
+The TWN platform requires a search subsystem capable of scaling independently from the CMS while supporting future enhancements such as semantic retrieval, AI-powered search and personalized recommendations. A tightly coupled or monolithic design would constrain evolution and reduce operational resilience.
+
+### Decision
+
+The Search subsystem shall be organized into distinct architectural layers responsible for integration, indexing, storage, query processing, retrieval, ranking and API delivery. Synchronization with the CMS shall occur exclusively through publication domain events. Query processing and retrieval services shall remain stateless, while search indexes shall serve as optimized, rebuildable projections of canonical knowledge.
+
+### Consequences
+
+**Positive**
+
+* Independent scaling of indexing and query workloads.
+* Clear separation of concerns.
+* Support for future AI and semantic search capabilities.
+* Improved resilience through failure isolation.
+* Simplified replacement or enhancement of individual components.
+
+**Trade-offs**
+
+* Greater architectural complexity.
+* Additional operational infrastructure (queues, caches, monitoring).
+* Eventual consistency between CMS and search indexes.
+* More components to deploy and observe.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* the overall search architecture is defined;
+* architectural layers and their responsibilities are established;
+* the major components and interactions are documented;
+* the end-to-end indexing and retrieval flow is illustrated;
+* boundaries with neighboring domains are identified;
+* scalability and failure isolation strategies are described;
+* cross-cutting concerns are acknowledged; and
+* the governing architectural decision is formally recorded.
+
+---
+
+## End of 7.9.3
+
+**Next Section:** **7.9.4 Indexing Architecture**, where the complete lifecycle of transforming published knowledge into searchable representations—including event ingestion, document projection, indexing workflows, synchronization strategies and recovery mechanisms—will be specified.
+
+# 7.9.4 Indexing Architecture
+
+---
+
+# Purpose
+
+Search quality is fundamentally determined by the quality of its indexes.
+
+Regardless of how sophisticated query processing, ranking algorithms or artificial intelligence become, a poorly designed indexing architecture inevitably results in incomplete, stale or irrelevant search results.
+
+For this reason, indexing is not treated as a background utility within TWN.
+
+It is a first-class architectural capability responsible for continuously transforming canonical knowledge into optimized search representations.
+
+This section defines the architecture responsible for ingesting published knowledge, constructing searchable documents, maintaining search indexes, recovering from failures and ensuring that discovery remains synchronized with the evolving knowledge ecosystem.
+
+---
+
+# Architectural Objectives
+
+The indexing architecture is designed to satisfy several strategic objectives.
+
+* Maintain near real-time synchronization between the CMS and Search.
+* Minimize coupling between publishing and indexing.
+* Support incremental updates without rebuilding entire indexes.
+* Enable zero-downtime reindexing.
+* Preserve index consistency during failures.
+* Support future semantic and vector indexing.
+* Scale independently from editorial activity.
+* Allow complete index reconstruction from canonical knowledge.
+
+These objectives prioritize operational resilience over implementation simplicity.
+
+---
+
+# Indexing Philosophy
+
+The CMS remains the single source of truth.
+
+Search indexes are **derived projections** of that truth.
+
+```text
+Canonical Knowledge
+        │
+        ▼
+ Event Stream
+        │
+        ▼
+Projection Pipeline
+        │
+        ▼
+ Search Index
+```
+
+This distinction has important architectural implications:
+
+* indexes are disposable;
+* knowledge is not;
+* indexes may always be rebuilt;
+* rebuilding should never require editorial intervention.
+
+---
+
+# Architectural Principles
+
+The indexing subsystem adheres to the following principles.
+
+## Principle 1 — Event-Driven Synchronization
+
+Indexes shall never poll the CMS for changes.
+
+Instead, every significant publication action generates domain events that initiate indexing workflows.
+
+Examples include:
+
+* Article Published
+* Article Updated
+* Journey Created
+* Translation Published
+* Media Metadata Updated
+* Content Archived
+
+This reduces unnecessary database activity while ensuring timely synchronization.
+
+---
+
+## Principle 2 — Eventual Consistency
+
+Search does not require strict transactional consistency with the CMS.
+
+Instead, it guarantees **eventual consistency**.
+
+```text
+Editor Publishes
+
+↓
+
+CMS Updated
+
+↓
+
+Publication Event
+
+↓
+
+Indexer Executes
+
+↓
+
+Search Updated
+```
+
+A short synchronization delay is acceptable provided the architecture guarantees convergence.
+
+This design significantly improves scalability and fault tolerance.
+
+---
+
+## Principle 3 — Idempotent Indexing
+
+Every indexing operation shall be idempotent.
+
+Executing the same indexing request multiple times must always produce the same final state.
+
+Benefits include:
+
+* safe retries;
+* simplified recovery;
+* duplicate event tolerance;
+* resilient distributed processing.
+
+---
+
+## Principle 4 — Immutable Events
+
+Publication events should never be modified after emission.
+
+Corrections generate new events rather than altering historical ones.
+
+This enables:
+
+* replay;
+* auditing;
+* deterministic recovery;
+* historical reconstruction.
+
+---
+
+# High-Level Indexing Architecture
+
+```text
+                  CMS
+
+                   │
+
+          Domain Events
+
+                   │
+
+                   ▼
+
+            Event Broker
+
+                   │
+
+         ┌─────────┼──────────┐
+
+         ▼         ▼          ▼
+
+   Index Worker  Index Worker  Index Worker
+
+         │         │          │
+
+         └─────────┼──────────┘
+
+                   ▼
+
+      Search Document Builder
+
+                   ▼
+
+         Search Index Storage
+```
+
+The architecture distributes indexing work across multiple workers, enabling horizontal scalability.
+
+---
+
+# Indexing Pipeline
+
+Every publication follows a standardized indexing pipeline.
+
+```text
+Content Published
+
+↓
+
+Publication Event
+
+↓
+
+Validation
+
+↓
+
+Transformation
+
+↓
+
+Metadata Enrichment
+
+↓
+
+Relationship Resolution
+
+↓
+
+Language Processing
+
+↓
+
+Search Document Creation
+
+↓
+
+Index Update
+
+↓
+
+Completion Event
+```
+
+Each stage has a single responsibility, allowing independent evolution and testing.
+
+---
+
+# Pipeline Stage Responsibilities
+
+| Stage                   | Responsibility                             |
+| ----------------------- | ------------------------------------------ |
+| Validation              | Verify event integrity                     |
+| Transformation          | Convert CMS entities into Search Documents |
+| Metadata Enrichment     | Add searchable metadata                    |
+| Relationship Resolution | Resolve links within the knowledge graph   |
+| Language Processing     | Apply language-specific analysis           |
+| Index Update            | Persist searchable representation          |
+| Completion              | Emit indexing completion events            |
+
+---
+
+# Search Document Projection
+
+The indexing pipeline creates **Search Documents** rather than copying CMS entities directly.
+
+Projection includes:
+
+* searchable text;
+* normalized titles;
+* summaries;
+* metadata;
+* taxonomy;
+* relationship identifiers;
+* language information;
+* ranking attributes.
+
+Editorial-only fields remain excluded.
+
+This minimizes index size while improving retrieval efficiency.
+
+---
+
+# Incremental Indexing
+
+Rebuilding every document after each editorial change is neither practical nor scalable.
+
+Instead, TWN adopts incremental indexing.
+
+```text
+Article Updated
+
+↓
+
+Single Event
+
+↓
+
+Single Projection
+
+↓
+
+Single Index Update
+```
+
+Only the affected search document is regenerated.
+
+This significantly reduces computational overhead.
+
+---
+
+# Full Reindexing
+
+Although incremental indexing is the default strategy, situations requiring complete reindexing inevitably arise.
+
+Examples include:
+
+* schema evolution;
+* analyzer changes;
+* ranking model updates;
+* language processor upgrades;
+* migration to a new search engine.
+
+The architecture therefore supports complete reconstruction directly from canonical knowledge.
+
+---
+
+# Zero-Downtime Reindexing
+
+A production knowledge platform cannot suspend search while indexes are rebuilt.
+
+TWN adopts an **index alias strategy**.
+
+```text
+Users
+
+ │
+
+ ▼
+
+Search Alias
+
+ │
+
+ ├────────► Index A (Active)
+
+ │
+
+ └────────► Index B (Building)
+```
+
+After validation:
+
+```text
+Search Alias
+
+ │
+
+ ▼
+
+Index B
+
+(old index retired)
+```
+
+Applications interact only with the alias.
+
+Index replacement therefore becomes transparent.
+
+---
+
+# Index Versioning
+
+Indexes evolve independently of applications.
+
+Example:
+
+```text
+articles_v1
+
+↓
+
+articles_v2
+
+↓
+
+articles_v3
+```
+
+Applications never reference version-specific indexes directly.
+
+Stable aliases preserve compatibility while enabling gradual evolution.
+
+---
+
+# Language-Specific Processing
+
+Indexing incorporates language-aware processing before persistence.
+
+Processing may include:
+
+* tokenization;
+* stemming;
+* stop-word removal;
+* synonym expansion;
+* normalization;
+* accent folding;
+* locale-specific analysis.
+
+Each language may employ a different analyzer pipeline.
+
+This architecture supports multilingual retrieval without compromising linguistic accuracy.
+
+---
+
+# Relationship Enrichment
+
+Search documents are enriched using the knowledge graph established in Chapter 7.8.
+
+Examples include:
+
+* Journey membership;
+* prerequisite relationships;
+* related articles;
+* author references;
+* category hierarchy.
+
+These enrichments support advanced discovery features beyond keyword matching.
+
+---
+
+# Queue-Based Processing
+
+Publication events are processed asynchronously through durable queues.
+
+```text
+CMS
+
+↓
+
+Event Broker
+
+↓
+
+Index Queue
+
+↓
+
+Workers
+
+↓
+
+Search Index
+```
+
+Advantages include:
+
+* load smoothing;
+* retry support;
+* back-pressure management;
+* worker elasticity.
+
+The queue decouples editorial activity from indexing throughput.
+
+---
+
+# Retry Strategy
+
+Transient failures should not immediately result in data loss.
+
+Recommended retry policy:
+
+```text
+Failure
+
+↓
+
+Retry 1
+
+↓
+
+Retry 2
+
+↓
+
+Retry 3
+
+↓
+
+Dead-Letter Queue
+```
+
+Retries should use exponential backoff to reduce contention during outages.
+
+---
+
+# Dead-Letter Queue
+
+Events that repeatedly fail indexing are redirected to a dedicated Dead-Letter Queue (DLQ).
+
+The DLQ enables:
+
+* operational investigation;
+* manual replay;
+* debugging;
+* recovery without disrupting normal indexing traffic.
+
+No publication event should be silently discarded.
+
+---
+
+# Failure Recovery
+
+The indexing subsystem supports deterministic recovery.
+
+Recovery sources include:
+
+* publication event replay;
+* scheduled reconciliation jobs;
+* full index rebuilds;
+* snapshot restoration.
+
+Recovery procedures should be automated wherever practical.
+
+---
+
+# Index Consistency Verification
+
+Operational integrity requires periodic verification.
+
+Examples include:
+
+* orphaned search documents;
+* missing indexed resources;
+* duplicate projections;
+* stale language variants;
+* broken relationship references.
+
+Automated consistency checks should execute on a scheduled basis.
+
+---
+
+# Performance Considerations
+
+The indexing architecture should optimize for sustained throughput rather than peak latency.
+
+Performance techniques include:
+
+* batch indexing where appropriate;
+* parallel workers;
+* asynchronous pipelines;
+* selective document regeneration;
+* metadata caching during projection.
+
+These optimizations improve scalability while preserving correctness.
+
+---
+
+# Security Considerations
+
+Only published, authorized knowledge shall enter public search indexes.
+
+The indexing pipeline must enforce:
+
+* visibility rules;
+* publication state;
+* access classifications;
+* exclusion of confidential editorial data.
+
+Administrative indexes, where required, should remain logically separated from public indexes.
+
+---
+
+# Observability
+
+The indexing subsystem shall expose operational telemetry, including:
+
+* events processed per minute;
+* indexing latency;
+* queue depth;
+* retry counts;
+* DLQ size;
+* indexing failures;
+* average projection time;
+* successful rebuild duration.
+
+These metrics enable proactive operational management.
+
+---
+
+# Architecture Decision Record — ADR 7.9.003
+
+## Title
+
+Adopt an Event-Driven, Incremental and Rebuildable Indexing Architecture.
+
+### Status
+
+Accepted.
+
+### Context
+
+TWN requires a search subsystem capable of supporting continuous editorial activity, future schema evolution and increasing content volumes without interrupting search availability. Direct synchronization with the CMS or synchronous indexing during publication would introduce unnecessary coupling, reduce scalability and complicate recovery.
+
+### Decision
+
+The platform shall implement an event-driven indexing architecture. Publication domain events shall initiate asynchronous indexing pipelines that generate optimized Search Documents. Incremental indexing shall be the default synchronization strategy, while complete index reconstruction shall remain possible from canonical CMS data. Search indexes shall be versioned and exposed through stable aliases to enable zero-downtime reindexing.
+
+### Consequences
+
+**Positive**
+
+* Loose coupling between CMS and Search.
+* Near real-time synchronization.
+* Independent scalability of indexing workloads.
+* Simplified disaster recovery.
+* Safe schema evolution through index versioning.
+* Transparent index replacement using aliases.
+
+**Trade-offs**
+
+* Eventual rather than immediate consistency.
+* Additional infrastructure (queues, workers, aliases, DLQs).
+* More operational monitoring requirements.
+* Increased architectural complexity.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* the indexing philosophy is established;
+* event-driven synchronization is defined;
+* the indexing pipeline is documented;
+* incremental and full reindexing strategies are specified;
+* index versioning and alias management are incorporated;
+* queue-based processing, retries and dead-letter handling are defined;
+* recovery and consistency verification mechanisms are documented;
+* security and observability considerations are addressed; and
+* the governing architectural decision is formally recorded.
+
+---
+
+## End of 7.9.4
+
+**Next Section:** **7.9.5 Search Index Design**, where the internal structure of search indexes—including document schemas, mappings, analyzers, shard strategy, replication, lifecycle management and storage optimization—will be defined in accordance with modern information retrieval and distributed search best practices.
+
+# 7.9.5 Search Index Design
+
+---
+
+# Purpose
+
+The indexing architecture defines **how knowledge reaches the search subsystem**.
+
+The Search Index Design defines **how that knowledge is organized once it arrives**.
+
+A search index is not merely a storage mechanism.
+
+It is a specialized data structure engineered to maximize retrieval performance, relevance, scalability and operational resilience.
+
+Poor index design cannot be compensated for by sophisticated ranking algorithms or AI-assisted retrieval.
+
+Conversely, a well-designed index enables efficient querying, accurate relevance scoring, multilingual discovery and future semantic capabilities without requiring major architectural redesign.
+
+This section defines the logical and physical organization of search indexes within the TWN platform.
+
+---
+
+# Architectural Objectives
+
+The Search Index Design shall:
+
+* support fast full-text retrieval;
+* optimize relevance scoring;
+* enable structured filtering;
+* accommodate multilingual content;
+* scale horizontally;
+* support zero-downtime schema evolution;
+* minimize storage overhead;
+* prepare for hybrid keyword and semantic retrieval.
+
+---
+
+# Search Index Philosophy
+
+Search indexes are **purpose-built retrieval structures**, not replicas of relational databases.
+
+The CMS stores knowledge for editing and governance.
+
+The Search subsystem stores optimized representations for discovery.
+
+```text
+                 CMS Database
+
+        Structured Editorial Data
+
+                    │
+
+          Projection & Enrichment
+
+                    ▼
+
+             Search Index
+
+       Optimized Retrieval Model
+```
+
+The index exists to answer questions quickly—not to preserve every editorial detail.
+
+---
+
+# Logical Index Organization
+
+TWN organizes indexes by **knowledge domain** rather than by database table.
+
+Illustratively:
+
+```text
+Knowledge Search
+
+├── Articles
+
+├── Journeys
+
+├── Journey Chapters
+
+├── Notebook Entries
+
+├── Shared Pages
+
+├── Margin Notes
+
+├── Authors
+
+├── Categories
+
+└── Tags
+```
+
+Each logical index represents a coherent retrieval domain while participating in unified search experiences.
+
+---
+
+# Unified Search vs. Domain-Specific Search
+
+The architecture supports both:
+
+### Unified Search
+
+Searches across every searchable knowledge object.
+
+Example:
+
+> "Artificial Intelligence"
+
+Returns:
+
+* Articles
+* Journeys
+* Notebook Entries
+* Authors
+* Shared Pages
+
+---
+
+### Domain Search
+
+Limits retrieval to a specific resource.
+
+Example:
+
+> Search only Journeys.
+
+or
+
+> Search only Notebook Entries.
+
+This flexibility improves usability without increasing architectural complexity.
+
+---
+
+# Index Schema Philosophy
+
+Every Search Document follows a canonical schema.
+
+The schema intentionally contains only information required for retrieval.
+
+Conceptually:
+
+```text
+Search Document
+
+├── Identity
+
+├── Searchable Content
+
+├── Metadata
+
+├── Taxonomy
+
+├── Relationships
+
+├── Ranking Signals
+
+└── Operational Metadata
+```
+
+The schema should remain stable, versioned and backward compatible whenever possible.
+
+---
+
+# Core Search Document Structure
+
+Each indexed document should include the following logical components.
+
+| Component       | Purpose                                |
+| --------------- | -------------------------------------- |
+| Identifier      | Unique resource reference              |
+| Resource Type   | Article, Journey, Notebook Entry, etc. |
+| Title           | Primary searchable heading             |
+| Summary         | Short descriptive content              |
+| Body            | Full searchable text                   |
+| Metadata        | Publication and editorial information  |
+| Taxonomy        | Categories and tags                    |
+| Relationships   | Knowledge graph references             |
+| Language        | Language identifier                    |
+| Ranking Signals | Attributes influencing relevance       |
+
+Additional fields may be introduced without breaking existing retrieval contracts.
+
+---
+
+# Searchable Fields
+
+Searchable fields contribute directly to full-text retrieval.
+
+Typical examples include:
+
+* title;
+* subtitle;
+* summary;
+* headings;
+* body;
+* quotations;
+* captions;
+* author names;
+* category names;
+* tags.
+
+These fields should be analyzed using language-specific pipelines.
+
+---
+
+# Filterable Fields
+
+Filterable fields support structured navigation rather than textual relevance.
+
+Examples include:
+
+* content type;
+* category;
+* tags;
+* language;
+* publication date;
+* reading time;
+* author;
+* Journey;
+* visibility.
+
+These fields should remain structured and not undergo full-text analysis.
+
+---
+
+# Sortable Fields
+
+Certain attributes support ordering rather than searching.
+
+Examples include:
+
+* publication date;
+* last updated;
+* alphabetical title;
+* estimated reading time;
+* popularity score;
+* editorial priority.
+
+Sorting fields should use optimized data types appropriate for comparison operations.
+
+---
+
+# Metadata Design
+
+Metadata provides contextual information that enhances retrieval.
+
+Examples include:
+
+```text
+Metadata
+
+├── Language
+
+├── Publication Date
+
+├── Last Updated
+
+├── Author
+
+├── Reading Time
+
+├── Difficulty
+
+├── Estimated Duration
+
+└── Visibility
+```
+
+Metadata should remain normalized and consistently structured across resource types.
+
+---
+
+# Taxonomy Indexing
+
+Categories and tags form an essential part of knowledge discovery.
+
+They should be indexed as structured fields while also remaining searchable.
+
+This enables:
+
+* filtering;
+* aggregation;
+* recommendation;
+* navigation.
+
+The taxonomy itself should remain governed by the CMS.
+
+---
+
+# Relationship Indexing
+
+Knowledge relationships significantly improve discovery quality.
+
+Examples include:
+
+* prerequisite articles;
+* related Notebook Entries;
+* Journey membership;
+* translations;
+* referenced authors.
+
+These relationships are indexed explicitly rather than inferred during query execution.
+
+This reduces runtime complexity.
+
+---
+
+# Language-Specific Indexes
+
+The architecture supports multilingual retrieval without fragmenting the knowledge ecosystem.
+
+Possible organization:
+
+```text
+Search
+
+├── English
+
+├── French
+
+├── Spanish
+
+└── Future Languages
+```
+
+Each language may use different analyzers while preserving shared conceptual identifiers.
+
+---
+
+# Analyzer Strategy
+
+Language processing should occur during indexing.
+
+Typical analyzer stages include:
+
+```text
+Raw Text
+
+↓
+
+Normalization
+
+↓
+
+Tokenization
+
+↓
+
+Stop Word Removal
+
+↓
+
+Stemming/Lemmatization
+
+↓
+
+Synonym Expansion
+
+↓
+
+Indexed Tokens
+```
+
+Different languages may require entirely different analyzer configurations.
+
+---
+
+# Field Mapping Strategy
+
+Each indexed field should have an explicit mapping appropriate to its purpose.
+
+Illustratively:
+
+| Field Purpose     | Recommended Mapping Strategy |
+| ----------------- | ---------------------------- |
+| Full-text content | Analyzed text                |
+| Identifiers       | Exact keyword                |
+| Tags              | Keyword                      |
+| Categories        | Keyword                      |
+| Dates             | Date type                    |
+| Reading time      | Numeric                      |
+| Boolean flags     | Boolean                      |
+| Popularity        | Numeric                      |
+| Language          | Keyword                      |
+
+Explicit mappings reduce ambiguity and improve query performance.
+
+---
+
+# Index Sharding Strategy
+
+As content volumes increase, a single physical index becomes insufficient.
+
+The architecture therefore supports horizontal partitioning through sharding.
+
+```text
+Articles Index
+
+├── Shard 1
+
+├── Shard 2
+
+├── Shard 3
+
+└── Shard N
+```
+
+Queries execute across shards while presenting a unified result set.
+
+Shard sizing should be reviewed periodically based on growth patterns rather than fixed assumptions.
+
+---
+
+# Replication Strategy
+
+Indexes should support replication to improve availability and fault tolerance.
+
+```text
+Primary Index
+
+│
+
+├── Replica A
+
+├── Replica B
+
+└── Replica C
+```
+
+Replicas enable:
+
+* read scaling;
+* failover;
+* maintenance without downtime.
+
+Replication policies should balance resilience with infrastructure costs.
+
+---
+
+# Index Lifecycle Management
+
+Indexes evolve throughout their operational life.
+
+Typical lifecycle:
+
+```text
+Created
+
+↓
+
+Active
+
+↓
+
+Optimized
+
+↓
+
+Archived
+
+↓
+
+Deleted
+```
+
+Lifecycle policies should automate maintenance activities such as optimization, snapshotting and eventual retirement.
+
+---
+
+# Schema Evolution
+
+Search schemas inevitably change.
+
+Examples include:
+
+* new metadata fields;
+* additional languages;
+* ranking improvements;
+* semantic embeddings.
+
+Schema evolution should occur through versioned indexes rather than destructive modifications.
+
+---
+
+# Hybrid Retrieval Preparation
+
+Although the initial platform emphasizes full-text retrieval, the index design intentionally accommodates future vector-based search.
+
+Future Search Documents may include:
+
+```text
+Search Document
+
+├── Text Fields
+
+├── Metadata
+
+├── Relationships
+
+└── Vector Embeddings
+```
+
+This hybrid model enables keyword and semantic retrieval to coexist.
+
+---
+
+# Storage Optimization
+
+Efficient index design reduces infrastructure costs.
+
+Optimization strategies include:
+
+* excluding unnecessary editorial fields;
+* compressing stored content where appropriate;
+* indexing only searchable attributes;
+* avoiding redundant metadata;
+* using efficient field mappings.
+
+Storage efficiency should never compromise retrieval quality.
+
+---
+
+# Operational Considerations
+
+The index architecture should support:
+
+* snapshots;
+* backups;
+* corruption detection;
+* integrity verification;
+* rolling upgrades;
+* rebuild automation.
+
+Operational resilience is considered part of the index design rather than an afterthought.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* mirroring relational schemas inside search indexes;
+* indexing every available field "just in case";
+* mixing analyzed and exact-match semantics within the same field without clear purpose;
+* relying on dynamic field mappings in production;
+* storing confidential editorial information in public indexes;
+* performing schema-breaking changes directly on active indexes.
+
+---
+
+# Architecture Decision Record — ADR 7.9.004
+
+## Title
+
+Adopt Versioned, Domain-Oriented Search Indexes with Explicit Field Mappings.
+
+### Status
+
+Accepted.
+
+### Context
+
+The TWN platform requires indexes that support efficient retrieval, multilingual content, evolving schemas and future hybrid search capabilities. A simplistic mirror of the CMS schema would limit scalability, increase storage costs and hinder relevance tuning.
+
+### Decision
+
+Search indexes shall be organized around knowledge domains and populated with canonical Search Documents. Field mappings shall be explicitly defined according to retrieval requirements, with clear distinctions between searchable, filterable and sortable fields. Indexes shall be versioned, shardable and replicated, and designed to accommodate future vector embeddings alongside traditional text fields.
+
+### Consequences
+
+**Positive**
+
+* Improved retrieval performance.
+* Predictable schema evolution.
+* Better relevance tuning.
+* Efficient storage utilization.
+* Readiness for semantic and AI-powered search.
+* High availability through replication.
+
+**Trade-offs**
+
+* Additional planning for schema governance.
+* Operational overhead for shard and replica management.
+* More sophisticated deployment processes for index version upgrades.
+* Increased complexity compared to a single monolithic index.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* the logical organization of search indexes is defined;
+* canonical Search Document structure is established;
+* searchable, filterable and sortable field strategies are documented;
+* taxonomy, relationships and multilingual indexing are incorporated;
+* analyzer and mapping strategies are specified;
+* sharding, replication and lifecycle management are addressed;
+* provisions for hybrid retrieval are included;
+* anti-patterns are identified; and
+* the governing architectural decision is formally recorded.
+
+---
+
+## End of 7.9.5
+
+**Next Section:** **7.9.6 Query Processing Pipeline**, where the lifecycle of a search request—from user input through parsing, normalization, intent interpretation, retrieval orchestration and response generation—will be defined using modern information retrieval and distributed search best practices.
+
+# 7.9.6 Query Processing Pipeline
+
+---
+
+# Purpose
+
+A search engine does not execute user input directly against its indexes.
+
+Between the moment a user submits a search request and the moment relevant knowledge is returned, the request passes through a sequence of processing stages that progressively transform raw input into an optimized retrieval operation.
+
+This sequence is known as the **Query Processing Pipeline**.
+
+Within TWN, the Query Processing Pipeline is responsible for:
+
+* understanding user intent;
+* validating requests;
+* normalizing input;
+* enriching queries;
+* orchestrating retrieval;
+* coordinating ranking;
+* producing structured responses.
+
+By isolating query processing from retrieval and ranking, the architecture gains flexibility, extensibility and resilience while enabling future AI-assisted search capabilities.
+
+---
+
+# Architectural Objectives
+
+The Query Processing Pipeline shall:
+
+* produce deterministic search behaviour;
+* maximize retrieval quality;
+* minimize query latency;
+* support multilingual input;
+* prepare queries for hybrid retrieval;
+* isolate business logic from search infrastructure;
+* allow incremental enhancement without disrupting existing functionality.
+
+---
+
+# Architectural Philosophy
+
+Query processing should progressively improve a request rather than execute it immediately.
+
+```text
+User Query
+
+↓
+
+Understand
+
+↓
+
+Normalize
+
+↓
+
+Enrich
+
+↓
+
+Validate
+
+↓
+
+Retrieve
+
+↓
+
+Rank
+
+↓
+
+Respond
+```
+
+Each stage performs a single responsibility before passing the request to the next stage.
+
+---
+
+# High-Level Pipeline
+
+```text
+               User
+
+                │
+
+                ▼
+
+         Search Request
+
+                │
+
+                ▼
+
+      Query Processing Pipeline
+
+ ┌──────────────────────────────────┐
+
+ │ Validation                       │
+
+ │ Parsing                          │
+
+ │ Normalization                    │
+
+ │ Language Detection               │
+
+ │ Intent Recognition               │
+
+ │ Query Enrichment                 │
+
+ │ Retrieval Planning               │
+
+ └──────────────────────────────────┘
+
+                │
+
+                ▼
+
+       Retrieval Engine
+
+                │
+
+                ▼
+
+        Ranking Engine
+
+                │
+
+                ▼
+
+         Response Builder
+
+                │
+
+                ▼
+
+            Search API
+```
+
+Each stage communicates using immutable request objects.
+
+---
+
+# Pipeline Responsibilities
+
+The pipeline is responsible for:
+
+* validating request syntax;
+* interpreting search expressions;
+* selecting retrieval strategies;
+* applying language-specific processing;
+* constructing optimized search plans;
+* coordinating downstream services.
+
+It is **not** responsible for:
+
+* storing indexes;
+* scoring documents;
+* modifying knowledge;
+* managing editorial workflows.
+
+---
+
+# Stage 1 — Request Validation
+
+Every request is validated before processing begins.
+
+Validation includes:
+
+* maximum query length;
+* unsupported characters;
+* malformed operators;
+* invalid filters;
+* unsupported sorting fields;
+* authentication requirements.
+
+Invalid requests should fail fast before consuming retrieval resources.
+
+---
+
+# Stage 2 — Query Parsing
+
+The parser converts raw user input into a structured internal representation.
+
+Example:
+
+```text
+AI architecture
+```
+
+becomes
+
+```text
+Terms
+
+├── AI
+
+└── architecture
+```
+
+For advanced syntax:
+
+```text
+author:"Vanessa" language:English AI
+```
+
+becomes
+
+```text
+Query
+
+├── Text
+
+├── Filters
+
+├── Operators
+
+└── Metadata
+```
+
+The parser should preserve semantic structure rather than treating every query as plain text.
+
+---
+
+# Stage 3 — Query Normalization
+
+Normalization ensures equivalent inputs produce equivalent retrieval behaviour.
+
+Examples include:
+
+* lowercase conversion;
+* whitespace normalization;
+* Unicode normalization;
+* punctuation handling;
+* accent folding where appropriate.
+
+Illustratively:
+
+```text
+ Artificial   Intelligence
+
+↓
+
+artificial intelligence
+```
+
+Normalization reduces unnecessary variation while preserving meaning.
+
+---
+
+# Stage 4 — Language Detection
+
+When the user's preferred language is unknown, the pipeline should infer the query language.
+
+```text
+Query
+
+↓
+
+Language Detector
+
+↓
+
+English
+
+or
+
+French
+
+or
+
+Spanish
+```
+
+Detected language influences:
+
+* analyzer selection;
+* stemming;
+* synonym dictionaries;
+* retrieval strategy.
+
+Where user preferences are known, explicit preferences take precedence over automatic detection.
+
+---
+
+# Stage 5 — Tokenization
+
+The normalized query is decomposed into searchable tokens.
+
+Example:
+
+```text
+Building Modern APIs
+```
+
+↓
+
+```text
+Building
+
+Modern
+
+APIs
+```
+
+Tokenization rules vary across languages and writing systems.
+
+The tokenizer must therefore be configurable rather than hardcoded.
+
+---
+
+# Stage 6 — Linguistic Analysis
+
+Following tokenization, language-specific analysis is applied.
+
+Possible operations include:
+
+* stemming;
+* lemmatization;
+* stop-word removal;
+* synonym expansion;
+* spelling normalization.
+
+Illustratively:
+
+```text
+running
+
+↓
+
+run
+```
+
+or
+
+```text
+AI
+
+↓
+
+Artificial Intelligence
+```
+
+These transformations improve recall while preserving precision.
+
+---
+
+# Stage 7 — Intent Recognition
+
+Not every query expresses the same intention.
+
+Examples include:
+
+| Query            | Likely Intent             |
+| ---------------- | ------------------------- |
+| Kubernetes       | Topic search              |
+| Vanessa          | Author search             |
+| Beginner Journey | Learning path discovery   |
+| AI Notebook      | Notebook retrieval        |
+| Recently Updated | Freshness-oriented search |
+
+Intent recognition allows the retrieval strategy to adapt to the user's objective.
+
+Future AI models may enhance this stage, but deterministic rules remain the default foundation.
+
+---
+
+# Stage 8 — Query Enrichment
+
+The original query may be enriched with additional context.
+
+Possible enrichments include:
+
+* synonyms;
+* abbreviations;
+* related terminology;
+* taxonomy expansion;
+* aliases.
+
+Example:
+
+```text
+JS
+
+↓
+
+JavaScript
+```
+
+or
+
+```text
+AI
+
+↓
+
+Artificial Intelligence
+
+Machine Learning
+
+LLMs
+```
+
+Enrichment should improve discovery without significantly increasing irrelevant matches.
+
+---
+
+# Stage 9 — Retrieval Planning
+
+Rather than querying every index indiscriminately, the pipeline constructs an optimized retrieval plan.
+
+Example:
+
+```text
+Journey Search
+
+↓
+
+Journey Index
+
++
+
+Chapter Index
+```
+
+Whereas:
+
+```text
+Author Search
+
+↓
+
+Author Index
+
++
+
+Article Index
+```
+
+The retrieval plan minimizes unnecessary index traversal.
+
+---
+
+# Query Routing
+
+Some requests require different processing paths.
+
+```text
+Query
+
+│
+
+├── Keyword Search
+
+├── Faceted Search
+
+├── Semantic Search
+
+├── Autocomplete
+
+└── AI Retrieval
+```
+
+Routing decisions are determined during query planning.
+
+This enables multiple retrieval engines to coexist within the same architecture.
+
+---
+
+# Query Optimization
+
+Before retrieval begins, the pipeline optimizes execution.
+
+Optimization techniques include:
+
+* removing duplicate terms;
+* collapsing equivalent filters;
+* simplifying Boolean expressions;
+* eliminating impossible predicates.
+
+Optimization reduces computational cost while preserving correctness.
+
+---
+
+# Retrieval Invocation
+
+Only after planning is complete does the pipeline invoke the Retrieval Engine.
+
+```text
+Optimized Query
+
+↓
+
+Retrieval Engine
+
+↓
+
+Candidate Results
+```
+
+The Retrieval Engine focuses on recall rather than final ranking.
+
+---
+
+# Ranking Coordination
+
+Retrieved candidates are forwarded to the Ranking Engine.
+
+The pipeline coordinates:
+
+* ranking model selection;
+* personalization context (future);
+* freshness preferences;
+* editorial boosts.
+
+Ranking itself remains an independent architectural responsibility.
+
+---
+
+# Response Construction
+
+The pipeline transforms ranked candidates into a standardized response.
+
+Typical response elements include:
+
+* results;
+* snippets;
+* highlights;
+* pagination;
+* applied filters;
+* aggregation data;
+* execution metadata.
+
+Applications consume this standardized representation regardless of the underlying search implementation.
+
+---
+
+# Error Handling
+
+Failures should remain localized.
+
+Examples include:
+
+| Failure                        | Expected Behaviour                   |
+| ------------------------------ | ------------------------------------ |
+| Invalid syntax                 | Return validation error              |
+| Missing filter                 | Ignore unsupported filter where safe |
+| Ranking failure                | Fall back to baseline ranking        |
+| Suggestion service unavailable | Continue without suggestions         |
+| Semantic search unavailable    | Fall back to keyword retrieval       |
+
+Graceful degradation is preferred over complete failure.
+
+---
+
+# Performance Considerations
+
+The Query Processing Pipeline should minimize latency.
+
+Recommended practices include:
+
+* immutable request objects;
+* parallel execution where safe;
+* caching of frequently used synonym dictionaries;
+* precompiled query templates;
+* efficient parser implementation.
+
+Latency introduced during query processing directly impacts user experience.
+
+---
+
+# Security Considerations
+
+Query processing must defend against malicious or abusive input.
+
+Examples include:
+
+* query injection;
+* excessive wildcard usage;
+* resource exhaustion attacks;
+* malformed operators;
+* oversized payloads.
+
+Input validation and rate limiting should occur before expensive processing stages.
+
+---
+
+# Observability
+
+Operational telemetry should include:
+
+* average parsing time;
+* normalization latency;
+* language detection accuracy;
+* enrichment success rate;
+* routing distribution;
+* retrieval planning latency;
+* total pipeline execution time.
+
+These metrics enable continuous optimization of search quality and performance.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* executing raw user input directly against search indexes;
+* embedding ranking logic within the parser;
+* tightly coupling query processing to a specific search engine implementation;
+* assuming a single language;
+* performing expensive AI inference for every query by default;
+* skipping validation for "trusted" clients.
+
+---
+
+# Architecture Decision Record — ADR 7.9.005
+
+## Title
+
+Adopt a Multi-Stage Query Processing Pipeline with Explicit Separation of Parsing, Enrichment and Retrieval Planning.
+
+### Status
+
+Accepted.
+
+### Context
+
+As TWN expands to support multilingual content, faceted navigation, semantic retrieval and AI-assisted discovery, directly executing raw user input against search indexes would limit extensibility and compromise search quality.
+
+### Decision
+
+All search requests shall pass through a structured processing pipeline consisting of validation, parsing, normalization, linguistic analysis, intent recognition, query enrichment and retrieval planning before interacting with the Retrieval Engine. Each stage shall perform a single responsibility and communicate through immutable request representations.
+
+### Consequences
+
+**Positive**
+
+* Improved retrieval quality.
+* Easier evolution of query understanding.
+* Independent enhancement of processing stages.
+* Clear separation of concerns.
+* Foundation for future AI-assisted query interpretation.
+
+**Trade-offs**
+
+* Increased processing complexity.
+* Additional latency if not carefully optimized.
+* More components requiring monitoring and testing.
+* Greater implementation effort compared to direct query execution.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* the purpose and objectives of the query processing pipeline are established;
+* each processing stage is defined and sequenced;
+* routing, optimization and retrieval planning strategies are documented;
+* response construction and error handling are specified;
+* performance, security and observability considerations are addressed;
+* anti-patterns are identified; and
+* the governing architectural decision is formally recorded.
+
+---
+
+## End of 7.9.6
+
+**Next Section:** **7.9.7 Full-Text Search Architecture**, where inverted indexes, analyzers, BM25 relevance scoring, phrase matching, Boolean queries, fuzzy matching and other modern information retrieval techniques will be defined as the foundation of TWN's keyword search capabilities.
+
+# 7.9.7 Full-Text Search Architecture
+
+---
+
+# Purpose
+
+Full-text search is the foundational retrieval mechanism upon which all higher-order search capabilities are built.
+
+While future versions of TWN will support semantic retrieval, vector search, Retrieval-Augmented Generation (RAG), and knowledge graph exploration, these capabilities complement rather than replace traditional information retrieval techniques.
+
+A well-designed full-text search engine remains the most efficient mechanism for answering explicit user queries, locating known information, and retrieving relevant knowledge with predictable performance.
+
+This section defines the architecture responsible for indexing textual content, interpreting search expressions, matching documents, computing lexical relevance, and returning candidate results for subsequent ranking.
+
+---
+
+# Architectural Objectives
+
+The Full-Text Search Architecture shall:
+
+* provide fast and accurate keyword retrieval;
+* support natural language search expressions;
+* maximize recall without sacrificing precision;
+* support multilingual content;
+* accommodate advanced query operators;
+* scale to millions of indexed knowledge objects;
+* integrate seamlessly with semantic retrieval.
+
+---
+
+# Architectural Philosophy
+
+Full-text search should retrieve **documents that best match the user's expressed language**, not necessarily documents that are semantically similar.
+
+The architecture therefore prioritizes lexical relevance while remaining extensible to future semantic enhancements.
+
+```text id="5db4m0"
+User Query
+
+↓
+
+Lexical Matching
+
+↓
+
+Relevant Documents
+
+↓
+
+Ranking
+
+↓
+
+Search Results
+```
+
+---
+
+# Position Within the Search Architecture
+
+```text id="4iq3s8"
+User
+
+↓
+
+Query Processing
+
+↓
+
+Full-Text Retrieval
+
+↓
+
+Candidate Documents
+
+↓
+
+Ranking
+
+↓
+
+Search API
+```
+
+Full-text retrieval is responsible only for identifying suitable candidates.
+
+It does not determine final presentation order beyond lexical scoring.
+
+---
+
+# Core Retrieval Model
+
+The architecture adopts the classical Information Retrieval (IR) model.
+
+Conceptually:
+
+```text id="7b3ux7"
+Indexed Terms
+
+↓
+
+Inverted Index
+
+↓
+
+Candidate Documents
+
+↓
+
+Lexical Score
+
+↓
+
+Ranking Pipeline
+```
+
+This approach remains the industry standard for large-scale search systems due to its performance, maturity and explainability.
+
+---
+
+# Inverted Index
+
+The primary data structure underlying full-text search is the **Inverted Index**.
+
+Unlike relational databases that map documents to words, an inverted index maps words to the documents in which they appear.
+
+Illustratively:
+
+```text id="hr8tq6"
+Artificial
+
+↓
+
+Article 12
+
+Article 41
+
+Journey 6
+
+Notebook 17
+
+------------------
+
+Architecture
+
+↓
+
+Article 3
+
+Journey 6
+
+Article 28
+```
+
+This enables retrieval in near constant time regardless of corpus size.
+
+---
+
+# Why Inverted Indexes
+
+Without an inverted index:
+
+```text id="5zjhrw"
+Search Query
+
+↓
+
+Scan Every Document
+
+↓
+
+Very Slow
+```
+
+With an inverted index:
+
+```text id="t7jqra"
+Search Query
+
+↓
+
+Lookup Posting List
+
+↓
+
+Relevant Documents
+```
+
+This architectural choice dramatically reduces retrieval latency.
+
+---
+
+# Tokenization Strategy
+
+Before indexing, textual content must be divided into searchable tokens.
+
+Example:
+
+```text id="d9zyoq"
+Building Modern APIs
+
+↓
+
+Building
+
+Modern
+
+APIs
+```
+
+Tokenizer implementations should be language-aware and configurable.
+
+Different writing systems may require different tokenization algorithms.
+
+---
+
+# Analyzer Pipeline
+
+Each searchable field passes through an analyzer pipeline before indexing.
+
+```text id="kydtmw"
+Original Text
+
+↓
+
+Character Filters
+
+↓
+
+Tokenizer
+
+↓
+
+Token Filters
+
+↓
+
+Indexed Terms
+```
+
+Each stage transforms text into a normalized representation suitable for retrieval.
+
+---
+
+# Character Filters
+
+Character filters normalize raw input before tokenization.
+
+Examples include:
+
+* HTML removal;
+* Unicode normalization;
+* punctuation normalization;
+* special character replacement.
+
+Example:
+
+```text id="9v07ya"
+C&amp;C++
+
+↓
+
+C&C++
+```
+
+These transformations improve consistency without altering meaning.
+
+---
+
+# Token Filters
+
+Following tokenization, additional linguistic processing occurs.
+
+Examples include:
+
+* lowercase conversion;
+* stop-word removal;
+* stemming;
+* lemmatization;
+* synonym expansion;
+* duplicate removal.
+
+Each filter contributes to improved recall and consistency.
+
+---
+
+# Searchable Fields
+
+Not every field contributes equally to lexical relevance.
+
+Illustratively:
+
+| Field    | Relative Importance |
+| -------- | ------------------- |
+| Title    | Very High           |
+| Headings | High                |
+| Summary  | High                |
+| Body     | Medium              |
+| Captions | Medium              |
+| Tags     | Medium              |
+| Author   | Low                 |
+| Metadata | Low                 |
+
+This weighting strategy enables more intuitive retrieval behaviour.
+
+---
+
+# Field Boosting
+
+Certain fields naturally carry greater semantic importance.
+
+Example:
+
+```text id="g0z4dn"
+Title Match
+
+↓
+
+Higher Weight
+
+-------------------
+
+Body Match
+
+↓
+
+Lower Weight
+```
+
+Field boosting improves result quality by recognizing the structural importance of different content elements.
+
+---
+
+# Phrase Matching
+
+Some searches represent exact concepts rather than independent words.
+
+Example:
+
+```text id="gpk5vh"
+"Machine Learning"
+```
+
+should prioritize documents containing the complete phrase over documents containing the individual terms in unrelated contexts.
+
+Phrase matching therefore receives dedicated support within the retrieval architecture.
+
+---
+
+# Boolean Queries
+
+Advanced users may combine search expressions using Boolean operators.
+
+Supported operators may include:
+
+* AND
+* OR
+* NOT
+
+Example:
+
+```text id="6h72m0"
+AI AND Architecture
+```
+
+or
+
+```text id="a1kjxv"
+Journey NOT Beginner
+```
+
+Boolean evaluation occurs during retrieval planning rather than application logic.
+
+---
+
+# Prefix and Wildcard Queries
+
+Autocomplete and exploratory searches may require partial matching.
+
+Examples include:
+
+```text id="m8yckv"
+Arch*
+```
+
+↓
+
+Architecture
+
+Architect
+
+Architectural
+
+Wildcard queries should be carefully controlled because they can significantly increase computational cost.
+
+---
+
+# Fuzzy Matching
+
+Users frequently misspell technical terminology.
+
+Examples include:
+
+```text id="jgn4ek"
+Kubernets
+
+↓
+
+Kubernetes
+```
+
+or
+
+```text id="dby8mw"
+Artifical
+
+↓
+
+Artificial
+```
+
+Fuzzy matching improves usability while avoiding excessive false positives.
+
+Edit-distance thresholds should remain configurable.
+
+---
+
+# Stop Words
+
+Common language terms often provide little retrieval value.
+
+Examples include:
+
+* the;
+* and;
+* of;
+* is.
+
+Depending on language and context, these terms may be excluded during indexing.
+
+However, stop-word removal should remain language-specific and configurable to avoid unintended loss of meaning.
+
+---
+
+# Synonym Expansion
+
+Users often describe identical concepts using different terminology.
+
+Examples:
+
+```text id="fqj8wf"
+AI
+
+↓
+
+Artificial Intelligence
+```
+
+```text id="bj6dch"
+JS
+
+↓
+
+JavaScript
+```
+
+```text id="w9m3er"
+Frontend
+
+↓
+
+Front End
+
+↓
+
+Front-End
+```
+
+Synonym dictionaries improve recall while maintaining lexical retrieval.
+
+---
+
+# Relevance Scoring
+
+The retrieval engine assigns an initial lexical relevance score to each candidate document.
+
+TWN adopts **BM25** as the default lexical ranking algorithm.
+
+### Why BM25?
+
+BM25 is widely regarded as the modern standard for lexical information retrieval because it:
+
+* rewards rare but meaningful terms;
+* considers document length;
+* supports efficient ranking at scale;
+* outperforms older TF-IDF approaches in most production environments;
+* is the default ranking algorithm in search engines such as Elasticsearch and OpenSearch.
+
+BM25 provides the baseline relevance score that is later refined by the Ranking Architecture (Section 7.9.9).
+
+---
+
+# Candidate Selection
+
+The objective of retrieval is not perfect ordering.
+
+It is identifying an appropriately sized set of candidate documents.
+
+Illustratively:
+
+```text id="j27rmr"
+Millions of Documents
+
+↓
+
+Lexical Retrieval
+
+↓
+
+Top 500 Candidates
+
+↓
+
+Ranking Pipeline
+
+↓
+
+Top 20 Results
+```
+
+Separating retrieval from ranking improves both scalability and search quality.
+
+---
+
+# Handling Large Documents
+
+Long-form content, such as extensive technical guides or Journey Chapters, may contain thousands of words.
+
+The architecture should avoid disproportionately rewarding document length.
+
+BM25 naturally addresses this through document-length normalization, reducing the bias toward excessively long documents while still recognizing relevant content.
+
+---
+
+# Query-Time vs. Index-Time Processing
+
+Some transformations occur when documents are indexed.
+
+Others occur when users search.
+
+```text id="j7g3f4"
+Index Time
+
+↓
+
+Tokenization
+
+↓
+
+Normalization
+
+↓
+
+Storage
+
+------------------
+
+Query Time
+
+↓
+
+Parsing
+
+↓
+
+Expansion
+
+↓
+
+Retrieval
+```
+
+Maintaining a clear separation simplifies maintenance and improves consistency.
+
+---
+
+# Performance Considerations
+
+To maintain interactive response times, the retrieval subsystem should:
+
+* minimize disk seeks through efficient index structures;
+* leverage memory caching for frequently accessed posting lists;
+* optimize analyzer pipelines;
+* avoid unnecessary wildcard expansion;
+* parallelize retrieval across shards where appropriate.
+
+These optimizations ensure consistent performance as the knowledge corpus grows.
+
+---
+
+# Security Considerations
+
+Full-text retrieval must respect authorization boundaries.
+
+Public search indexes shall never expose:
+
+* unpublished drafts;
+* private editorial discussions;
+* moderation notes;
+* restricted content;
+* internal workflow metadata.
+
+Authorization filtering should occur before results are returned to clients.
+
+---
+
+# Observability
+
+Operational metrics should include:
+
+* average retrieval latency;
+* posting list traversal time;
+* BM25 scoring latency;
+* cache hit ratio;
+* analyzer execution time;
+* fuzzy query frequency;
+* wildcard query frequency;
+* zero-result query rate.
+
+These metrics provide valuable insight into retrieval quality and system performance.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* using relational database `LIKE` queries as a replacement for full-text search;
+* relying solely on wildcard searches for discovery;
+* indexing every field with equal weight;
+* exposing unrestricted wildcard queries;
+* coupling retrieval directly to ranking logic;
+* replacing lexical retrieval entirely with vector search.
+
+Lexical retrieval remains an essential component of a modern hybrid search architecture.
+
+---
+
+# Architecture Decision Record — ADR 7.9.006
+
+## Title
+
+Adopt Inverted Indexes with BM25-Based Lexical Retrieval as the Foundation of Full-Text Search.
+
+### Status
+
+Accepted.
+
+### Context
+
+The TWN platform requires a mature, explainable and high-performance retrieval mechanism capable of supporting explicit keyword searches across a growing multilingual knowledge corpus. While semantic retrieval will be introduced in later sections, lexical search remains indispensable for precision, transparency and operational efficiency.
+
+### Decision
+
+The platform shall implement full-text search using inverted indexes and BM25 as the baseline lexical relevance algorithm. Text shall be processed through configurable analyzer pipelines with language-specific tokenization, normalization, stemming, stop-word handling and synonym expansion. Retrieval shall produce candidate documents that are subsequently refined by the Ranking Architecture.
+
+### Consequences
+
+**Positive**
+
+* Fast and scalable keyword retrieval.
+* Explainable relevance scoring.
+* Strong support for multilingual content.
+* Compatibility with Elasticsearch, OpenSearch and Apache Lucene.
+* Robust foundation for future hybrid (lexical + semantic) search.
+
+**Trade-offs**
+
+* Lexical retrieval cannot fully capture semantic meaning.
+* Analyzer configuration requires ongoing maintenance.
+* Synonym management introduces operational complexity.
+* Fuzzy and wildcard queries require careful performance controls.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* the role of full-text search is established;
+* inverted index architecture is defined;
+* analyzer, tokenizer and filter pipelines are documented;
+* lexical retrieval features (phrase, Boolean, fuzzy and wildcard queries) are specified;
+* BM25 is adopted as the baseline scoring model;
+* performance, security and observability considerations are addressed;
+* anti-patterns are identified; and
+* the governing architectural decision is formally recorded.
+
+---
+
+## End of 7.9.7
+
+**Next Section:** **7.9.8 Faceted Search and Filtering**, where the architecture for structured navigation, aggregations, taxonomy-driven discovery and multidimensional filtering across the TWN knowledge ecosystem will be defined.
+
+# 7.9.8 Faceted Search and Filtering
+
+---
+
+# Purpose
+
+While full-text search enables users to retrieve knowledge through keywords and phrases, it becomes increasingly insufficient as the volume and diversity of knowledge grow.
+
+A search returning hundreds or thousands of relevant documents still places a significant cognitive burden on users.
+
+Readers often know **what characteristics** they are looking for, even if they do not know the exact title or terminology.
+
+Examples include:
+
+* Beginner articles
+* Python Journeys
+* English content
+* Notebook Entries
+* Recently updated resources
+* Articles under ten minutes to read
+
+Faceted Search and Filtering addresses this challenge by allowing users to progressively narrow search results through structured dimensions.
+
+Within TWN, faceted search is considered a **knowledge navigation architecture** rather than merely a filtering feature.
+
+---
+
+# Architectural Objectives
+
+The Faceted Search Architecture shall:
+
+* enable multidimensional knowledge exploration;
+* minimize cognitive overload;
+* provide dynamic filtering;
+* expose meaningful knowledge dimensions;
+* maintain low query latency;
+* integrate seamlessly with full-text and semantic retrieval;
+* support future personalization.
+
+---
+
+# Architectural Philosophy
+
+Search retrieves.
+
+Facets organize.
+
+Filters refine.
+
+Together they transform a large result set into an intuitive exploration experience.
+
+```text id="p1g7vq"
+Search Query
+
+↓
+
+Candidate Results
+
+↓
+
+Facets
+
+↓
+
+Filters
+
+↓
+
+Refined Results
+```
+
+Rather than forcing users to reformulate queries repeatedly, the architecture allows iterative refinement.
+
+---
+
+# Why Faceted Search Matters
+
+Traditional search assumes users know precisely what they seek.
+
+Knowledge platforms behave differently.
+
+Readers frequently begin with incomplete understanding.
+
+Examples include:
+
+> "Show me all AI content."
+
+followed by
+
+> Only Journeys.
+
+then
+
+> Beginner level.
+
+then
+
+> English.
+
+then
+
+> Updated this year.
+
+Facets support this natural discovery process.
+
+---
+
+# Position Within the Search Architecture
+
+```text id="2v8nhe"
+User
+
+↓
+
+Query Processing
+
+↓
+
+Retrieval
+
+↓
+
+Candidate Documents
+
+↓
+
+Facet Engine
+
+↓
+
+Filtered Results
+
+↓
+
+Ranking
+
+↓
+
+Search API
+```
+
+Faceting occurs after candidate retrieval but before final presentation.
+
+---
+
+# Facets vs. Filters
+
+Although often used interchangeably, the architecture distinguishes between the two.
+
+## Facet
+
+A **facet** represents a searchable dimension.
+
+Examples:
+
+* Language
+* Category
+* Author
+* Journey
+* Difficulty
+* Reading Time
+
+---
+
+## Filter
+
+A **filter** represents a selected value within a facet.
+
+Example:
+
+Facet
+
+```text
+Language
+```
+
+Filter
+
+```text
+English
+```
+
+Another example:
+
+Facet
+
+```text
+Difficulty
+```
+
+Filter
+
+```text
+Beginner
+```
+
+This distinction simplifies both implementation and user interface design.
+
+---
+
+# Facet Categories
+
+The architecture groups facets into logical domains.
+
+```text id="u9prlt"
+Knowledge
+
+├── Content
+
+├── Taxonomy
+
+├── Editorial
+
+├── Learning
+
+└── Operational
+```
+
+Grouping prevents overly complex filter interfaces.
+
+---
+
+# Content Facets
+
+Content-oriented facets describe the resource itself.
+
+Examples include:
+
+* Resource Type
+* Journey
+* Chapter
+* Notebook Entry
+* Shared Page
+* Margin Note
+
+These facets help users quickly navigate between different forms of knowledge.
+
+---
+
+# Taxonomy Facets
+
+Taxonomy-based facets leverage the organizational structures established within the CMS.
+
+Examples include:
+
+* Categories
+* Tags
+* Topics
+* Subject Areas
+* Technologies
+
+Taxonomy facets provide conceptual organization rather than structural organization.
+
+---
+
+# Editorial Facets
+
+Editorial metadata provides additional discovery dimensions.
+
+Examples:
+
+* Author
+* Publication Date
+* Last Updated
+* Language
+* Editorial Status
+* Featured Content
+
+These facets improve discoverability without affecting editorial workflows.
+
+---
+
+# Learning Facets
+
+One distinguishing feature of TWN is its emphasis on structured learning.
+
+Learning-specific facets include:
+
+* Difficulty
+* Estimated Reading Time
+* Journey Stage
+* Prerequisite Available
+* Practical Exercise Included
+* Project-Based Content
+
+These facets transform search into a guided learning experience.
+
+---
+
+# Operational Facets
+
+Operational facets support administrative users.
+
+Examples include:
+
+* Translation Status
+* Review Status
+* Workflow Stage
+* Missing Metadata
+* Orphaned Content
+
+These facets should remain available only within authorized editorial interfaces.
+
+---
+
+# Dynamic Facet Generation
+
+Facets should not be statically defined within application code whenever possible.
+
+Instead, they should be generated dynamically from indexed metadata.
+
+Example:
+
+```text id="v4g08t"
+Search Results
+
+↓
+
+Aggregation Engine
+
+↓
+
+Available Facets
+
+↓
+
+User Interface
+```
+
+This ensures facets remain synchronized with the evolving knowledge corpus.
+
+---
+
+# Facet Aggregations
+
+Every facet should display the number of matching resources.
+
+Example:
+
+```text id="38yzpr"
+Language
+
+English (124)
+
+French (41)
+
+Spanish (19)
+```
+
+Aggregations help users understand the distribution of knowledge before applying filters.
+
+---
+
+# Multi-Facet Filtering
+
+Users should be able to combine multiple filters simultaneously.
+
+Example:
+
+```text id="kegjlwm"
+Language
+
+English
+
++
+
+Difficulty
+
+Intermediate
+
++
+
+Category
+
+Web Development
+```
+
+↓
+
+```text
+Refined Results
+```
+
+Filters should combine predictably using logical AND unless explicitly configured otherwise.
+
+---
+
+# Hierarchical Facets
+
+Some facets naturally possess hierarchical structures.
+
+Example:
+
+```text id="xzv0my"
+Programming
+
+├── Web Development
+
+│     ├── React
+
+│     ├── Next.js
+
+│     └── Vue
+
+├── Backend
+
+└── Mobile
+```
+
+Hierarchical facets improve navigation while preserving conceptual organization.
+
+---
+
+# Range Filters
+
+Certain metadata is continuous rather than categorical.
+
+Examples include:
+
+* Reading Time
+* Publication Date
+* Last Updated
+* Estimated Duration
+
+Illustratively:
+
+```text id="mwjlq2"
+Reading Time
+
+0–5 min
+
+5–15 min
+
+15–30 min
+
+30+ min
+```
+
+Range filters should support efficient indexing and querying.
+
+---
+
+# Search Within Facets
+
+Large taxonomies may contain hundreds of values.
+
+The architecture therefore supports searching within individual facets.
+
+Example:
+
+```text id="o1s2jq"
+Technology
+
+Search...
+
+↓
+
+Python
+
+PyTorch
+
+Pydantic
+```
+
+This improves usability for extensive knowledge collections.
+
+---
+
+# Facet Dependencies
+
+Certain facets may influence the availability of others.
+
+Example:
+
+Selecting:
+
+```text
+Notebook Entries
+```
+
+may remove:
+
+```text
+Journey Stage
+```
+
+because it is not applicable.
+
+The architecture should support conditional facet visibility based on the current result set and resource types.
+
+---
+
+# Empty Facets
+
+Facets that cannot produce meaningful results should not be displayed.
+
+Example:
+
+```text
+Difficulty
+
+(No Matching Values)
+```
+
+↓
+
+Hidden
+
+This reduces visual clutter and prevents user confusion.
+
+---
+
+# Filter Persistence
+
+Users often refine results through multiple interactions.
+
+Selected filters should persist across:
+
+* pagination;
+* sorting changes;
+* query refinement;
+* browser navigation where appropriate.
+
+Persistence improves continuity during exploration.
+
+---
+
+# Performance Considerations
+
+Facet generation can become computationally expensive.
+
+Recommended optimizations include:
+
+* precomputed aggregations where appropriate;
+* efficient metadata indexing;
+* caching frequently requested facet counts;
+* limiting excessively large aggregation sets;
+* lazy loading for very large taxonomies.
+
+Facet performance should not significantly increase overall query latency.
+
+---
+
+# Security Considerations
+
+Facet values should never expose unauthorized information.
+
+Examples:
+
+Public users should not see:
+
+* unpublished authors;
+* draft workflow states;
+* restricted editorial classifications.
+
+Facet generation must respect the same authorization policies applied during retrieval.
+
+---
+
+# Observability
+
+Operational metrics should include:
+
+* average facet generation latency;
+* aggregation execution time;
+* most frequently selected filters;
+* abandoned filter sessions;
+* zero-result filter combinations;
+* facet cache hit ratio.
+
+These metrics help optimize both performance and user experience.
+
+---
+
+# Future Evolution
+
+Future enhancements may include:
+
+* AI-generated facet suggestions;
+* personalized facet ordering;
+* contextual learning filters;
+* adaptive facet prioritization;
+* semantic facet expansion;
+* cross-language taxonomy alignment.
+
+The current architecture accommodates these capabilities without structural redesign.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* hardcoding facet values in the application;
+* generating facets directly from relational database queries;
+* exposing every metadata field as a facet;
+* displaying empty or irrelevant facets;
+* ignoring authorization during aggregation;
+* allowing unrestricted combinations that degrade performance.
+
+Facets should remain meaningful, performant and context-aware.
+
+---
+
+# Architecture Decision Record — ADR 7.9.007
+
+## Title
+
+Adopt Dynamic, Metadata-Driven Faceted Search with Hierarchical and Multi-Dimensional Filtering.
+
+### Status
+
+Accepted.
+
+### Context
+
+As TWN evolves into a large-scale multilingual knowledge platform, keyword search alone will be insufficient for efficient knowledge discovery. Users require structured mechanisms to progressively refine search results across multiple dimensions while maintaining responsive performance and respecting authorization boundaries.
+
+### Decision
+
+The platform shall implement dynamic faceted search driven by indexed metadata rather than hardcoded application logic. Facets shall support categorical, hierarchical and range-based dimensions, provide real-time aggregations, allow multi-facet filtering and adapt to the current result set. Facet generation shall remain integrated with the search index and authorization model.
+
+### Consequences
+
+**Positive**
+
+* Improved knowledge discoverability.
+* Reduced cognitive load during exploration.
+* Better support for structured learning journeys.
+* Scalable and extensible facet management.
+* Consistent integration with multilingual and future semantic search.
+
+**Trade-offs**
+
+* Increased aggregation complexity.
+* Additional indexing requirements for metadata.
+* Greater operational overhead for caching and optimization.
+* More sophisticated user interface requirements.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* the purpose of faceted search is established;
+* the distinction between facets and filters is defined;
+* content, taxonomy, editorial, learning and operational facets are specified;
+* dynamic facet generation and aggregations are documented;
+* multi-facet, hierarchical and range filtering are incorporated;
+* performance, security and observability considerations are addressed;
+* anti-patterns are identified; and
+* the governing architectural decision is formally recorded.
+
+---
+
+## End of 7.9.8
+
+**Next Section:** **7.9.9 Relevance Ranking Architecture**, where the architecture responsible for transforming retrieved candidate documents into the most useful, trustworthy and educationally valuable search results will be defined through lexical scoring, business rules, freshness signals, knowledge relationships and future machine learning–based ranking strategies.
+
+# 7.9.10 Knowledge Graph Search
+
+---
+
+# Purpose
+
+Traditional full-text search retrieves documents based primarily on lexical similarity.
+
+While effective for answering explicit queries, lexical retrieval has an important limitation:
+
+It does not inherently understand how pieces of knowledge relate to one another.
+
+Modern knowledge platforms require more than document retrieval.
+
+They must enable users to explore concepts, navigate learning paths, discover prerequisite knowledge and understand relationships across an interconnected body of information.
+
+To support this capability, TWN extends traditional search with **Knowledge Graph Search**.
+
+Knowledge Graph Search transforms search from document lookup into **relationship-aware knowledge exploration**, allowing users to traverse concepts rather than simply retrieve pages.
+
+This architecture builds directly upon the Knowledge Graph introduced in **Section 7.8.14**.
+
+---
+
+# Architectural Objectives
+
+The Knowledge Graph Search Architecture shall:
+
+* enable relationship-aware discovery;
+* support concept exploration;
+* expose prerequisite learning paths;
+* improve recommendation quality;
+* strengthen semantic understanding;
+* prepare the platform for AI-assisted reasoning;
+* complement rather than replace lexical retrieval.
+
+---
+
+# Architectural Philosophy
+
+Knowledge should not exist as isolated documents.
+
+Instead, every knowledge object should participate in an interconnected network.
+
+```text id="9kgs0a"
+Article
+
+│
+
+├── Related Articles
+
+├── Journey
+
+├── Chapter
+
+├── Author
+
+├── Categories
+
+├── Tags
+
+└── Prerequisites
+```
+
+Search therefore becomes navigation through a graph rather than movement through a list.
+
+---
+
+# Why Knowledge Graph Search
+
+Consider the query:
+
+```text id="7axu6t"
+Docker
+```
+
+Traditional search returns documents containing the word.
+
+Knowledge Graph Search additionally understands relationships.
+
+Example:
+
+```text id="g9hpk2"
+Docker
+
+│
+
+├── Containers
+
+├── Kubernetes
+
+├── DevOps Journey
+
+├── Docker Compose
+
+├── CI/CD
+
+└── Deployment
+```
+
+Instead of ending with one result, discovery naturally expands into related knowledge.
+
+---
+
+# Position Within the Search Architecture
+
+```text id="m2v9ds"
+User Query
+
+↓
+
+Retrieval
+
+↓
+
+Candidate Documents
+
+↓
+
+Knowledge Graph
+
+↓
+
+Relationship Expansion
+
+↓
+
+Ranking
+
+↓
+
+Search Results
+```
+
+Graph traversal enriches retrieval before final ranking.
+
+---
+
+# Relationship with the CMS
+
+The Knowledge Graph itself is maintained by the CMS.
+
+The Search subsystem consumes graph relationships as indexed metadata.
+
+```text id="p7d1ku"
+CMS
+
+↓
+
+Knowledge Graph
+
+↓
+
+Indexing Pipeline
+
+↓
+
+Graph Index
+
+↓
+
+Search
+```
+
+This separation ensures that Search never owns relationship definitions.
+
+---
+
+# Graph Fundamentals
+
+The Knowledge Graph consists of:
+
+* nodes;
+* relationships;
+* properties.
+
+```text id="u5t4rb"
+Node
+
+↓
+
+Relationship
+
+↓
+
+Node
+```
+
+Every searchable knowledge object becomes a node.
+
+Relationships connect those nodes.
+
+---
+
+# Graph Nodes
+
+Examples of graph nodes include:
+
+* Articles;
+* Journeys;
+* Journey Chapters;
+* Notebook Entries;
+* Shared Pages;
+* Margin Notes;
+* Categories;
+* Tags;
+* Authors;
+* Technologies.
+
+Nodes represent concepts rather than storage records.
+
+---
+
+# Relationship Types
+
+Relationships capture how knowledge connects.
+
+Examples include:
+
+```text id="j4n6lc"
+Article
+
+│
+
+├── WRITTEN_BY
+
+├── PART_OF
+
+├── RELATED_TO
+
+├── REQUIRES
+
+├── TRANSLATED_AS
+
+├── REFERENCES
+
+└── BELONGS_TO
+```
+
+Relationship names should remain domain-oriented rather than implementation-oriented.
+
+---
+
+# Core Relationship Categories
+
+The architecture groups relationships into several domains.
+
+| Category   | Examples                          |
+| ---------- | --------------------------------- |
+| Structural | Part of Journey, Chapter sequence |
+| Learning   | Prerequisite, Next topic          |
+| Semantic   | Related concepts, Similar ideas   |
+| Editorial  | Same author, Translation          |
+| Taxonomy   | Category membership, Tags         |
+| Reference  | Citations, External references    |
+
+This categorization simplifies traversal strategies.
+
+---
+
+# Graph Traversal
+
+Unlike keyword retrieval, graph search follows relationships.
+
+Illustratively:
+
+```text id="o8z3qn"
+React
+
+↓
+
+Frontend
+
+↓
+
+JavaScript
+
+↓
+
+Web Development
+
+↓
+
+Programming
+```
+
+Traversal enables progressive exploration of increasingly broader concepts.
+
+---
+
+# Multi-Hop Discovery
+
+Users frequently benefit from indirect relationships.
+
+Example:
+
+```text id="6xy5ua"
+Next.js
+
+↓
+
+React
+
+↓
+
+JavaScript
+
+↓
+
+Programming
+
+↓
+
+Software Engineering
+```
+
+This sequence represents multiple graph hops.
+
+Traversal depth should remain configurable to avoid excessive expansion.
+
+---
+
+# Prerequisite Navigation
+
+Learning-oriented platforms require explicit prerequisite discovery.
+
+Example:
+
+```text id="ts9mvr"
+Kubernetes
+
+↓
+
+Requires
+
+↓
+
+Docker
+
+↓
+
+Requires
+
+↓
+
+Linux
+```
+
+When users search for Kubernetes, the platform may recommend foundational knowledge first.
+
+This directly supports TWN's educational mission.
+
+---
+
+# Journey Graph
+
+Journeys naturally form graph structures.
+
+```text id="a4v8ke"
+Journey
+
+↓
+
+Chapter 1
+
+↓
+
+Chapter 2
+
+↓
+
+Chapter 3
+
+↓
+
+Chapter 4
+```
+
+Knowledge Graph Search understands sequential relationships rather than treating each chapter independently.
+
+---
+
+# Concept Exploration
+
+Users often begin with one concept before exploring related ideas.
+
+Example:
+
+```text id="l1q7bd"
+Artificial Intelligence
+
+│
+
+├── Machine Learning
+
+├── Neural Networks
+
+├── Prompt Engineering
+
+├── LLMs
+
+├── Ethics
+
+└── AI Safety
+```
+
+This supports exploratory learning rather than isolated retrieval.
+
+---
+
+# Author Connections
+
+Graph search enables exploration across authors.
+
+Example:
+
+```text id="s2y8hp"
+Vanessa
+
+↓
+
+Articles
+
+↓
+
+Journeys
+
+↓
+
+Notebook Entries
+
+↓
+
+Shared Pages
+```
+
+Readers can navigate knowledge ecosystems built around individual contributors.
+
+---
+
+# Taxonomy Traversal
+
+Categories become navigable graph structures.
+
+```text id="6w5gta"
+Technology
+
+↓
+
+Programming
+
+↓
+
+Backend
+
+↓
+
+Go
+```
+
+This differs fundamentally from simple category filtering because traversal preserves hierarchical relationships.
+
+---
+
+# Related Knowledge
+
+Related resources should not depend solely on shared keywords.
+
+Relationship-aware discovery may consider:
+
+* shared Journey;
+* prerequisite links;
+* common technologies;
+* shared authors;
+* similar objectives;
+* editorial curation.
+
+Graph relationships produce significantly higher-quality recommendations.
+
+---
+
+# Graph Search vs. Relational Queries
+
+Relational databases answer questions such as:
+
+> Which rows satisfy these conditions?
+
+Graph search answers questions such as:
+
+> How are these concepts connected?
+
+The two approaches solve different architectural problems and should coexist.
+
+---
+
+# Graph Index
+
+Efficient traversal requires dedicated graph representations.
+
+Conceptually:
+
+```text id="h7p4cf"
+Knowledge Graph
+
+↓
+
+Graph Projection
+
+↓
+
+Graph Index
+
+↓
+
+Traversal Engine
+```
+
+The graph index complements the full-text index rather than replacing it.
+
+---
+
+# Hybrid Retrieval
+
+Knowledge Graph Search operates alongside lexical retrieval.
+
+```text id="b2m6wd"
+Keyword Search
+
++
+
+Graph Search
+
+↓
+
+Unified Candidates
+
+↓
+
+Ranking
+```
+
+This hybrid approach balances precision with conceptual discovery.
+
+---
+
+# Future Semantic Integration
+
+Graph relationships provide valuable context for semantic search and AI.
+
+Future AI services may use graph traversal to:
+
+* expand retrieval context;
+* identify prerequisite knowledge;
+* validate reasoning paths;
+* improve Retrieval-Augmented Generation.
+
+Knowledge Graph Search therefore becomes foundational infrastructure for Chapter **7.10 AI Architecture**.
+
+---
+
+# Performance Considerations
+
+Graph traversal can become computationally expensive.
+
+Recommended strategies include:
+
+* traversal depth limits;
+* cached neighborhood expansions;
+* indexed relationships;
+* precomputed high-value paths;
+* lazy expansion for large graphs.
+
+Performance optimizations should preserve traversal correctness.
+
+---
+
+# Security Considerations
+
+Graph traversal must respect authorization boundaries.
+
+Hidden knowledge objects should never become discoverable indirectly through relationships.
+
+Traversal should terminate at authorization boundaries rather than exposing restricted graph structures.
+
+---
+
+# Observability
+
+Operational telemetry should include:
+
+* graph traversal latency;
+* average traversal depth;
+* relationship expansion counts;
+* most traversed relationship types;
+* graph cache hit ratio;
+* recommendation acceptance rate;
+* graph index synchronization latency.
+
+These metrics help maintain graph quality and operational performance.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* treating graph search as a replacement for full-text retrieval;
+* automatically traversing unlimited graph depths;
+* storing relationship definitions exclusively within application code;
+* duplicating graph logic across services;
+* exposing unauthorized nodes through traversal;
+* assuming every relationship has equal ranking value.
+
+Knowledge Graph Search should remain focused, explainable and tightly integrated with the platform's knowledge model.
+
+---
+
+# Architecture Decision Record — ADR 7.9.009
+
+## Title
+
+Adopt Relationship-Aware Knowledge Graph Search as a Complement to Lexical Retrieval.
+
+### Status
+
+Accepted.
+
+### Context
+
+TWN aims to function as a knowledge platform rather than a document repository. Users require mechanisms to discover related concepts, navigate learning paths and understand the relationships between knowledge objects. Lexical retrieval alone cannot satisfy these requirements.
+
+### Decision
+
+The platform shall implement Knowledge Graph Search using the relationships defined within the CMS Knowledge Graph. Search shall index relationship metadata and support controlled graph traversal to enable concept exploration, prerequisite discovery and relationship-aware recommendations. Knowledge Graph Search shall complement, rather than replace, full-text retrieval and shall integrate with future semantic and AI-powered retrieval systems.
+
+### Consequences
+
+**Positive**
+
+* Richer knowledge discovery.
+* Improved educational navigation.
+* Stronger recommendation quality.
+* Foundation for semantic search and AI reasoning.
+* Better utilization of the platform's knowledge graph.
+
+**Trade-offs**
+
+* Increased indexing complexity.
+* Additional storage for graph projections.
+* Higher computational cost for traversal.
+* More sophisticated operational monitoring.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* the purpose of Knowledge Graph Search is established;
+* graph nodes, relationships and traversal strategies are defined;
+* learning, taxonomy and author relationship models are documented;
+* hybrid retrieval integration is specified;
+* performance, security and observability considerations are addressed;
+* anti-patterns are identified; and
+* the governing architectural decision is formally recorded.
+
+---
+
+## End of 7.9.10
+
+**Next Section:** **7.9.11 Multilingual Search Architecture**, where language-aware indexing, cross-language retrieval, analyzer selection, translation alignment and multilingual relevance strategies will be defined to ensure that knowledge remains discoverable regardless of the user's preferred language.
+
+# 7.9.10 Knowledge Graph Search
+
+---
+
+# Purpose
+
+Traditional full-text search retrieves documents based primarily on lexical similarity.
+
+While effective for answering explicit queries, lexical retrieval has an important limitation:
+
+It does not inherently understand how pieces of knowledge relate to one another.
+
+Modern knowledge platforms require more than document retrieval.
+
+They must enable users to explore concepts, navigate learning paths, discover prerequisite knowledge and understand relationships across an interconnected body of information.
+
+To support this capability, TWN extends traditional search with **Knowledge Graph Search**.
+
+Knowledge Graph Search transforms search from document lookup into **relationship-aware knowledge exploration**, allowing users to traverse concepts rather than simply retrieve pages.
+
+This architecture builds directly upon the Knowledge Graph introduced in **Section 7.8.14**.
+
+---
+
+# Architectural Objectives
+
+The Knowledge Graph Search Architecture shall:
+
+* enable relationship-aware discovery;
+* support concept exploration;
+* expose prerequisite learning paths;
+* improve recommendation quality;
+* strengthen semantic understanding;
+* prepare the platform for AI-assisted reasoning;
+* complement rather than replace lexical retrieval.
+
+---
+
+# Architectural Philosophy
+
+Knowledge should not exist as isolated documents.
+
+Instead, every knowledge object should participate in an interconnected network.
+
+```text id="9kgs0a"
+Article
+
+│
+
+├── Related Articles
+
+├── Journey
+
+├── Chapter
+
+├── Author
+
+├── Categories
+
+├── Tags
+
+└── Prerequisites
+```
+
+Search therefore becomes navigation through a graph rather than movement through a list.
+
+---
+
+# Why Knowledge Graph Search
+
+Consider the query:
+
+```text id="7axu6t"
+Docker
+```
+
+Traditional search returns documents containing the word.
+
+Knowledge Graph Search additionally understands relationships.
+
+Example:
+
+```text id="g9hpk2"
+Docker
+
+│
+
+├── Containers
+
+├── Kubernetes
+
+├── DevOps Journey
+
+├── Docker Compose
+
+├── CI/CD
+
+└── Deployment
+```
+
+Instead of ending with one result, discovery naturally expands into related knowledge.
+
+---
+
+# Position Within the Search Architecture
+
+```text id="m2v9ds"
+User Query
+
+↓
+
+Retrieval
+
+↓
+
+Candidate Documents
+
+↓
+
+Knowledge Graph
+
+↓
+
+Relationship Expansion
+
+↓
+
+Ranking
+
+↓
+
+Search Results
+```
+
+Graph traversal enriches retrieval before final ranking.
+
+---
+
+# Relationship with the CMS
+
+The Knowledge Graph itself is maintained by the CMS.
+
+The Search subsystem consumes graph relationships as indexed metadata.
+
+```text id="p7d1ku"
+CMS
+
+↓
+
+Knowledge Graph
+
+↓
+
+Indexing Pipeline
+
+↓
+
+Graph Index
+
+↓
+
+Search
+```
+
+This separation ensures that Search never owns relationship definitions.
+
+---
+
+# Graph Fundamentals
+
+The Knowledge Graph consists of:
+
+* nodes;
+* relationships;
+* properties.
+
+```text id="u5t4rb"
+Node
+
+↓
+
+Relationship
+
+↓
+
+Node
+```
+
+Every searchable knowledge object becomes a node.
+
+Relationships connect those nodes.
+
+---
+
+# Graph Nodes
+
+Examples of graph nodes include:
+
+* Articles;
+* Journeys;
+* Journey Chapters;
+* Notebook Entries;
+* Shared Pages;
+* Margin Notes;
+* Categories;
+* Tags;
+* Authors;
+* Technologies.
+
+Nodes represent concepts rather than storage records.
+
+---
+
+# Relationship Types
+
+Relationships capture how knowledge connects.
+
+Examples include:
+
+```text id="j4n6lc"
+Article
+
+│
+
+├── WRITTEN_BY
+
+├── PART_OF
+
+├── RELATED_TO
+
+├── REQUIRES
+
+├── TRANSLATED_AS
+
+├── REFERENCES
+
+└── BELONGS_TO
+```
+
+Relationship names should remain domain-oriented rather than implementation-oriented.
+
+---
+
+# Core Relationship Categories
+
+The architecture groups relationships into several domains.
+
+| Category   | Examples                          |
+| ---------- | --------------------------------- |
+| Structural | Part of Journey, Chapter sequence |
+| Learning   | Prerequisite, Next topic          |
+| Semantic   | Related concepts, Similar ideas   |
+| Editorial  | Same author, Translation          |
+| Taxonomy   | Category membership, Tags         |
+| Reference  | Citations, External references    |
+
+This categorization simplifies traversal strategies.
+
+---
+
+# Graph Traversal
+
+Unlike keyword retrieval, graph search follows relationships.
+
+Illustratively:
+
+```text id="o8z3qn"
+React
+
+↓
+
+Frontend
+
+↓
+
+JavaScript
+
+↓
+
+Web Development
+
+↓
+
+Programming
+```
+
+Traversal enables progressive exploration of increasingly broader concepts.
+
+---
+
+# Multi-Hop Discovery
+
+Users frequently benefit from indirect relationships.
+
+Example:
+
+```text id="6xy5ua"
+Next.js
+
+↓
+
+React
+
+↓
+
+JavaScript
+
+↓
+
+Programming
+
+↓
+
+Software Engineering
+```
+
+This sequence represents multiple graph hops.
+
+Traversal depth should remain configurable to avoid excessive expansion.
+
+---
+
+# Prerequisite Navigation
+
+Learning-oriented platforms require explicit prerequisite discovery.
+
+Example:
+
+```text id="ts9mvr"
+Kubernetes
+
+↓
+
+Requires
+
+↓
+
+Docker
+
+↓
+
+Requires
+
+↓
+
+Linux
+```
+
+When users search for Kubernetes, the platform may recommend foundational knowledge first.
+
+This directly supports TWN's educational mission.
+
+---
+
+# Journey Graph
+
+Journeys naturally form graph structures.
+
+```text id="a4v8ke"
+Journey
+
+↓
+
+Chapter 1
+
+↓
+
+Chapter 2
+
+↓
+
+Chapter 3
+
+↓
+
+Chapter 4
+```
+
+Knowledge Graph Search understands sequential relationships rather than treating each chapter independently.
+
+---
+
+# Concept Exploration
+
+Users often begin with one concept before exploring related ideas.
+
+Example:
+
+```text id="l1q7bd"
+Artificial Intelligence
+
+│
+
+├── Machine Learning
+
+├── Neural Networks
+
+├── Prompt Engineering
+
+├── LLMs
+
+├── Ethics
+
+└── AI Safety
+```
+
+This supports exploratory learning rather than isolated retrieval.
+
+---
+
+# Author Connections
+
+Graph search enables exploration across authors.
+
+Example:
+
+```text id="s2y8hp"
+Vanessa
+
+↓
+
+Articles
+
+↓
+
+Journeys
+
+↓
+
+Notebook Entries
+
+↓
+
+Shared Pages
+```
+
+Readers can navigate knowledge ecosystems built around individual contributors.
+
+---
+
+# Taxonomy Traversal
+
+Categories become navigable graph structures.
+
+```text id="6w5gta"
+Technology
+
+↓
+
+Programming
+
+↓
+
+Backend
+
+↓
+
+Go
+```
+
+This differs fundamentally from simple category filtering because traversal preserves hierarchical relationships.
+
+---
+
+# Related Knowledge
+
+Related resources should not depend solely on shared keywords.
+
+Relationship-aware discovery may consider:
+
+* shared Journey;
+* prerequisite links;
+* common technologies;
+* shared authors;
+* similar objectives;
+* editorial curation.
+
+Graph relationships produce significantly higher-quality recommendations.
+
+---
+
+# Graph Search vs. Relational Queries
+
+Relational databases answer questions such as:
+
+> Which rows satisfy these conditions?
+
+Graph search answers questions such as:
+
+> How are these concepts connected?
+
+The two approaches solve different architectural problems and should coexist.
+
+---
+
+# Graph Index
+
+Efficient traversal requires dedicated graph representations.
+
+Conceptually:
+
+```text id="h7p4cf"
+Knowledge Graph
+
+↓
+
+Graph Projection
+
+↓
+
+Graph Index
+
+↓
+
+Traversal Engine
+```
+
+The graph index complements the full-text index rather than replacing it.
+
+---
+
+# Hybrid Retrieval
+
+Knowledge Graph Search operates alongside lexical retrieval.
+
+```text id="b2m6wd"
+Keyword Search
+
++
+
+Graph Search
+
+↓
+
+Unified Candidates
+
+↓
+
+Ranking
+```
+
+This hybrid approach balances precision with conceptual discovery.
+
+---
+
+# Future Semantic Integration
+
+Graph relationships provide valuable context for semantic search and AI.
+
+Future AI services may use graph traversal to:
+
+* expand retrieval context;
+* identify prerequisite knowledge;
+* validate reasoning paths;
+* improve Retrieval-Augmented Generation.
+
+Knowledge Graph Search therefore becomes foundational infrastructure for Chapter **7.10 AI Architecture**.
+
+---
+
+# Performance Considerations
+
+Graph traversal can become computationally expensive.
+
+Recommended strategies include:
+
+* traversal depth limits;
+* cached neighborhood expansions;
+* indexed relationships;
+* precomputed high-value paths;
+* lazy expansion for large graphs.
+
+Performance optimizations should preserve traversal correctness.
+
+---
+
+# Security Considerations
+
+Graph traversal must respect authorization boundaries.
+
+Hidden knowledge objects should never become discoverable indirectly through relationships.
+
+Traversal should terminate at authorization boundaries rather than exposing restricted graph structures.
+
+---
+
+# Observability
+
+Operational telemetry should include:
+
+* graph traversal latency;
+* average traversal depth;
+* relationship expansion counts;
+* most traversed relationship types;
+* graph cache hit ratio;
+* recommendation acceptance rate;
+* graph index synchronization latency.
+
+These metrics help maintain graph quality and operational performance.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* treating graph search as a replacement for full-text retrieval;
+* automatically traversing unlimited graph depths;
+* storing relationship definitions exclusively within application code;
+* duplicating graph logic across services;
+* exposing unauthorized nodes through traversal;
+* assuming every relationship has equal ranking value.
+
+Knowledge Graph Search should remain focused, explainable and tightly integrated with the platform's knowledge model.
+
+---
+
+# Architecture Decision Record — ADR 7.9.009
+
+## Title
+
+Adopt Relationship-Aware Knowledge Graph Search as a Complement to Lexical Retrieval.
+
+### Status
+
+Accepted.
+
+### Context
+
+TWN aims to function as a knowledge platform rather than a document repository. Users require mechanisms to discover related concepts, navigate learning paths and understand the relationships between knowledge objects. Lexical retrieval alone cannot satisfy these requirements.
+
+### Decision
+
+The platform shall implement Knowledge Graph Search using the relationships defined within the CMS Knowledge Graph. Search shall index relationship metadata and support controlled graph traversal to enable concept exploration, prerequisite discovery and relationship-aware recommendations. Knowledge Graph Search shall complement, rather than replace, full-text retrieval and shall integrate with future semantic and AI-powered retrieval systems.
+
+### Consequences
+
+**Positive**
+
+* Richer knowledge discovery.
+* Improved educational navigation.
+* Stronger recommendation quality.
+* Foundation for semantic search and AI reasoning.
+* Better utilization of the platform's knowledge graph.
+
+**Trade-offs**
+
+* Increased indexing complexity.
+* Additional storage for graph projections.
+* Higher computational cost for traversal.
+* More sophisticated operational monitoring.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* the purpose of Knowledge Graph Search is established;
+* graph nodes, relationships and traversal strategies are defined;
+* learning, taxonomy and author relationship models are documented;
+* hybrid retrieval integration is specified;
+* performance, security and observability considerations are addressed;
+* anti-patterns are identified; and
+* the governing architectural decision is formally recorded.
+
+---
+
+## End of 7.9.10
+
+**Next Section:** **7.9.11 Multilingual Search Architecture**, where language-aware indexing, cross-language retrieval, analyzer selection, translation alignment and multilingual relevance strategies will be defined to ensure that knowledge remains discoverable regardless of the user's preferred language.
+
+
+# 7.9.11 Multilingual Search Architecture
+
+---
+
+# Purpose
+
+One of TWN's core principles is that knowledge should be accessible regardless of language.
+
+As the platform evolves beyond English to support French and additional languages, users should not experience fragmented knowledge ecosystems where content is only discoverable within its original language.
+
+Multilingual Search Architecture ensures that knowledge remains searchable, discoverable and connected across linguistic boundaries while respecting the nuances of each language.
+
+Rather than treating every language as an isolated search index, the architecture provides a unified multilingual retrieval framework capable of supporting language-aware indexing, cross-language discovery and future AI-assisted translation.
+
+---
+
+# Architectural Objectives
+
+The Multilingual Search Architecture shall:
+
+* support multiple human languages;
+* provide language-aware retrieval;
+* preserve linguistic accuracy;
+* enable cross-language discovery;
+* support localized ranking;
+* integrate seamlessly with lexical and semantic search;
+* scale as additional languages are introduced.
+
+---
+
+# Architectural Philosophy
+
+Language should influence **how knowledge is indexed**, not **whether knowledge can be discovered**.
+
+Users should be able to discover relevant knowledge regardless of the language in which it was originally authored.
+
+```text id="m1a8zk"
+Knowledge
+
+↓
+
+Language Detection
+
+↓
+
+Language-Specific Indexing
+
+↓
+
+Unified Search
+
+↓
+
+Localized Results
+```
+
+The architecture therefore balances language specialization with unified knowledge access.
+
+---
+
+# Why Multilingual Search
+
+Consider the following scenario.
+
+An English article exists:
+
+```text id="h5p7dn"
+Building REST APIs
+```
+
+A French translation exists:
+
+```text id="z4v2ke"
+Créer des API REST
+```
+
+A French-speaking user searching for:
+
+```text id="q8r3xf"
+API REST
+```
+
+should discover the French version first while still being able to access the English original if desired.
+
+Likewise, an English-speaking user searching for REST APIs should not lose access simply because the most comprehensive resource currently exists in French.
+
+---
+
+# Position Within the Search Architecture
+
+```text id="w3m7cq"
+Query
+
+↓
+
+Language Detection
+
+↓
+
+Language Routing
+
+↓
+
+Language Analyzer
+
+↓
+
+Retrieval
+
+↓
+
+Ranking
+
+↓
+
+Localized Results
+```
+
+Language-aware processing occurs before retrieval.
+
+---
+
+# Language Independence
+
+Knowledge identity should remain independent of language.
+
+Conceptually:
+
+```text id="p6t9ju"
+Knowledge Object
+
+├── English
+
+├── French
+
+├── Spanish
+
+└── Future Languages
+```
+
+Each translation represents a linguistic representation of the same conceptual knowledge object.
+
+---
+
+# Language Metadata
+
+Every indexed document shall contain explicit language metadata.
+
+Examples include:
+
+| Field              | Example  |
+| ------------------ | -------- |
+| Language Code      | en       |
+| Language Name      | English  |
+| Translation Group  | TG-1042  |
+| Original Language  | English  |
+| Translation Status | Complete |
+
+Language metadata enables routing, filtering and relationship-aware retrieval.
+
+---
+
+# Language Detection
+
+Incoming queries should undergo language detection when no explicit language preference is available.
+
+```text id="u4d6mv"
+User Query
+
+↓
+
+Language Detector
+
+↓
+
+English
+
+or
+
+French
+
+or
+
+Unknown
+```
+
+Explicit user preferences always take precedence over automatic detection.
+
+---
+
+# Language Routing
+
+Once the query language has been determined, it is routed to the appropriate analyzer.
+
+```text id="y9j3rl"
+English Query
+
+↓
+
+English Analyzer
+
+-------------------
+
+French Query
+
+↓
+
+French Analyzer
+```
+
+Routing ensures that each language benefits from appropriate linguistic processing.
+
+---
+
+# Language-Specific Analyzers
+
+Each supported language requires dedicated linguistic processing.
+
+Analyzer responsibilities include:
+
+* tokenization;
+* stemming;
+* lemmatization;
+* stop-word handling;
+* synonym expansion;
+* normalization.
+
+Different languages require different analyzer configurations.
+
+For example:
+
+English:
+
+```text id="e7g2qp"
+running
+
+↓
+
+run
+```
+
+French:
+
+```text id="v1n5bz"
+développements
+
+↓
+
+développement
+```
+
+Applying English linguistic rules to French content would reduce retrieval quality.
+
+---
+
+# Separate Logical Language Indexes
+
+The architecture logically separates language-specific indexes while presenting a unified search interface.
+
+```text id="a8x4kd"
+English Index
+
+French Index
+
+Spanish Index
+
+↓
+
+Unified Search Layer
+```
+
+This approach simplifies analyzer management without exposing implementation complexity to users.
+
+---
+
+# Translation Relationships
+
+Translations should be explicitly linked.
+
+```text id="r3k8mt"
+Article
+
+↓
+
+Translated As
+
+↓
+
+French Article
+
+↓
+
+Translated As
+
+↓
+
+Spanish Article
+```
+
+These relationships are maintained within the Knowledge Graph.
+
+---
+
+# Cross-Language Retrieval
+
+Sometimes relevant knowledge exists only in another language.
+
+Example:
+
+```text id="f6u2sw"
+French Query
+
+↓
+
+French Retrieval
+
+↓
+
+Insufficient Results
+
+↓
+
+Cross-Language Expansion
+
+↓
+
+English Retrieval
+
+↓
+
+Combined Results
+```
+
+Cross-language retrieval improves discovery without compromising localization.
+
+---
+
+# Cross-LLanguage Expansion Strategy
+
+When retrieval quality falls below configurable thresholds, the architecture may expand the search.
+
+Expansion may include:
+
+* translation equivalents;
+* multilingual synonyms;
+* linked translations;
+* concept identifiers.
+
+Expansion should occur only when necessary to avoid unnecessary noise.
+
+---
+
+# Localized Ranking
+
+Ranking should prioritize results matching the user's preferred language.
+
+Illustratively:
+
+```text id="c2m7yb"
+French User
+
+↓
+
+French Results
+
+↓
+
+English Results
+
+↓
+
+Other Languages
+```
+
+Language preference is a ranking signal rather than an absolute restriction.
+
+---
+
+# Mixed-Language Results
+
+In some cases, search results may legitimately contain multiple languages.
+
+Example:
+
+```text id="t5p4vw"
+English Result
+
+French Translation Available
+
+↓
+
+Display Together
+```
+
+The user interface should clearly indicate available translations.
+
+---
+
+# Translation Awareness
+
+Rather than treating translated documents as duplicates, the architecture recognizes them as equivalent knowledge representations.
+
+This enables:
+
+* seamless language switching;
+* consistent recommendations;
+* unified analytics;
+* shared citation relationships.
+
+---
+
+# Multilingual Synonyms
+
+Synonym dictionaries should support multiple languages.
+
+Examples:
+
+```text id="o7y6hz"
+Artificial Intelligence
+
+↓
+
+AI
+
+↓
+
+Intelligence Artificielle
+```
+
+or
+
+```text id="k9v3dn"
+Computer
+
+↓
+
+Ordinateur
+```
+
+Multilingual synonym expansion enhances cross-language recall.
+
+---
+
+# Taxonomy Localization
+
+Categories and tags should also support localization.
+
+Example:
+
+```text id="z1b5pq"
+Programming
+
+↓
+
+Programmation
+```
+
+Localized taxonomies maintain conceptual consistency across languages.
+
+---
+
+# Autocomplete
+
+Autocomplete should prioritize suggestions in the user's preferred language.
+
+```text id="n2f8wc"
+User Language
+
+↓
+
+Localized Suggestions
+
+↓
+
+Search
+```
+
+Fallback suggestions may include translated equivalents when appropriate.
+
+---
+
+# Search Suggestions
+
+Did-you-mean suggestions should be language aware.
+
+Example:
+
+French query:
+
+```text id="x6q4lh"
+javscript
+```
+
+↓
+
+```text id="b5r9tz"
+javascript
+```
+
+English spell-correction rules should never be applied indiscriminately to other languages.
+
+---
+
+# Future AI Translation
+
+Future AI services may provide:
+
+* query translation;
+* multilingual semantic retrieval;
+* automatic translation suggestions;
+* multilingual summarization.
+
+These capabilities should augment rather than replace the deterministic multilingual architecture.
+
+---
+
+# Performance Considerations
+
+Supporting multiple languages increases indexing complexity.
+
+Recommended practices include:
+
+* language-specific analyzers;
+* efficient language routing;
+* shared infrastructure where appropriate;
+* cached language detection;
+* incremental synchronization of translated content.
+
+The addition of new languages should not significantly degrade search latency.
+
+---
+
+# Security Considerations
+
+Language boundaries must not bypass authorization controls.
+
+Examples include:
+
+* unpublished translations;
+* restricted editorial drafts;
+* partially translated internal content.
+
+Authorization policies must be enforced consistently across all language variants.
+
+---
+
+# Observability
+
+Operational metrics should include:
+
+* language detection accuracy;
+* query language distribution;
+* multilingual retrieval latency;
+* translation coverage;
+* cross-language retrieval frequency;
+* language-specific zero-result rate;
+* analyzer performance by language.
+
+These metrics guide future language expansion.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* applying one analyzer to every language;
+* treating translated documents as unrelated resources;
+* hardcoding supported languages throughout the application;
+* assuming English is always the primary language;
+* exposing duplicate translations as unrelated search results;
+* ignoring localization within autocomplete and suggestions.
+
+Multilingual support should remain a first-class architectural capability rather than an afterthought.
+
+---
+
+# Architecture Decision Record — ADR 7.9.010
+
+## Title
+
+Adopt Language-Aware Multilingual Search with Cross-Language Retrieval and Translation-Aware Indexing.
+
+### Status
+
+Accepted.
+
+### Context
+
+TWN is designed as a multilingual knowledge platform. Traditional single-language search architectures cannot provide consistent discovery across translated content or accommodate language-specific linguistic processing. A dedicated multilingual architecture is therefore required to ensure accurate indexing, retrieval and localization while supporting future language expansion.
+
+### Decision
+
+The platform shall implement language-aware search using language-specific analyzers, explicit language metadata and translation relationships maintained within the Knowledge Graph. Search shall prioritize results in the user's preferred language while supporting controlled cross-language retrieval when relevant localized content is unavailable. Translation-aware indexing and multilingual synonym management shall provide a unified search experience across all supported languages.
+
+### Consequences
+
+**Positive**
+
+* High-quality multilingual retrieval.
+* Improved localization and user experience.
+* Seamless discovery across translated knowledge.
+* Strong foundation for multilingual semantic search.
+* Scalable support for future languages.
+
+**Trade-offs**
+
+* Increased indexing and analyzer complexity.
+* Additional operational overhead for translation synchronization.
+* Larger storage requirements for multilingual indexes.
+* More sophisticated ranking and routing logic.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* the purpose of multilingual search is established;
+* language-aware indexing and routing are defined;
+* language-specific analyzers and metadata are documented;
+* translation relationships and cross-language retrieval strategies are specified;
+* localized ranking, autocomplete and synonym handling are incorporated;
+* performance, security and observability considerations are addressed;
+* anti-patterns are identified; and
+* the governing architectural decision is formally recorded.
+
+---
+
+## End of 7.9.11
+
+**Next Section:** **7.9.12 Autocomplete, Suggestions and Query Assistance**, where predictive search, query completion, spelling correction, "Did You Mean" recommendations, related searches, zero-result recovery and AI-assisted query formulation will be architected to improve search usability and reduce user effort.
+
+# 7.9.12 Autocomplete, Suggestions and Query Assistance
+
+---
+
+# Purpose
+
+Search should reduce the effort required to discover knowledge.
+
+Users frequently begin searching with incomplete ideas, uncertain terminology, spelling mistakes or only partial knowledge of the concepts they wish to explore.
+
+An effective search architecture therefore assists users before retrieval even begins.
+
+The Autocomplete, Suggestions and Query Assistance Architecture provides predictive guidance that improves search efficiency, reduces failed searches and accelerates knowledge discovery.
+
+Rather than functioning as isolated user interface features, autocomplete and query assistance are treated as integral components of the Search Architecture.
+
+---
+
+# Architectural Objectives
+
+The Autocomplete and Query Assistance Architecture shall:
+
+* reduce search effort;
+* improve query formulation;
+* minimize zero-result searches;
+* assist users with technical terminology;
+* support multilingual suggestions;
+* improve search performance through guided input;
+* prepare the platform for AI-assisted search interactions.
+
+---
+
+# Architectural Philosophy
+
+Users should not be expected to know the exact wording of knowledge stored within the platform.
+
+Instead, the platform should progressively guide users toward successful discovery.
+
+```text
+User Types
+
+↓
+
+Predict
+
+↓
+
+Suggest
+
+↓
+
+Refine
+
+↓
+
+Retrieve
+
+↓
+
+Learn
+```
+
+Search assistance should accelerate discovery without replacing user intent.
+
+---
+
+# Position Within the Search Architecture
+
+```text
+User Input
+
+↓
+
+Autocomplete Engine
+
+↓
+
+Suggestion Engine
+
+↓
+
+Query Assistance
+
+↓
+
+Query Processing Pipeline
+
+↓
+
+Retrieval
+
+↓
+
+Ranking
+```
+
+Autocomplete operates before query processing.
+
+Suggestions may continue both before and after retrieval.
+
+---
+
+# Components
+
+The architecture consists of several independent services.
+
+```text
+Search Assistance
+
+├── Autocomplete
+
+├── Query Suggestions
+
+├── Spelling Correction
+
+├── Did You Mean
+
+├── Related Searches
+
+├── Query Expansion
+
+├── Trending Queries
+
+└── AI Query Assistant (Future)
+```
+
+Each service performs a distinct responsibility.
+
+---
+
+# Autocomplete
+
+Autocomplete predicts likely search expressions while the user is typing.
+
+Example:
+
+```text
+User
+
+↓
+
+Re
+```
+
+↓
+
+```text
+React
+
+Redis
+
+REST APIs
+
+Requirements Engineering
+```
+
+Autocomplete reduces typing effort and increases successful searches.
+
+---
+
+# Autocomplete Sources
+
+Suggestions should originate from multiple sources.
+
+Examples include:
+
+* article titles;
+* Journey titles;
+* technologies;
+* categories;
+* authors;
+* tags;
+* notebook entries;
+* popular searches.
+
+Combining multiple sources improves coverage.
+
+---
+
+# Prefix Index
+
+Autocomplete should rely on dedicated prefix indexes rather than full-text search.
+
+```text
+Knowledge
+
+↓
+
+Prefix Index
+
+↓
+
+Fast Suggestions
+```
+
+Prefix indexes provide predictable low-latency performance suitable for interactive typing.
+
+---
+
+# Response Time Requirements
+
+Autocomplete operates within interactive user sessions.
+
+The architecture should target response times significantly lower than standard search queries.
+
+Recommended design goals include:
+
+* predictable latency;
+* lightweight payloads;
+* incremental updates;
+* asynchronous execution.
+
+User typing should never be delayed by autocomplete processing.
+
+---
+
+# Ranking Suggestions
+
+Autocomplete suggestions require their own ranking strategy.
+
+Signals may include:
+
+* exact prefix matches;
+* popularity;
+* editorial priority;
+* recency;
+* language preference;
+* educational value.
+
+Autocomplete ranking is independent from search result ranking.
+
+---
+
+# Query Suggestions
+
+Autocomplete predicts what users are typing.
+
+Query Suggestions recommend additional searches users may wish to perform.
+
+Example:
+
+Search:
+
+```text
+Docker
+```
+
+Suggested searches:
+
+```text
+Docker Compose
+
+Docker Networking
+
+Docker vs Kubernetes
+
+Docker Security
+```
+
+Suggestions encourage exploration beyond the initial query.
+
+---
+
+# Query Expansion Suggestions
+
+Users often search using overly narrow terminology.
+
+Example:
+
+```text
+React
+```
+
+Suggested expansions:
+
+```text
+React Hooks
+
+React Components
+
+React State Management
+
+Next.js
+
+Frontend Development
+```
+
+These recommendations improve knowledge discovery.
+
+---
+
+# Did You Mean
+
+Misspelled queries should trigger correction suggestions.
+
+Example:
+
+```text
+Kubernets
+```
+
+↓
+
+```text
+Did you mean
+
+Kubernetes?
+```
+
+Corrections should remain suggestions rather than automatic replacements.
+
+---
+
+# Spelling Correction
+
+The spelling subsystem identifies likely typographical errors.
+
+Example:
+
+```text
+Javscript
+```
+
+↓
+
+```text
+JavaScript
+```
+
+Correction algorithms should be language-aware.
+
+---
+
+# Fuzzy Suggestions
+
+Some errors involve missing or transposed characters.
+
+Example:
+
+```text
+Artifical
+```
+
+↓
+
+```text
+Artificial
+```
+
+Approximate matching improves retrieval without requiring perfect spelling.
+
+---
+
+# Zero-Result Recovery
+
+A failed search should not terminate the user's journey.
+
+Example:
+
+```text
+0 Results
+```
+
+↓
+
+The architecture may offer:
+
+* corrected spelling;
+* broader search terms;
+* related categories;
+* parent technologies;
+* similar Journeys.
+
+Zero-result recovery transforms search failures into discovery opportunities.
+
+---
+
+# Related Searches
+
+After successful retrieval, additional searches may be suggested.
+
+Example:
+
+```text
+Python
+```
+
+↓
+
+Related:
+
+* FastAPI
+* Django
+* Flask
+* AsyncIO
+* Type Hints
+
+These suggestions encourage continued exploration.
+
+---
+
+# Trending Searches
+
+The architecture may surface frequently searched topics.
+
+Examples:
+
+```text
+Trending
+
+AI Agents
+
+Go
+
+Rust
+
+Prompt Engineering
+```
+
+Trending queries should be generated from aggregate anonymous search activity rather than individual user behavior.
+
+---
+
+# Recently Popular Content
+
+Search assistance may recommend newly popular knowledge resources.
+
+Examples include:
+
+* newly published Journeys;
+* highly viewed notebook entries;
+* frequently accessed articles;
+* recently updated learning paths.
+
+Popularity should complement relevance rather than dominate it.
+
+---
+
+# Personalized Suggestions (Future)
+
+Future releases may provide personalized suggestions.
+
+Possible signals include:
+
+* current Journey;
+* completed chapters;
+* preferred technologies;
+* preferred language;
+* reading history.
+
+Personalization should remain transparent and privacy-conscious.
+
+---
+
+# AI Query Assistance (Future)
+
+Future AI models may assist users in constructing effective queries.
+
+Example:
+
+User types:
+
+```text
+I want to build APIs
+```
+
+AI may suggest:
+
+```text
+REST APIs
+
+API Design
+
+OpenAPI
+
+Authentication
+
+Node.js APIs
+```
+
+AI assistance should generate recommendations rather than replacing deterministic search behavior.
+
+---
+
+# Search History
+
+Where user preferences permit, recent searches may be available.
+
+Example:
+
+```text
+Recent Searches
+
+Docker
+
+Go
+
+React
+
+Redis
+```
+
+History should remain user-controlled and removable.
+
+---
+
+# Query Templates
+
+Frequently repeated search patterns may be exposed as templates.
+
+Examples:
+
+```text
+Beginner Articles
+
+Latest Notebook Entries
+
+Recently Updated
+
+AI Journeys
+```
+
+Templates simplify common discovery tasks.
+
+---
+
+# Multilingual Suggestions
+
+Suggestions should respect language preferences.
+
+Example:
+
+French user:
+
+```text
+Program...
+```
+
+↓
+
+```text
+Programmation
+
+Programme
+
+Programmation Web
+```
+
+Language-aware suggestions improve usability.
+
+---
+
+# Suggestion Caching
+
+Autocomplete is highly repetitive.
+
+Recommended caching includes:
+
+* prefix cache;
+* trending query cache;
+* taxonomy cache;
+* popular search cache;
+* suggestion cache.
+
+Caching minimizes repeated computation.
+
+---
+
+# Synchronization
+
+Suggestions must remain synchronized with the evolving knowledge base.
+
+Synchronization events include:
+
+* new article published;
+* Journey created;
+* title updated;
+* author renamed;
+* category modified;
+* translation added.
+
+Suggestion indexes should update incrementally through the indexing pipeline.
+
+---
+
+# Performance Considerations
+
+Autocomplete requires significantly lower latency than full retrieval.
+
+Recommended practices include:
+
+* dedicated prefix indexes;
+* lightweight document structures;
+* asynchronous suggestion generation;
+* incremental cache refresh;
+* bounded suggestion counts.
+
+Suggestion services should scale independently from the primary search engine.
+
+---
+
+# Security Considerations
+
+Suggestions must never expose:
+
+* unpublished content;
+* private Journeys;
+* internal notebook drafts;
+* hidden authors;
+* restricted editorial metadata.
+
+Authorization filtering applies before suggestions are generated.
+
+---
+
+# Observability
+
+Operational metrics should include:
+
+* autocomplete latency;
+* average suggestion generation time;
+* suggestion click-through rate;
+* spelling correction frequency;
+* zero-result recovery rate;
+* suggestion cache hit ratio;
+* abandoned searches;
+* autocomplete acceptance rate.
+
+These metrics help continuously improve search usability.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* implementing autocomplete through full-text search queries;
+* exposing unrestricted internal titles;
+* automatically rewriting user queries without consent;
+* ranking suggestions solely by popularity;
+* mixing autocomplete indexes with full-text indexes;
+* ignoring multilingual suggestion requirements.
+
+Autocomplete should remain fast, predictable and contextually relevant.
+
+---
+
+# Architecture Decision Record — ADR 7.9.011
+
+## Title
+
+Adopt Dedicated Autocomplete, Suggestion and Query Assistance Services Independent of the Core Retrieval Engine.
+
+### Status
+
+Accepted.
+
+### Context
+
+As TWN grows, users will increasingly rely on predictive assistance to navigate a large and evolving knowledge base. Traditional search interfaces that wait for fully formed queries create unnecessary friction and increase the likelihood of failed searches. A dedicated query assistance architecture is therefore required to support efficient, multilingual and educationally oriented knowledge discovery.
+
+### Decision
+
+The platform shall implement dedicated services for autocomplete, query suggestions, spelling correction, zero-result recovery and related search recommendations. These services shall utilize specialized prefix indexes and lightweight metadata structures rather than the primary full-text retrieval engine. Future AI-powered query assistance shall augment, but not replace, deterministic suggestion mechanisms.
+
+### Consequences
+
+**Positive**
+
+* Faster and more intuitive search interactions.
+* Reduced search failures.
+* Improved knowledge discoverability.
+* Independent scalability of suggestion services.
+* Strong foundation for future AI-assisted search experiences.
+
+**Trade-offs**
+
+* Additional indexing infrastructure.
+* Increased cache management complexity.
+* Separate operational monitoring requirements.
+* Additional synchronization logic for suggestion indexes.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* the purpose of autocomplete and query assistance is established;
+* autocomplete, suggestion and correction services are defined;
+* prefix indexing, synchronization and caching strategies are documented;
+* multilingual and future AI-assisted capabilities are incorporated;
+* performance, security and observability considerations are addressed;
+* anti-patterns are identified; and
+* the governing architectural decision is formally recorded.
+
+---
+
+## End of 7.9.12
+
+**Next Section:** **7.9.13 Semantic Search and Hybrid Retrieval**, where vector embeddings, dense retrieval, hybrid lexical–semantic search, embedding generation, vector indexes, retrieval fusion, reranking and the architectural foundations for Retrieval-Augmented Generation (RAG) will be defined.
+
+# 7.9.13 Semantic Search and Hybrid Retrieval
+
+---
+
+# Purpose
+
+Traditional full-text search excels at retrieving documents containing the exact words entered by a user.
+
+However, users do not always know the correct terminology.
+
+They may describe concepts differently from how authors wrote them.
+
+For example:
+
+A user searching for:
+
+> "How do I make software respond faster?"
+
+may never use the words:
+
+* optimization
+* performance
+* latency
+* caching
+
+A purely lexical search engine may therefore miss highly relevant knowledge.
+
+Semantic Search addresses this limitation by retrieving knowledge based on **meaning rather than exact wording**.
+
+Within TWN, semantic retrieval complements lexical search through a Hybrid Retrieval Architecture that combines the strengths of both approaches.
+
+---
+
+# Architectural Objectives
+
+The Semantic Search Architecture shall:
+
+* retrieve knowledge based on conceptual similarity;
+* improve discovery when terminology differs;
+* complement lexical retrieval rather than replace it;
+* support multilingual semantic understanding;
+* provide a foundation for Retrieval-Augmented Generation (RAG);
+* scale independently of the full-text search engine;
+* support future AI capabilities.
+
+---
+
+# Architectural Philosophy
+
+Lexical search answers:
+
+> **"Which documents contain these words?"**
+
+Semantic search answers:
+
+> **"Which documents discuss this idea?"**
+
+Hybrid retrieval combines both.
+
+```text
+User Query
+
+↓
+
+Lexical Understanding
+
++
+
+Semantic Understanding
+
+↓
+
+Unified Retrieval
+
+↓
+
+Ranking
+
+↓
+
+Results
+```
+
+The architecture recognizes that no single retrieval strategy is sufficient for every search scenario.
+
+---
+
+# Why Semantic Search
+
+Consider the following example.
+
+User Query:
+
+```text
+How can I speed up my website?
+```
+
+Article Title:
+
+```text
+Frontend Performance Optimization
+```
+
+A lexical engine may assign only a weak score because the wording differs.
+
+A semantic engine recognizes that:
+
+* speed
+* optimization
+* faster
+* performance
+
+represent closely related concepts.
+
+---
+
+# Position Within the Search Architecture
+
+```text
+User Query
+
+↓
+
+Query Processing
+
+↓
+
+Embedding Service
+
+↓
+
+Vector Search
+
++
+
+Lexical Search
+
+↓
+
+Candidate Fusion
+
+↓
+
+Ranking Engine
+
+↓
+
+Search API
+```
+
+Semantic retrieval operates alongside lexical retrieval rather than replacing it.
+
+---
+
+# What Is Semantic Search?
+
+Semantic search represents text as mathematical vectors.
+
+Instead of indexing words directly, documents are transformed into numerical representations that capture conceptual meaning.
+
+Conceptually:
+
+```text
+Article
+
+↓
+
+Embedding Model
+
+↓
+
+Vector
+
+↓
+
+Vector Index
+```
+
+Queries follow the same transformation.
+
+---
+
+# Embeddings
+
+An **embedding** is a numerical representation of meaning.
+
+Conceptually:
+
+```text
+Artificial Intelligence
+
+↓
+
+Embedding Model
+
+↓
+
+[0.214, -0.731, 0.981, ...]
+```
+
+The exact numerical values are not important to application developers.
+
+What matters is that similar concepts produce nearby vectors.
+
+---
+
+# Semantic Similarity
+
+Vectors that represent similar concepts occupy nearby positions within vector space.
+
+Illustratively:
+
+```text
+Docker
+
+        Kubernetes
+
+              Containers
+
+                    DevOps
+
+
+
+Cooking
+
+      Recipes
+```
+
+Docker and Kubernetes are located close together.
+
+Cooking remains far away.
+
+---
+
+# Embedding Generation Pipeline
+
+Every searchable knowledge object passes through an embedding generation pipeline.
+
+```text
+Knowledge Object
+
+↓
+
+Content Extraction
+
+↓
+
+Text Normalization
+
+↓
+
+Embedding Model
+
+↓
+
+Vector
+
+↓
+
+Vector Index
+```
+
+Embedding generation occurs during indexing rather than during every search request.
+
+---
+
+# Embedding Sources
+
+Embeddings may be generated from multiple content elements.
+
+Examples include:
+
+* title;
+* summary;
+* body;
+* headings;
+* tags;
+* categories;
+* Journey descriptions.
+
+Combining multiple fields produces richer semantic representations.
+
+---
+
+# Chunk-Based Embeddings
+
+Large documents should not be embedded as a single vector.
+
+Instead, they should be divided into logical chunks.
+
+Example:
+
+```text
+Journey
+
+↓
+
+Chapter
+
+↓
+
+Section
+
+↓
+
+Embedding
+```
+
+or
+
+```text
+Article
+
+↓
+
+Introduction
+
+↓
+
+Main Sections
+
+↓
+
+Conclusion
+```
+
+Chunk-level embeddings improve retrieval precision and later enable Retrieval-Augmented Generation.
+
+---
+
+# Why Chunking?
+
+Embedding an entire document may dilute important concepts.
+
+Example:
+
+```text
+15,000-word Article
+
+↓
+
+One Embedding
+
+↓
+
+Poor Precision
+```
+
+Instead:
+
+```text
+15 Sections
+
+↓
+
+15 Embeddings
+
+↓
+
+Better Retrieval
+```
+
+Chunking enables fine-grained semantic matching.
+
+---
+
+# Vector Index
+
+Embeddings are stored inside a dedicated vector index.
+
+```text
+Embeddings
+
+↓
+
+Vector Database
+
+↓
+
+Nearest Neighbor Search
+
+↓
+
+Candidate Documents
+```
+
+The vector index remains separate from the inverted index used for lexical retrieval.
+
+---
+
+# Approximate Nearest Neighbor (ANN) Search
+
+Exact vector comparisons become computationally expensive as the corpus grows.
+
+The architecture therefore adopts Approximate Nearest Neighbor (ANN) search for production-scale semantic retrieval.
+
+ANN algorithms rapidly identify vectors that are sufficiently close to the query vector while maintaining high retrieval quality.
+
+This approach provides predictable latency even for very large knowledge collections.
+
+---
+
+# Semantic Retrieval Pipeline
+
+```text
+User Query
+
+↓
+
+Embedding Model
+
+↓
+
+Query Vector
+
+↓
+
+Vector Search
+
+↓
+
+Candidate Chunks
+
+↓
+
+Candidate Documents
+```
+
+The pipeline mirrors lexical retrieval while operating on semantic representations instead of textual terms.
+
+---
+
+# Hybrid Retrieval
+
+Neither lexical nor semantic retrieval is universally superior.
+
+The architecture therefore combines both.
+
+```text
+Lexical Search
+
+↓
+
+Candidates A
+
+---------------
+
+Semantic Search
+
+↓
+
+Candidates B
+
+---------------
+
+Fusion Engine
+
+↓
+
+Unified Candidates
+
+↓
+
+Ranking
+```
+
+Hybrid retrieval consistently produces higher-quality results across diverse query types.
+
+---
+
+# Reciprocal Rank Fusion
+
+To combine results from multiple retrieval methods, TWN adopts **Reciprocal Rank Fusion (RRF)** as the default fusion strategy.
+
+RRF combines rankings from lexical and semantic retrieval without requiring direct comparison of incompatible scoring systems.
+
+Benefits include:
+
+* simplicity;
+* robustness;
+* strong empirical performance;
+* compatibility with multiple retrieval engines;
+* explainable fusion behaviour.
+
+Alternative fusion strategies may be introduced in future releases where justified.
+
+---
+
+# Retrieval Strategy Selection
+
+Not every search requires semantic retrieval.
+
+The Query Processing Pipeline may select retrieval strategies based on query characteristics.
+
+Examples include:
+
+| Query Type                | Preferred Strategy |
+| ------------------------- | ------------------ |
+| Exact title               | Lexical            |
+| Code symbol               | Lexical            |
+| Conceptual question       | Hybrid             |
+| Natural language question | Hybrid             |
+| Author search             | Lexical            |
+| Related content           | Semantic           |
+
+This selective routing minimizes unnecessary computational cost.
+
+---
+
+# Semantic Recall
+
+Semantic retrieval often increases recall by identifying conceptually related resources.
+
+For example, a search for "software reliability" may retrieve documents discussing resilience, fault tolerance or system robustness, even when the exact phrase does not appear.
+
+Improved recall should be balanced through careful ranking to avoid overwhelming users with loosely related content.
+
+---
+
+# Embedding Model Independence
+
+The architecture intentionally avoids coupling the platform to a specific embedding provider.
+
+Embedding generation is abstracted behind a dedicated service interface.
+
+This allows the platform to:
+
+* upgrade embedding models;
+* evaluate alternative providers;
+* retrain embeddings;
+* regenerate vector indexes.
+
+without affecting higher architectural layers.
+
+---
+
+# Embedding Lifecycle
+
+Embeddings require lifecycle management.
+
+Generation should occur when:
+
+* new content is published;
+* existing content changes significantly;
+* translations are added;
+* metadata materially affects meaning;
+* embedding models are upgraded.
+
+Embedding regeneration should occur asynchronously through the indexing pipeline.
+
+---
+
+# Multilingual Embeddings
+
+Future multilingual embedding models may represent equivalent concepts from different languages within a shared semantic space.
+
+Example:
+
+```text
+Artificial Intelligence
+
+↓
+
+Intelligence Artificielle
+
+↓
+
+Nearby Vectors
+```
+
+This enables meaningful cross-language semantic retrieval while complementing the multilingual architecture defined in Section 7.9.11.
+
+---
+
+# Integration with the Knowledge Graph
+
+Semantic similarity and graph relationships are complementary.
+
+```text
+Semantic Similarity
+
++
+
+Knowledge Graph
+
+↓
+
+Richer Discovery
+```
+
+For example:
+
+* semantic search identifies conceptually similar content;
+* graph traversal identifies structurally related content.
+
+Together they provide a more complete knowledge exploration experience.
+
+---
+
+# Foundation for Retrieval-Augmented Generation
+
+Semantic retrieval forms the retrieval layer for future AI capabilities.
+
+When users ask complex natural-language questions, relevant knowledge chunks may be retrieved through the vector index and supplied as contextual grounding for large language models.
+
+This architecture intentionally separates retrieval from generation to preserve modularity and support multiple AI providers.
+
+The complete Retrieval-Augmented Generation architecture is specified in Chapter 7.10.
+
+---
+
+# Performance Considerations
+
+Semantic retrieval introduces additional computational requirements.
+
+Recommended architectural practices include:
+
+* asynchronous embedding generation;
+* efficient ANN indexes;
+* chunk-level embeddings;
+* embedding cache management;
+* parallel lexical and semantic retrieval;
+* configurable retrieval thresholds.
+
+The semantic layer should remain independently scalable from the lexical search subsystem.
+
+---
+
+# Security Considerations
+
+Semantic indexes must enforce the same authorization rules as lexical indexes.
+
+Restricted knowledge must never become discoverable through vector similarity alone.
+
+Embedding generation pipelines should exclude sensitive metadata that is not intended for retrieval.
+
+Model upgrades and embedding regeneration processes should be auditable and versioned.
+
+---
+
+# Observability
+
+Operational metrics should include:
+
+* embedding generation latency;
+* embedding queue depth;
+* vector index size;
+* ANN query latency;
+* semantic retrieval success rate;
+* hybrid retrieval usage;
+* Reciprocal Rank Fusion execution time;
+* embedding regeneration frequency.
+
+These metrics provide visibility into semantic retrieval quality and operational health.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* replacing lexical retrieval entirely with semantic search;
+* embedding entire books or very large documents as a single vector;
+* tightly coupling the architecture to a specific embedding provider;
+* regenerating embeddings synchronously during user requests;
+* exposing vector similarity scores directly to end users without context;
+* assuming semantic similarity always implies educational relevance.
+
+Semantic retrieval should enhance—not replace—the broader search architecture.
+
+---
+
+# Architecture Decision Record — ADR 7.9.012
+
+## Title
+
+Adopt Hybrid Lexical–Semantic Retrieval Using Chunk-Based Embeddings and Reciprocal Rank Fusion.
+
+### Status
+
+Accepted.
+
+### Context
+
+TWN requires a search architecture capable of supporting both precise keyword retrieval and conceptual knowledge discovery. Lexical search alone cannot reliably retrieve semantically related content, while semantic search alone lacks the precision and explainability required for many technical queries.
+
+### Decision
+
+The platform shall implement semantic retrieval using chunk-based embeddings stored within a dedicated vector index. Lexical and semantic retrieval shall operate in parallel, with candidate results combined through Reciprocal Rank Fusion before entering the Relevance Ranking Architecture. Embedding generation shall be asynchronous, model-independent and integrated with the indexing pipeline.
+
+### Consequences
+
+**Positive**
+
+* Improved conceptual knowledge discovery.
+* Strong foundation for Retrieval-Augmented Generation.
+* Better handling of natural-language queries.
+* Independent evolution of lexical and semantic retrieval.
+* Flexible adoption of future embedding models.
+
+**Trade-offs**
+
+* Additional infrastructure for vector indexing.
+* Higher storage and computational requirements.
+* Embedding lifecycle management complexity.
+* Increased operational monitoring and model governance.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* the purpose of semantic search is established;
+* embeddings, vector indexes and ANN retrieval are defined;
+* chunk-based embedding architecture is documented;
+* hybrid retrieval and Reciprocal Rank Fusion are specified;
+* integration with multilingual search and the Knowledge Graph is described;
+* performance, security and observability considerations are addressed;
+* anti-patterns are identified; and
+* the governing architectural decision is formally recorded.
+
+---
+
+## End of 7.9.13
+
+**Next Section:** **7.9.14 Search API Architecture**, which will define the public and internal search interfaces, request/response contracts, pagination, filtering APIs, streaming search responses, versioning, rate limiting, authentication and service integration patterns.
+
+# 7.9.14 Search API Architecture
+
+---
+
+# Purpose
+
+The Search API serves as the public interface between TWN's Search Architecture and every consumer of search capabilities.
+
+Regardless of whether requests originate from the website, CMS, mobile applications, AI services, analytics platforms or future integrations, all search interactions should occur through a consistent, well-defined API.
+
+The Search API is more than an endpoint for executing queries.
+
+It is the architectural boundary that:
+
+* protects internal search infrastructure;
+* enforces authorization;
+* provides stable contracts;
+* coordinates search capabilities;
+* enables future evolution without disrupting consumers.
+
+Within TWN, the Search API acts as the gateway to the complete Search subsystem.
+
+---
+
+# Architectural Objectives
+
+The Search API Architecture shall:
+
+* expose consistent search interfaces;
+* abstract internal search implementation;
+* support multiple search experiences;
+* enforce security and authorization;
+* maintain backward compatibility;
+* provide predictable performance;
+* enable future API evolution.
+
+---
+
+# Architectural Philosophy
+
+Consumers should interact with **search capabilities**, not search technologies.
+
+Applications should never know:
+
+* which search engine is used;
+* how indexes are organized;
+* whether retrieval is lexical or semantic;
+* how ranking operates.
+
+Instead they communicate through stable contracts.
+
+```text
+Application
+
+↓
+
+Search API
+
+↓
+
+Search Services
+
+↓
+
+Indexes
+```
+
+This abstraction enables independent evolution of internal architecture.
+
+---
+
+# Position Within the Overall Architecture
+
+```text
+Web Application
+
+CMS
+
+Mobile
+
+AI Services
+
+Analytics
+
+↓
+
+Search API
+
+↓
+
+Query Processing
+
+↓
+
+Retrieval
+
+↓
+
+Ranking
+
+↓
+
+Results
+```
+
+Every search request enters the architecture through the Search API.
+
+---
+
+# Responsibilities
+
+The Search API is responsible for:
+
+* receiving requests;
+* validating payloads;
+* authenticating clients;
+* authorizing access;
+* routing search operations;
+* coordinating search services;
+* formatting responses;
+* exposing consistent metadata.
+
+It is **not** responsible for:
+
+* ranking;
+* indexing;
+* query parsing;
+* graph traversal;
+* embedding generation.
+
+---
+
+# API Design Principles
+
+The Search API follows several architectural principles.
+
+## Principle 1 — Resource-Oriented Design
+
+Operations expose business capabilities rather than infrastructure.
+
+Examples:
+
+Good
+
+```text
+Search Articles
+```
+
+Poor
+
+```text
+Query Elasticsearch
+```
+
+---
+
+## Principle 2 — Stable Contracts
+
+API contracts should evolve independently of internal implementation.
+
+Consumers must remain unaffected when:
+
+* ranking changes;
+* indexes change;
+* search providers change;
+* embedding models change.
+
+---
+
+## Principle 3 — Stateless Requests
+
+Every request should contain sufficient information to execute independently.
+
+The Search API should not rely upon server-side conversational state.
+
+---
+
+## Principle 4 — Predictable Responses
+
+Regardless of search type, response structures should remain consistent.
+
+Applications should not require different parsers for different search modes.
+
+---
+
+# High-Level Request Flow
+
+```text
+Client
+
+↓
+
+Search API
+
+↓
+
+Validation
+
+↓
+
+Authorization
+
+↓
+
+Query Processing
+
+↓
+
+Retrieval
+
+↓
+
+Ranking
+
+↓
+
+Response Builder
+
+↓
+
+Client
+```
+
+---
+
+# API Endpoints
+
+The architecture intentionally separates capabilities into distinct resources.
+
+Examples include:
+
+| Endpoint        | Purpose                         |
+| --------------- | ------------------------------- |
+| Search          | General search                  |
+| Suggestions     | Autocomplete                    |
+| Related Content | Knowledge discovery             |
+| Filters         | Facet retrieval                 |
+| Trending        | Popular searches                |
+| Recommendations | Personalized discovery (future) |
+
+Each capability remains independently evolvable.
+
+---
+
+# Search Request Model
+
+Conceptually, a search request contains:
+
+```text
+Search Request
+
+├── Query
+
+├── Filters
+
+├── Pagination
+
+├── Language
+
+├── Sort
+
+├── Search Mode
+
+└── Metadata
+```
+
+The request model should remain extensible.
+
+---
+
+# Search Modes
+
+Different consumers require different retrieval strategies.
+
+Examples include:
+
+| Mode    | Description                 |
+| ------- | --------------------------- |
+| Keyword | Lexical search              |
+| Hybrid  | Lexical + semantic          |
+| Related | Graph-based discovery       |
+| Journey | Learning-oriented retrieval |
+| Author  | Contributor search          |
+| CMS     | Editorial search            |
+
+The Search API routes requests without exposing internal complexity.
+
+---
+
+# Response Model
+
+Every successful response should follow a consistent structure.
+
+```text
+Response
+
+├── Results
+
+├── Facets
+
+├── Suggestions
+
+├── Pagination
+
+├── Metadata
+
+└── Diagnostics
+```
+
+Consistency simplifies client implementation.
+
+---
+
+# Result Representation
+
+Each result should contain standardized metadata.
+
+Examples include:
+
+* identifier;
+* title;
+* summary;
+* content type;
+* language;
+* URL;
+* relevance information;
+* available translations;
+* reading time;
+* publication metadata.
+
+The response should avoid exposing search engine internals.
+
+---
+
+# Pagination
+
+Large result sets require predictable pagination.
+
+The architecture supports logical page navigation rather than exposing internal index offsets.
+
+Conceptually:
+
+```text
+Results
+
+↓
+
+Page 1
+
+↓
+
+Page 2
+
+↓
+
+Page 3
+```
+
+Pagination mechanisms should remain implementation-independent.
+
+---
+
+# Cursor-Based Pagination
+
+For large collections, cursor-based pagination is preferred over offset-based pagination.
+
+Benefits include:
+
+* consistent performance;
+* stable navigation during content updates;
+* reduced database and index traversal costs.
+
+Offset-based pagination may remain available for administrative use where appropriate.
+
+---
+
+# Sorting
+
+The Search API supports configurable sorting.
+
+Examples include:
+
+* relevance;
+* newest;
+* oldest;
+* alphabetical;
+* recently updated;
+* reading time.
+
+Sorting options should be validated before execution.
+
+---
+
+# Filtering
+
+The Search API exposes filtering independently from retrieval.
+
+Examples:
+
+* language;
+* category;
+* Journey;
+* author;
+* difficulty;
+* publication date.
+
+Filtering should integrate directly with the Faceted Search Architecture.
+
+---
+
+# Search Metadata
+
+Responses may include operational metadata.
+
+Examples include:
+
+* total results;
+* execution time;
+* applied filters;
+* corrected query;
+* language detected;
+* search mode.
+
+Metadata improves transparency while remaining implementation-agnostic.
+
+---
+
+# Partial Responses
+
+Search should degrade gracefully.
+
+Example:
+
+```text
+Results
+
+✓
+
+Facets
+
+✓
+
+Suggestions
+
+Unavailable
+```
+
+The API should return usable responses whenever possible rather than failing entirely because one supporting service is unavailable.
+
+---
+
+# API Versioning
+
+Search APIs evolve over time.
+
+Versioning should preserve backward compatibility.
+
+Recommended strategy:
+
+```text
+Version 1
+
+↓
+
+Version 2
+
+↓
+
+Version 3
+```
+
+Older versions should remain supported according to established deprecation policies.
+
+---
+
+# Error Model
+
+Errors should be predictable and machine-readable.
+
+Categories include:
+
+| Error Type            | Example             |
+| --------------------- | ------------------- |
+| Validation            | Invalid request     |
+| Authorization         | Access denied       |
+| Rate Limiting         | Too many requests   |
+| Unsupported Operation | Invalid search mode |
+| Internal Failure      | Search unavailable  |
+
+Internal implementation details should never be exposed.
+
+---
+
+# Authentication
+
+Public search may permit anonymous access.
+
+Administrative search requires authenticated users.
+
+Examples:
+
+```text
+Public Search
+
+↓
+
+Anonymous
+```
+
+```text
+Editorial Search
+
+↓
+
+Authenticated
+```
+
+Authentication requirements depend upon the requested capability.
+
+---
+
+# Authorization
+
+Authorization determines **which knowledge may be searched**.
+
+Examples:
+
+Public users:
+
+* published content only.
+
+Editors:
+
+* drafts;
+* unpublished translations;
+* workflow states.
+
+Authorization filtering must occur before results are returned.
+
+---
+
+# Rate Limiting
+
+Search endpoints represent valuable computational resources.
+
+The API should protect itself against:
+
+* automated abuse;
+* denial-of-service attacks;
+* excessive semantic retrieval;
+* repeated autocomplete requests.
+
+Rate-limiting policies should be configurable per client type.
+
+---
+
+# Caching
+
+Search responses vary significantly in cacheability.
+
+Suitable cache candidates include:
+
+* trending searches;
+* autocomplete;
+* popular filters;
+* taxonomy metadata;
+* static recommendations.
+
+Highly personalized search responses should generally avoid shared caching.
+
+---
+
+# Streaming Responses (Future)
+
+Future AI-assisted search may benefit from progressive response delivery.
+
+Conceptually:
+
+```text
+Search
+
+↓
+
+Partial Results
+
+↓
+
+Additional Results
+
+↓
+
+Complete Response
+```
+
+Streaming should remain optional and backward compatible.
+
+---
+
+# API Gateway Integration
+
+The Search API should be exposed through the platform's API Gateway.
+
+Responsibilities delegated to the gateway include:
+
+* authentication;
+* rate limiting;
+* request logging;
+* API version routing;
+* TLS termination;
+* request size validation.
+
+This keeps search services focused on business logic.
+
+---
+
+# Service Discovery
+
+Internal search services should communicate through service discovery rather than fixed network addresses.
+
+This enables:
+
+* scaling;
+* failover;
+* infrastructure portability.
+
+The Search API remains independent of deployment topology.
+
+---
+
+# Performance Considerations
+
+Recommended practices include:
+
+* stateless request handling;
+* response compression;
+* efficient serialization;
+* cursor pagination;
+* request validation before retrieval;
+* asynchronous logging.
+
+The Search API should contribute minimal latency beyond the retrieval pipeline.
+
+---
+
+# Security Considerations
+
+The Search API must protect against:
+
+* unauthorized access;
+* injection attacks;
+* oversized payloads;
+* enumeration attacks;
+* abusive automated clients;
+* information leakage through error messages.
+
+Every response should respect the platform's authorization model.
+
+---
+
+# Observability
+
+Operational telemetry should include:
+
+* request volume;
+* endpoint latency;
+* error rates;
+* authorization failures;
+* cache hit ratio;
+* rate-limit events;
+* average payload size;
+* API version usage.
+
+These metrics support operational reliability and capacity planning.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* exposing search engine–specific APIs directly to clients;
+* tightly coupling clients to index structures;
+* embedding authorization logic within user interfaces;
+* returning inconsistent response structures across endpoints;
+* exposing internal relevance scores or infrastructure details unnecessarily;
+* creating separate APIs for lexical and semantic search when a unified contract is sufficient.
+
+The Search API should remain stable, technology-agnostic and focused on business capabilities.
+
+---
+
+# Architecture Decision Record — ADR 7.9.013
+
+## Title
+
+Adopt a Unified, Versioned Search API with Stable Contracts and Technology Abstraction.
+
+### Status
+
+Accepted.
+
+### Context
+
+The TWN platform supports multiple consumers of search capabilities, including public applications, editorial systems and future AI services. Exposing search engine implementations directly would tightly couple clients to infrastructure, making future evolution difficult and increasing maintenance costs.
+
+### Decision
+
+The platform shall expose all search capabilities through a unified, versioned Search API. The API shall provide stable request and response contracts, enforce authentication and authorization, support multiple search modes, and abstract internal retrieval, ranking and indexing technologies. Infrastructure concerns such as rate limiting, request validation and routing shall be delegated to the API Gateway where appropriate.
+
+### Consequences
+
+**Positive**
+
+* Stable client integrations.
+* Independent evolution of internal search technologies.
+* Consistent search experience across all consumers.
+* Simplified API governance.
+* Strong foundation for future AI and external integrations.
+
+**Trade-offs**
+
+* Additional abstraction layer.
+* Increased API governance responsibilities.
+* More comprehensive version management.
+* Need for careful contract evolution and compatibility testing.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* the purpose of the Search API is established;
+* responsibilities and architectural principles are defined;
+* request and response models are documented;
+* pagination, filtering, sorting and versioning strategies are specified;
+* authentication, authorization and rate limiting are addressed;
+* performance, security and observability considerations are incorporated;
+* anti-patterns are identified; and
+* the governing architectural decision is formally recorded.
+
+---
+
+## End of 7.9.14
+
+**Next Section:** **7.9.15 Search Performance, Scalability and Resilience**, where the architecture for caching, distributed search clusters, shard allocation, replication, autoscaling, fault tolerance, disaster recovery, service-level objectives (SLOs) and operational resilience will be defined for production-scale deployments.
+
+# 7.9.15 Search Performance, Scalability and Resilience
+
+---
+
+# Purpose
+
+The quality of a search platform is determined not only by the relevance of its results but also by its ability to deliver those results consistently under varying workloads.
+
+Users expect search to remain responsive regardless of:
+
+* corpus size;
+* traffic volume;
+* indexing activity;
+* infrastructure failures;
+* software upgrades.
+
+As TWN evolves into a large-scale knowledge platform supporting multilingual content, semantic retrieval, Knowledge Graph traversal and AI-assisted search, the underlying search infrastructure must scale without compromising reliability or user experience.
+
+This section defines the architectural principles and operational mechanisms that ensure the Search subsystem remains performant, resilient and highly available.
+
+---
+
+# Architectural Objectives
+
+The Search Performance, Scalability and Resilience Architecture shall:
+
+* deliver consistently low search latency;
+* support horizontal scaling;
+* remain available during infrastructure failures;
+* tolerate partial subsystem degradation;
+* support zero-downtime operations;
+* optimize infrastructure utilization;
+* enable predictable operational growth.
+
+---
+
+# Architectural Philosophy
+
+Performance is not achieved through faster hardware alone.
+
+It is the result of architectural decisions made throughout the lifecycle of the search platform.
+
+Likewise, resilience is not the absence of failures.
+
+It is the ability of the system to continue providing useful service despite failures.
+
+```text
+Reliable Search
+
+=
+
+Good Architecture
+
++
+
+Scalable Infrastructure
+
++
+
+Operational Resilience
+```
+
+---
+
+# Quality Attribute Goals
+
+The architecture prioritizes the following quality attributes:
+
+| Attribute       | Goal                        |
+| --------------- | --------------------------- |
+| Availability    | High                        |
+| Reliability     | High                        |
+| Scalability     | Horizontal                  |
+| Latency         | Predictable                 |
+| Recoverability  | Rapid                       |
+| Elasticity      | Automatic where appropriate |
+| Maintainability | High                        |
+
+---
+
+# Performance Strategy
+
+Search performance is achieved through multiple architectural layers rather than a single optimization technique.
+
+```text
+Request
+
+↓
+
+Caching
+
+↓
+
+Optimized Query
+
+↓
+
+Distributed Retrieval
+
+↓
+
+Efficient Ranking
+
+↓
+
+Compressed Response
+```
+
+Each layer contributes incremental performance improvements.
+
+---
+
+# End-to-End Latency Budget
+
+Search latency should be managed as a budget shared across architectural components.
+
+Illustratively:
+
+| Stage                 | Latency Budget |
+| --------------------- | -------------- |
+| API Validation        | Small          |
+| Query Processing      | Small          |
+| Retrieval             | Moderate       |
+| Ranking               | Moderate       |
+| Response Construction | Small          |
+
+No individual stage should dominate overall response time.
+
+Latency budgets should be monitored continuously.
+
+---
+
+# Horizontal Scalability
+
+The Search subsystem should scale horizontally rather than vertically.
+
+```text
+Search API
+
+↓
+
+Load Balancer
+
+↓
+
+Search Node A
+
+Search Node B
+
+Search Node C
+
+Search Node D
+```
+
+Additional nodes increase capacity without requiring architectural redesign.
+
+---
+
+# Stateless Search Services
+
+Search application services should remain stateless.
+
+Persistent information resides in:
+
+* indexes;
+* caches;
+* object storage;
+* metadata stores.
+
+Stateless services simplify:
+
+* scaling;
+* deployment;
+* failover;
+* recovery.
+
+---
+
+# Distributed Search Cluster
+
+The search engine should operate as a distributed cluster.
+
+```text
+Cluster
+
+├── Node A
+
+├── Node B
+
+├── Node C
+
+└── Node D
+```
+
+Nodes cooperate to execute distributed retrieval while presenting a unified search capability.
+
+---
+
+# Sharding Strategy
+
+Indexes should be partitioned into logical shards.
+
+```text
+Search Index
+
+↓
+
+Shard 1
+
+Shard 2
+
+Shard 3
+
+Shard 4
+```
+
+Sharding enables:
+
+* parallel query execution;
+* independent scaling;
+* balanced storage utilization.
+
+Shard sizes should remain within operational limits to avoid inefficient recovery and excessive memory usage.
+
+---
+
+# Replica Strategy
+
+Each primary shard should have one or more replicas.
+
+```text
+Primary
+
+↓
+
+Replica A
+
+↓
+
+Replica B
+```
+
+Replicas provide:
+
+* high availability;
+* read scalability;
+* faster recovery;
+* maintenance flexibility.
+
+---
+
+# Load Balancing
+
+Search requests should be distributed across available nodes.
+
+```text
+Client
+
+↓
+
+Load Balancer
+
+↓
+
+Node A
+
+Node B
+
+Node C
+```
+
+Load balancing should consider:
+
+* node health;
+* request volume;
+* response latency;
+* replica utilization.
+
+---
+
+# Search Caching Architecture
+
+Caching significantly reduces retrieval latency for frequently accessed resources.
+
+The architecture adopts a multi-layer caching strategy.
+
+```text
+Browser Cache
+
+↓
+
+CDN Cache
+
+↓
+
+API Cache
+
+↓
+
+Search Cache
+
+↓
+
+Index
+```
+
+Each cache layer serves a distinct responsibility.
+
+---
+
+# Query Result Cache
+
+Frequently repeated search requests may be cached.
+
+Suitable candidates include:
+
+* popular searches;
+* trending topics;
+* common filters;
+* public search pages.
+
+Highly personalized responses should generally bypass shared caches.
+
+---
+
+# Filter Cache
+
+Facet aggregations are computationally expensive.
+
+Reusable aggregation results should therefore be cached independently from search results.
+
+This reduces repeated computation while maintaining freshness through controlled invalidation.
+
+---
+
+# Metadata Cache
+
+Slow-changing metadata such as:
+
+* categories;
+* tags;
+* Journey definitions;
+* language lists;
+
+should be cached separately from search responses.
+
+Independent cache lifecycles reduce unnecessary invalidation.
+
+---
+
+# Cache Invalidation
+
+Caching is only valuable when correctness is preserved.
+
+Cache invalidation should occur when:
+
+* content is published;
+* content is updated;
+* translations change;
+* taxonomy changes;
+* ranking rules change.
+
+Invalidation should be event-driven rather than time-driven whenever possible.
+
+---
+
+# Incremental Index Updates
+
+Content changes should trigger incremental indexing.
+
+```text
+Content Updated
+
+↓
+
+Index Event
+
+↓
+
+Affected Documents
+
+↓
+
+Incremental Update
+```
+
+Rebuilding entire indexes for minor changes is inefficient and should be avoided.
+
+---
+
+# Zero-Downtime Reindexing
+
+Large schema or analyzer changes require complete reindexing.
+
+The architecture supports index aliasing.
+
+```text
+Index V1
+
+↓
+
+Build Index V2
+
+↓
+
+Switch Alias
+
+↓
+
+Retire V1
+```
+
+Users continue searching throughout the migration.
+
+---
+
+# Background Processing
+
+Expensive operations should execute asynchronously.
+
+Examples include:
+
+* embedding generation;
+* full reindexing;
+* graph projection;
+* cache warming;
+* suggestion regeneration.
+
+User-facing requests should remain lightweight.
+
+---
+
+# Autoscaling
+
+Infrastructure should support automatic scaling based on operational metrics.
+
+Potential triggers include:
+
+* CPU utilization;
+* memory consumption;
+* queue depth;
+* request throughput;
+* latency.
+
+Scaling policies should avoid rapid oscillation through appropriate stabilization windows.
+
+---
+
+# Graceful Degradation
+
+When individual components fail, search should continue with reduced functionality.
+
+Examples include:
+
+| Component Failure  | Degraded Behaviour                    |
+| ------------------ | ------------------------------------- |
+| Semantic Search    | Lexical search only                   |
+| Suggestion Service | Search continues without suggestions  |
+| Knowledge Graph    | Relationship expansion disabled       |
+| Trending Service   | Omit trending queries                 |
+| Analytics          | Continue without telemetry collection |
+
+Graceful degradation maintains core search functionality during partial outages.
+
+---
+
+# Circuit Breakers
+
+External dependencies should be protected through circuit breakers.
+
+```text
+Search Service
+
+↓
+
+Circuit Breaker
+
+↓
+
+External Dependency
+```
+
+Persistent failures should trigger temporary isolation rather than repeated unsuccessful requests.
+
+---
+
+# Retry Strategy
+
+Retries should be reserved for transient failures.
+
+Recommended practices include:
+
+* exponential backoff;
+* jitter;
+* retry limits;
+* idempotent operations only.
+
+Blind retries should be avoided as they can amplify failures.
+
+---
+
+# Backpressure
+
+During traffic spikes, the architecture should regulate incoming work.
+
+Mechanisms may include:
+
+* bounded queues;
+* request throttling;
+* admission control;
+* priority scheduling.
+
+Backpressure protects system stability under overload.
+
+---
+
+# Disaster Recovery
+
+The Search subsystem should support disaster recovery through:
+
+* replicated indexes;
+* off-site backups;
+* infrastructure-as-code;
+* automated cluster provisioning;
+* index restoration procedures.
+
+Recovery procedures should be tested periodically rather than assumed to work.
+
+---
+
+# Backup Strategy
+
+Search indexes should be backed up independently from application databases.
+
+Backup scope includes:
+
+* index snapshots;
+* synonym dictionaries;
+* analyzer configurations;
+* ranking configurations;
+* embedding metadata.
+
+Backups should be versioned and regularly validated through restoration exercises.
+
+---
+
+# Service-Level Objectives (SLOs)
+
+Operational expectations should be formally defined.
+
+Illustrative objectives include:
+
+| Objective                         | Target                              |
+| --------------------------------- | ----------------------------------- |
+| Search Availability               | ≥ 99.9%                             |
+| Successful Search Requests        | ≥ 99.5%                             |
+| Indexing Success Rate             | ≥ 99.9%                             |
+| Recovery from Single Node Failure | Within operational target           |
+| Zero-Result Rate                  | Continuously monitored and improved |
+
+Specific numerical targets should be reviewed periodically based on operational experience.
+
+---
+
+# Service-Level Indicators (SLIs)
+
+Representative SLIs include:
+
+* search latency;
+* successful request ratio;
+* indexing latency;
+* replica synchronization delay;
+* cache hit ratio;
+* query timeout rate;
+* semantic retrieval availability.
+
+These indicators measure whether SLOs are being achieved.
+
+---
+
+# Capacity Planning
+
+Capacity planning should account for:
+
+* document growth;
+* multilingual expansion;
+* vector index growth;
+* AI retrieval workloads;
+* seasonal traffic;
+* editorial activity.
+
+Capacity should be reviewed regularly rather than only after resource exhaustion.
+
+---
+
+# Operational Runbooks
+
+Operational procedures should exist for common scenarios.
+
+Examples include:
+
+* node replacement;
+* index corruption;
+* cache failures;
+* replica recovery;
+* reindexing;
+* search latency investigation;
+* semantic index regeneration.
+
+Runbooks reduce recovery time and improve operational consistency.
+
+---
+
+# Performance Testing
+
+Performance should be validated through dedicated testing.
+
+Representative workloads include:
+
+* high query throughput;
+* concurrent indexing;
+* hybrid retrieval;
+* multilingual search;
+* cache cold starts;
+* failover scenarios.
+
+Testing should simulate realistic production behavior rather than synthetic best-case scenarios.
+
+---
+
+# Security Considerations
+
+Performance optimizations must not weaken security.
+
+Examples include:
+
+* caches must respect authorization boundaries;
+* replicas must enforce the same access controls as primary nodes;
+* autoscaling should not bypass security configuration;
+* backups should remain encrypted and access-controlled.
+
+Operational resilience must preserve confidentiality as well as availability.
+
+---
+
+# Observability
+
+Comprehensive telemetry should include:
+
+* search latency distribution;
+* indexing throughput;
+* cache hit ratios;
+* shard utilization;
+* replica health;
+* node availability;
+* queue depths;
+* autoscaling events;
+* circuit breaker activations;
+* recovery durations.
+
+Dashboards should provide both real-time operational visibility and long-term trend analysis.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* relying solely on vertical scaling;
+* rebuilding indexes for every content update;
+* sharing a single cache for unrelated workloads;
+* treating replicas as backups;
+* performing synchronous embedding generation during user requests;
+* assuming successful backups without restoration testing;
+* scaling infrastructure without corresponding observability.
+
+Performance and resilience should emerge from deliberate architectural design rather than isolated optimizations.
+
+---
+
+# Architecture Decision Record — ADR 7.9.014
+
+## Title
+
+Adopt a Horizontally Scalable, Highly Available Search Architecture with Multi-Layer Caching, Distributed Indexes and Graceful Degradation.
+
+### Status
+
+Accepted.
+
+### Context
+
+The TWN platform is expected to grow significantly in both content volume and user traffic while supporting advanced capabilities such as multilingual search, Knowledge Graph traversal and semantic retrieval. The search infrastructure must therefore remain performant, resilient and operationally manageable under increasing scale and during component failures.
+
+### Decision
+
+The platform shall implement a distributed search architecture based on horizontal scaling, sharded indexes, replica-based redundancy, multi-layer caching, event-driven indexing and zero-downtime operational procedures. Core search functionality shall remain available during partial subsystem failures through graceful degradation, while operational quality shall be governed through defined SLOs, SLIs and comprehensive observability.
+
+### Consequences
+
+**Positive**
+
+* High availability and fault tolerance.
+* Predictable search performance at scale.
+* Efficient infrastructure utilization.
+* Zero-downtime maintenance and upgrades.
+* Strong operational governance and recoverability.
+
+**Trade-offs**
+
+* Increased infrastructure complexity.
+* More sophisticated cluster management.
+* Additional monitoring and operational tooling.
+* Higher storage requirements due to replicas, snapshots and caches.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* the performance and resilience objectives are established;
+* distributed clustering, sharding and replication strategies are defined;
+* caching, indexing and autoscaling architectures are documented;
+* graceful degradation, disaster recovery and operational governance are specified;
+* SLOs, SLIs, capacity planning and observability are incorporated;
+* security implications are addressed;
+* anti-patterns are identified; and
+* the governing architectural decision is formally recorded.
+
+---
+
+## End of 7.9.15
+
+**Next Section:** **7.9.16 Search Analytics and Continuous Improvement**, which will define how TWN measures search effectiveness, analyzes user behavior, evaluates relevance quality, identifies content gaps, supports experimentation and continuously improves the search experience through evidence-based architectural feedback loops.
+
+# 7.9.16 Search Analytics and Continuous Improvement
+
+---
+
+# Purpose
+
+A search architecture cannot be considered successful solely because it returns results quickly.
+
+Its effectiveness must be continuously measured against the fundamental objective of helping users discover relevant knowledge efficiently.
+
+Without systematic measurement, the platform cannot answer questions such as:
+
+* Are users finding what they need?
+* Which searches consistently fail?
+* Which topics are missing?
+* Which ranking changes improve relevance?
+* Which suggestions are actually helpful?
+* Which learning paths are difficult to discover?
+
+Search Analytics provides the architectural foundation for answering these questions through objective measurement, experimentation and continuous improvement.
+
+Within TWN, analytics are not intended to maximize engagement at any cost.
+
+Instead, they are used to improve knowledge accessibility, educational outcomes and search quality.
+
+---
+
+# Architectural Objectives
+
+The Search Analytics Architecture shall:
+
+* measure search effectiveness;
+* identify retrieval failures;
+* improve ranking quality;
+* detect knowledge gaps;
+* support evidence-based improvements;
+* enable controlled experimentation;
+* preserve user privacy.
+
+---
+
+# Architectural Philosophy
+
+Every search interaction provides an opportunity to improve the platform.
+
+```text
+Search
+
+↓
+
+Observation
+
+↓
+
+Measurement
+
+↓
+
+Analysis
+
+↓
+
+Improvement
+
+↓
+
+Better Search
+```
+
+Analytics transform operational data into architectural feedback.
+
+---
+
+# Position Within the Search Architecture
+
+```text
+Search Request
+
+↓
+
+Search API
+
+↓
+
+Retrieval
+
+↓
+
+Ranking
+
+↓
+
+Response
+
+↓
+
+Analytics Pipeline
+
+↓
+
+Reporting
+
+↓
+
+Continuous Improvement
+```
+
+Analytics observe search behaviour without interfering with search execution.
+
+---
+
+# Core Responsibilities
+
+The Search Analytics subsystem is responsible for:
+
+* collecting search telemetry;
+* measuring retrieval quality;
+* identifying failed searches;
+* tracking feature adoption;
+* supporting experimentation;
+* informing editorial decisions;
+* improving ranking models.
+
+It is **not** responsible for:
+
+* executing searches;
+* storing content;
+* modifying indexes;
+* determining ranking during live requests.
+
+---
+
+# Analytics Domains
+
+The architecture organizes analytics into several domains.
+
+```text
+Search Analytics
+
+├── Usage
+
+├── Quality
+
+├── Performance
+
+├── Editorial
+
+├── Operational
+
+├── Learning
+
+└── Experimentation
+```
+
+Each domain addresses a different aspect of search effectiveness.
+
+---
+
+# Usage Analytics
+
+Usage analytics describe how search is being used.
+
+Examples include:
+
+* total searches;
+* unique search sessions;
+* average searches per session;
+* most frequently searched topics;
+* language distribution;
+* device distribution.
+
+These metrics provide visibility into platform adoption.
+
+---
+
+# Query Analytics
+
+The platform should understand the characteristics of incoming queries.
+
+Examples include:
+
+* average query length;
+* natural language queries;
+* keyword queries;
+* Boolean query usage;
+* autocomplete usage;
+* semantic search usage.
+
+Understanding query composition helps guide future architectural investments.
+
+---
+
+# Search Success Metrics
+
+The architecture should distinguish between searches that merely return results and searches that satisfy user intent.
+
+Representative indicators include:
+
+* result selection rate;
+* successful session completion;
+* refinement frequency;
+* repeated search rate;
+* abandonment rate.
+
+These metrics provide stronger signals than raw search volume.
+
+---
+
+# Zero-Result Analysis
+
+Zero-result searches represent valuable opportunities for improvement.
+
+Each occurrence should be analyzed to determine whether the cause is:
+
+* missing content;
+* poor indexing;
+* spelling issues;
+* language mismatch;
+* overly restrictive filters;
+* retrieval limitations.
+
+Reducing unnecessary zero-result searches should be an ongoing objective.
+
+---
+
+# Content Gap Analysis
+
+Repeated unsuccessful searches may indicate missing knowledge.
+
+Illustratively:
+
+```text
+Searches
+
+↓
+
+Repeated Failures
+
+↓
+
+Content Gap
+
+↓
+
+Editorial Recommendation
+```
+
+Search analytics therefore inform the editorial roadmap.
+
+---
+
+# Ranking Evaluation
+
+Ranking quality should be evaluated continuously.
+
+Metrics include:
+
+* Precision@K;
+* Recall@K;
+* Mean Reciprocal Rank (MRR);
+* Normalized Discounted Cumulative Gain (NDCG);
+* Click-through Rate (CTR);
+* Successful Search Rate.
+
+Offline evaluation datasets should complement production telemetry.
+
+---
+
+# Search Refinement Analysis
+
+Users often modify their searches.
+
+Example:
+
+```text
+Docker
+
+↓
+
+Docker Compose
+
+↓
+
+Docker Networking
+
+↓
+
+Docker Compose Tutorial
+```
+
+Repeated refinement may indicate:
+
+* insufficient ranking;
+* ambiguous terminology;
+* inadequate suggestions.
+
+Understanding refinement behaviour improves query assistance.
+
+---
+
+# Autocomplete Analytics
+
+Autocomplete effectiveness should be measured independently.
+
+Representative metrics include:
+
+* suggestion acceptance rate;
+* average accepted suggestion position;
+* abandoned autocomplete sessions;
+* autocomplete latency;
+* spelling correction frequency.
+
+These metrics guide optimization of suggestion algorithms.
+
+---
+
+# Facet Analytics
+
+Facet usage provides insight into how users explore knowledge.
+
+Examples include:
+
+* most selected facets;
+* most selected filters;
+* abandoned filter combinations;
+* filter-induced zero results;
+* hierarchy navigation patterns.
+
+Facet analytics inform taxonomy evolution.
+
+---
+
+# Knowledge Graph Analytics
+
+Relationship-aware discovery should also be measured.
+
+Examples include:
+
+* related content selections;
+* prerequisite navigation frequency;
+* Journey traversal patterns;
+* graph recommendation acceptance;
+* average traversal depth.
+
+These metrics assess the educational value of the Knowledge Graph.
+
+---
+
+# Semantic Search Analytics
+
+Hybrid retrieval introduces additional evaluation requirements.
+
+Representative metrics include:
+
+* lexical-only retrieval frequency;
+* hybrid retrieval frequency;
+* semantic retrieval success;
+* Reciprocal Rank Fusion contribution;
+* embedding coverage;
+* semantic recommendation acceptance.
+
+These metrics help justify the computational cost of semantic retrieval.
+
+---
+
+# Learning Analytics
+
+Because TWN is an educational platform, search should also be evaluated in terms of learning outcomes.
+
+Examples include:
+
+* Journey discovery rate;
+* chapter completion following search;
+* prerequisite navigation;
+* learning-path continuation;
+* successful concept progression.
+
+These metrics align search quality with educational objectives.
+
+---
+
+# Editorial Insights
+
+Search analytics should support editorial teams.
+
+Potential reports include:
+
+* frequently searched missing topics;
+* declining content relevance;
+* outdated popular resources;
+* untranslated high-demand content;
+* underutilized knowledge.
+
+Analytics become a planning tool rather than merely an operational dashboard.
+
+---
+
+# Search Quality Dashboard
+
+Operational teams should have access to a unified dashboard.
+
+Representative sections include:
+
+```text
+Search Quality
+
+├── Usage
+
+├── Performance
+
+├── Ranking
+
+├── Zero Results
+
+├── Content Gaps
+
+├── Suggestions
+
+└── Experiments
+```
+
+Dashboards should support both real-time monitoring and historical trend analysis.
+
+---
+
+# Experimentation Framework
+
+Search improvements should be evaluated through controlled experiments.
+
+Examples include:
+
+* new ranking weights;
+* updated synonym dictionaries;
+* revised autocomplete algorithms;
+* semantic retrieval thresholds;
+* new recommendation strategies.
+
+Changes should be validated before platform-wide deployment.
+
+---
+
+# A/B Testing
+
+Controlled experiments compare alternative implementations.
+
+```text
+Users
+
+↓
+
+Random Assignment
+
+↓
+
+Version A
+
+Version B
+
+↓
+
+Measurement
+
+↓
+
+Analysis
+```
+
+Experiments should define success criteria before execution.
+
+---
+
+# Feedback Collection
+
+Explicit user feedback provides valuable signals.
+
+Examples include:
+
+* "Was this helpful?"
+* "Didn't find what I needed."
+* "Report irrelevant result."
+
+Feedback should supplement—not replace—objective analytics.
+
+---
+
+# Privacy by Design
+
+Analytics collection must respect user privacy.
+
+Recommended practices include:
+
+* aggregate reporting;
+* anonymized identifiers where appropriate;
+* configurable retention periods;
+* data minimization;
+* consent where required.
+
+Search analytics should improve the platform without creating unnecessary privacy risks.
+
+---
+
+# Data Retention
+
+Operational analytics should follow defined retention policies.
+
+Retention periods should balance:
+
+* operational usefulness;
+* trend analysis;
+* storage costs;
+* privacy obligations.
+
+Retention policies should be reviewed periodically.
+
+---
+
+# Performance Considerations
+
+Analytics should never significantly increase search latency.
+
+Recommended architectural practices include:
+
+* asynchronous event collection;
+* batched processing;
+* event queues;
+* background aggregation;
+* independent analytics infrastructure.
+
+User-facing search performance should remain unaffected.
+
+---
+
+# Security Considerations
+
+Analytics systems must protect:
+
+* search histories;
+* administrative searches;
+* editorial workflows;
+* operational metrics.
+
+Access to analytics should follow role-based authorization.
+
+Sensitive search activity should not be exposed through reporting interfaces.
+
+---
+
+# Observability
+
+The analytics platform should monitor itself.
+
+Representative metrics include:
+
+* event ingestion rate;
+* processing latency;
+* dropped events;
+* dashboard refresh time;
+* experiment execution status;
+* report generation latency.
+
+Reliable analytics require reliable observability.
+
+---
+
+# Continuous Improvement Cycle
+
+Search quality should evolve through a structured improvement process.
+
+```text
+Observe
+
+↓
+
+Measure
+
+↓
+
+Analyze
+
+↓
+
+Prioritize
+
+↓
+
+Implement
+
+↓
+
+Evaluate
+
+↓
+
+Repeat
+```
+
+Architectural improvements should be driven by evidence rather than intuition.
+
+---
+
+# Anti-Patterns
+
+Avoid:
+
+* optimizing solely for search volume;
+* equating clicks with successful learning;
+* collecting excessive personal information;
+* changing ranking algorithms without measurement;
+* ignoring unsuccessful searches;
+* relying exclusively on anecdotal feedback.
+
+Continuous improvement should remain data-informed, privacy-conscious and aligned with the educational mission of TWN.
+
+---
+
+# Architecture Decision Record — ADR 7.9.015
+
+## Title
+
+Adopt a Privacy-Conscious Search Analytics Platform Supporting Continuous Evidence-Based Improvement.
+
+### Status
+
+Accepted.
+
+### Context
+
+Search quality cannot be effectively maintained without objective measurement. As TWN grows in scale and complexity, improvements to retrieval, ranking, multilingual support and semantic search must be guided by reliable operational and educational metrics rather than assumptions.
+
+### Decision
+
+The platform shall implement a dedicated Search Analytics subsystem that collects anonymized operational, retrieval, ranking and educational telemetry. Analytics shall support dashboards, experimentation, content gap analysis and continuous improvement while remaining asynchronous, privacy-conscious and independent of the live search pipeline.
+
+### Consequences
+
+**Positive**
+
+* Continuous improvement of search quality.
+* Evidence-based ranking and retrieval decisions.
+* Better editorial planning through content gap analysis.
+* Improved educational outcomes.
+* Strong operational governance.
+
+**Trade-offs**
+
+* Additional analytics infrastructure.
+* Increased storage and processing requirements.
+* Governance responsibilities for privacy and retention.
+* More sophisticated operational reporting.
+
+---
+
+# Completion Criteria
+
+This section is complete when:
+
+* the purpose of search analytics is established;
+* usage, quality, performance, editorial and learning analytics are defined;
+* experimentation, dashboards and feedback mechanisms are documented;
+* privacy, retention and security considerations are addressed;
+* continuous improvement processes are specified;
+* anti-patterns are identified; and
+* the governing architectural decision is formally recorded.
+
+---
+
+# 7.9.17 Search Architecture Summary
+
+## Purpose
+
+The Search Architecture defines how knowledge is discovered, retrieved, organized, ranked and continuously improved across the TWN platform.
+
+Rather than treating search as a standalone technical feature, the architecture establishes it as a foundational knowledge capability that supports learning, exploration and future AI-assisted experiences.
+
+It integrates traditional information retrieval techniques with modern semantic technologies, multilingual support, knowledge graph traversal and operational excellence while maintaining clear separation of concerns and long-term extensibility.
+
+---
+
+## Architectural Vision
+
+The TWN Search Architecture is designed to:
+
+* enable fast and relevant knowledge discovery;
+* support structured educational journeys;
+* provide multilingual accessibility;
+* combine lexical and semantic retrieval;
+* leverage knowledge relationships;
+* expose stable APIs;
+* operate reliably at scale; and
+* evolve continuously through measurable improvement.
+
+Search is therefore positioned as a strategic platform capability rather than a supporting utility.
+
+---
+
+## Architectural Scope
+
+The Search domain encompasses:
+
+* Query Processing
+* Indexing
+* Full-Text Search
+* Faceted Search
+* Relevance Ranking
+* Knowledge Graph Search
+* Multilingual Search
+* Autocomplete and Query Assistance
+* Semantic Search
+* Search API
+* Performance and Resilience
+* Analytics and Continuous Improvement
+
+Together, these components provide a comprehensive search ecosystem capable of supporting both current and future platform requirements.
+
+---
+
+## Architectural Layers
+
+```text
+Users
+
+↓
+
+Search API
+
+↓
+
+Query Processing
+
+↓
+
+Retrieval
+
+├── Full-Text Search
+├── Semantic Search
+└── Knowledge Graph Search
+
+↓
+
+Ranking
+
+↓
+
+Response Construction
+
+↓
+
+Analytics
+
+↓
+
+Continuous Improvement
+```
+
+Each layer performs a distinct responsibility while remaining independently evolvable.
+
+---
+
+## Core Architectural Decisions
+
+| Area                 | Decision                                         |
+| -------------------- | ------------------------------------------------ |
+| Lexical Retrieval    | Inverted indexes with BM25                       |
+| Semantic Retrieval   | Chunk-based embeddings with ANN                  |
+| Hybrid Retrieval     | Reciprocal Rank Fusion                           |
+| Knowledge Discovery  | Knowledge Graph integration                      |
+| Multilingual Support | Language-aware indexing and analyzers            |
+| Query Assistance     | Dedicated autocomplete and suggestion services   |
+| API                  | Unified, versioned Search API                    |
+| Scalability          | Horizontal clustering with sharding and replicas |
+| Analytics            | Privacy-conscious, evidence-based improvement    |
+
+---
+
+## Cross-Cutting Quality Attributes
+
+The Search Architecture prioritizes:
+
+* Relevance
+* Performance
+* Scalability
+* Availability
+* Reliability
+* Explainability
+* Security
+* Privacy
+* Maintainability
+* Extensibility
+* Observability
+
+These quality attributes guide architectural decisions across every search component.
+
+---
+
+## Integration with Other Domains
+
+The Search Architecture integrates closely with:
+
+* **CMS Architecture** for content lifecycle and metadata.
+* **Knowledge Graph Architecture** for relationship-aware discovery.
+* **Media Architecture** for searchable assets.
+* **Editorial Workflow** for publication visibility.
+* **API Architecture** for external access.
+* **AI Architecture (Volume 7.10)** for Retrieval-Augmented Generation, intelligent assistants and semantic reasoning.
+
+---
+
+## Future Evolution
+
+The architecture intentionally prepares for future capabilities, including:
+
+* Retrieval-Augmented Generation (RAG);
+* conversational search;
+* multimodal retrieval;
+* personalized ranking;
+* AI-generated search summaries;
+* adaptive learning recommendations;
+* federated enterprise search;
+* advanced multilingual semantic retrieval.
+
+These enhancements can be introduced without requiring fundamental architectural redesign.
+
+---
+
+## Lessons Learned
+
+Key architectural principles established throughout this chapter include:
+
+* retrieval and ranking are separate responsibilities;
+* lexical and semantic retrieval complement each other;
+* knowledge relationships improve discovery;
+* multilingual search requires language-aware processing;
+* search quality must be measurable;
+* resilience and scalability are architectural concerns from the outset;
+* analytics are essential for continuous improvement.
+
+---
+
+## Completion Checklist
+
+The Search Architecture is considered complete when:
+
+* query processing and indexing are fully defined;
+* lexical, semantic and graph-based retrieval strategies are documented;
+* multilingual and hybrid retrieval are incorporated;
+* ranking, faceting and query assistance are specified;
+* API contracts and operational architecture are established;
+* resilience, observability and analytics are addressed;
+* architectural decisions are formally recorded through ADRs; and
+* integration points with future AI capabilities are clearly identified.
+
+---
+
+## End of Chapter 7.9 — Search Architecture
+
+**Next Chapter:** **7.10 AI Architecture**, where the platform's artificial intelligence capabilities—including model orchestration, Retrieval-Augmented Generation (RAG), AI-assisted authoring, intelligent recommendations, prompt architecture, agent workflows, model governance and safety controls—will be defined.

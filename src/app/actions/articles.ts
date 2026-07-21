@@ -5,6 +5,7 @@ import {
   deleteArticleAdmin,
   updateArticleAdmin,
 } from "@/lib/services/articles";
+import { broadcastNewArticle } from "@/lib/services/subscribers";
 import type { CreateArticleInput, UpdateArticleInput } from "@/types";
 import { revalidatePath } from "next/cache";
 
@@ -17,6 +18,23 @@ export async function createArticleAction(input: CreateArticleInput) {
     revalidatePath("/");
     revalidatePath("/articles");
     revalidatePath("/admin/articles");
+
+    // Notify all subscribers when a new article is published.
+    // Non-fatal: errors are caught inside broadcastNewArticle and never
+    // block the response returned to the admin UI.
+    if (article.status === "published") {
+      broadcastNewArticle({
+        title: article.title,
+        slug: article.slug,
+        excerpt: article.excerpt,
+        cover_image: article.cover_image,
+        reading_time: article.reading_time ?? null,
+        category: article.category,
+      }).catch((err) =>
+        console.error("[createArticleAction] Broadcast failed silently:", err)
+      );
+    }
+
     return { success: true, data: article, error: null };
   } catch (error: unknown) {
     const err = error as Error;

@@ -33,7 +33,7 @@ export async function contactAction(_prevState: unknown, formData: FormData) {
       },
       body: JSON.stringify({
         from: "TWN Contact Form <onboarding@resend.dev>",
-        to: "vanessa@twnotebook.com", // Owner recipient
+        to: "wahvanessa22@gmail.com", // Owner recipient
         reply_to: email,
         subject: `[TWN Contact] Message from ${name}`,
         html: `

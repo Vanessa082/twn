@@ -1,5 +1,9 @@
 import { createAdminClient, createClient } from "@/lib/db/server";
-import { sendWelcomeEmail } from "@/lib/services/email";
+import {
+  type ArticleBroadcastPayload,
+  sendArticleNewsletterEmail,
+  sendWelcomeEmail,
+} from "@/lib/services/email";
 import type { Subscriber } from "@/types";
 
 /**
@@ -88,4 +92,54 @@ export async function getAllSubscribersAdmin(): Promise<Subscriber[]> {
     console.error("[getAllSubscribersAdmin] Service error:", err.message);
     throw error;
   }
+}
+
+/**
+ * Broadcasts a "new article published" email to every active subscriber.
+ * Called from createArticleAction when the article status is "published".
+ *
+ * Strategy: fetch all subscriber emails via the admin client, then send
+ * each notification individually. Failures per-address are silent (logged
+ * inside sendArticleNewsletterEmail) — one bad address never blocks others.
+ */
+export async function broadcastNewArticle(
+  article: ArticleBroadcastPayload
+): Promise<{ sent: number; failed: number }> {
+  let sent = 0;
+  let failed = 0;
+
+  try {
+    const adminSupabase = createAdminClient();
+    const { data: subscribers, error } = await adminSupabase
+      .from("subscribers")
+      .select("email");
+
+    if (error) {
+      console.error("[broadcastNewArticle] Failed to fetch subscribers:", error.message);
+      return { sent: 0, failed: 0 };
+    }
+
+    if (!subscribers || subscribers.length === 0) {
+      console.log("[broadcastNewArticle] No subscribers to notify.");
+      return { sent: 0, failed: 0 };
+    }
+
+    // Send notifications sequentially to respect Resend rate limits
+    for (const subscriber of subscribers) {
+      try {
+        await sendArticleNewsletterEmail(subscriber.email, article);
+        sent++;
+      } catch {
+        failed++;
+      }
+    }
+
+    console.log(
+      `[broadcastNewArticle] Broadcast complete. Sent: ${sent}, Failed: ${failed}, Total: ${subscribers.length}`
+    );
+  } catch (err) {
+    console.error("[broadcastNewArticle] Unexpected error:", err);
+  }
+
+  return { sent, failed };
 }

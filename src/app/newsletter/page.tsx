@@ -1,5 +1,22 @@
+/**
+ * /newsletter — Dedicated newsletter subscription page.
+ *
+ * ─── NEWSLETTER_ENABLED flag ──────────────────────────────────────────────────
+ * When false, the subscription form is replaced with a professional
+ * "Coming Soon" announcement. The page itself remains accessible and looks
+ * intentional — it describes what the newsletter will be, builds anticipation,
+ * and tells visitors it is on its way.
+ *
+ * To activate:
+ *   1. Purchase a domain and verify it in Resend (resend.com/domains)
+ *   2. Update FROM_ADDRESS + SITE_URL in src/lib/services/email.ts
+ *   3. Set NEWSLETTER_ENABLED = true in src/lib/feature-flags.ts
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
 import NewsletterSection from "@/components/home/NewsletterSection";
-import { Calendar, Heart, Sparkles } from "lucide-react";
+import { NEWSLETTER_ENABLED } from "@/lib/feature-flags";
+import { Calendar, Clock, Heart, Sparkles } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 export const metadata = {
@@ -43,6 +60,16 @@ export default async function NewsletterPage() {
             {t("description")}
           </p>
 
+          {/* Coming Soon badge — visible only while newsletter is disabled */}
+          {!NEWSLETTER_ENABLED && (
+            <div className="mt-8 inline-flex items-center gap-2.5 px-5 py-3 rounded-full border border-border bg-card text-muted-foreground">
+              <Clock className="h-4 w-4 text-[#AE8D64] shrink-0" />
+              <p className="text-xs font-sans font-semibold uppercase tracking-[0.18em]">
+                Launching Soon
+              </p>
+            </div>
+          )}
+
           {/* Highlights Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mt-12 text-left">
             {highlights.map((item) => {
@@ -63,7 +90,7 @@ export default async function NewsletterPage() {
         </div>
       </section>
 
-      {/* Main Form Section */}
+      {/* Main Form Section (shows form or coming-soon depending on flag) */}
       <NewsletterSection />
     </div>
   );

@@ -649,6 +649,7 @@ Instead of static text.
 
 The hero displays notebook entries.
 
+
 Examples
 
 > Today I learned that curiosity scales better than certainty.
