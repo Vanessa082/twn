@@ -1,0 +1,60 @@
+{
+  "audit_date": "2026-07-22T14:23:25Z",
+  "commit": "58ab2796b4697abfe3a563b12fd55dfc6565a54b",
+  "branch": "main",
+  "packages_installed_during_audit": false,
+  "commands": [
+    {
+      "command": "pnpm type-check",
+      "exit_code": 2,
+      "result": "FAIL",
+      "summary": "TS2307 Cannot find module 'resend' in src/lib/services/email.ts:14"
+    },
+    {
+      "command": "pnpm lint",
+      "exit_code": 1,
+      "result": "FAIL",
+      "summary": "4 errors, 13 warnings (Biome)"
+    },
+    {
+      "command": "pnpm test",
+      "exit_code": null,
+      "result": "SKIPPED",
+      "summary": "No test script or test files"
+    },
+    {
+      "command": "pnpm build",
+      "exit_code": 1,
+      "result": "FAIL",
+      "summary": "Module not found: Can't resolve 'resend'"
+    },
+    {
+      "command": "pnpm dev",
+      "exit_code": 0,
+      "result": "STARTED",
+      "summary": "Next.js 15.3.9 Turbopack ready on :3000; HTML routes compile-error 500"
+    }
+  ],
+  "http_probes": [
+    {"path": "/", "status": 500},
+    {"path": "/about", "status": 500},
+    {"path": "/articles", "status": 500},
+    {"path": "/community", "status": 500},
+    {"path": "/contact", "status": 500},
+    {"path": "/newsletter", "status": 500},
+    {"path": "/search", "status": 500},
+    {"path": "/api/health", "status": 200, "body_ok": true, "database": "ok"},
+    {"path": "/admin", "status": 500, "clerk_auth_status": "signed-out"},
+    {"path": "/blog/test-slug", "status": 308, "redirect": "/articles/test-slug"}
+  ],
+  "browser_tool": {
+    "requested": "Antigravity browser",
+    "available": false,
+    "fallback": "curl HTTP probes"
+  },
+  "database_connectivity": {
+    "via": "/api/health",
+    "ok": true,
+    "label": "VERIFIED"
+  }
+}

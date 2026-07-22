@@ -110,9 +110,7 @@ export async function broadcastNewArticle(
 
   try {
     const adminSupabase = createAdminClient();
-    const { data: subscribers, error } = await adminSupabase
-      .from("subscribers")
-      .select("email");
+    const { data: subscribers, error } = await adminSupabase.from("subscribers").select("email");
 
     if (error) {
       console.error("[broadcastNewArticle] Failed to fetch subscribers:", error.message);

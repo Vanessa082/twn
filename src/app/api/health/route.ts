@@ -26,10 +26,23 @@ export async function GET(_req: NextRequest) {
   };
 
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      status.database = "error";
+      status.ok = false;
+      status.latency_ms = Date.now() - start;
+      return NextResponse.json(status, {
+        status: 503,
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate",
+          "X-Health-Check": "twn-api",
+        },
+      });
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
     // Lightweight read-only ping — does not create any records
     const { error } = await supabase.from("articles").select("id").limit(1).single();

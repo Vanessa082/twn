@@ -16,7 +16,6 @@
 import { readFileSync } from "node:fs";
 
 const PROJECT_REF = "ajafekyeeuvygqdyrlpu";
-const SUPABASE_URL = `https://${PROJECT_REF}.supabase.co`;
 
 // --- Read schema ---
 const schemaSQL = readFileSync("src/lib/db/schema.sql", "utf8");
@@ -24,7 +23,7 @@ const schemaSQL = readFileSync("src/lib/db/schema.sql", "utf8");
 const accessToken = process.argv[2];
 
 if (!accessToken) {
-  console.log("\n" + "=".repeat(70));
+  console.log(`\n${"=".repeat(70)}`);
   console.log("  NO ACCESS TOKEN PROVIDED");
   console.log("=".repeat(70));
   console.log("");

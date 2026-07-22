@@ -4,6 +4,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { createAdminClient, createClient } from "@/lib/db/server";
+import { findSharedPageByParam } from "@/lib/utils/shared-page-lookup";
 import type { ModerationStatus, SharedPage } from "@/types";
 
 // ── Fallback Data ─────────────────────────────────────────────────────────────
@@ -69,6 +70,24 @@ export async function getApprovedSharedPages(): Promise<SharedPage[]> {
   } catch (error) {
     console.warn("[getApprovedSharedPages] Service error, using fallbacks:", error);
     return FALLBACK_SHARED_PAGES;
+  }
+}
+
+/**
+ * Public: Resolve an approved shared page by UUID or public slug.
+ */
+export async function getApprovedSharedPageBySlug(slug: string): Promise<SharedPage | null> {
+  if (!slug || typeof slug !== "string") return null;
+
+  const trimmed = slug.trim();
+  if (!trimmed) return null;
+
+  try {
+    const pages = await getApprovedSharedPages();
+    return findSharedPageByParam(pages, trimmed);
+  } catch (error) {
+    console.warn("[getApprovedSharedPageBySlug] Service error:", error);
+    return findSharedPageByParam(FALLBACK_SHARED_PAGES, trimmed);
   }
 }
 
@@ -162,7 +181,7 @@ export async function updateSharedPageStatusAdmin(
 
   try {
     const adminSupabase = createAdminClient();
-    const updatePayload: Record<string, any> = { status };
+    const updatePayload: Record<string, string | null> = { status };
 
     if (status === "approved") {
       updatePayload.published_at = new Date().toISOString();

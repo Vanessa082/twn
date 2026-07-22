@@ -17,6 +17,8 @@
  * Carousel arrows: top-right, circular border-only buttons, hover fills black
  */
 
+import { truncateSharedPagePreview } from "@/lib/utils/shared-page-preview";
+import { buildSharedPageSlug } from "@/lib/utils/shared-page-slug";
 import type { SharedPage } from "@/types";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import Link from "next/link";
@@ -139,51 +141,67 @@ export default function SharedPagesSection({ initialPages }: SharedPagesSectionP
               className="flex gap-5 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2"
               style={{ scrollbarWidth: "none" }}
             >
-              {pages.map((page, i) => (
-                <div
-                  key={page.id}
-                  className={[
-                    "flex-shrink-0 w-[300px] sm:w-[320px] snap-start",
-                    "bg-card border border-border rounded-[16px] p-7",
-                    "shadow-[0_2px_16px_rgba(0,0,0,0.04)]",
-                    "flex flex-col justify-between gap-5",
-                    "twn-paper-place",
-                    cardsInView ? "in-view" : "",
-                  ].join(" ")}
-                  style={{
-                    animationDelay: `${i * 80}ms`,
-                    minHeight: "200px",
-                  }}
-                >
-                  {/* Large amber quotation mark */}
-                  <div>
-                    <span
-                      className="font-quote font-medium leading-none block mb-3"
-                      style={{ fontSize: "4.5rem", color: "#AE8D64", lineHeight: 0.8 }}
-                      aria-hidden="true"
-                    >
-                      &ldquo;
-                    </span>
-                    {/* Quote text */}
-                    <p
-                      className="font-quote font-medium text-foreground leading-[1.55]"
-                      style={{ fontSize: "1.15rem" }}
-                    >
-                      {page.content}
-                    </p>
-                  </div>
+              {pages.map((page, i) => {
+                const href = `/pages/${buildSharedPageSlug(page)}`;
+                const preview = truncateSharedPagePreview(page.content);
 
-                  {/* Author + date */}
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-[13px] font-sans font-semibold text-foreground">
-                      — {page.author_name}
-                    </span>
-                    <span className="text-[11px] text-muted-foreground/70">
-                      {formatDate(page.submitted_at)}
-                    </span>
+                return (
+                  <div
+                    key={page.id}
+                    className={[
+                      "flex-shrink-0 w-[300px] sm:w-[320px] snap-start",
+                      "bg-card border border-border rounded-[16px] p-7",
+                      "shadow-[0_2px_16px_rgba(0,0,0,0.04)]",
+                      "flex flex-col justify-between gap-5",
+                      "twn-paper-place",
+                      cardsInView ? "in-view" : "",
+                    ].join(" ")}
+                    style={{
+                      animationDelay: `${i * 80}ms`,
+                      minHeight: "200px",
+                    }}
+                  >
+                    <div>
+                      <span
+                        className="font-quote font-medium leading-none block mb-3"
+                        style={{ fontSize: "4.5rem", color: "#AE8D64", lineHeight: 0.8 }}
+                        aria-hidden="true"
+                      >
+                        &ldquo;
+                      </span>
+                      {page.title?.trim() ? (
+                        <h3 className="font-serif text-base font-bold text-foreground mb-2 leading-snug">
+                          {page.title.trim()}
+                        </h3>
+                      ) : null}
+                      <p
+                        className="font-quote font-medium text-foreground leading-[1.55]"
+                        style={{ fontSize: "1.15rem" }}
+                      >
+                        {preview}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-[13px] font-sans font-semibold text-foreground">
+                          — {page.author_name}
+                        </span>
+                        <span className="text-[11px] text-muted-foreground/70">
+                          {formatDate(page.submitted_at)}
+                        </span>
+                      </div>
+                      <Link
+                        href={href}
+                        data-cursor="link"
+                        className="text-[10px] font-sans font-semibold uppercase tracking-[0.18em] text-foreground hover:opacity-60 transition-opacity"
+                      >
+                        Read Page →
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
 
               {/* Fallback if empty */}
               {pages.length === 0 && (

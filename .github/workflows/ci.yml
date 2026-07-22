@@ -1,0 +1,57 @@
+# CI — lint, type-check, unit tests, production build
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.8.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Type check
+        run: pnpm type-check
+
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Production build
+        run: pnpm build
+        env:
+          SKIP_ENV_VALIDATION: "1"
+          NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: test-anon-key
+          SUPABASE_SERVICE_ROLE_KEY: test-service-role-key
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_ci
+          CLERK_SECRET_KEY: sk_test_ci
+          NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: demo
+          CLOUDINARY_API_KEY: "123"
+          CLOUDINARY_API_SECRET: secret
+          RESEND_API_KEY: re_test_ci
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+          ADMIN_USER_IDS: user_ci_admin
+          NODE_ENV: production

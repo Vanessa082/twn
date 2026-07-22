@@ -1,0 +1,30 @@
+{
+  "audit_date": "2026-07-22",
+  "features": [
+    {"id": "F-01", "name": "Public home page", "status": "BROKEN", "routes": ["/"], "browser": "HTTP_500"},
+    {"id": "F-02", "name": "Navigation", "status": "BROKEN", "routes": ["*"], "browser": "HTTP_500"},
+    {"id": "F-03", "name": "Living Hero", "status": "BROKEN", "routes": ["/"], "browser": "HTTP_500"},
+    {"id": "F-04", "name": "Today's Page", "status": "BROKEN", "routes": ["/"], "browser": "HTTP_500", "notes": "fallback when empty"},
+    {"id": "F-05", "name": "Articles", "status": "BROKEN", "routes": ["/articles", "/articles/[slug]"], "browser": "HTTP_500"},
+    {"id": "F-06", "name": "Notebook entries", "status": "BROKEN", "routes": ["/", "/admin/content/notebook"], "browser": "HTTP_500"},
+    {"id": "F-07", "name": "Journeys", "status": "PLANNED_ONLY", "routes": [], "browser": "N/A"},
+    {"id": "F-08", "name": "Categories", "status": "PARTIALLY_WORKING", "routes": ["/articles"], "browser": "HTTP_500", "notes": "hardcoded; DB table unused"},
+    {"id": "F-09", "name": "Tags", "status": "PLANNED_ONLY", "routes": [], "browser": "N/A"},
+    {"id": "F-10", "name": "Authors/profiles", "status": "PLANNED_ONLY", "routes": [], "browser": "N/A"},
+    {"id": "F-11", "name": "Media library", "status": "PLACEHOLDER", "routes": [], "browser": "N/A"},
+    {"id": "F-12", "name": "Editorial featured pick", "status": "PARTIALLY_WORKING", "routes": ["/"], "browser": "HTTP_500", "notes": "latest[0] not curated"},
+    {"id": "F-13", "name": "Shared pages", "status": "PARTIALLY_WORKING", "routes": ["/", "/community", "/admin/content/shared-pages"], "browser": "HTTP_500", "notes": "no detail route"},
+    {"id": "F-14", "name": "Margin notes", "status": "BROKEN", "routes": ["/articles/[slug]", "/admin/content/margin-notes"], "browser": "HTTP_500"},
+    {"id": "F-15", "name": "Search", "status": "PARTIALLY_WORKING", "routes": ["/search"], "browser": "HTTP_500"},
+    {"id": "F-16", "name": "Authentication", "status": "IMPLEMENTED_NOT_BROWSER_VERIFIED", "routes": ["/admin"], "browser": "UNVERIFIED"},
+    {"id": "F-17", "name": "Admin CMS", "status": "IMPLEMENTED_NOT_BROWSER_VERIFIED", "routes": ["/admin/*"], "browser": "UNVERIFIED"},
+    {"id": "F-18", "name": "Newsletter", "status": "PARTIALLY_WORKING", "routes": ["/newsletter"], "browser": "HTTP_500", "notes": "NEWSLETTER_ENABLED=false"},
+    {"id": "F-19", "name": "Contact", "status": "BROKEN", "routes": ["/contact"], "browser": "HTTP_500"},
+    {"id": "F-20", "name": "About", "status": "BROKEN", "routes": ["/about"], "browser": "HTTP_500"},
+    {"id": "F-21", "name": "Reading extras", "status": "PARTIALLY_WORKING", "routes": ["/articles/[slug]"], "browser": "HTTP_500"},
+    {"id": "F-22", "name": "Responsive/a11y/SEO", "status": "UNKNOWN", "routes": ["*"], "browser": "UNVERIFIED"},
+    {"id": "F-23", "name": "Health check", "status": "VERIFIED_WORKING", "routes": ["/api/health"], "browser": "HTTP_200"},
+    {"id": "F-24", "name": "Dead code (CategoryCards, db/client, Tag)", "status": "DEAD_OR_UNUSED", "routes": [], "browser": "N/A"},
+    {"id": "F-25", "name": "Analytics/AI", "status": "PLANNED_ONLY", "routes": [], "browser": "N/A"}
+  ]
+}

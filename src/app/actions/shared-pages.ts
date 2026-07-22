@@ -1,17 +1,23 @@
 "use server";
 
+import { requireAdmin } from "@/lib/auth/require-admin";
+import { toAdminActionError } from "@/lib/auth/admin-errors";
 import {
   deleteSharedPageAdmin,
   submitSharedPage,
   updateSharedPageStatusAdmin,
 } from "@/lib/services/shared-pages";
+import { buildSharedPageSlug } from "@/lib/utils/shared-page-slug";
 import type { ModerationStatus } from "@/types";
 import { revalidatePath } from "next/cache";
 
-/**
- * Action: Visitor submits a reflection.
- * Defaults status to 'pending'.
- */
+function revalidateSharedPagePaths(slug?: string) {
+  revalidatePath("/");
+  revalidatePath("/community");
+  revalidatePath("/admin/content/shared-pages");
+  if (slug) revalidatePath(`/pages/${slug}`);
+}
+
 export async function submitSharedPageAction(
   authorName: string,
   title: string | null,
@@ -19,8 +25,7 @@ export async function submitSharedPageAction(
 ) {
   try {
     const page = await submitSharedPage(authorName, title, content);
-    revalidatePath("/");
-    revalidatePath("/admin/content/shared-pages");
+    revalidateSharedPagePaths();
     return { success: true, data: page, error: null };
   } catch (error: unknown) {
     const err = error as Error;
@@ -37,38 +42,33 @@ export async function submitSharedPageAction(
   }
 }
 
-/**
- * Action: Admin updates moderation status (approved/rejected).
- */
 export async function moderateSharedPageAction(id: string, status: ModerationStatus) {
   try {
+    await requireAdmin();
     const page = await updateSharedPageStatusAdmin(id, status);
-    revalidatePath("/");
-    revalidatePath("/admin/content/shared-pages");
+    revalidateSharedPagePaths(buildSharedPageSlug(page));
     return { success: true, data: page, error: null };
   } catch (error: unknown) {
-    const err = error as Error;
-    console.error("[moderateSharedPageAction] Error:", err.message);
+    console.error("[moderateSharedPageAction] Error:", toAdminActionError(error));
     return {
       success: false,
       data: null,
-      error: err.message || "Failed to update moderation status.",
+      error: toAdminActionError(error) || "Failed to update moderation status.",
     };
   }
 }
 
-/**
- * Action: Admin deletes a shared page submission.
- */
 export async function deleteSharedPageAction(id: string) {
   try {
+    await requireAdmin();
     await deleteSharedPageAdmin(id);
-    revalidatePath("/");
-    revalidatePath("/admin/content/shared-pages");
+    revalidateSharedPagePaths();
     return { success: true, error: null };
   } catch (error: unknown) {
-    const err = error as Error;
-    console.error("[deleteSharedPageAction] Error:", err.message);
-    return { success: false, error: err.message || "Failed to delete submission." };
+    console.error("[deleteSharedPageAction] Error:", toAdminActionError(error));
+    return {
+      success: false,
+      error: toAdminActionError(error) || "Failed to delete submission.",
+    };
   }
 }

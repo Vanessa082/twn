@@ -1,0 +1,34 @@
+{
+  "audit_date": "2026-07-22",
+  "commit": "58ab2796b4697abfe3a563b12fd55dfc6565a54b",
+  "routes": [
+    {"path": "/", "type": "page", "file": "src/app/page.tsx", "auth": "public", "local_http": 500, "status": "BROKEN"},
+    {"path": "/about", "type": "page", "file": "src/app/about/page.tsx", "auth": "public", "local_http": 500, "status": "BROKEN"},
+    {"path": "/articles", "type": "page", "file": "src/app/articles/page.tsx", "auth": "public", "local_http": 500, "status": "BROKEN"},
+    {"path": "/articles/[slug]", "type": "page", "file": "src/app/articles/[slug]/page.tsx", "auth": "public", "local_http": null, "status": "UNVERIFIED"},
+    {"path": "/community", "type": "page", "file": "src/app/community/page.tsx", "auth": "public", "local_http": 500, "status": "BROKEN"},
+    {"path": "/contact", "type": "page", "file": "src/app/contact/page.tsx", "auth": "public", "local_http": 500, "status": "BROKEN"},
+    {"path": "/newsletter", "type": "page", "file": "src/app/newsletter/page.tsx", "auth": "public", "local_http": 500, "status": "BROKEN"},
+    {"path": "/search", "type": "page", "file": "src/app/search/page.tsx", "auth": "public", "local_http": 500, "status": "BROKEN"},
+    {"path": "/admin", "type": "page", "file": "src/app/(admin)/admin/page.tsx", "auth": "clerk", "local_http": 500, "status": "BROKEN"},
+    {"path": "/admin/articles", "type": "page", "file": "src/app/(admin)/admin/articles/page.tsx", "auth": "clerk", "local_http": null, "status": "UNVERIFIED"},
+    {"path": "/admin/articles/new", "type": "page", "file": "src/app/(admin)/admin/articles/new/page.tsx", "auth": "clerk", "local_http": null, "status": "UNVERIFIED"},
+    {"path": "/admin/articles/[id]/edit", "type": "page", "file": "src/app/(admin)/admin/articles/[id]/edit/page.tsx", "auth": "clerk", "local_http": null, "status": "UNVERIFIED"},
+    {"path": "/admin/content/notebook", "type": "page", "file": "src/app/(admin)/admin/content/notebook/page.tsx", "auth": "clerk", "local_http": null, "status": "UNVERIFIED"},
+    {"path": "/admin/content/shared-pages", "type": "page", "file": "src/app/(admin)/admin/content/shared-pages/page.tsx", "auth": "clerk", "local_http": null, "status": "UNVERIFIED"},
+    {"path": "/admin/content/margin-notes", "type": "page", "file": "src/app/(admin)/admin/content/margin-notes/page.tsx", "auth": "clerk", "local_http": null, "status": "UNVERIFIED"},
+    {"path": "/admin/newsletter", "type": "page", "file": "src/app/(admin)/admin/newsletter/page.tsx", "auth": "clerk", "local_http": null, "status": "UNVERIFIED"},
+    {"path": "/api/health", "type": "api", "file": "src/app/api/health/route.ts", "auth": "public", "local_http": 200, "status": "VERIFIED_WORKING"},
+    {"path": "/blog/:slug", "type": "redirect", "destination": "/articles/:slug", "local_http": 308, "status": "VERIFIED_WORKING"},
+    {"path": "/pages/[slug]", "type": "missing", "status": "PLANNED_ONLY"},
+    {"path": "/notes/[slug]", "type": "missing", "status": "PLANNED_ONLY"}
+  ],
+  "server_actions": [
+    "src/app/actions/articles.ts",
+    "src/app/actions/notebook-entries.ts",
+    "src/app/actions/shared-pages.ts",
+    "src/app/actions/margin-notes.ts",
+    "src/app/actions/newsletter.ts",
+    "src/app/actions/contact.ts"
+  ]
+}

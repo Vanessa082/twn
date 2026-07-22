@@ -1,0 +1,49 @@
+{
+  "audit_date": "2026-07-22",
+  "package_manager": "pnpm",
+  "pnpm_version": "10.8.0",
+  "node_version": "22.22.0",
+  "declared": {
+    "next": "15.3.9",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5",
+    "@clerk/nextjs": "^7.5.2",
+    "@supabase/ssr": "^0.12.0",
+    "@supabase/supabase-js": "^2.108.1",
+    "@t3-oss/env-nextjs": "^0.13.11",
+    "next-intl": "^4.13.0",
+    "zod": "^4.4.3",
+    "resend": "^6.17.2",
+    "lucide-react": "^1.18.0",
+    "tailwindcss": "^4",
+    "@biomejs/biome": "1.9.4"
+  },
+  "installed": {
+    "next": "15.3.9",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "typescript": "5.9.3",
+    "@clerk/nextjs": "7.5.2",
+    "@supabase/ssr": "0.12.0",
+    "@supabase/supabase-js": "2.108.1",
+    "@t3-oss/env-nextjs": "0.13.11",
+    "next-intl": "4.13.0",
+    "zod": "4.4.3",
+    "resend": null,
+    "lucide-react": "1.18.0",
+    "tailwindcss": "4.3.1",
+    "@biomejs/biome": "1.9.4"
+  },
+  "lockfile_has_resend": true,
+  "node_modules_has_resend": false,
+  "absent_packages": ["drizzle-orm", "prisma", "next-auth", "cloudinary", "openai", "@vercel/analytics"],
+  "usage_notes": {
+    "resend": "Imported by email.ts; package missing locally — CRITICAL",
+    "cloudinary": "Env + URL transforms only; no SDK",
+    "clerk": "Middleware + admin layout",
+    "supabase": "Primary data store via JS client",
+    "next-intl": "en locale only",
+    "zod": "Env validation primarily"
+  }
+}

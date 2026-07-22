@@ -162,12 +162,16 @@ export async function sendArticleNewsletterEmail(
           </tr>
 
           <!-- Cover image (if available) -->
-          ${article.cover_image ? `
+          ${
+            article.cover_image
+              ? `
           <tr>
             <td style="padding:0;">
               <img src="${article.cover_image}" alt="${article.title}" width="560" style="display:block;width:100%;height:200px;object-fit:cover;border:none;" />
             </td>
-          </tr>` : ""}
+          </tr>`
+              : ""
+          }
 
           <!-- Category + Title -->
           <tr>

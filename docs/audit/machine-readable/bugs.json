@@ -1,0 +1,99 @@
+{
+  "audit_date": "2026-07-22",
+  "bugs": [
+    {
+      "id": "BUG-001",
+      "title": "Missing resend package breaks type-check, build, and HTML routes",
+      "severity": "CRITICAL",
+      "confidence": "HIGH",
+      "reproduced": true,
+      "subsystem": "email/install",
+      "files": ["package.json", "src/lib/services/email.ts"]
+    },
+    {
+      "id": "BUG-002",
+      "title": "Footer newsletter import takes down all root-layout pages",
+      "severity": "CRITICAL",
+      "confidence": "HIGH",
+      "reproduced": true,
+      "subsystem": "layout",
+      "files": ["src/components/layout/Footer.tsx", "src/app/actions/newsletter.ts"]
+    },
+    {
+      "id": "BUG-003",
+      "title": "NEWSLETTER_ENABLED does not remove Resend from import graph",
+      "severity": "HIGH",
+      "confidence": "HIGH",
+      "reproduced": true,
+      "subsystem": "feature-flags",
+      "files": ["src/lib/feature-flags.ts", "src/components/home/NewsletterSection.tsx", "src/components/layout/Footer.tsx"]
+    },
+    {
+      "id": "BUG-004",
+      "title": "Admin auth is sign-in only; actions lack auth/role checks",
+      "severity": "HIGH",
+      "confidence": "MEDIUM",
+      "reproduced": false,
+      "notes": "Code-verified; not exploit-tested with second user",
+      "subsystem": "authz",
+      "files": ["src/middleware.ts", "src/app/actions/articles.ts"]
+    },
+    {
+      "id": "BUG-005",
+      "title": "getTodaysEntry always falls back when no DB row",
+      "severity": "MEDIUM",
+      "confidence": "HIGH",
+      "reproduced": true,
+      "notes": "Code path; browser blocked",
+      "subsystem": "notebook",
+      "files": ["src/lib/services/notebook-entries.ts"]
+    },
+    {
+      "id": "BUG-006",
+      "title": "Shared pages missing dedicated reading route",
+      "severity": "MEDIUM",
+      "confidence": "HIGH",
+      "reproduced": true,
+      "notes": "Product gap vs AGENTS.md",
+      "subsystem": "community",
+      "files": ["src/components/home/SharedPagesSection.tsx"]
+    },
+    {
+      "id": "BUG-007",
+      "title": "Unsanitized HTML via dangerouslySetInnerHTML for articles",
+      "severity": "HIGH",
+      "confidence": "MEDIUM",
+      "reproduced": false,
+      "notes": "Source-verified XSS surface",
+      "subsystem": "articles",
+      "files": ["src/app/articles/[slug]/page.tsx"]
+    },
+    {
+      "id": "BUG-008",
+      "title": "Privacy/Terms footer links point to /about",
+      "severity": "LOW",
+      "confidence": "HIGH",
+      "reproduced": true,
+      "subsystem": "footer",
+      "files": ["src/components/layout/Footer.tsx"]
+    },
+    {
+      "id": "BUG-009",
+      "title": "pnpm lint fails (format + warnings)",
+      "severity": "LOW",
+      "confidence": "HIGH",
+      "reproduced": true,
+      "subsystem": "tooling",
+      "files": []
+    },
+    {
+      "id": "BUG-010",
+      "title": "Canonical site URL inconsistency across metadata and email",
+      "severity": "LOW",
+      "confidence": "HIGH",
+      "reproduced": true,
+      "subsystem": "config",
+      "files": ["src/app/layout.tsx", "src/lib/services/email.ts", "src/lib/env.ts"]
+    }
+  ]
+}

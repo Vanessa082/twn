@@ -22,6 +22,9 @@ export const env = createEnv({
     // Resend — newsletter email sending
     RESEND_API_KEY: z.string().min(1),
 
+    // Comma-separated Clerk user IDs allowed to use /admin (required in production)
+    ADMIN_USER_IDS: z.string().optional(),
+
     // Node environment
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   },
@@ -44,6 +47,7 @@ export const env = createEnv({
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
+    ADMIN_USER_IDS: process.env.ADMIN_USER_IDS,
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
