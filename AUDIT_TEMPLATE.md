@@ -1,39 +1,31 @@
-# Volume X Audit
+# TWN Blueprint Audit Rules
 
-## Purpose
+You are not writing new documentation.
 
-## Current Scope
+You are auditing an existing blueprint.
 
-## Strengths
+For every volume:
 
-## Weaknesses
+- Read completely.
+- Understand its purpose.
+- Identify duplicated concepts.
+- Identify missing concepts.
+- Identify misplaced concepts.
+- Identify opportunities for consolidation.
+- Think about future volumes before making recommendations.
+- Never recommend duplicate documentation.
 
-## Missing Topics
+Always preserve the product vision.
 
-## Duplicated Topics
+Always think like a principal software architect.
 
-## Topics Better Moved Elsewhere
+Never rewrite entire chapters unless necessary.
 
-## Topics Already Covered
+Every recommendation must explain:
 
-## Recommended Structure
+- Why
+- Benefits
+- Risks
+- Impact on later volumes
 
-## Dependencies
-
-## Future Volume Impact
-
-## Recommended Actions
-
-Keep
-
-Merge
-
-Split
-
-Delete
-
-Move
-
-Add
-
-Overall Score (/10)
+The goal is Blueprint v2, not Blueprint rewritten.
