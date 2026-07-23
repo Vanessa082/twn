@@ -8,7 +8,7 @@ description: Safely map, split, verify, and analyze the large TWN blueprint in b
 Use deterministic scripts for file size, heading extraction, source line
 ranges, exact splitting, checksums, manifests, and gap/overlap verification.
 
-Never modify `blueprint.md`. Analyze one volume or bounded chapter at a time.
+Never modify `Blueprint.md`. Analyze one volume or bounded chapter at a time.
 For each volume create summary, requirements, systems, domain rules, decisions,
 open questions, contradictions, cross-volume references, current implementation
 evidence, learning topics, content opportunities, and compact context.
