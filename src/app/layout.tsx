@@ -13,12 +13,6 @@
  *  2. The generated HTML is streamed directly to the browser, offering rapid First Contentful Paint.
  */
 
-import Footer from "@/components/layout/Footer";
-import Navbar from "@/components/layout/Navbar";
-import CustomCursor from "@/components/ui/CustomCursor";
-import NotebookTimeline from "@/components/ui/NotebookTimeline";
-import PageTransition from "@/components/ui/PageTransition";
-import ReadingLine from "@/components/ui/ReadingLine";
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
@@ -115,20 +109,7 @@ export default async function RootLayout({
         suppressHydrationWarning
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
-          {/* Global ambient UI — cursor, reading line, page transitions */}
-          <CustomCursor />
-          <NotebookTimeline />
-          <ReadingLine />
-          <PageTransition />
-
-          {/* Shared Header Navigation */}
-          <Navbar />
-
-          {/* Main workspace container where child routes (e.g. /articles, /about) inject their HTML */}
           <main className="flex-1 flex flex-col">{children}</main>
-
-          {/* Shared Footer Navigation */}
-          <Footer />
         </NextIntlClientProvider>
       </body>
     </html>

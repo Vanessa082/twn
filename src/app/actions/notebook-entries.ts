@@ -1,7 +1,7 @@
 "use server";
 
-import { requireAdmin } from "@/lib/auth/require-admin";
 import { toAdminActionError } from "@/lib/auth/admin-errors";
+import { requireAdmin } from "@/lib/auth/require-admin";
 import {
   createEntryAdmin,
   deleteEntryAdmin,

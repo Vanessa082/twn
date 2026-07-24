@@ -17,6 +17,11 @@ export interface DatabaseArticleRow {
   published_at: string | null;
   created_at: string;
   updated_at: string;
+  likes_count?: number;
+  seo_title?: string | null;
+  seo_description?: string | null;
+  og_image?: string | null;
+  canonical_url?: string | null;
 }
 
 /** Maps raw database row to our clean Article type, adding calculated fields */
@@ -35,6 +40,11 @@ export function mapToArticle(row: DatabaseArticleRow): Article {
     created_at: row.created_at,
     updated_at: row.updated_at,
     reading_time: calculateReadingTime(content),
+    likes_count: row.likes_count || 0,
+    seo_title: row.seo_title,
+    seo_description: row.seo_description,
+    og_image: row.og_image,
+    canonical_url: row.canonical_url,
   };
 }
 
@@ -141,6 +151,45 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
     console.warn("[getArticleBySlug] Service error, falling back to local seed:", error);
     return FALLBACK_ARTICLES.find((a) => a.slug === slug) || null;
   }
+}
+
+/**
+ * Toggles (increments or decrements) the likes_count of an article in the database.
+ * Uses createAdminClient to bypass RLS.
+ */
+export async function toggleArticleLike(slug: string, increment: boolean): Promise<number> {
+  if (!slug || typeof slug !== "string") {
+    throw new Error("Invalid article slug.");
+  }
+
+  const { createAdminClient } = await import("@/lib/db/server");
+  const adminSupabase = createAdminClient();
+
+  // 1. Fetch current likes_count
+  const { data, error } = await adminSupabase
+    .from("articles")
+    .select("id, likes_count")
+    .eq("slug", slug)
+    .single();
+
+  if (error || !data) {
+    throw new Error(`Article not found: ${error?.message || ""}`);
+  }
+
+  // 2. Compute new count
+  const newCount = Math.max(0, (data.likes_count || 0) + (increment ? 1 : -1));
+
+  // 3. Update in database
+  const { error: updateErr } = await adminSupabase
+    .from("articles")
+    .update({ likes_count: newCount })
+    .eq("id", data.id);
+
+  if (updateErr) {
+    throw new Error(`Failed to update like count: ${updateErr.message}`);
+  }
+
+  return newCount;
 }
 
 // Re-export Admin Services for backward compatibility and clean importing

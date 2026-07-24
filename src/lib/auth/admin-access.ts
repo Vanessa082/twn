@@ -42,10 +42,5 @@ export function isAuthorizedAdmin(input: AdminAccessInput): boolean {
     return true;
   }
 
-  const env = input.nodeEnv ?? "development";
-  if (env === "development") {
-    return true;
-  }
-
   return false;
 }

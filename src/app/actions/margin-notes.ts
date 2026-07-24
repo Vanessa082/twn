@@ -1,7 +1,7 @@
 "use server";
 
-import { requireAdmin } from "@/lib/auth/require-admin";
 import { toAdminActionError } from "@/lib/auth/admin-errors";
+import { requireAdmin } from "@/lib/auth/require-admin";
 import {
   deleteMarginNoteAdmin,
   submitMarginNote,
@@ -30,7 +30,13 @@ export async function submitMarginNoteAction(
       userFriendlyError.includes("TypeError") ||
       userFriendlyError.includes("failed to fetch")
     ) {
-      userFriendlyError = "Unable to connect to the database right now. Please try again later.";
+      userFriendlyError = "Something went wrong on our end. Please try again in a few moments.";
+    } else if (
+      userFriendlyError.toLowerCase().includes("row-level security") ||
+      userFriendlyError.toLowerCase().includes("violates") ||
+      userFriendlyError.toLowerCase().includes("policy")
+    ) {
+      userFriendlyError = "We couldn't save your note right now. Please try again in a moment.";
     }
     return { success: false, data: null, error: userFriendlyError };
   }

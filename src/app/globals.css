@@ -540,7 +540,7 @@ h6 {
    Only visible on devices with fine pointer (mouse/trackpad).
 */
 @media (pointer: fine) {
-  * {
+  body.hide-native-cursor * {
     cursor: none !important;
   }
 }

@@ -1,7 +1,7 @@
 "use server";
 
-import { requireAdmin } from "@/lib/auth/require-admin";
 import { toAdminActionError } from "@/lib/auth/admin-errors";
+import { requireAdmin } from "@/lib/auth/require-admin";
 import {
   createArticleAdmin,
   deleteArticleAdmin,
@@ -71,5 +71,18 @@ export async function deleteArticleAction(id: string) {
   } catch (error: unknown) {
     console.error("[deleteArticleAction] Error:", toAdminActionError(error));
     return { success: false, error: toAdminActionError(error) || "Failed to delete article" };
+  }
+}
+
+export async function toggleArticleLikeAction(slug: string, increment: boolean) {
+  try {
+    const { toggleArticleLike } = await import("@/lib/services/articles");
+    const count = await toggleArticleLike(slug, increment);
+    revalidatePath(`/articles/${slug}`);
+    return { success: true, count, error: null };
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error("[toggleArticleLikeAction] Error:", err.message);
+    return { success: false, count: 0, error: err.message || "Failed to toggle like" };
   }
 }

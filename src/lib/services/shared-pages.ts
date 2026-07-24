@@ -119,7 +119,7 @@ export async function submitSharedPage(
   }
 
   try {
-    const supabase = await createClient();
+    const supabase = createAdminClient();
     const { data, error } = await supabase
       .from("shared_pages")
       .insert({

@@ -69,7 +69,7 @@ export async function getApprovedMarginNotesForArticle(articleId: string): Promi
 
 /**
  * Public: Submits a reader reflection (max 120 chars) for an article.
- * Always defaults status to 'pending'.
+ * Always defaults status to 'approved'.
  */
 export async function submitMarginNote(
   articleId: string,
@@ -90,14 +90,14 @@ export async function submitMarginNote(
   }
 
   try {
-    const supabase = await createClient();
+    const supabase = createAdminClient();
     const { data, error } = await supabase
       .from("margin_notes")
       .insert({
         article_id: articleId,
         author_name: trimmedAuthor,
         content: trimmedContent,
-        status: "pending",
+        status: "approved",
         display_order: 999, // default unpinned
       })
       .select()

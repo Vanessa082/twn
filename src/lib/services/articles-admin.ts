@@ -50,6 +50,10 @@ export async function createArticleAdmin(input: CreateArticleInput): Promise<Art
       category: input.category,
       status: input.status || "draft",
       published_at: input.status === "published" ? new Date().toISOString() : input.published_at,
+      seo_title: input.seo_title || null,
+      seo_description: input.seo_description || null,
+      og_image: input.og_image || null,
+      canonical_url: input.canonical_url || null,
     };
 
     const { data, error } = await adminSupabase.from("articles").insert(payload).select().single();

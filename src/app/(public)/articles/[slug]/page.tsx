@@ -23,16 +23,21 @@ export async function generateMetadata({ params }: ArticleDetailPageProps): Prom
 
   if (!article) return { title: "Article Not Found" };
 
+  const displayTitle = article.seo_title || article.title;
+  const displayDescription = article.seo_description || article.excerpt;
+  const displayImage = article.og_image || article.cover_image;
+
   return {
-    title: article.title,
-    description: article.excerpt,
+    title: displayTitle,
+    description: displayDescription,
+    alternates: article.canonical_url ? { canonical: article.canonical_url } : undefined,
     openGraph: {
-      title: article.title,
-      description: article.excerpt,
+      title: displayTitle,
+      description: displayDescription,
       type: "article",
       publishedTime: article.published_at || undefined,
       modifiedTime: article.updated_at,
-      images: article.cover_image ? [{ url: article.cover_image }] : undefined,
+      images: displayImage ? [{ url: displayImage }] : undefined,
     },
   };
 }
@@ -63,7 +68,11 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
       <ReadingProgress />
 
       {/* Floating engagement sidebar (client component) */}
-      <ArticleEngagement slug={article.slug} title={article.title} />
+      <ArticleEngagement
+        slug={article.slug}
+        title={article.title}
+        initialLikesCount={article.likes_count ?? 0}
+      />
 
       <article className="flex-1">
         {/* ── Article Header ─────────────────────────────────────────────── */}
@@ -154,7 +163,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
               /* Paragraphs */
               "[&_p]:text-foreground/85 [&_p]:leading-[1.85]",
               /* Inline links */
-              "[&_a]:text-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:decoration-foreground/30 hover:[&_a]:decoration-foreground [&_a]:transition-all",
+              "[&_a]:text-ink-accent [&_a]:font-semibold [&_a]:underline [&_a]:underline-offset-4 [&_a]:decoration-ink-accent/40 hover:[&_a]:decoration-ink-accent [&_a]:transition-all",
               /* Blockquote — editorial treatment */
               "[&_blockquote]:border-l-[3px] [&_blockquote]:border-foreground [&_blockquote]:pl-6 [&_blockquote]:my-10 [&_blockquote]:not-italic",
               "[&_blockquote_p]:text-xl [&_blockquote_p]:sm:text-2xl [&_blockquote_p]:font-serif [&_blockquote_p]:italic [&_blockquote_p]:text-foreground [&_blockquote_p]:leading-snug",

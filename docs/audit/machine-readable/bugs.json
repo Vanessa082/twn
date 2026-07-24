@@ -2,22 +2,16 @@
   "audit_date": "2026-07-22",
   "bugs": [
     {
-      "id": "BUG-001",
-      "title": "Missing resend package breaks type-check, build, and HTML routes",
-      "severity": "CRITICAL",
-      "confidence": "HIGH",
-      "reproduced": true,
-      "subsystem": "email/install",
-      "files": ["package.json", "src/lib/services/email.ts"]
-    },
-    {
       "id": "BUG-002",
       "title": "Footer newsletter import takes down all root-layout pages",
       "severity": "CRITICAL",
       "confidence": "HIGH",
       "reproduced": true,
       "subsystem": "layout",
-      "files": ["src/components/layout/Footer.tsx", "src/app/actions/newsletter.ts"]
+      "files": [
+        "src/components/layout/Footer.tsx",
+        "src/app/actions/newsletter.ts"
+      ]
     },
     {
       "id": "BUG-003",
@@ -26,7 +20,11 @@
       "confidence": "HIGH",
       "reproduced": true,
       "subsystem": "feature-flags",
-      "files": ["src/lib/feature-flags.ts", "src/components/home/NewsletterSection.tsx", "src/components/layout/Footer.tsx"]
+      "files": [
+        "src/lib/feature-flags.ts",
+        "src/components/home/NewsletterSection.tsx",
+        "src/components/layout/Footer.tsx"
+      ]
     },
     {
       "id": "BUG-004",
@@ -36,7 +34,10 @@
       "reproduced": false,
       "notes": "Code-verified; not exploit-tested with second user",
       "subsystem": "authz",
-      "files": ["src/middleware.ts", "src/app/actions/articles.ts"]
+      "files": [
+        "src/middleware.ts",
+        "src/app/actions/articles.ts"
+      ]
     },
     {
       "id": "BUG-005",
@@ -46,7 +47,9 @@
       "reproduced": true,
       "notes": "Code path; browser blocked",
       "subsystem": "notebook",
-      "files": ["src/lib/services/notebook-entries.ts"]
+      "files": [
+        "src/lib/services/notebook-entries.ts"
+      ]
     },
     {
       "id": "BUG-006",
@@ -56,7 +59,9 @@
       "reproduced": true,
       "notes": "Product gap vs AGENTS.md",
       "subsystem": "community",
-      "files": ["src/components/home/SharedPagesSection.tsx"]
+      "files": [
+        "src/components/home/SharedPagesSection.tsx"
+      ]
     },
     {
       "id": "BUG-007",
@@ -66,7 +71,9 @@
       "reproduced": false,
       "notes": "Source-verified XSS surface",
       "subsystem": "articles",
-      "files": ["src/app/articles/[slug]/page.tsx"]
+      "files": [
+        "src/app/articles/[slug]/page.tsx"
+      ]
     },
     {
       "id": "BUG-008",
@@ -75,7 +82,9 @@
       "confidence": "HIGH",
       "reproduced": true,
       "subsystem": "footer",
-      "files": ["src/components/layout/Footer.tsx"]
+      "files": [
+        "src/components/layout/Footer.tsx"
+      ]
     },
     {
       "id": "BUG-009",
@@ -93,7 +102,11 @@
       "confidence": "HIGH",
       "reproduced": true,
       "subsystem": "config",
-      "files": ["src/app/layout.tsx", "src/lib/services/email.ts", "src/lib/env.ts"]
+      "files": [
+        "src/app/layout.tsx",
+        "src/lib/services/email.ts",
+        "src/lib/env.ts"
+      ]
     }
   ]
 }

@@ -101,13 +101,21 @@ export interface Article {
   created_at: string;
   updated_at: string;
   reading_time?: number; // computed, minutes
+  likes_count?: number;
+  seo_title?: string | null;
+  seo_description?: string | null;
+  og_image?: string | null;
+  canonical_url?: string | null;
 }
 
 /** Minimal projection used in article lists (no full content) */
 export type ArticleCard = Omit<Article, "content">;
 
 /** Payload for creating a new article */
-export type CreateArticleInput = Omit<Article, "id" | "created_at" | "updated_at" | "reading_time">;
+export type CreateArticleInput = Omit<
+  Article,
+  "id" | "created_at" | "updated_at" | "reading_time" | "likes_count"
+>;
 
 /** Payload for updating an existing article */
 export type UpdateArticleInput = Partial<CreateArticleInput>;

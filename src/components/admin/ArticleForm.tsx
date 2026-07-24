@@ -2,10 +2,12 @@
 
 import { createArticleAction, updateArticleAction } from "@/app/actions/articles";
 import type { Article, ArticleCategory, ArticleStatus } from "@/types";
-import { ArrowLeft, Edit2, Eye, Loader2, Save } from "lucide-react";
+import { ArrowLeft, Edit2, Eye, Globe, Loader2, Save, Share2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import SeoPreview from "./SeoPreview";
+import TiptapEditor from "./TiptapEditor";
 
 interface ArticleFormProps {
   initialData?: Article;
@@ -28,6 +30,12 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
     initialData?.published_at ? new Date(initialData.published_at).toISOString().slice(0, 16) : ""
   );
 
+  // Advanced SEO States
+  const [seoTitle, setSeoTitle] = useState(initialData?.seo_title || "");
+  const [seoDescription, setSeoDescription] = useState(initialData?.seo_description || "");
+  const [ogImage, setOgImage] = useState(initialData?.og_image || "");
+  const [canonicalUrl, setCanonicalUrl] = useState(initialData?.canonical_url || "");
+
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -48,6 +56,10 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
       category,
       status,
       published_at: publishedAt ? new Date(publishedAt).toISOString() : null,
+      seo_title: seoTitle.trim() || null,
+      seo_description: seoDescription.trim() || null,
+      og_image: ogImage.trim() || null,
+      canonical_url: canonicalUrl.trim() || null,
     };
 
     startTransition(async () => {
@@ -197,118 +209,222 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
                 htmlFor="article-content"
                 className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
               >
-                Content (HTML allowed)
+                Content
               </label>
-              <textarea
-                id="article-content"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="Write the body of the article here..."
-                rows={15}
-                className="w-full p-4 rounded-lg border border-border bg-card font-mono text-xs sm:text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-y"
-              />
+              <TiptapEditor content={content} onChange={setContent} />
             </div>
           </div>
 
           {/* Sidebar Settings Column */}
-          <div className="lg:col-span-4 space-y-6 p-6 rounded-xl border border-border bg-card">
-            <h3 className="font-bold text-sm text-foreground border-b border-border pb-3">
-              Publishing Settings
-            </h3>
+          <div className="lg:col-span-4 space-y-6">
+            {/* Card 1: Publishing Settings */}
+            <div className="p-6 rounded-xl border border-border bg-card space-y-6">
+              <h3 className="font-bold text-sm text-foreground border-b border-border pb-3">
+                Publishing Settings
+              </h3>
 
-            {/* Category selection */}
-            <div className="space-y-2">
-              <label
-                htmlFor="article-category"
-                className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
-              >
-                Category
-              </label>
-              <select
-                id="article-category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value as ArticleCategory)}
-                className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
-              >
-                <option value="technology">Technology</option>
-                <option value="leadership">Leadership</option>
-                <option value="learning">Learning</option>
-                <option value="community">Community</option>
-                <option value="reflections">Reflections</option>
-              </select>
+              {/* Category selection */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="article-category"
+                  className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                >
+                  Category
+                </label>
+                <select
+                  id="article-category"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value as ArticleCategory)}
+                  className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
+                >
+                  <option value="technology">Technology</option>
+                  <option value="leadership">Leadership</option>
+                  <option value="learning">Learning</option>
+                  <option value="community">Community</option>
+                  <option value="reflections">Reflections</option>
+                </select>
+              </div>
+
+              {/* Custom Slug */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="article-slug"
+                  className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                >
+                  Slug (Optional)
+                </label>
+                <input
+                  id="article-slug"
+                  type="text"
+                  value={slug}
+                  onChange={(e) => setSlug(e.target.value)}
+                  placeholder="auto-generated-if-blank"
+                  className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
+                />
+              </div>
+
+              {/* Cover Image URL */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="article-cover"
+                  className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                >
+                  Cover Image URL
+                </label>
+                <input
+                  id="article-cover"
+                  type="text"
+                  value={coverImage}
+                  onChange={(e) => setCoverImage(e.target.value)}
+                  placeholder="https://images.unsplash.com/..."
+                  className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
+                />
+              </div>
+
+              {/* Status */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="article-status"
+                  className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                >
+                  Status
+                </label>
+                <select
+                  id="article-status"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value as ArticleStatus)}
+                  className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
+                >
+                  <option value="draft">Draft</option>
+                  <option value="published">Published</option>
+                  <option value="scheduled">Scheduled</option>
+                </select>
+              </div>
+
+              {/* Scheduled Date */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="article-published-at"
+                  className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                >
+                  Publish Date (Optional)
+                </label>
+                <input
+                  id="article-published-at"
+                  type="datetime-local"
+                  value={publishedAt}
+                  onChange={(e) => setPublishedAt(e.target.value)}
+                  className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
+                />
+              </div>
             </div>
 
-            {/* Custom Slug */}
-            <div className="space-y-2">
-              <label
-                htmlFor="article-slug"
-                className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
-              >
-                Slug (Optional)
-              </label>
-              <input
-                id="article-slug"
-                type="text"
-                value={slug}
-                onChange={(e) => setSlug(e.target.value)}
-                placeholder="auto-generated-if-blank"
-                className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
-              />
-            </div>
+            {/* Card 2: Advanced SEO Settings & Previews */}
+            <div className="p-6 rounded-xl border border-border bg-card space-y-6">
+              <div className="flex items-center gap-2 border-b border-border pb-3">
+                <Globe className="h-4 w-4 text-muted-gold" />
+                <h3 className="font-bold text-sm text-foreground">Advanced SEO Settings</h3>
+              </div>
 
-            {/* Cover Image URL */}
-            <div className="space-y-2">
-              <label
-                htmlFor="article-cover"
-                className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
-              >
-                Cover Image URL
-              </label>
-              <input
-                id="article-cover"
-                type="text"
-                value={coverImage}
-                onChange={(e) => setCoverImage(e.target.value)}
-                placeholder="https://images.unsplash.com/..."
-                className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
-              />
-            </div>
+              {/* SEO Title */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="article-seo-title"
+                  className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                >
+                  SEO Meta Title
+                  <span className="text-[10px] text-muted-foreground block normal-case font-normal">
+                    Defaults to article title if blank
+                  </span>
+                </label>
+                <input
+                  id="article-seo-title"
+                  type="text"
+                  value={seoTitle}
+                  onChange={(e) => setSeoTitle(e.target.value)}
+                  placeholder={title || "Defaults to article title"}
+                  className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
+                />
+              </div>
 
-            {/* Status */}
-            <div className="space-y-2">
-              <label
-                htmlFor="article-status"
-                className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
-              >
-                Status
-              </label>
-              <select
-                id="article-status"
-                value={status}
-                onChange={(e) => setStatus(e.target.value as ArticleStatus)}
-                className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
-              >
-                <option value="draft">Draft</option>
-                <option value="published">Published</option>
-                <option value="scheduled">Scheduled</option>
-              </select>
-            </div>
+              {/* SEO Description */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="article-seo-desc"
+                  className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                >
+                  SEO Meta Description
+                  <span className="text-[10px] text-muted-foreground block normal-case font-normal">
+                    Defaults to excerpt if blank
+                  </span>
+                </label>
+                <textarea
+                  id="article-seo-desc"
+                  value={seoDescription}
+                  onChange={(e) => setSeoDescription(e.target.value)}
+                  placeholder={excerpt || "Defaults to article excerpt"}
+                  rows={3}
+                  className="w-full p-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm resize-none"
+                />
+              </div>
 
-            {/* Scheduled Date */}
-            <div className="space-y-2">
-              <label
-                htmlFor="article-published-at"
-                className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
-              >
-                Publish Date (Optional)
-              </label>
-              <input
-                id="article-published-at"
-                type="datetime-local"
-                value={publishedAt}
-                onChange={(e) => setPublishedAt(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
-              />
+              {/* Open Graph Image */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="article-og-image"
+                  className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                >
+                  Open Graph Image URL
+                  <span className="text-[10px] text-muted-foreground block normal-case font-normal">
+                    Defaults to cover image if blank
+                  </span>
+                </label>
+                <input
+                  id="article-og-image"
+                  type="text"
+                  value={ogImage}
+                  onChange={(e) => setOgImage(e.target.value)}
+                  placeholder={coverImage || "Defaults to cover image"}
+                  className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
+                />
+              </div>
+
+              {/* Canonical URL */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="article-canonical"
+                  className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                >
+                  Canonical URL
+                </label>
+                <input
+                  id="article-canonical"
+                  type="text"
+                  value={canonicalUrl}
+                  onChange={(e) => setCanonicalUrl(e.target.value)}
+                  placeholder="https://originalsite.com/post"
+                  className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
+                />
+              </div>
+
+              {/* Live Social Preview */}
+              <div className="space-y-3 pt-3 border-t border-border">
+                <div className="flex items-center gap-1.5">
+                  <Share2 className="h-4 w-4 text-muted-gold animate-bounce" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Social & Search Preview
+                  </span>
+                </div>
+                <SeoPreview
+                  title={title}
+                  excerpt={excerpt}
+                  coverImage={coverImage}
+                  slug={slug}
+                  seoTitle={seoTitle}
+                  seoDescription={seoDescription}
+                  ogImage={ogImage}
+                />
+              </div>
             </div>
           </div>
         </div>

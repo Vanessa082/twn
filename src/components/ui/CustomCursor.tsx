@@ -24,6 +24,9 @@ export default function CustomCursor() {
     // Respect reduced motion
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    // Apply class to hide native cursor globally
+    document.body.classList.add("hide-native-cursor");
+
     const el = cursorRef.current;
     if (!el) return;
 
@@ -52,6 +55,7 @@ export default function CustomCursor() {
     return () => {
       window.removeEventListener("mousemove", onMove);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      document.body.classList.remove("hide-native-cursor");
     };
   }, []);
 

@@ -19,32 +19,76 @@ import { useEffect, useState } from "react";
 interface ArticleEngagementProps {
   slug: string;
   title: string;
+  initialLikesCount: number;
 }
 
-export default function ArticleEngagement({ slug, title }: ArticleEngagementProps) {
+export default function ArticleEngagement({
+  slug,
+  title,
+  initialLikesCount,
+}: ArticleEngagementProps) {
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
+  const [likeCount, setLikeCount] = useState(initialLikesCount);
+  const [sidebarVisible, setSidebarVisible] = useState(true);
+
+  // IntersectionObserver to hide floating sidebar near comments/footer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setSidebarVisible(!entry.isIntersecting);
+      },
+      {
+        rootMargin: "-80px 0px 0px 0px",
+        threshold: 0.05,
+      }
+    );
+
+    const target = document.getElementById("comments");
+    if (target) {
+      observer.observe(target);
+    }
+
+    return () => {
+      if (target) {
+        observer.unobserve(target);
+      }
+    };
+  }, []);
 
   // Hydrate from localStorage on mount (persists user's state across refreshes)
   useEffect(() => {
     const storedLike = localStorage.getItem(`twn-like-${slug}`);
     const storedBookmark = localStorage.getItem(`twn-bookmark-${slug}`);
-    const storedCount = localStorage.getItem(`twn-like-count-${slug}`);
     if (storedLike === "1") setLiked(true);
     if (storedBookmark === "1") setBookmarked(true);
-    // Start at 0 — grows only from real user interactions
-    setLikeCount(storedCount ? Number.parseInt(storedCount, 10) : 0);
   }, [slug]);
 
-  const handleLike = () => {
+  const handleLike = async () => {
     const next = !liked;
     setLiked(next);
-    const nextCount = next ? likeCount + 1 : likeCount - 1;
+    const nextCount = next ? likeCount + 1 : Math.max(0, likeCount - 1);
     setLikeCount(nextCount);
     localStorage.setItem(`twn-like-${slug}`, next ? "1" : "0");
-    localStorage.setItem(`twn-like-count-${slug}`, String(nextCount));
+
+    try {
+      const { toggleArticleLikeAction } = await import("@/app/actions/articles");
+      const res = await toggleArticleLikeAction(slug, next);
+      if (res.success) {
+        setLikeCount(res.count);
+      } else {
+        console.error("Failed to sync like with server:", res.error);
+        setLiked(!next);
+        setLikeCount(likeCount);
+        localStorage.setItem(`twn-like-${slug}`, !next ? "1" : "0");
+      }
+    } catch (err) {
+      console.error("Like toggle failed:", err);
+      setLiked(!next);
+      setLikeCount(likeCount);
+      localStorage.setItem(`twn-like-${slug}`, !next ? "1" : "0");
+    }
   };
 
   const handleBookmark = () => {
@@ -77,7 +121,13 @@ export default function ArticleEngagement({ slug, title }: ArticleEngagementProp
   return (
     <>
       {/* ── Desktop: Sticky floating sidebar (left of reading area) ── */}
-      <div className="hidden lg:flex fixed left-[max(1rem,calc(50vw-480px-80px))] top-1/2 -translate-y-1/2 flex-col items-center gap-5 z-20">
+      <div
+        className={`hidden lg:flex fixed left-[max(1rem,calc(50vw-480px-80px))] top-1/2 -translate-y-1/2 flex-col items-center gap-5 z-20 transition-all duration-300 ${
+          sidebarVisible
+            ? "opacity-100 translate-x-0 pointer-events-auto"
+            : "opacity-0 -translate-x-4 pointer-events-none"
+        }`}
+      >
         <button
           type="button"
           onClick={handleLike}

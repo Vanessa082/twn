@@ -26,6 +26,15 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   /**
+   * ── Server Actions Configuration ───────────────────────────────────────────
+   * We increase the bodySizeLimit from the 1MB default to 5MB to allow
+   * editors to upload high-quality cover photos and inline images.
+   */
+  serverExternalPackages: [],
+  serverActions: {
+    bodySizeLimit: "5mb",
+  },
+  /**
    * ── Image Security (next/image) ────────────────────────────────────────────
    * 🧠 LEARNING POINT: Why allowlist external image domains?
    * By default, Next.js blocks all external images to prevent:

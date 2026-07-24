@@ -1,77 +1,33 @@
-import { ClerkProvider, UserButton } from "@clerk/nextjs";
-import {
-  BookOpen,
-  FileText,
-  Home,
-  LayoutDashboard,
-  MessageSquare,
-  Share2,
-  Users,
-} from "lucide-react";
-import Link from "next/link";
+import AdminHeader from "@/components/admin/layout/AdminHeader";
+import AdminSidebar from "@/components/admin/layout/AdminSidebar";
+import { requireAdmin } from "@/lib/auth/require-admin";
+import { ClerkProvider } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const navItems = [
-    { label: "Overview", href: "/admin", icon: LayoutDashboard },
-    { label: "Articles", href: "/admin/articles", icon: FileText },
-    { label: "Notebook", href: "/admin/content/notebook", icon: BookOpen },
-    { label: "Shared Pages", href: "/admin/content/shared-pages", icon: Share2 },
-    { label: "Margin Notes", href: "/admin/content/margin-notes", icon: MessageSquare },
-    { label: "Subscribers", href: "/admin/newsletter", icon: Users },
-  ];
+  try {
+    await requireAdmin();
+  } catch (_error) {
+    redirect("/?error=forbidden");
+  }
 
   return (
     <ClerkProvider>
-      <div className="bg-background min-h-screen flex flex-col transition-colors duration-300">
-        {/* Secondary Admin Navigation Bar */}
-        <div className="border-b border-border bg-card">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex h-12 items-center justify-between">
-              {/* Quick Stats Label */}
-              <div className="flex items-center gap-6">
-                <span className="text-xs font-bold uppercase tracking-wider text-muted-gold bg-muted-gold/5 border border-muted-gold/20 px-2.5 py-0.5 rounded-md">
-                  Admin Mode
-                </span>
-                <nav className="flex items-center gap-4">
-                  {navItems.map((item) => {
-                    const Icon = item.icon;
-                    return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors py-1"
-                      >
-                        <Icon className="h-3.5 w-3.5" />
-                        {item.label}
-                      </Link>
-                    );
-                  })}
-                </nav>
-              </div>
+      <div className="flex min-h-screen bg-muted/30 text-foreground transition-colors duration-300 font-sans">
+        <AdminSidebar />
 
-              {/* Right side: View Site + User */}
-              <div className="flex items-center gap-4">
-                <Link
-                  href="/"
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <Home className="h-3.5 w-3.5" />
-                  View Site
-                </Link>
-                <UserButton />
-              </div>
-            </div>
-          </div>
+        <div className="flex-1 flex flex-col md:pl-64 min-h-screen">
+          <AdminHeader />
+          <main className="flex-1 p-4 md:p-6 lg:p-8">
+            <div className="mx-auto max-w-7xl">{children}</div>
+          </main>
         </div>
-
-        {/* Main Admin Workspace Content */}
-        <div className="flex-1 bg-background/50">{children}</div>
       </div>
     </ClerkProvider>
   );

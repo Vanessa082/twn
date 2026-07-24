@@ -59,7 +59,7 @@ describe("isAuthorizedAdmin", () => {
     ).toBe(false);
   });
 
-  it("allows any signed-in user in development when allowlist empty", () => {
+  it("denies user in development when allowlist empty and role not admin", () => {
     expect(
       isAuthorizedAdmin({
         userId: "user_1",
@@ -67,7 +67,7 @@ describe("isAuthorizedAdmin", () => {
         role: null,
         nodeEnv: "development",
       })
-    ).toBe(true);
+    ).toBe(false);
   });
 
   it("denies missing userId", () => {
