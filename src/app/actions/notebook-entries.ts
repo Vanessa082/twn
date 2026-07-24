@@ -1,12 +1,14 @@
 "use server";
 
 import { toAdminActionError } from "@/lib/auth/admin-errors";
-import { requireAdmin } from "@/lib/auth/require-admin";
+import { canManageNotebookEntries } from "@/lib/auth/policies";
+import { recordAuditLog } from "@/platform/audit/audit-log";
 import {
   createEntryAdmin,
   deleteEntryAdmin,
   updateEntryAdmin,
 } from "@/lib/services/notebook-entries";
+import { createNotebookEntrySchema, updateNotebookEntrySchema } from "@/lib/validation/schemas";
 import type { NotebookEntry } from "@/types";
 import { revalidatePath } from "next/cache";
 
@@ -14,8 +16,18 @@ export async function createEntryAction(
   input: Omit<NotebookEntry, "id" | "created_at" | "updated_at">
 ) {
   try {
-    await requireAdmin();
-    const entry = await createEntryAdmin(input);
+    const { userId } = await canManageNotebookEntries();
+    const validated = createNotebookEntrySchema.parse(input);
+    const entry = await createEntryAdmin(validated);
+
+    await recordAuditLog({
+      userId,
+      action: "notebook_entry.created",
+      targetType: "notebook_entry",
+      targetId: entry.id,
+      details: { title: entry.title, thought: entry.thought },
+    });
+
     revalidatePath("/");
     revalidatePath("/admin/content/notebook");
     return { success: true, data: entry, error: null };
@@ -34,8 +46,17 @@ export async function updateEntryAction(
   input: Partial<Omit<NotebookEntry, "id" | "created_at" | "updated_at">>
 ) {
   try {
-    await requireAdmin();
-    const entry = await updateEntryAdmin(id, input);
+    const { userId } = await canManageNotebookEntries();
+    const validated = updateNotebookEntrySchema.parse(input);
+    const entry = await updateEntryAdmin(id, validated);
+
+    await recordAuditLog({
+      userId,
+      action: "notebook_entry.updated",
+      targetType: "notebook_entry",
+      targetId: entry.id,
+    });
+
     revalidatePath("/");
     revalidatePath("/admin/content/notebook");
     return { success: true, data: entry, error: null };
@@ -51,8 +72,16 @@ export async function updateEntryAction(
 
 export async function deleteEntryAction(id: string) {
   try {
-    await requireAdmin();
+    const { userId } = await canManageNotebookEntries();
     await deleteEntryAdmin(id);
+
+    await recordAuditLog({
+      userId,
+      action: "notebook_entry.deleted",
+      targetType: "notebook_entry",
+      targetId: id,
+    });
+
     revalidatePath("/");
     revalidatePath("/admin/content/notebook");
     return { success: true, error: null };

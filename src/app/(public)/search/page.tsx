@@ -1,18 +1,27 @@
 import SearchClient from "@/components/search/SearchClient";
 import { getLatestArticles } from "@/lib/services/articles";
+import { getPublicCollections } from "@/lib/services/collections";
+import { getAllActiveEntries } from "@/lib/services/notebook-entries";
+import { getApprovedSharedPages } from "@/lib/services/shared-pages";
 import { getTranslations } from "next-intl/server";
 
 export const metadata = {
-  title: "Search Articles",
-  description: "Search all published articles and reflections in The Notebook of a Tech Woman.",
+  title: "Search Content | The Notebook of a Tech Woman",
+  description:
+    "Search all published articles, notebook thoughts, community pages, and collections in The Notebook of a Tech Woman.",
 };
 
 export const revalidate = 60; // Revalidate index every 60 seconds
 
 export default async function SearchPage() {
-  // 1. Fetch published articles for local client-side search index
-  const articles = await getLatestArticles(100);
-  const t = await getTranslations("search");
+  // Concurrent multi-content fetch for local high-performance search index
+  const [articles, notebookEntries, sharedPages, collections, t] = await Promise.all([
+    getLatestArticles(100),
+    getAllActiveEntries(),
+    getApprovedSharedPages(),
+    getPublicCollections(),
+    getTranslations("search"),
+  ]);
 
   return (
     <div className="py-16 sm:py-24 bg-background transition-colors duration-300 min-h-screen">
@@ -26,12 +35,17 @@ export default async function SearchPage() {
             {t("title")}
           </h1>
           <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-            Search our records by title, excerpt, content, or category tag.
+            Search across articles, notebook thoughts, community pages, and curated collections.
           </p>
         </div>
 
-        {/* Client-side search interface */}
-        <SearchClient articles={articles} />
+        {/* Multi-Content client-side search interface */}
+        <SearchClient
+          articles={articles}
+          notebookEntries={notebookEntries}
+          sharedPages={sharedPages}
+          collections={collections}
+        />
       </div>
     </div>
   );

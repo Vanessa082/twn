@@ -31,8 +31,10 @@ const nextConfig: NextConfig = {
    * editors to upload high-quality cover photos and inline images.
    */
   serverExternalPackages: [],
-  serverActions: {
-    bodySizeLimit: "5mb",
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "5mb",
+    },
   },
   /**
    * ── Image Security (next/image) ────────────────────────────────────────────

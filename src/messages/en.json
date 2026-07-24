@@ -80,10 +80,15 @@
   },
   "search": {
     "title": "Search",
-    "placeholder": "Search articles...",
+    "placeholder": "Search articles, thoughts, reflections, collections...",
     "results": "{count} results for \"{query}\"",
-    "noResults": "No articles found for \"{query}\"",
-    "empty": "Start typing to search articles."
+    "noResults": "No results found for \"{query}\"",
+    "empty": "Type a keyword to search across articles, notebook thoughts, community pages, and collections.",
+    "filterAll": "All",
+    "filterArticles": "Articles",
+    "filterNotebook": "Notebook Thoughts",
+    "filterSharedPages": "Community Pages",
+    "filterCollections": "Collections"
   },
   "footer": {
     "tagline": "Notes on technology, ideas, challenges, and the journey of becoming.",

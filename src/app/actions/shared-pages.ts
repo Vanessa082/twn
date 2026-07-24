@@ -1,13 +1,20 @@
 "use server";
 
 import { toAdminActionError } from "@/lib/auth/admin-errors";
-import { requireAdmin } from "@/lib/auth/require-admin";
+import { canModerateSharedPages } from "@/lib/auth/policies";
+import {
+  enforceRateLimit,
+  isBotSubmission,
+  isDuplicateSubmission,
+} from "@/lib/security/submission-protection";
+import { recordAuditLog } from "@/platform/audit/audit-log";
 import {
   deleteSharedPageAdmin,
   submitSharedPage,
   updateSharedPageStatusAdmin,
 } from "@/lib/services/shared-pages";
 import { buildSharedPageSlug } from "@/lib/utils/shared-page-slug";
+import { submitSharedPageSchema } from "@/lib/validation/schemas";
 import type { ModerationStatus } from "@/types";
 import { revalidatePath } from "next/cache";
 
@@ -21,10 +28,36 @@ function revalidateSharedPagePaths(slug?: string) {
 export async function submitSharedPageAction(
   authorName: string,
   title: string | null,
-  content: string
+  content: string,
+  honeypot?: string
 ) {
   try {
-    const page = await submitSharedPage(authorName, title, content);
+    // 1. Honeypot Check
+    if (isBotSubmission(honeypot)) {
+      return { success: true, data: null, error: null };
+    }
+
+    // 2. Rate Limiting (max 3 submissions per 10 min)
+    const rateLimit = await enforceRateLimit("submit_shared_page", 3);
+    if (!rateLimit.success) {
+      return { success: false, data: null, error: rateLimit.error! };
+    }
+
+    // 3. Duplicate Suppression
+    if (await isDuplicateSubmission(content)) {
+      return {
+        success: false,
+        data: null,
+        error: "You have already submitted this reflection recently.",
+      };
+    }
+
+    const validated = submitSharedPageSchema.parse({ authorName, title, content });
+    const page = await submitSharedPage(
+      validated.authorName,
+      validated.title ?? null,
+      validated.content
+    );
     revalidateSharedPagePaths();
     return { success: true, data: page, error: null };
   } catch (error: unknown) {
@@ -50,8 +83,17 @@ export async function submitSharedPageAction(
 
 export async function moderateSharedPageAction(id: string, status: ModerationStatus) {
   try {
-    await requireAdmin();
+    const { userId } = await canModerateSharedPages();
     const page = await updateSharedPageStatusAdmin(id, status);
+
+    await recordAuditLog({
+      userId,
+      action: `shared_page.${status}`,
+      targetType: "shared_page",
+      targetId: page.id,
+      details: { author_name: page.author_name, status },
+    });
+
     revalidateSharedPagePaths(buildSharedPageSlug(page));
     return { success: true, data: page, error: null };
   } catch (error: unknown) {
@@ -66,8 +108,16 @@ export async function moderateSharedPageAction(id: string, status: ModerationSta
 
 export async function deleteSharedPageAction(id: string) {
   try {
-    await requireAdmin();
+    const { userId } = await canModerateSharedPages();
     await deleteSharedPageAdmin(id);
+
+    await recordAuditLog({
+      userId,
+      action: "shared_page.deleted",
+      targetType: "shared_page",
+      targetId: id,
+    });
+
     revalidateSharedPagePaths();
     return { success: true, error: null };
   } catch (error: unknown) {

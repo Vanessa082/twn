@@ -21,33 +21,33 @@
  */
 "use server";
 
+import { enforceRateLimit, isBotSubmission } from "@/lib/security/submission-protection";
 import { addSubscriber } from "@/lib/services/subscribers";
+import { subscribeNewsletterSchema } from "@/lib/validation/schemas";
 
-/**
- * Handles newsletter subscription form submission.
- *
- * @param prevState - The previous state, required by React's useActionState hook.
- *                   This lets React keep track of previous submissions, useful
- *                   if you need to compare old vs new state (e.g. for animations).
- * @param formData  - The raw HTML FormData object. This is a native browser type
- *                    that contains all form field values by name attribute.
- *                    We access values with formData.get("fieldName").
- */
 export async function subscribeAction(_prevState: unknown, formData: FormData) {
-  // 1. VALIDATE: Extract and validate the email field
-  //    .get("email") fetches the value of the <input name="email"> field
-  //    .toString() converts it from FormDataEntryValue to a plain string
-  const email = formData.get("email")?.toString().trim();
-
-  // Guard clause: return early with an error if email is missing
-  if (!email) {
-    return { success: false, error: "Email address is required." };
+  // Honeypot check
+  const honeypot = formData.get("website")?.toString();
+  if (isBotSubmission(honeypot)) {
+    return { success: true, error: null };
   }
 
-  // 2. PROCESS: Delegate to the service layer — no raw DB calls here
-  //    The service handles deeper validation (email regex, duplicate checks)
-  const result = await addSubscriber(email);
+  // Rate Limiting (max 5 subscriptions per 10 min)
+  const rateLimit = await enforceRateLimit("newsletter_subscribe", 5);
+  if (!rateLimit.success) {
+    return { success: false, error: rateLimit.error! };
+  }
 
-  // 3. RETURN: Pass the service result directly back to the UI component
+  const email = formData.get("email")?.toString().trim();
+
+  const validated = subscribeNewsletterSchema.safeParse({ email });
+  if (!validated.success) {
+    return {
+      success: false,
+      error: validated.error.issues[0]?.message || "Invalid email address.",
+    };
+  }
+
+  const result = await addSubscriber(validated.data.email);
   return result;
 }

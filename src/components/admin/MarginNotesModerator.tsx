@@ -5,6 +5,8 @@ import {
   moderateMarginNoteAction,
   pinMarginNoteAction,
 } from "@/app/actions/margin-notes";
+import { useConfirm } from "@/components/admin/ui/ConfirmDialog";
+import { ToastContainer, useToast } from "@/components/admin/ui/Toast";
 import type { MarginNote, ModerationStatus } from "@/types";
 import { Check, Clock, Pin, Trash2, X } from "lucide-react";
 import { useState, useTransition } from "react";
@@ -17,6 +19,8 @@ export default function MarginNotesModerator({ initialNotes }: MarginNotesModera
   const [notes, setNotes] = useState(initialNotes);
   const [filter, setFilter] = useState<ModerationStatus | "all">("pending");
   const [isPending, startTransition] = useTransition();
+  const { toasts, showSuccess, showError } = useToast();
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const filteredNotes = notes.filter((note) => {
     if (filter === "all") return true;
@@ -28,8 +32,9 @@ export default function MarginNotesModerator({ initialNotes }: MarginNotesModera
       const result = await moderateMarginNoteAction(id, status);
       if (result.success && result.data) {
         setNotes((prev) => prev.map((n) => (n.id === id ? { ...n, ...result.data } : n)));
+        showSuccess(`Note ${status} successfully.`);
       } else {
-        alert(result.error || "Failed to update moderation status.");
+        showError(result.error || "Failed to update moderation status.");
       }
     });
   };
@@ -39,21 +44,30 @@ export default function MarginNotesModerator({ initialNotes }: MarginNotesModera
       const result = await pinMarginNoteAction(id, !currentlyPinned);
       if (result.success && result.data) {
         setNotes((prev) => prev.map((n) => (n.id === id ? { ...n, ...result.data } : n)));
+        showSuccess(currentlyPinned ? "Note unpinned." : "Note pinned to top.");
       } else {
-        alert(result.error || "Failed to toggle pin status.");
+        showError(result.error || "Failed to toggle pin status.");
       }
     });
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to permanently delete this margin note?")) return;
+    const ok = await confirm({
+      title: "Delete Margin Note",
+      message:
+        "Are you sure you want to permanently delete this margin note? This cannot be undone.",
+      confirmLabel: "Delete",
+      danger: true,
+    });
+    if (!ok) return;
 
     startTransition(async () => {
       const result = await deleteMarginNoteAction(id);
       if (result.success) {
         setNotes((prev) => prev.filter((n) => n.id !== id));
+        showSuccess("Note deleted.");
       } else {
-        alert(result.error || "Failed to delete note.");
+        showError(result.error || "Failed to delete note.");
       }
     });
   };
@@ -71,6 +85,8 @@ export default function MarginNotesModerator({ initialNotes }: MarginNotesModera
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto py-8 px-4 sm:px-6">
+      {ConfirmDialog}
+      <ToastContainer toasts={toasts} />
       {/* Header */}
       <div className="border-b border-border pb-6">
         <h1 className="text-3xl font-serif font-black tracking-tight text-foreground">

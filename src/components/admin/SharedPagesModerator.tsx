@@ -1,6 +1,8 @@
 "use client";
 
 import { deleteSharedPageAction, moderateSharedPageAction } from "@/app/actions/shared-pages";
+import { useConfirm } from "@/components/admin/ui/ConfirmDialog";
+import { ToastContainer, useToast } from "@/components/admin/ui/Toast";
 import type { ModerationStatus, SharedPage } from "@/types";
 import { Check, Clock, Eye, Trash2, X } from "lucide-react";
 import { useState, useTransition } from "react";
@@ -14,6 +16,8 @@ export default function SharedPagesModerator({ initialPages }: SharedPagesModera
   const [filter, setFilter] = useState<ModerationStatus | "all">("pending");
   const [isPending, startTransition] = useTransition();
   const [readingPage, setReadingPage] = useState<SharedPage | null>(null);
+  const { toasts, showSuccess, showError } = useToast();
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const filteredPages = pages.filter((page) => {
     if (filter === "all") return true;
@@ -24,23 +28,31 @@ export default function SharedPagesModerator({ initialPages }: SharedPagesModera
     startTransition(async () => {
       const result = await moderateSharedPageAction(id, status);
       if (result.success && result.data) {
-        setPages((prev) => prev.map((p) => (p.id === id ? result.data! : p)));
+        setPages((prev) => prev.map((p) => (p.id === id ? (result.data as SharedPage) : p)));
+        showSuccess(`Submission ${status} successfully.`);
       } else {
-        alert(result.error || "Failed to update moderation status.");
+        showError(result.error || "Failed to update moderation status.");
       }
     });
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to permanently delete this shared page submission?"))
-      return;
+    const ok = await confirm({
+      title: "Delete Submission",
+      message:
+        "Are you sure you want to permanently delete this shared page submission? This cannot be undone.",
+      confirmLabel: "Delete",
+      danger: true,
+    });
+    if (!ok) return;
 
     startTransition(async () => {
       const result = await deleteSharedPageAction(id);
       if (result.success) {
         setPages((prev) => prev.filter((p) => p.id !== id));
+        showSuccess("Submission deleted.");
       } else {
-        alert(result.error || "Failed to delete submission.");
+        showError(result.error || "Failed to delete submission.");
       }
     });
   };
@@ -58,6 +70,8 @@ export default function SharedPagesModerator({ initialPages }: SharedPagesModera
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto py-8 px-4 sm:px-6">
+      {ConfirmDialog}
+      <ToastContainer toasts={toasts} />
       {/* Header */}
       <div className="border-b border-border pb-6">
         <h1 className="text-3xl font-serif font-black tracking-tight text-foreground">

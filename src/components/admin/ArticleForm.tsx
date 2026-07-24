@@ -1,19 +1,32 @@
 "use client";
 
 import { createArticleAction, updateArticleAction } from "@/app/actions/articles";
-import type { Article, ArticleCategory, ArticleStatus } from "@/types";
-import { ArrowLeft, Edit2, Eye, Globe, Loader2, Save, Share2 } from "lucide-react";
+import { setArticleTagsAction } from "@/app/actions/tags";
+import RevisionHistory from "@/components/admin/RevisionHistory";
+import SaveStatusIndicator, { type SaveStatus } from "@/components/admin/ui/SaveStatusIndicator";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
+import type { Article, ArticleCategory, ArticleRevision, ArticleStatus, Tag } from "@/types";
+import { ArrowLeft, Edit2, Eye, Globe, Loader2, Save, Share2, Tag as TagIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import SeoPreview from "./SeoPreview";
+import TagPicker from "./TagPicker";
 import TiptapEditor from "./TiptapEditor";
 
 interface ArticleFormProps {
   initialData?: Article;
+  allTags?: Tag[];
+  initialTags?: Tag[];
+  revisions?: ArticleRevision[];
 }
 
-export default function ArticleForm({ initialData }: ArticleFormProps) {
+export default function ArticleForm({
+  initialData,
+  allTags = [],
+  initialTags = [],
+  revisions = [],
+}: ArticleFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [previewMode, setPreviewMode] = useState(false);
@@ -29,6 +42,7 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
   const [publishedAt, setPublishedAt] = useState(
     initialData?.published_at ? new Date(initialData.published_at).toISOString().slice(0, 16) : ""
   );
+  const [selectedTags, setSelectedTags] = useState<Tag[]>(initialTags);
 
   // Advanced SEO States
   const [seoTitle, setSeoTitle] = useState(initialData?.seo_title || "");
@@ -38,12 +52,58 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
 
   const [error, setError] = useState<string | null>(null);
 
+  // ── Save Status & Unsaved-Changes Guard ─────────────────────────────────────
+  // 'isDirty' is true once any field has been changed from the initial value.
+  // It drives both the browser beforeunload guard and the status badge.
+  const [isDirty, setIsDirty] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+
+  // Mark form dirty whenever a key field changes.
+  // We use useEffect so the flag is set after the first user interaction,
+  // not on the initial render with pre-populated edit data.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentional field tracking
+  useEffect(() => {
+    setIsDirty(true);
+    setSaveStatus("unsaved");
+  }, [
+    title,
+    excerpt,
+    content,
+    coverImage,
+    slug,
+    category,
+    status,
+    publishedAt,
+    seoTitle,
+    seoDescription,
+    ogImage,
+    canonicalUrl,
+  ]);
+
+  // Register the beforeunload guard — blocks tab close when there are unsaved changes.
+  useUnsavedChanges({ isDirty: isDirty && saveStatus === "unsaved" });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    if (!title || !content || !excerpt) {
-      setError("Please fill in the title, excerpt, and content.");
+    // ── Publishing validation ──────────────────────────────────────────────────
+    // Block submission if required fields are missing.
+    if (!title.trim()) {
+      setError("Title is required before saving.");
+      return;
+    }
+    if (!excerpt.trim()) {
+      setError("Excerpt is required — it appears on article listing cards.");
+      return;
+    }
+    if (!content.trim() || content.trim() === "<p></p>") {
+      setError("Content cannot be empty.");
+      return;
+    }
+    // Extra guard: block publish without a cover image
+    if (status === "published" && !coverImage.trim()) {
+      setError("A cover image is required before publishing.");
       return;
     }
 
@@ -62,18 +122,25 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
       canonical_url: canonicalUrl.trim() || null,
     };
 
+    setSaveStatus("saving");
     startTransition(async () => {
-      let result: { success: boolean; error: string | null; data?: unknown };
+      let result: { success: boolean; error: string | null; data?: Article | null };
       if (initialData?.id) {
         result = await updateArticleAction(initialData.id, payload);
       } else {
         result = await createArticleAction(payload);
       }
 
-      if (result.success) {
+      if (result.success && result.data) {
+        const articleId = result.data.id;
+        const tagIds = selectedTags.map((t) => t.id);
+        await setArticleTagsAction(articleId, tagIds);
+        setSaveStatus("saved");
+        setIsDirty(false);
         router.push("/admin/articles");
         router.refresh();
       } else {
+        setSaveStatus("unsaved");
         setError(result.error || "Something went wrong.");
       }
     });
@@ -90,10 +157,12 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
           >
             <ArrowLeft className="h-4 w-4" />
           </Link>
-          <div>
+          <div className="space-y-1">
             <h1 className="text-2xl font-serif font-black tracking-tight text-foreground">
               {initialData ? `Edit: ${initialData.title}` : "Create New Article"}
             </h1>
+            {/* Save status badge — shows Unsaved / Saving / Saved */}
+            <SaveStatusIndicator status={isPending ? "saving" : saveStatus} />
           </div>
         </div>
 
@@ -110,10 +179,20 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
               </>
             ) : (
               <>
-                <Eye className="h-4 w-4" /> Preview
+                <Eye className="h-4 w-4" /> Quick Preview
               </>
             )}
           </button>
+
+          {initialData?.id && (
+            <Link
+              href={`/admin/articles/${initialData.id}/preview`}
+              target="_blank"
+              className="flex-1 sm:flex-none inline-flex h-10 items-center justify-center gap-1.5 rounded-lg border border-muted-gold/40 bg-muted-gold/10 px-4 text-xs font-bold text-muted-gold hover:bg-muted-gold/20 transition-colors"
+            >
+              <Globe className="h-4 w-4" /> Full Preview
+            </Link>
+          )}
 
           <button
             type="submit"
@@ -243,6 +322,19 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
                   <option value="community">Community</option>
                   <option value="reflections">Reflections</option>
                 </select>
+              </div>
+
+              {/* Tags (Granular Discovery) */}
+              <div className="space-y-2">
+                <span className="block text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <TagIcon className="h-3.5 w-3.5 text-muted-gold" />
+                  Tags
+                </span>
+                <TagPicker
+                  allTags={allTags}
+                  selectedTags={selectedTags}
+                  onChange={setSelectedTags}
+                />
               </div>
 
               {/* Custom Slug */}
@@ -426,6 +518,11 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
                 />
               </div>
             </div>
+
+            {/* Card 3: Revision History (Edit Mode only) */}
+            {initialData?.id && (
+              <RevisionHistory revisions={revisions} articleId={initialData.id} />
+            )}
           </div>
         </div>
       )}

@@ -2,6 +2,25 @@
 -- SQL DDL Schema for The Notebook of a Tech Woman (TWN)
 -- Copy and paste this ENTIRE file into the Supabase SQL Editor to initialize
 -- your database. Safe to re-run — uses IF NOT EXISTS and ON CONFLICT.
+--
+-- MODULE OWNERSHIP SUMMARY (Milestone 9.2 — Database Architecture Alignment)
+-- ┌──────────────────────┬──────────────┬──────────────────────────────────────┐
+-- │ Table                │ Module Owner │ Aggregate Root                       │
+-- ├──────────────────────┼──────────────┼──────────────────────────────────────┤
+-- │ categories           │ Editorial    │ Category                             │
+-- │ articles             │ Editorial    │ Article                              │
+-- │ article_tags         │ Editorial    │ Article (join)                       │
+-- │ article_revisions    │ Editorial    │ Article (snapshot log)               │
+-- │ tags                 │ Editorial    │ Tag                                  │
+-- │ collections          │ Editorial    │ Collection                           │
+-- │ collection_articles  │ Editorial    │ Collection (join)                    │
+-- │ subscribers          │ Newsletter   │ Subscriber                           │
+-- │ notebooks            │ Notebook     │ Notebook                             │
+-- │ notebook_entries     │ Notebook     │ Notebook (entity within aggregate)   │
+-- │ shared_pages         │ Community    │ Shared Page                          │
+-- │ margin_notes         │ Community    │ Margin Note                          │
+-- │ audit_logs           │ Platform     │ Audit Log (cross-cutting capability) │
+-- └──────────────────────┴──────────────┴──────────────────────────────────────┘
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 -- Enable UUID extension
@@ -18,6 +37,10 @@ end $$;
 
 
 -- ── 1. Categories Table ──────────────────────────────────────────────────────
+-- Module Owner : Editorial
+-- Aggregate Root: Category
+-- RLS           : Public read (SELECT). Write via service role only.
+-- Notes         : Seeded with fixed values. Not CMS-editable in Phase 2.
 
 create table if not exists public.categories (
     id uuid default uuid_generate_v4() primary key,
@@ -46,6 +69,11 @@ on conflict (slug) do nothing;
 
 
 -- ── 2. Articles Table ────────────────────────────────────────────────────────
+-- Module Owner : Editorial
+-- Aggregate Root: Article
+-- RLS           : Public read (SELECT) for status='published' and published_at <= now().
+--                 Admin write via service role (bypasses RLS).
+-- Notes         : Controls article_tags and article_revisions as child entities.
 
 create table if not exists public.articles (
     id uuid default uuid_generate_v4() primary key,
@@ -105,6 +133,10 @@ for each row execute procedure public.handle_update_timestamp();
 
 
 -- ── 3. Subscribers Table ─────────────────────────────────────────────────────
+-- Module Owner : Newsletter
+-- Aggregate Root: Subscriber
+-- RLS           : Public insert (subscribe). Admin read via service role.
+-- Notes         : Email uniqueness enforced at DB level. Deletion = unsubscribe.
 
 create table if not exists public.subscribers (
     id uuid default uuid_generate_v4() primary key,
@@ -126,6 +158,11 @@ end $$;
 
 
 -- ── 4. Notebooks Table ──────────────────────────────────────────────────────
+-- Module Owner : Notebook
+-- Aggregate Root: Notebook
+-- RLS           : Public read (SELECT). Write via service role only.
+-- Notes         : Notebook controls notebook_entries as child entities.
+--                 One default notebook seeded ('The Notebook').
 -- A named collection of entries. Initially one default notebook exists.
 
 create table if not exists public.notebooks (
@@ -161,6 +198,10 @@ for each row execute procedure public.handle_update_timestamp();
 
 
 -- ── 5. Notebook Entries Table ────────────────────────────────────────────────
+-- Module Owner : Notebook
+-- Aggregate Root: Notebook (entry is an entity within the Notebook aggregate)
+-- RLS           : Public read (SELECT) for is_active=true. Write via service role.
+-- Notes         : Display date field used for Today's Page scheduling.
 -- Admin-authored sentences/paragraphs that power the hero animation and Today's Page.
 
 create table if not exists public.notebook_entries (
@@ -200,6 +241,12 @@ for each row execute procedure public.handle_update_timestamp();
 
 
 -- ── 6. Shared Pages Table ────────────────────────────────────────────────────
+-- Module Owner : Community
+-- Aggregate Root: Shared Page
+-- RLS           : Public read (SELECT) for status='approved'.
+--                 Public insert (submit). Admin write via service role.
+-- Notes         : Moderation workflow: pending → approved | rejected.
+--                 published_at set on approval.
 -- Visitor-submitted reflections (10–300 words). Require moderation.
 
 create table if not exists public.shared_pages (
@@ -244,6 +291,12 @@ for each row execute procedure public.handle_update_timestamp();
 
 
 -- ── 7. Margin Notes Table ────────────────────────────────────────────────────
+-- Module Owner : Community
+-- Aggregate Root: Margin Note
+-- RLS           : Public read (SELECT) for status='approved'.
+--                 Public insert (submit). Admin write via service role.
+-- Notes         : Cascades on article deletion. display_order 0 = pinned.
+--                 published_at set on approval.
 -- Short reader reflections (max 120 chars) in article margins/footers.
 
 create table if not exists public.margin_notes (

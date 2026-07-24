@@ -1,20 +1,38 @@
 "use server";
 
 import { toAdminActionError } from "@/lib/auth/admin-errors";
-import { requireAdmin } from "@/lib/auth/require-admin";
+import { canManageArticles } from "@/lib/auth/policies";
 import {
   createArticleAdmin,
   deleteArticleAdmin,
   updateArticleAdmin,
 } from "@/lib/services/articles";
+import { recordAuditLog } from "@/platform/audit/audit-log";
+import { createRevision, getRevisionById } from "@/lib/services/revisions";
 import { broadcastNewArticle } from "@/lib/services/subscribers";
+import { createArticleSchema, updateArticleSchema } from "@/lib/validation/schemas";
 import type { CreateArticleInput, UpdateArticleInput } from "@/types";
 import { revalidatePath } from "next/cache";
 
 export async function createArticleAction(input: CreateArticleInput) {
   try {
-    await requireAdmin();
-    const article = await createArticleAdmin(input);
+    const { userId } = await canManageArticles();
+    const validated = createArticleSchema.parse(input);
+    const articlePayload: CreateArticleInput = {
+      ...validated,
+      cover_image: validated.cover_image ?? null,
+      published_at: validated.published_at ?? null,
+    };
+    const article = await createArticleAdmin(articlePayload);
+
+    await recordAuditLog({
+      userId,
+      action: article.status === "published" ? "article.published" : "article.created",
+      targetType: "article",
+      targetId: article.id,
+      details: { title: article.title, status: article.status, category: article.category },
+    });
+
     revalidatePath("/");
     revalidatePath("/articles");
     revalidatePath("/admin/articles");
@@ -43,8 +61,29 @@ export async function createArticleAction(input: CreateArticleInput) {
 
 export async function updateArticleAction(id: string, input: UpdateArticleInput) {
   try {
-    await requireAdmin();
-    const article = await updateArticleAdmin(id, input);
+    const { userId } = await canManageArticles();
+    const validated = updateArticleSchema.parse(input);
+    const updatePayload: UpdateArticleInput = {
+      ...validated,
+      cover_image:
+        validated.cover_image === undefined ? undefined : (validated.cover_image ?? null),
+    };
+    const article = await updateArticleAdmin(id, updatePayload);
+
+    // Save a revision snapshot so the editor can restore any previous version.
+    // Fire-and-forget: revision failure should never block the main save.
+    createRevision(article, userId).catch((err) =>
+      console.warn("[updateArticleAction] Revision snapshot failed silently:", err)
+    );
+
+    await recordAuditLog({
+      userId,
+      action: "article.updated",
+      targetType: "article",
+      targetId: article.id,
+      details: { title: article.title, status: article.status },
+    });
+
     revalidatePath("/");
     revalidatePath("/articles");
     revalidatePath(`/articles/${article.slug}`);
@@ -60,10 +99,70 @@ export async function updateArticleAction(id: string, input: UpdateArticleInput)
   }
 }
 
+/**
+ * Restore an article to a previous revision snapshot.
+ * Before restoring, saves the current state as a new revision so the
+ * editor can always undo the restore itself.
+ */
+export async function restoreRevisionAction(revisionId: string) {
+  try {
+    const { userId } = await canManageArticles();
+    const revision = await getRevisionById(revisionId);
+    if (!revision) return { success: false, error: "Revision not found" };
+
+    // Save current state before overwriting (safety net)
+    const current = await import("@/lib/services/articles").then((m) =>
+      m.getArticleByIdAdmin(revision.article_id)
+    );
+    if (current) {
+      createRevision(current, userId).catch(() => {});
+    }
+
+    // Restore the revision content
+    const restored = await updateArticleAdmin(revision.article_id, {
+      title: revision.title,
+      excerpt: revision.excerpt,
+      content: revision.content,
+      cover_image: revision.cover_image,
+      category: revision.category as UpdateArticleInput["category"],
+      status: revision.status as UpdateArticleInput["status"],
+    });
+
+    await recordAuditLog({
+      userId,
+      action: "article.updated",
+      targetType: "article",
+      targetId: revision.article_id,
+      details: { restored_from_revision: revisionId, title: revision.title },
+    });
+
+    revalidatePath("/");
+    revalidatePath("/articles");
+    revalidatePath(`/articles/${restored.slug}`);
+    revalidatePath("/admin/articles");
+    revalidatePath(`/admin/articles/${revision.article_id}/edit`);
+    return { success: true, data: restored, error: null };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      data: null,
+      error: toAdminActionError(error) || "Failed to restore revision",
+    };
+  }
+}
+
 export async function deleteArticleAction(id: string) {
   try {
-    await requireAdmin();
+    const { userId } = await canManageArticles();
     await deleteArticleAdmin(id);
+
+    await recordAuditLog({
+      userId,
+      action: "article.deleted",
+      targetType: "article",
+      targetId: id,
+    });
+
     revalidatePath("/");
     revalidatePath("/articles");
     revalidatePath("/admin/articles");

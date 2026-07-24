@@ -1,3 +1,4 @@
+import RelatedArticles from "@/components/article/RelatedArticles";
 import ArticleEngagement from "@/components/articles/ArticleEngagement";
 import MarginNotesList from "@/components/articles/MarginNotesList";
 import ReadingProgress from "@/components/articles/ReadingProgress";
@@ -5,7 +6,8 @@ import NewsletterSection from "@/components/home/NewsletterSection";
 import ImageWithSkeleton from "@/components/ui/ImageWithSkeleton";
 import { getArticleBySlug } from "@/lib/services/articles";
 import { getApprovedMarginNotesForArticle } from "@/lib/services/margin-notes";
-import { Calendar, Clock } from "lucide-react";
+import { getRelatedArticles, getTagsForArticle } from "@/lib/services/tags";
+import { Calendar, Clock, Tag as TagIcon } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
@@ -48,8 +50,12 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
 
   if (!article) notFound();
 
-  // Fetch approved margin notes for this article
-  const marginNotes = await getApprovedMarginNotesForArticle(article.id);
+  // Fetch margin notes, tags, and related articles in parallel
+  const [marginNotes, tags, relatedArticles] = await Promise.all([
+    getApprovedMarginNotesForArticle(article.id),
+    getTagsForArticle(article.id),
+    getRelatedArticles(article.id, article.category),
+  ]);
 
   const t = await getTranslations("articles");
 
@@ -182,6 +188,22 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
             // biome-ignore lint/security/noDangerouslySetInnerHtml: Article content is admin-authored HTML, not user input
             dangerouslySetInnerHTML={{ __html: article.content }}
           />
+
+          {/* Tag Pills */}
+          {tags.length > 0 && (
+            <div className="pt-8 flex flex-wrap items-center gap-2 border-t border-border mt-10">
+              <TagIcon className="h-3.5 w-3.5 text-muted-gold shrink-0" />
+              {tags.map((tag) => (
+                <Link
+                  key={tag.id}
+                  href={`/topics/${tag.slug}`}
+                  className="px-2.5 py-1 rounded-md bg-muted/50 hover:bg-muted text-foreground/80 hover:text-foreground text-xs font-medium border border-border/60 transition-colors"
+                >
+                  {tag.name}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* ── End-of-article divider ──────────────────────────────────────── */}
@@ -200,6 +222,9 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
           <MarginNotesList articleId={article.id} notes={marginNotes} />
         </div>
       </article>
+
+      {/* Related Articles */}
+      <RelatedArticles articles={relatedArticles} />
 
       {/* Newsletter CTA */}
       <NewsletterSection />
