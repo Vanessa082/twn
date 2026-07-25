@@ -1,15 +1,16 @@
 "use client";
 
 import { createArticleAction, updateArticleAction } from "@/app/actions/articles";
+import { uploadImageAction } from "@/app/actions/upload";
 import { setArticleTagsAction } from "@/app/actions/tags";
 import RevisionHistory from "@/components/admin/RevisionHistory";
 import SaveStatusIndicator, { type SaveStatus } from "@/components/admin/ui/SaveStatusIndicator";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import type { Article, ArticleCategory, ArticleRevision, ArticleStatus, Tag } from "@/types";
-import { ArrowLeft, Edit2, Eye, Globe, Loader2, Save, Share2, Tag as TagIcon } from "lucide-react";
+import { ArrowLeft, Edit2, Eye, Globe, Image as ImageIcon, Loader2, Save, Tag as TagIcon, Upload, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import SeoPreview from "./SeoPreview";
 import TagPicker from "./TagPicker";
 import TiptapEditor from "./TiptapEditor";
@@ -37,6 +38,9 @@ export default function ArticleForm({
   const [excerpt, setExcerpt] = useState(initialData?.excerpt || "");
   const [content, setContent] = useState(initialData?.content || "");
   const [coverImage, setCoverImage] = useState(initialData?.cover_image || "");
+  const [isCoverUploading, setIsCoverUploading] = useState(false);
+  const [coverUploadError, setCoverUploadError] = useState<string | null>(null);
+  const coverFileRef = useRef<HTMLInputElement>(null);
   const [category, setCategory] = useState<ArticleCategory>(initialData?.category || "technology");
   const [status, setStatus] = useState<ArticleStatus>(initialData?.status || "draft");
   const [publishedAt, setPublishedAt] = useState(
@@ -137,8 +141,11 @@ export default function ArticleForm({
         await setArticleTagsAction(articleId, tagIds);
         setSaveStatus("saved");
         setIsDirty(false);
-        router.push("/admin/articles");
-        router.refresh();
+        // Only redirect when publishing — Save stays on this page
+        if (payload.status === "published") {
+          router.push("/admin/articles");
+          router.refresh();
+        }
       } else {
         setSaveStatus("unsaved");
         setError(result.error || "Something went wrong.");
@@ -355,20 +362,85 @@ export default function ArticleForm({
                 />
               </div>
 
-              {/* Cover Image URL */}
+              {/* Cover Image — upload OR paste URL */}
               <div className="space-y-2">
-                <label
-                  htmlFor="article-cover"
-                  className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
-                >
-                  Cover Image URL
-                </label>
+                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
+                  Cover Image
+                </span>
+
+                {/* Preview thumbnail */}
+                {coverImage && (
+                  <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-border bg-muted mb-2">
+                    <img src={coverImage} alt="Cover preview" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => { setCoverImage(""); setCoverUploadError(null); }}
+                      className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center text-foreground hover:bg-destructive hover:text-white transition-colors"
+                      aria-label="Remove cover image"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                )}
+
+                {/* Upload from device */}
+                <div className="relative">
+                  <input
+                    ref={coverFileRef}
+                    id="cover-image-upload"
+                    type="file"
+                    accept="image/*"
+                    className="sr-only"
+                    disabled={isCoverUploading}
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      setIsCoverUploading(true);
+                      setCoverUploadError(null);
+                      const formData = new FormData();
+                      formData.append("file", file);
+                      const res = await uploadImageAction(formData);
+                      if (res.success && res.url) {
+                        setCoverImage(res.url);
+                      } else {
+                        setCoverUploadError(res.error || "Upload failed");
+                      }
+                      setIsCoverUploading(false);
+                      if (coverFileRef.current) coverFileRef.current.value = "";
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => coverFileRef.current?.click()}
+                    disabled={isCoverUploading}
+                    className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground text-xs font-semibold flex items-center justify-center gap-2 hover:bg-muted transition-colors disabled:opacity-50"
+                  >
+                    {isCoverUploading ? (
+                      <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Uploading...</>
+                    ) : (
+                      <><Upload className="h-3.5 w-3.5" /> Upload from device</>
+                    )}
+                  </button>
+                </div>
+
+                {coverUploadError && (
+                  <p className="text-xs text-destructive font-semibold">{coverUploadError}</p>
+                )}
+
+                {/* Divider */}
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 h-px bg-border" />
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">or</span>
+                  <div className="flex-1 h-px bg-border" />
+                </div>
+
+                {/* URL input */}
                 <input
                   id="article-cover"
                   type="text"
                   value={coverImage}
                   onChange={(e) => setCoverImage(e.target.value)}
-                  placeholder="https://images.unsplash.com/..."
+                  placeholder="Paste image URL..."
                   className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
                 />
               </div>
@@ -502,7 +574,7 @@ export default function ArticleForm({
               {/* Live Social Preview */}
               <div className="space-y-3 pt-3 border-t border-border">
                 <div className="flex items-center gap-1.5">
-                  <Share2 className="h-4 w-4 text-muted-gold animate-bounce" />
+                  <Globe className="h-4 w-4 text-muted-gold" />
                   <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                     Social & Search Preview
                   </span>

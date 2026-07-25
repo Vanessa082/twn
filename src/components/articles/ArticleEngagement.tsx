@@ -1,25 +1,46 @@
 "use client";
 
 /**
- * ArticleEngagement — floating sidebar + inline bottom bar with like/share/bookmark.
+ * ArticleEngagement — floating sidebar + inline bottom bar with clap/share/bookmark.
  *
  * Design: Medium-inspired engagement patterns:
  *  - A sticky floating column on the LEFT of the reading area (desktop) shows
  *    action icons vertically — they feel "at hand" without interrupting reading.
  *  - On mobile, a fixed bottom bar appears instead.
  *
- * State is local (no DB) — likes/bookmarks use localStorage so they persist
+ * State is local (no DB) — claps/bookmarks use localStorage so they persist
  * across page refreshes without needing a login system.
  * Share uses the Web Share API (mobile) or copies the URL to clipboard (desktop).
  */
 
-import { Bookmark, Check, Heart, MessageCircle, Share2 } from "lucide-react";
+import { Bookmark, Check, MessageCircle, Share2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface ArticleEngagementProps {
   slug: string;
   title: string;
   initialLikesCount: number;
+}
+
+/** Medium-style clap hand SVG */
+function ClapIcon({ filled, className }: { filled?: boolean; className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className={className}
+      fill={filled ? "currentColor" : "none"}
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {/* palm */}
+      <path d="M8.5 3.5 L9 10 M11 2 L11.5 10 M13.5 3.5 L13 10" />
+      {/* hand body */}
+      <path d="M6.5 10.5 C5.7 10.5 5 11.2 5 12 L5 15 C5 18.3 7.7 21 11 21 L13 21 C16.3 21 19 18.3 19 15 L19 13 C19 11.9 18.1 11 17 11 L16.5 11 L16 10 C15.6 9.3 14.8 9 14 9.3 L13 10 L13 3.5 C13 2.7 12.3 2 11.5 2 C10.7 2 10 2.7 10 3.5 L10 10 L9 10 L9 3.5 C9 2.7 8.3 2 7.5 2 C6.7 2 6 2.7 6 3.5 L6 10.5 L6.5 10.5 Z" />
+    </svg>
+  );
 }
 
 export default function ArticleEngagement({
@@ -131,7 +152,7 @@ export default function ArticleEngagement({
         <button
           type="button"
           onClick={handleLike}
-          aria-label={liked ? "Unlike" : "Like"}
+          aria-label={liked ? "Remove clap" : "Clap"}
           className="group flex flex-col items-center gap-1.5"
         >
           <span
@@ -141,7 +162,7 @@ export default function ArticleEngagement({
                 : "border-border bg-card text-muted-foreground hover:border-foreground hover:text-foreground"
             }`}
           >
-            <Heart className={`h-4 w-4 ${liked ? "fill-current" : ""}`} />
+            <ClapIcon filled={liked} className="h-4 w-4" />
           </span>
           <span className="text-[10px] font-bold text-muted-foreground tabular-nums">
             {likeCount}
@@ -199,12 +220,12 @@ export default function ArticleEngagement({
           <button
             type="button"
             onClick={handleLike}
-            aria-label={liked ? "Unlike" : "Like"}
+            aria-label={liked ? "Remove clap" : "Clap"}
             className={`flex flex-col items-center gap-1 transition-colors duration-200 ${
               liked ? "text-foreground" : "text-muted-foreground"
             }`}
           >
-            <Heart className={`h-5 w-5 ${liked ? "fill-current" : ""}`} />
+            <ClapIcon filled={liked} className="h-5 w-5" />
             <span className="text-[10px] font-bold">{likeCount}</span>
           </button>
 

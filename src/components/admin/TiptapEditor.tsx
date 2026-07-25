@@ -3,7 +3,12 @@
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
-import { EditorContent, useEditor } from "@tiptap/react";
+import {
+  EditorContent,
+  NodeViewWrapper,
+  ReactNodeViewRenderer,
+  useEditor,
+} from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import {
   Bold,
@@ -20,10 +25,62 @@ import {
   Quote,
   Strikethrough,
   Terminal,
+  Trash2,
   Unlink,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
+// ── Image Node View ─────────────────────────────────────────────────────────
+// A React wrapper rendered around every image node in the editor.
+// On hover, a red trash button appears in the top-right corner.
+// Clicking trash calls deleteNode() — removes ONLY that specific image.
+// This is the pattern used by Notion, Ghost, and Substack.
+// biome-ignore lint/suspicious/noExplicitAny: Tiptap NodeViewRendererProps
+function ImageNodeView({ node, deleteNode }: any) {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <NodeViewWrapper
+      className="relative my-6 group"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Delete button — appears on hover, top-right corner */}
+      {hovered && (
+        <button
+          type="button"
+          onClick={deleteNode}
+          aria-label="Remove image"
+          className="absolute top-2 right-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-destructive text-white shadow-lg transition-all hover:bg-destructive/90 hover:scale-110"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </button>
+      )}
+      <img
+        src={node.attrs.src}
+        alt={node.attrs.alt || ""}
+        className={`rounded-lg w-full border shadow-md transition-all duration-150 ${
+          hovered ? "border-destructive/50 opacity-95" : "border-border"
+        }`}
+      />
+      {/* Helper hint */}
+      {hovered && (
+        <p className="text-center text-[10px] text-muted-foreground mt-1 select-none">
+          Click <span className="text-destructive font-bold">✕</span> to remove this image
+        </p>
+      )}
+    </NodeViewWrapper>
+  );
+}
+
+// ── Custom Image Extension with NodeView ─────────────────────────────────────
+const ImageWithDelete = Image.extend({
+  addNodeView() {
+    return ReactNodeViewRenderer(ImageNodeView);
+  },
+});
+
+// ── Editor Props ─────────────────────────────────────────────────────────────
 interface TiptapEditorProps {
   content: string;
   onChange: (html: string) => void;
@@ -38,15 +95,9 @@ export default function TiptapEditor({
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
-        heading: {
-          levels: [2, 3],
-        },
-        codeBlock: {
-          HTMLAttributes: {
-            class:
-              "rounded-lg bg-muted p-4 font-mono text-xs sm:text-sm text-foreground overflow-x-auto my-4",
-          },
-        },
+        heading: { levels: [2, 3] },
+        // No custom class here — let globals.css VS Code dark theme own the <pre> styling
+        codeBlock: {},
       }),
       Link.configure({
         openOnClick: false,
@@ -55,23 +106,21 @@ export default function TiptapEditor({
             "text-ink-accent font-semibold underline underline-offset-4 decoration-ink-accent/40 hover:decoration-ink-accent transition-colors cursor-pointer",
         },
       }),
-      Image.configure({
-        HTMLAttributes: {
-          class: "rounded-lg max-w-full my-6 mx-auto border border-border shadow-md",
-        },
+      ImageWithDelete.configure({
+        inline: false,
+        allowBase64: false,
       }),
-      Placeholder.configure({
-        placeholder,
-      }),
+      Placeholder.configure({ placeholder }),
     ],
-    content: content,
+    content,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
     editorProps: {
       attributes: {
+        // "tiptap" class is required so our .tiptap ul/.tiptap blockquote CSS selectors fire
         class:
-          "prose prose-sm dark:prose-invert max-w-none focus:outline-none min-h-[400px] px-4 py-3 text-foreground bg-card rounded-b-lg border-x border-b border-border focus:ring-1 focus:ring-ring font-serif leading-relaxed",
+          "tiptap min-h-[400px] px-4 py-3 text-foreground bg-card rounded-b-lg border-x border-b border-border focus:outline-none focus:ring-1 focus:ring-ring leading-relaxed text-base",
       },
     },
   });
@@ -85,7 +134,7 @@ export default function TiptapEditor({
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
-  // Keep editor content in sync with external content resets (e.g. initialData hydration)
+  // Keep editor content in sync with external content resets
   useEffect(() => {
     if (editor && content !== editor.getHTML() && editor.isEmpty) {
       editor.commands.setContent(content);
@@ -119,6 +168,7 @@ export default function TiptapEditor({
         {/* Formatting */}
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={`p-2 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors ${
             editor.isActive("bold") ? "bg-card text-foreground font-bold shadow-sm" : ""
@@ -130,6 +180,7 @@ export default function TiptapEditor({
 
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().toggleItalic().run()}
           className={`p-2 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors ${
             editor.isActive("italic") ? "bg-card text-foreground shadow-sm" : ""
@@ -141,6 +192,7 @@ export default function TiptapEditor({
 
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().toggleStrike().run()}
           className={`p-2 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors ${
             editor.isActive("strike") ? "bg-card text-foreground shadow-sm" : ""
@@ -155,8 +207,9 @@ export default function TiptapEditor({
         {/* Headings */}
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={`p-2 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 ${
+          className={`p-2 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors ${
             editor.isActive("heading", { level: 2 }) ? "bg-card text-foreground shadow-sm" : ""
           }`}
           title="Heading 2"
@@ -166,8 +219,9 @@ export default function TiptapEditor({
 
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-          className={`p-2 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 ${
+          className={`p-2 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors ${
             editor.isActive("heading", { level: 3 }) ? "bg-card text-foreground shadow-sm" : ""
           }`}
           title="Heading 3"
@@ -180,6 +234,7 @@ export default function TiptapEditor({
         {/* Lists */}
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={`p-2 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors ${
             editor.isActive("bulletList") ? "bg-card text-foreground shadow-sm" : ""
@@ -191,11 +246,12 @@ export default function TiptapEditor({
 
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           className={`p-2 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors ${
             editor.isActive("orderedList") ? "bg-card text-foreground shadow-sm" : ""
           }`}
-          title="Ordered List"
+          title="Numbered List"
         >
           <ListOrdered className="h-4 w-4" />
         </button>
@@ -205,6 +261,7 @@ export default function TiptapEditor({
         {/* Blocks */}
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           className={`p-2 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors ${
             editor.isActive("blockquote") ? "bg-card text-foreground shadow-sm" : ""
@@ -216,6 +273,7 @@ export default function TiptapEditor({
 
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           className={`p-2 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors ${
             editor.isActive("codeBlock") ? "bg-card text-foreground shadow-sm" : ""
@@ -227,6 +285,7 @@ export default function TiptapEditor({
 
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().toggleCode().run()}
           className={`p-2 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors ${
             editor.isActive("code") ? "bg-card text-foreground shadow-sm" : ""
@@ -238,9 +297,10 @@ export default function TiptapEditor({
 
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
           className="p-2 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-          title="Horizontal Rule"
+          title="Divider"
         >
           <Minus className="h-4 w-4" />
         </button>
@@ -286,7 +346,7 @@ export default function TiptapEditor({
       {/* Link Modal */}
       {isLinkModalOpen && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card border border-border rounded-xl shadow-xl w-full max-w-md p-6 space-y-4 animate-in fade-in zoom-in duration-200">
+          <div className="bg-card border border-border rounded-xl shadow-xl w-full max-w-md p-6 space-y-4 animate-in fade-in duration-200">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="font-bold text-sm text-foreground">Insert / Edit Link</h3>
               <button
@@ -353,7 +413,7 @@ export default function TiptapEditor({
       {/* Image Modal */}
       {isImageModalOpen && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card border border-border rounded-xl shadow-xl w-full max-w-md p-6 space-y-4 animate-in fade-in zoom-in duration-200">
+          <div className="bg-card border border-border rounded-xl shadow-xl w-full max-w-md p-6 space-y-4 animate-in fade-in duration-200">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="font-bold text-sm text-foreground">Insert Image</h3>
               <button
@@ -413,12 +473,8 @@ export default function TiptapEditor({
                   ) : (
                     <div className="space-y-1 py-2">
                       <ImageIcon className="h-6 w-6 text-muted-foreground mx-auto mb-1" />
-                      <p className="text-xs text-foreground font-medium">
-                        Click to select an image
-                      </p>
-                      <p className="text-[10px] text-muted-foreground">
-                        Supports PNG, JPG, WebP up to 5MB
-                      </p>
+                      <p className="text-xs text-foreground font-medium">Click to select an image</p>
+                      <p className="text-[10px] text-muted-foreground">PNG, JPG, WebP · max 5 MB</p>
                     </div>
                   )}
                 </div>

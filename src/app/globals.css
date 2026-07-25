@@ -740,15 +740,204 @@ h6 {
   transition: top 0.15s linear;
 }
 
+/* ── Typography (Prose & Editor) Styles for Rich Text & Content ────────────── */
+/* Wrapped in @layer utilities so these rules are placed AFTER Tailwind's
+   preflight/base resets, guaranteeing our list + blockquote styles win. */
+@layer utilities {
+  .prose,
+  .tiptap,
+  .ProseMirror {
+    color: var(--foreground);
+    line-height: 1.85;
+  }
+
+  .prose p,
+  .tiptap p,
+  .ProseMirror p {
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+    text-align: left;
+  }
+
+  .prose h2,
+  .tiptap h2,
+  .ProseMirror h2 {
+    font-size: 1.65em;
+    margin-top: 2em;
+    margin-bottom: 0.75em;
+    line-height: 1.3;
+    font-weight: 800;
+    font-family: var(--font-serif), ui-serif, Georgia, serif;
+    color: var(--foreground);
+  }
+
+  .prose h3,
+  .tiptap h3,
+  .ProseMirror h3 {
+    font-size: 1.3em;
+    margin-top: 1.6em;
+    margin-bottom: 0.6em;
+    line-height: 1.4;
+    font-weight: 700;
+    font-family: var(--font-serif), ui-serif, Georgia, serif;
+    color: var(--foreground);
+  }
+
+  /* ── Lists: forcefully override Tailwind preflight reset ── */
+  .prose ul,
+  .tiptap ul,
+  .ProseMirror ul {
+    list-style-type: disc !important;
+    padding-left: 1.75rem !important;
+    margin-top: 1.25em !important;
+    margin-bottom: 1.25em !important;
+  }
+
+  .prose ol,
+  .tiptap ol,
+  .ProseMirror ol {
+    list-style-type: decimal !important;
+    padding-left: 1.75rem !important;
+    margin-top: 1.25em !important;
+    margin-bottom: 1.25em !important;
+  }
+
+  .prose li,
+  .tiptap li,
+  .ProseMirror li {
+    margin-top: 0.4em !important;
+    margin-bottom: 0.4em !important;
+    display: list-item !important;
+    padding-left: 0.25rem !important;
+  }
+
+  .prose ul > li::marker,
+  .tiptap ul > li::marker,
+  .ProseMirror ul > li::marker {
+    color: var(--muted-gold) !important;
+  }
+
+  .prose ol > li::marker,
+  .tiptap ol > li::marker,
+  .ProseMirror ol > li::marker {
+    color: var(--muted-gold) !important;
+    font-weight: 700 !important;
+  }
+
+  /* ── Blockquote ── */
+  .prose blockquote,
+  .tiptap blockquote,
+  .ProseMirror blockquote {
+    font-weight: 500 !important;
+    font-style: italic !important;
+    color: var(--foreground) !important;
+    border-left: 4px solid var(--muted-gold) !important;
+    margin-top: 1.75em !important;
+    margin-bottom: 1.75em !important;
+    padding: 0.75rem 1.25rem !important;
+    background: var(--muted) !important;
+    border-radius: 0 0.5rem 0.5rem 0 !important;
+  }
+
+  .prose a,
+  .tiptap a,
+  .ProseMirror a {
+    color: var(--ink-accent) !important;
+    text-decoration: underline !important;
+    text-underline-offset: 4px !important;
+    font-weight: 600 !important;
+  }
+
+  .prose strong,
+  .tiptap strong,
+  .ProseMirror strong {
+    font-weight: 700 !important;
+  }
+}
+
+/* ── VS Code Dark Theme for Code Blocks ───────────────────────────────────── */
+/* Outside @layer so !important always wins over any other rule */
+.prose pre,
+.tiptap pre,
+.ProseMirror pre {
+  background-color: #1e1e1e !important;
+  color: #d4d4d4 !important;
+  border: 1px solid #2d2d2d !important;
+  border-radius: 0.75rem !important;
+  padding: 2.5rem 1.5rem 1.25rem 1.5rem !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace !important;
+  font-size: 0.875rem !important;
+  line-height: 1.6 !important;
+  overflow-x: auto !important;
+  position: relative !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4) !important;
+  margin: 1.75em 0 !important;
+}
+
+/* Mac window dots bar via ::before */
+.prose pre::before,
+.tiptap pre::before,
+.ProseMirror pre::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 0.75rem !important;
+  left: 1rem !important;
+  display: flex !important;
+  gap: 6px !important;
+  height: 12px !important;
+  width: 52px !important;
+  background: radial-gradient(circle at center, #ff5f56 0 4px, transparent 4px),
+              radial-gradient(circle at center, #ffbd2e 0 4px, transparent 4px),
+              radial-gradient(circle at center, #27c93f 0 4px, transparent 4px);
+  background-size: 12px 12px;
+  background-position: 0 0, 18px 0, 36px 0;
+  background-repeat: no-repeat;
+  opacity: 0.9 !important;
+}
+
+/* Syntax Highlighting Colors — VS Code Dark palette */
+.prose pre code,
+.tiptap pre code,
+.ProseMirror pre code {
+  color: #d4d4d4 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  font-family: inherit !important;
+}
+
+.hljs-keyword, .token.keyword { color: #569cd6 !important; font-weight: 600 !important; }
+.hljs-string, .token.string { color: #ce9178 !important; }
+.hljs-number, .token.number { color: #b5cea8 !important; }
+.hljs-comment, .token.comment { color: #6a9955 !important; font-style: italic !important; }
+.hljs-function, .hljs-title.function_, .token.function { color: #dcdcaa !important; }
+.hljs-variable, .token.variable { color: #9cdcfe !important; }
+.hljs-attr, .token.attr-name { color: #9cdcfe !important; }
+.hljs-tag, .token.tag { color: #569cd6 !important; }
+.hljs-operator, .token.operator { color: #d4d4d4 !important; }
+.hljs-title { color: #4ec9b0 !important; }
+.hljs-params { color: #9cdcfe !important; }
+.hljs-built_in { color: #4ec9b0 !important; }
+.hljs-literal { color: #569cd6 !important; }
+
+/* Inline code (outside a pre block) */
+:not(pre) > code {
+  background-color: var(--muted) !important;
+  color: var(--foreground) !important;
+  padding: 0.2em 0.45em !important;
+  border-radius: 0.25rem !important;
+  font-size: 0.875em !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+}
+
 /* ── Article & Editor Image Max Dimensions ──────────────────────────────── */
 .prose img,
-.tiptap img {
-  max-height: 480px !important;
-  width: auto !important;
-  height: auto !important;
-  object-fit: contain !important;
-  margin-left: auto;
-  margin-right: auto;
+.tiptap img,
+.ProseMirror img {
+  width: 100% !important;
+  max-height: 600px !important;
+  object-fit: cover !important;
+  object-position: center;
+  margin: 2em 0;
   border-radius: 0.75rem;
 }
 

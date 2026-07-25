@@ -76,21 +76,22 @@ export default async function ArticlePreviewPage({ params }: ArticlePreviewPageP
       </div>
 
       {/* Main Article Render */}
-      <main className="py-12 px-4 sm:px-6 lg:px-8">
-        <article className="max-w-4xl mx-auto space-y-12">
+      <main className="py-10 px-4 sm:px-6 lg:px-8">
+        <article className="max-w-4xl mx-auto space-y-8">
           {/* Header */}
-          <header className="space-y-6 text-center">
+          <header className="space-y-4 text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted-gold/10 text-muted-gold text-xs font-bold uppercase tracking-wider">
               {article.category}
             </div>
-            <h1 className="text-4xl sm:text-5xl font-serif font-black text-foreground tracking-tight leading-tight">
+            <h1 className="text-3xl sm:text-5xl font-serif font-black text-foreground tracking-tight leading-tight">
               {article.title}
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto italic">
-              {article.excerpt}
-            </p>
 
-            <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground pt-2">
+            <div className="flex items-center gap-3 text-xs text-muted-foreground pt-1">
+              <span className="flex items-center gap-1 font-semibold text-foreground">
+                Vanessa
+              </span>
+              <span>•</span>
               <span className="flex items-center gap-1">
                 <Calendar className="h-3.5 w-3.5" /> {formattedDate}
               </span>
@@ -101,7 +102,7 @@ export default async function ArticlePreviewPage({ params }: ArticlePreviewPageP
             </div>
 
             {article.cover_image && (
-              <div className="aspect-video w-full relative rounded-2xl overflow-hidden bg-muted max-w-4xl mx-auto border border-border shadow-lg">
+              <div className="aspect-[21/9] w-full relative rounded-2xl overflow-hidden bg-muted max-w-4xl mx-auto border border-border shadow-lg mt-6">
                 <img
                   src={article.cover_image}
                   alt={article.title}
@@ -112,9 +113,17 @@ export default async function ArticlePreviewPage({ params }: ArticlePreviewPageP
           </header>
 
           {/* Content Body */}
-          <div className="max-w-3xl mx-auto prose prose-lg dark:prose-invert text-foreground">
-            {/* biome-ignore lint/security/noDangerouslySetInnerHtml: Trusted admin preview */}
-            <div dangerouslySetInnerHTML={{ __html: article.content }} />
+          <div className="max-w-[680px] mx-auto pt-6 pb-12">
+            {/* Excerpt — left-aligned lead paragraph, blends naturally into body */}
+            <p className="text-xl sm:text-2xl font-serif leading-relaxed text-foreground/75 text-left mb-10 pb-8 border-b border-border/50">
+              {article.excerpt}
+            </p>
+
+            <div
+              className="prose text-foreground"
+              // biome-ignore lint/security/noDangerouslySetInnerHtml: Trusted admin preview
+              dangerouslySetInnerHTML={{ __html: article.content }}
+            />
           </div>
 
           {/* Tags */}

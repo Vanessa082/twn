@@ -7,7 +7,7 @@ import ImageWithSkeleton from "@/components/ui/ImageWithSkeleton";
 import { getArticleBySlug } from "@/lib/services/articles";
 import { getApprovedMarginNotesForArticle } from "@/lib/services/margin-notes";
 import { getRelatedArticles, getTagsForArticle } from "@/lib/services/tags";
-import { Calendar, Clock, Tag as TagIcon } from "lucide-react";
+import { Tag as TagIcon } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
@@ -82,62 +82,49 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
 
       <article className="flex-1">
         {/* ── Article Header ─────────────────────────────────────────────── */}
-        <div className="border-b border-border">
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-12 pb-14 sm:pt-20 sm:pb-20">
-            {/* Publication byline — Medium-style context, not a back button */}
-            <div className="flex items-center gap-2 mb-10">
-              <Link
-                href="/"
-                className="font-serif font-black text-sm tracking-[0.1em] text-foreground hover:opacity-70 transition-opacity"
-              >
-                TWN
-              </Link>
-              <span className="text-border select-none">/</span>
-              <Link
-                href="/articles"
-                className="text-xs font-semibold uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {article.category}
-              </Link>
-            </div>
+        <div className="max-w-[680px] mx-auto px-4 sm:px-6 pt-12 pb-8 sm:pt-20 sm:pb-10">
+          {/* Publication breadcrumb */}
+          <div className="flex items-center gap-2 mb-8">
+            <Link
+              href="/"
+              className="font-serif font-black text-sm tracking-[0.1em] text-foreground hover:opacity-70 transition-opacity"
+            >
+              TWN
+            </Link>
+            <span className="text-border select-none">/</span>
+            <Link
+              href="/articles"
+              className="text-xs font-semibold uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {article.category}
+            </Link>
+          </div>
 
-            {/* Category + Meta row */}
-            <div className="flex flex-wrap items-center gap-3 mb-7">
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <Calendar className="h-3 w-3" />
+          {/* Title */}
+          <h1 className="text-4xl sm:text-5xl font-serif font-black tracking-tight leading-[1.1] text-foreground mb-6">
+            {article.title}
+          </h1>
+
+          {/* Author meta row — Medium style */}
+          <div className="flex items-center gap-3 border-t border-b border-border py-4 mt-6">
+            {/* Avatar placeholder */}
+            <div className="h-10 w-10 rounded-full bg-foreground/10 flex items-center justify-center shrink-0 text-sm font-black font-serif text-foreground/50 select-none">
+              V
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-foreground">Vanessa</p>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <span>{formatDate(article.published_at)}</span>
-              </div>
-              <span className="text-border select-none">·</span>
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <Clock className="h-3 w-3" />
+                <span>·</span>
                 <span>{t("readingTime", { minutes: article.reading_time || 1 })}</span>
               </div>
-            </div>
-
-            {/* Title */}
-            <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-serif font-black tracking-tight leading-[1.08] text-foreground mb-8">
-              {article.title}
-            </h1>
-
-            {/* Pull Quote — large decorative quote mark + bold 3px bar */}
-            <div className="relative my-10 pl-6 sm:pl-8">
-              <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-foreground rounded-full" />
-              <span
-                className="absolute -top-5 left-4 font-serif text-8xl leading-none text-foreground/6 select-none pointer-events-none"
-                aria-hidden="true"
-              >
-                &ldquo;
-              </span>
-              <p className="text-lg sm:text-xl font-serif leading-relaxed text-foreground/75 italic relative z-10">
-                {article.excerpt}
-              </p>
             </div>
           </div>
         </div>
 
-        {/* ── Hero Cover Image ────────────────────────────────────────────── */}
+        {/* ── Hero Cover Image — full bleed, like Medium ─────────────────── */}
         {article.cover_image && (
-          <div className="max-w-5xl mx-auto px-0 sm:px-6 mb-0">
+          <div className="w-full max-w-5xl mx-auto mb-0 px-0 sm:px-6">
             <div className="relative aspect-[16/8] w-full overflow-hidden sm:rounded-[var(--radius)] bg-muted">
               <ImageWithSkeleton
                 src={article.cover_image}
@@ -156,7 +143,12 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
             Max width 680px mirrors Medium's reading line length.
             Prose styles below handle all HTML content formatting.
         ── */}
-        <div className="max-w-[680px] mx-auto px-4 sm:px-6 py-14 sm:py-20">
+        <div className="max-w-[680px] mx-auto px-4 sm:px-6 pt-10 sm:pt-14 pb-14 sm:pb-20">
+          {/* Excerpt — lead paragraph style, blends naturally into body */}
+          <p className="text-xl sm:text-2xl font-serif leading-relaxed text-foreground/75 text-left mb-10 pb-8 border-b border-border/50">
+            {article.excerpt}
+          </p>
+
           <div
             className={[
               /* Base reading styles */
