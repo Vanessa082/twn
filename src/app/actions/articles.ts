@@ -9,7 +9,7 @@ import {
 } from "@/lib/services/articles";
 import { recordAuditLog } from "@/platform/audit/audit-log";
 import { createRevision, getRevisionById } from "@/lib/services/revisions";
-import { broadcastNewArticle } from "@/lib/services/subscribers";
+import { broadcastNewArticle } from "@/modules/newsletter";
 import { createArticleSchema, updateArticleSchema } from "@/lib/validation/schemas";
 import type { CreateArticleInput, UpdateArticleInput } from "@/types";
 import { revalidatePath } from "next/cache";

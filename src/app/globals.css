@@ -905,22 +905,82 @@ h6 {
   font-family: inherit !important;
 }
 
-.hljs-keyword, .token.keyword { color: #569cd6 !important; font-weight: 600 !important; }
-.hljs-string, .token.string { color: #ce9178 !important; }
-.hljs-number, .token.number { color: #b5cea8 !important; }
-.hljs-comment, .token.comment { color: #6a9955 !important; font-style: italic !important; }
-.hljs-function, .hljs-title.function_, .token.function { color: #dcdcaa !important; }
-.hljs-variable, .token.variable { color: #9cdcfe !important; }
-.hljs-attr, .token.attr-name { color: #9cdcfe !important; }
-.hljs-tag, .token.tag { color: #569cd6 !important; }
-.hljs-operator, .token.operator { color: #d4d4d4 !important; }
-.hljs-title { color: #4ec9b0 !important; }
-.hljs-params { color: #9cdcfe !important; }
+/* ── Lowlight / Highlight.js Token Colors (VS Code Dark+ Palette) ── */
+/* lowlight outputs <span class="hljs-*"> elements inside <code>         */
+/* Every color below maps 1:1 to VS Code Dark+ token semantics          */
+
+/* Keywords: if, def, const, return, import, class, function...  */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-tag { color: #569cd6 !important; font-weight: 600 !important; }
+
+/* Strings: "hello", 'world', `template` */
+.hljs-string,
+.hljs-attr,
+.hljs-attribute { color: #ce9178 !important; }
+
+/* Numbers: 42, 3.14, 0xFF */
+.hljs-number { color: #b5cea8 !important; }
+
+/* Comments: code comments starting with // or # */
+.hljs-comment { color: #6a9955 !important; font-style: italic !important; }
+
+/* Functions & methods */
+.hljs-title,
+.hljs-title.function_,
+.hljs-title.class_ { color: #dcdcaa !important; }
+
+/* Class names / Types */
+.hljs-type,
+.hljs-class .hljs-title,
 .hljs-built_in { color: #4ec9b0 !important; }
+
+/* Variables & params */
+.hljs-variable,
+.hljs-params,
+.hljs-name { color: #9cdcfe !important; }
+
+/* Operators: +, -, *, =, => */
+.hljs-operator,
+.hljs-punctuation { color: #d4d4d4 !important; }
+
+/* Literals: true, false, null, None, undefined */
 .hljs-literal { color: #569cd6 !important; }
 
+/* Regular expressions */
+.hljs-regexp { color: #d16969 !important; }
+
+/* Deleted / Added lines (diffs) */
+.hljs-deletion { color: #f44747 !important; }
+.hljs-addition { color: #6a9955 !important; }
+
+/* Meta: decorators, preprocessor, shebangs (#!) */
+.hljs-meta,
+.hljs-meta .hljs-string { color: #9cdcfe !important; }
+
+/* Sections: markdown headings, CSS selectors */
+.hljs-section,
+.hljs-selector-class,
+.hljs-selector-id { color: #dcdcaa !important; }
+
+/* CSS property values, links */
+.hljs-selector-pseudo,
+.hljs-link { color: #ce9178 !important; }
+
+/* Template tags: {{ var }}, {% block %} */
+.hljs-subst { color: #d4d4d4 !important; }
+
+/* HTML tag attributes */
+.hljs-attr { color: #9cdcfe !important; }
+
+/* Symbols / characters */
+.hljs-symbol,
+.hljs-bullet { color: #b5cea8 !important; }
+
 /* Inline code (outside a pre block) */
-:not(pre) > code {
+:not(pre) > code,
+.article-content :not(pre) > code,
+.prose :not(pre) > code {
   background-color: var(--muted) !important;
   color: var(--foreground) !important;
   padding: 0.2em 0.45em !important;
@@ -929,7 +989,17 @@ h6 {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
 }
 
+/* Ensure code inside pre blocks never inherits inline code background */
+pre code,
+.article-content pre code,
+.prose pre code {
+  background-color: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+
 /* ── Article & Editor Image Max Dimensions ──────────────────────────────── */
+.article-content img,
 .prose img,
 .tiptap img,
 .ProseMirror img {
@@ -939,6 +1009,135 @@ h6 {
   object-position: center;
   margin: 2em 0;
   border-radius: 0.75rem;
+}
+
+/* ── Table Styles — Editor & Reading View ──────────────────────────────── */
+.article-content table,
+.prose table,
+.tiptap table,
+.ProseMirror table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  margin: 1.5em 0 !important;
+  font-size: 0.875rem;
+  overflow: hidden;
+  border: 1px solid #000000 !important;
+}
+
+.dark .article-content table,
+.dark .prose table,
+.dark .tiptap table,
+.dark .ProseMirror table {
+  border: 1px solid #475569 !important;
+}
+
+.article-content th,
+.prose th,
+.tiptap th,
+.ProseMirror th {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+  font-weight: 700 !important;
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif !important;
+  font-size: 0.875rem !important;
+  padding: 0.65rem 0.85rem !important;
+  border: 1px solid #000000 !important;
+  text-align: left !important;
+}
+
+.dark .article-content th,
+.dark .prose th,
+.dark .tiptap th,
+.dark .ProseMirror th {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border: 1px solid #475569 !important;
+}
+
+.article-content td,
+.prose td,
+.tiptap td,
+.ProseMirror td {
+  padding: 0.65rem 0.85rem !important;
+  border: 1px solid #000000 !important;
+  vertical-align: top;
+  line-height: 1.5;
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif !important;
+  font-size: 0.875rem !important;
+}
+
+.dark .article-content td,
+.dark .prose td,
+.dark .tiptap td,
+.dark .ProseMirror td {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border: 1px solid #475569 !important;
+}
+
+.article-content td p,
+.prose td p,
+.tiptap td p,
+.ProseMirror td p,
+.article-content th p,
+.prose th p,
+.tiptap th p,
+.ProseMirror th p {
+  margin: 0 !important;
+  min-height: 1.25rem;
+}
+
+/* Row hover */
+.article-content tbody tr:hover td,
+.prose tbody tr:hover td,
+.tiptap tbody tr:hover td,
+.ProseMirror tbody tr:hover td {
+  background-color: #f8fafc !important;
+  transition: background-color 0.15s ease;
+}
+
+.dark .article-content tbody tr:hover td,
+.dark .prose tbody tr:hover td,
+.dark .tiptap tbody tr:hover td,
+.dark .ProseMirror tbody tr:hover td {
+  background-color: #1e293b !important;
+}
+
+/* Selected cell highlight inside Tiptap editor */
+.tiptap .selectedCell,
+.ProseMirror .selectedCell {
+  background-color: color-mix(in srgb, var(--muted-gold) 15%, transparent) !important;
+}
+
+/* Tiptap column resize handle */
+.tiptap .column-resize-handle,
+.ProseMirror .column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: var(--muted-gold);
+  opacity: 0;
+  cursor: col-resize;
+  transition: opacity 0.2s;
+}
+.tiptap th:hover .column-resize-handle,
+.ProseMirror th:hover .column-resize-handle,
+.tiptap td:hover .column-resize-handle,
+.ProseMirror td:hover .column-resize-handle {
+  opacity: 0.5;
+}
+
+/* Prevent overflow on narrow screens */
+.article-content .tableWrapper,
+.prose .tableWrapper,
+.tiptap .tableWrapper,
+.ProseMirror .tableWrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ── Reduced Motion Overrides ─────────────────────────────────────────────────

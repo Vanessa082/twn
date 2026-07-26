@@ -1,9 +1,11 @@
 import RelatedArticles from "@/components/article/RelatedArticles";
+import { InlineActionBar } from "@/components/articles/ArticleEngagement";
 import NewsletterSection from "@/components/home/NewsletterSection";
+import { ArticleRenderer } from "@/components/article/ArticleRenderer";
 import { getArticleByIdAdmin } from "@/lib/services/articles";
-import { getApprovedMarginNotesForArticle } from "@/lib/services/margin-notes";
+import { getApprovedMarginNotesForArticle } from "@/modules/community";
 import { getRelatedArticles, getTagsForArticle } from "@/lib/services/tags";
-import { ArrowLeft, Calendar, Clock, Edit2, ShieldAlert, Tag as TagIcon } from "lucide-react";
+import { ArrowLeft, Edit2, ShieldAlert, Tag as TagIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -17,13 +19,6 @@ export const metadata = {
 
 export const dynamic = "force-dynamic";
 
-/**
- * ArticlePreviewPage
- *
- * Renders an unpublished draft or scheduled article with full fidelity to the
- * public article detail page (`/articles/[slug]`). Uses `getArticleByIdAdmin` to bypass
- * the `status = 'published'` RLS policy.
- */
 export default async function ArticlePreviewPage({ params }: ArticlePreviewPageProps) {
   const { id } = await params;
   const article = await getArticleByIdAdmin(id);
@@ -40,11 +35,11 @@ export default async function ArticlePreviewPage({ params }: ArticlePreviewPageP
 
   const formattedDate = article.published_at
     ? new Date(article.published_at).toLocaleDateString("en-US", {
-        month: "long",
+        month: "short",
         day: "numeric",
         year: "numeric",
       })
-    : "Draft (Not Published)";
+    : "Draft (Unpublished)";
 
   return (
     <div className="min-h-screen bg-background">
@@ -75,82 +70,103 @@ export default async function ArticlePreviewPage({ params }: ArticlePreviewPageP
         </div>
       </div>
 
-      {/* Main Article Render */}
-      <main className="py-10 px-4 sm:px-6 lg:px-8">
-        <article className="max-w-4xl mx-auto space-y-8">
-          {/* Header */}
-          <header className="space-y-4 text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted-gold/10 text-muted-gold text-xs font-bold uppercase tracking-wider">
-              {article.category}
+      {/* Main Article Render (Medium-identical Layout) */}
+      <main className="py-10">
+        <article>
+          {/* Header Block */}
+          <div className="max-w-[680px] mx-auto px-4 sm:px-6 pt-4 pb-4">
+            <div className="flex items-center gap-2 mb-6">
+              <span className="font-serif font-black text-sm tracking-[0.1em] text-foreground">
+                TWN
+              </span>
+              <span className="text-border select-none">/</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-muted-gold">
+                {article.category}
+              </span>
             </div>
-            <h1 className="text-3xl sm:text-5xl font-serif font-black text-foreground tracking-tight leading-tight">
+
+            <h1 className="text-3xl sm:text-5xl font-serif font-black tracking-tight leading-[1.15] text-foreground mb-4">
               {article.title}
             </h1>
 
-            <div className="flex items-center gap-3 text-xs text-muted-foreground pt-1">
-              <span className="flex items-center gap-1 font-semibold text-foreground">
-                Vanessa
-              </span>
-              <span>•</span>
-              <span className="flex items-center gap-1">
-                <Calendar className="h-3.5 w-3.5" /> {formattedDate}
-              </span>
-              <span>•</span>
-              <span className="flex items-center gap-1">
-                <Clock className="h-3.5 w-3.5" /> {article.reading_time || 5} min read
-              </span>
+            {article.excerpt && (
+              <p className="text-xl sm:text-2xl font-serif text-muted-foreground leading-relaxed text-left mb-6">
+                {article.excerpt}
+              </p>
+            )}
+
+            <div className="flex items-center gap-3.5 pt-2">
+              <div className="h-11 w-11 rounded-full bg-foreground/10 flex items-center justify-center shrink-0 text-sm font-black font-serif text-foreground/70 select-none">
+                V
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-semibold text-foreground">Vanessa</p>
+                  <span className="text-xs text-muted-gold font-medium">• Author</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
+                  <span>{article.reading_time || 1} min read</span>
+                  <span>·</span>
+                  <span>{formattedDate}</span>
+                </div>
+              </div>
             </div>
 
-            {article.cover_image && (
-              <div className="aspect-[21/9] w-full relative rounded-2xl overflow-hidden bg-muted max-w-4xl mx-auto border border-border shadow-lg mt-6">
+            <InlineActionBar
+              slug={article.slug}
+              title={article.title}
+              initialLikesCount={article.likes_count ?? 0}
+            />
+          </div>
+
+          {/* Cover Image */}
+          {article.cover_image && (
+            <div className="w-full max-w-[680px] mx-auto mb-10 px-4 sm:px-6">
+              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-muted border border-border/40 shadow-sm">
                 <img
                   src={article.cover_image}
                   alt={article.title}
                   className="object-cover w-full h-full"
                 />
               </div>
-            )}
-          </header>
+            </div>
+          )}
 
           {/* Content Body */}
-          <div className="max-w-[680px] mx-auto pt-6 pb-12">
-            {/* Excerpt — left-aligned lead paragraph, blends naturally into body */}
-            <p className="text-xl sm:text-2xl font-serif leading-relaxed text-foreground/75 text-left mb-10 pb-8 border-b border-border/50">
-              {article.excerpt}
-            </p>
-
-            <div
-              className="prose text-foreground"
-              // biome-ignore lint/security/noDangerouslySetInnerHtml: Trusted admin preview
-              dangerouslySetInnerHTML={{ __html: article.content }}
+          <div className="max-w-[680px] mx-auto px-4 sm:px-6 pb-14 sm:pb-20">
+            <ArticleRenderer
+              className="prose article-content text-foreground"
+              html={article.content}
             />
-          </div>
 
-          {/* Tags */}
-          {tags.length > 0 && (
-            <div className="max-w-3xl mx-auto border-t border-border pt-6">
-              <div className="flex items-center gap-2 flex-wrap">
-                <TagIcon className="h-4 w-4 text-muted-gold" />
+            <InlineActionBar
+              slug={article.slug}
+              title={article.title}
+              initialLikesCount={article.likes_count ?? 0}
+            />
+
+            {tags.length > 0 && (
+              <div className="pt-6 flex flex-wrap items-center gap-2 border-t border-border mt-8">
+                <TagIcon className="h-3.5 w-3.5 text-muted-gold shrink-0" />
                 {tags.map((tag) => (
                   <span
                     key={tag.id}
-                    className="px-2.5 py-1 rounded-full bg-muted text-foreground text-xs font-medium"
+                    className="px-2.5 py-1 rounded-md bg-muted/50 text-foreground/80 text-xs font-medium border border-border/60"
                   >
                     #{tag.name}
                   </span>
                 ))}
               </div>
-            </div>
-          )}
+            )}
+          </div>
 
-          {/* Related Articles */}
+          {/* Related & Newsletter */}
           {relatedArticles.length > 0 && (
             <div className="max-w-4xl mx-auto border-t border-border pt-12">
               <RelatedArticles articles={relatedArticles} />
             </div>
           )}
 
-          {/* Newsletter Section */}
           <div className="max-w-3xl mx-auto pt-12 border-t border-border">
             <NewsletterSection />
           </div>

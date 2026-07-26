@@ -7,7 +7,7 @@ import {
   createEntryAdmin,
   deleteEntryAdmin,
   updateEntryAdmin,
-} from "@/lib/services/notebook-entries";
+} from "@/modules/notebook";
 import { createNotebookEntrySchema, updateNotebookEntrySchema } from "@/lib/validation/schemas";
 import type { NotebookEntry } from "@/types";
 import { revalidatePath } from "next/cache";

@@ -12,7 +12,7 @@ import {
   deleteSharedPageAdmin,
   submitSharedPage,
   updateSharedPageStatusAdmin,
-} from "@/lib/services/shared-pages";
+} from "@/modules/community";
 import { buildSharedPageSlug } from "@/lib/utils/shared-page-slug";
 import { submitSharedPageSchema } from "@/lib/validation/schemas";
 import type { ModerationStatus } from "@/types";

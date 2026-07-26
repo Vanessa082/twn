@@ -6,8 +6,8 @@ import NewsletterSection from "@/components/home/NewsletterSection";
 import SharedPagesSection from "@/components/home/SharedPagesSection";
 import TodaysPage from "@/components/home/TodaysPage";
 import { getLatestArticles } from "@/lib/services/articles";
-import { getTodaysEntry } from "@/lib/services/notebook-entries";
-import { getApprovedSharedPages } from "@/lib/services/shared-pages";
+import { getTodaysEntry } from "@/modules/notebook";
+import { getApprovedSharedPages } from "@/modules/community";
 
 export const revalidate = 60; // ISR
 

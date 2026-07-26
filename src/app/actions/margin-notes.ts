@@ -13,7 +13,7 @@ import {
   submitMarginNote,
   updateMarginNotePinAdmin,
   updateMarginNoteStatusAdmin,
-} from "@/lib/services/margin-notes";
+} from "@/modules/community";
 import { submitMarginNoteSchema } from "@/lib/validation/schemas";
 import type { ModerationStatus } from "@/types";
 import { revalidatePath } from "next/cache";

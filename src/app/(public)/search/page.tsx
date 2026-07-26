@@ -1,8 +1,8 @@
 import SearchClient from "@/components/search/SearchClient";
 import { getLatestArticles } from "@/lib/services/articles";
 import { getPublicCollections } from "@/lib/services/collections";
-import { getAllActiveEntries } from "@/lib/services/notebook-entries";
-import { getApprovedSharedPages } from "@/lib/services/shared-pages";
+import { getAllActiveEntries } from "@/modules/notebook";
+import { getApprovedSharedPages } from "@/modules/community";
 import { getTranslations } from "next-intl/server";
 
 export const metadata = {

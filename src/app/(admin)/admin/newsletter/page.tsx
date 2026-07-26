@@ -1,5 +1,5 @@
 import AdminNewsletterList from "@/components/admin/AdminNewsletterList";
-import { getAllSubscribersAdmin } from "@/lib/services/subscribers";
+import { listSubscribersAdmin } from "@/modules/newsletter";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminNewsletterPage() {
   // 1. Fetch all subscribers
-  const subscribers = await getAllSubscribersAdmin();
+  const subscribers = await listSubscribersAdmin();
 
   return (
     <div className="py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

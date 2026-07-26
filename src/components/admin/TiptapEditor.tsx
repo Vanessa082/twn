@@ -1,18 +1,27 @@
 "use client";
 
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
+import { Table } from "@tiptap/extension-table";
+import TableCell from "@tiptap/extension-table-cell";
+import TableHeader from "@tiptap/extension-table-header";
+import TableRow from "@tiptap/extension-table-row";
 import {
   EditorContent,
+  NodeViewContent,
   NodeViewWrapper,
   ReactNodeViewRenderer,
   useEditor,
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { common, createLowlight } from "lowlight";
 import {
   Bold,
+  Check,
   Code,
+  Copy,
   Heading2,
   Heading3,
   Image as ImageIcon,
@@ -24,11 +33,121 @@ import {
   Minus,
   Quote,
   Strikethrough,
+  Table as TableIcon,
   Terminal,
   Trash2,
   Unlink,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+// ── Lowlight instance with all common languages ───────────────────────────────
+const lowlight = createLowlight(common);
+
+// ── Code Block NodeView ───────────────────────────────────────────────────────
+// Renders a VS Code-style code block with:
+//   · Language label (top-left) — auto-detected by lowlight or manually set
+//   · Copy-to-clipboard button (top-right)
+//   · Real syntax-highlighted code via NodeViewContent
+// biome-ignore lint/suspicious/noExplicitAny: Tiptap NodeViewRendererProps
+function CodeBlockNodeView({ node, updateAttributes, extension }: any) {
+  const [copied, setCopied] = useState(false);
+  const language = node.attrs.language || "plaintext";
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(node.textContent).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  return (
+    <NodeViewWrapper className="relative my-6 group/codeblock">
+      {/* VS Code-style header bar */}
+      <div
+        style={{ background: "#1a1a1a" }}
+        className="flex items-center justify-between px-4 py-2 rounded-t-xl border border-b-0 border-[#2d2d2d] select-none"
+      >
+        {/* Language selector — click to change */}
+        <select
+          value={language}
+          onChange={(e) => updateAttributes({ language: e.target.value })}
+          style={{
+            background: "transparent",
+            color: "#858585",
+            fontSize: "0.72rem",
+            fontFamily: "ui-monospace, monospace",
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+            border: "none",
+            outline: "none",
+            cursor: "pointer",
+            appearance: "none",
+          }}
+        >
+          {[
+            "plaintext", "javascript", "typescript", "python", "bash",
+            "shell", "css", "html", "json", "markdown", "sql", "rust",
+            "go", "java", "c", "cpp", "csharp", "php", "ruby", "swift",
+            "kotlin", "yaml", "xml", "graphql",
+          ].map((lang) => (
+            <option key={lang} value={lang} style={{ background: "#1a1a1a", color: "#ccc" }}>
+              {lang}
+            </option>
+          ))}
+        </select>
+
+        {/* Mac window dots */}
+        <span
+          style={{ display: "flex", gap: "6px", position: "absolute", left: "50%", transform: "translateX(-50%)" }}
+        >
+          <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#ff5f56" }} />
+          <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#ffbd2e" }} />
+          <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#27c93f" }} />
+        </span>
+
+        {/* Copy button */}
+        <button
+          type="button"
+          onClick={handleCopy}
+          style={{ background: "transparent", border: "none", cursor: "pointer", padding: "2px" }}
+          title="Copy code"
+        >
+          {copied ? (
+            <Check style={{ width: 14, height: 14, color: "#27c93f" }} />
+          ) : (
+            <Copy style={{ width: 14, height: 14, color: "#858585" }} />
+          )}
+        </button>
+      </div>
+
+      {/* Code content — lowlight injects syntax colour classes */}
+      <pre
+        style={{
+          background: "#1e1e1e",
+          borderRadius: "0 0 0.75rem 0.75rem",
+          border: "1px solid #2d2d2d",
+          borderTop: "none",
+          margin: 0,
+          padding: "1.1rem 1.4rem 1.25rem",
+          overflowX: "auto",
+          boxShadow: "0 10px 25px -5px rgba(0,0,0,0.4)",
+        }}
+      >
+        <NodeViewContent
+          as="div"
+          style={{
+            fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+            fontSize: "0.875rem",
+            lineHeight: 1.7,
+            color: "#d4d4d4",
+            display: "block",
+            whiteSpace: "pre",
+          }}
+        />
+      </pre>
+    </NodeViewWrapper>
+  );
+}
 
 // ── Image Node View ─────────────────────────────────────────────────────────
 // A React wrapper rendered around every image node in the editor.
@@ -96,9 +215,14 @@ export default function TiptapEditor({
     extensions: [
       StarterKit.configure({
         heading: { levels: [2, 3] },
-        // No custom class here — let globals.css VS Code dark theme own the <pre> styling
-        codeBlock: {},
+        // Disable StarterKit's built-in codeBlock — CodeBlockLowlight replaces it
+        codeBlock: false,
       }),
+      CodeBlockLowlight.extend({
+        addNodeView() {
+          return ReactNodeViewRenderer(CodeBlockNodeView);
+        },
+      }).configure({ lowlight }),
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
@@ -110,6 +234,10 @@ export default function TiptapEditor({
         inline: false,
         allowBase64: false,
       }),
+      Table.configure({ resizable: true }),
+      TableRow,
+      TableHeader,
+      TableCell,
       Placeholder.configure({ placeholder }),
     ],
     content,
@@ -128,6 +256,21 @@ export default function TiptapEditor({
   // Custom Modals
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
+
+  // Table menu
+  const [isTableMenuOpen, setIsTableMenuOpen] = useState(false);
+  const tableMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close table menu on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (tableMenuRef.current && !tableMenuRef.current.contains(e.target as Node)) {
+        setIsTableMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
@@ -304,6 +447,187 @@ export default function TiptapEditor({
         >
           <Minus className="h-4 w-4" />
         </button>
+
+        <div className="h-4 w-[1px] bg-border mx-1" />
+
+        {/* Table */}
+        <div className="relative" ref={tableMenuRef}>
+          <button
+            type="button"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => setIsTableMenuOpen((v) => !v)}
+            className={`p-2 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 ${
+              editor.isActive("table") ? "bg-muted-gold/20 text-foreground font-semibold shadow-sm border border-muted-gold/30" : ""
+            }`}
+            title="Table Actions"
+          >
+            <TableIcon className="h-4 w-4 text-muted-gold" />
+            <span className="text-xs font-semibold hidden sm:inline">Table</span>
+          </button>
+
+          {isTableMenuOpen && (
+            <div className="absolute top-full left-0 mt-1 z-50 bg-card border border-border rounded-xl shadow-2xl py-1.5 min-w-[210px] animate-in fade-in duration-150">
+              <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Insert Preset
+              </div>
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  editor.chain().focus().insertTable({ rows: 2, cols: 2, withHeaderRow: true }).run();
+                  setIsTableMenuOpen(false);
+                }}
+                className="w-full text-left px-4 py-1.5 text-xs text-foreground hover:bg-muted transition-colors flex items-center gap-2"
+              >
+                <TableIcon className="h-3.5 w-3.5 text-muted-gold" />
+                2 × 2 Table
+              </button>
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+                  setIsTableMenuOpen(false);
+                }}
+                className="w-full text-left px-4 py-1.5 text-xs text-foreground hover:bg-muted transition-colors flex items-center gap-2"
+              >
+                <TableIcon className="h-3.5 w-3.5 text-muted-gold" />
+                3 × 3 Table
+              </button>
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  editor.chain().focus().insertTable({ rows: 4, cols: 4, withHeaderRow: true }).run();
+                  setIsTableMenuOpen(false);
+                }}
+                className="w-full text-left px-4 py-1.5 text-xs text-foreground hover:bg-muted transition-colors flex items-center gap-2"
+              >
+                <TableIcon className="h-3.5 w-3.5 text-muted-gold" />
+                4 × 4 Table
+              </button>
+
+              <div className="my-1 border-t border-border" />
+
+              <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Rows & Columns
+              </div>
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => { editor.chain().focus().addRowAfter().run(); setIsTableMenuOpen(false); }}
+                className="w-full text-left px-4 py-1.5 text-xs text-foreground hover:bg-muted transition-colors"
+              >
+                + Add row below
+              </button>
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => { editor.chain().focus().addRowBefore().run(); setIsTableMenuOpen(false); }}
+                className="w-full text-left px-4 py-1.5 text-xs text-foreground hover:bg-muted transition-colors"
+              >
+                + Add row above
+              </button>
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => { editor.chain().focus().addColumnAfter().run(); setIsTableMenuOpen(false); }}
+                className="w-full text-left px-4 py-1.5 text-xs text-foreground hover:bg-muted transition-colors"
+              >
+                + Add column right
+              </button>
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => { editor.chain().focus().addColumnBefore().run(); setIsTableMenuOpen(false); }}
+                className="w-full text-left px-4 py-1.5 text-xs text-foreground hover:bg-muted transition-colors"
+              >
+                + Add column left
+              </button>
+
+              <div className="my-1 border-t border-border" />
+
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => { editor.chain().focus().deleteRow().run(); setIsTableMenuOpen(false); }}
+                className="w-full text-left px-4 py-1.5 text-xs text-destructive hover:bg-destructive/10 transition-colors"
+              >
+                − Delete current row
+              </button>
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => { editor.chain().focus().deleteColumn().run(); setIsTableMenuOpen(false); }}
+                className="w-full text-left px-4 py-1.5 text-xs text-destructive hover:bg-destructive/10 transition-colors"
+              >
+                − Delete current column
+              </button>
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => { editor.chain().focus().deleteTable().run(); setIsTableMenuOpen(false); }}
+                className="w-full text-left px-4 py-2 text-xs font-semibold text-destructive hover:bg-destructive/10 transition-colors flex items-center gap-1.5"
+              >
+                <Trash2 className="h-3.5 w-3.5" /> Delete Entire Table
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Table Quick Controls — Shown when focused inside a table */}
+        {editor.isActive("table") && (
+          <div className="flex items-center gap-1 bg-muted px-2 py-1 rounded-md border border-border">
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mr-1 select-none">
+              Table:
+            </span>
+            <button
+              type="button"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => editor.chain().focus().addRowAfter().run()}
+              className="px-2 py-0.5 text-xs bg-card hover:bg-muted border border-border rounded text-foreground transition-colors"
+              title="Add row below"
+            >
+              + Row
+            </button>
+            <button
+              type="button"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => editor.chain().focus().addColumnAfter().run()}
+              className="px-2 py-0.5 text-xs bg-card hover:bg-muted border border-border rounded text-foreground transition-colors"
+              title="Add column right"
+            >
+              + Col
+            </button>
+            <button
+              type="button"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => editor.chain().focus().deleteRow().run()}
+              className="px-2 py-0.5 text-xs bg-card hover:bg-destructive/20 border border-border rounded text-destructive transition-colors"
+              title="Delete row"
+            >
+              − Row
+            </button>
+            <button
+              type="button"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => editor.chain().focus().deleteColumn().run()}
+              className="px-2 py-0.5 text-xs bg-card hover:bg-destructive/20 border border-border rounded text-destructive transition-colors"
+              title="Delete column"
+            >
+              − Col
+            </button>
+            <button
+              type="button"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => editor.chain().focus().deleteTable().run()}
+              className="px-2 py-0.5 text-xs bg-destructive text-white rounded hover:bg-destructive/90 transition-colors flex items-center gap-1 font-semibold ml-1"
+              title="Delete table"
+            >
+              <Trash2 className="h-3 w-3" /> Remove Table
+            </button>
+          </div>
+        )}
 
         <div className="h-4 w-[1px] bg-border mx-1" />
 
