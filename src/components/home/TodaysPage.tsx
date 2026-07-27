@@ -24,15 +24,15 @@ export default function TodaysPage({ entry }: TodaysPageProps) {
 
   const displayDate = entry.display_date
     ? new Date(`${entry.display_date}T00:00:00`).toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      })
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    })
     : new Date().toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      });
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
 
   useEffect(() => {
     const el = sectionRef.current;

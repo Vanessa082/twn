@@ -1,7 +1,6 @@
 import RelatedArticles from "@/components/article/RelatedArticles";
 import { InlineActionBar } from "@/components/articles/ArticleEngagement";
 import NewsletterSection from "@/components/home/NewsletterSection";
-import { ArticleRenderer } from "@/components/article/ArticleRenderer";
 import { getArticleByIdAdmin } from "@/lib/services/articles";
 import { getApprovedMarginNotesForArticle } from "@/modules/community";
 import { getRelatedArticles, getTagsForArticle } from "@/lib/services/tags";
@@ -134,9 +133,10 @@ export default async function ArticlePreviewPage({ params }: ArticlePreviewPageP
 
           {/* Content Body */}
           <div className="max-w-[680px] mx-auto px-4 sm:px-6 pb-14 sm:pb-20">
-            <ArticleRenderer
-              className="prose article-content text-foreground"
-              html={article.content}
+            <div
+              className="prose text-foreground"
+              // biome-ignore lint/security/noDangerouslySetInnerHtml: Trusted admin preview
+              dangerouslySetInnerHTML={{ __html: article.content }}
             />
 
             <InlineActionBar

@@ -3,7 +3,7 @@ import FeaturedArticle from "@/components/home/FeaturedArticle";
 import Hero from "@/components/home/Hero";
 import LatestNotesSection from "@/components/home/LatestNotesSection";
 import NewsletterSection from "@/components/home/NewsletterSection";
-import SharedPagesSection from "@/components/home/SharedPagesSection";
+// import SharedPagesSection from "@/components/home/SharedPagesSection";
 import TodaysPage from "@/components/home/TodaysPage";
 import { getLatestArticles } from "@/lib/services/articles";
 import { getTodaysEntry } from "@/modules/notebook";
@@ -12,7 +12,9 @@ import { getApprovedSharedPages } from "@/modules/community";
 export const revalidate = 60; // ISR
 
 export default async function HomePage() {
-  const [articles, todaysEntry, sharedPages] = await Promise.all([
+  const [articles, todaysEntry,
+    //  sharedPages
+  ] = await Promise.all([
     getLatestArticles(7),
     getTodaysEntry(),
     getApprovedSharedPages(),
@@ -36,7 +38,7 @@ export default async function HomePage() {
       <LatestNotesSection articles={latestArticles} />
 
       {/* 5. Community Shared Pages — paper-placement cards */}
-      <SharedPagesSection initialPages={sharedPages} />
+      {/* <SharedPagesSection initialPages={sharedPages} /> */}
 
       {/* 6. Browse by Topic — icon-draw grid */}
       <BrowseByTopic />

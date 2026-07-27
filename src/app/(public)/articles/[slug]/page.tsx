@@ -4,7 +4,6 @@ import MarginNotesList from "@/components/articles/MarginNotesList";
 import ReadingProgress from "@/components/articles/ReadingProgress";
 import NewsletterSection from "@/components/home/NewsletterSection";
 import ImageWithSkeleton from "@/components/ui/ImageWithSkeleton";
-import { ArticleRenderer } from "@/components/article/ArticleRenderer";
 import { getArticleBySlug } from "@/lib/services/articles";
 import { getApprovedMarginNotesForArticle } from "@/modules/community";
 import { getRelatedArticles, getTagsForArticle } from "@/lib/services/tags";
@@ -150,9 +149,8 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
 
         {/* ── Article Body (Aligned pixel-perfectly with header) ──────────── */}
         <div className="max-w-[680px] mx-auto px-4 sm:px-6 pb-14 sm:pb-20">
-          <ArticleRenderer
+          <div
             className={[
-              "article-content",
               "text-foreground/90 leading-[1.85] text-[18px] font-sans",
               "space-y-6",
               "[&_h2]:text-2xl [&_h2]:sm:text-3xl [&_h2]:font-serif [&_h2]:font-black [&_h2]:text-foreground [&_h2]:mt-12 [&_h2]:mb-4 [&_h2]:tracking-tight",
@@ -161,13 +159,16 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
               "[&_a]:text-ink-accent [&_a]:font-semibold [&_a]:underline [&_a]:underline-offset-4 [&_a]:decoration-ink-accent/40 hover:[&_a]:decoration-ink-accent [&_a]:transition-all",
               "[&_blockquote]:border-l-[3px] [&_blockquote]:border-foreground [&_blockquote]:pl-6 [&_blockquote]:my-8 [&_blockquote]:not-italic",
               "[&_blockquote_p]:text-xl [&_blockquote_p]:sm:text-2xl [&_blockquote_p]:font-serif [&_blockquote_p]:italic [&_blockquote_p]:text-foreground [&_blockquote_p]:leading-snug",
+              "[&_code]:bg-muted [&_code]:text-foreground [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded-sm [&_code]:text-[0.85em] [&_code]:font-mono",
+              "[&_pre]:bg-card [&_pre]:border [&_pre]:border-border [&_pre]:rounded-xl [&_pre]:p-5 [&_pre]:overflow-x-auto",
               "[&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2",
               "[&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:space-y-2",
               "[&_li]:text-foreground/85",
               "[&_img]:rounded-xl [&_img]:w-full",
               "[&_hr]:border-border [&_hr]:my-10",
             ].join(" ")}
-            html={article.content}
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: Admin authored HTML
+            dangerouslySetInnerHTML={{ __html: article.content }}
           />
 
           {/* Bottom Inline Action Bar */}

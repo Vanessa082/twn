@@ -64,8 +64,7 @@ export default function MarginNoteForm({ articleId }: MarginNoteFormProps) {
         <div className="p-4 border border-emerald-500/20 bg-emerald-500/5 text-emerald-600 rounded-lg flex items-start gap-2.5 animate-fade-in">
           <CheckCircle2 className="h-4 w-4 shrink-0 mt-0.5" />
           <p className="text-xs leading-relaxed">
-            Note submitted to the margins! It will appear here once approved by TWN editors.
-          </p>
+            Thank you for your feedback          </p>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-3">
@@ -90,9 +89,8 @@ export default function MarginNoteForm({ articleId }: MarginNoteFormProps) {
                 required
               />
               <span
-                className={`absolute right-3 bottom-3 text-[9px] font-bold ${
-                  charsLeft < 15 ? "text-red-500" : "text-muted-foreground/50"
-                }`}
+                className={`absolute right-3 bottom-3 text-[9px] font-bold ${charsLeft < 15 ? "text-red-500" : "text-muted-foreground/50"
+                  }`}
               >
                 {charsLeft}
               </span>
