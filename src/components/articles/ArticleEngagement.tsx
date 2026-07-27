@@ -1,6 +1,6 @@
 "use client";
 
-import { Bookmark, Check, MessageCircle, Share2 } from "lucide-react";
+import { Bookmark, Check, HeartIcon, MessageCircle, Share2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface ArticleEngagementProps {
@@ -9,24 +9,6 @@ interface ArticleEngagementProps {
   initialLikesCount: number;
 }
 
-/** Medium-style clap hand SVG */
-export function ClapIcon({ filled, className }: { filled?: boolean; className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-      className={className}
-      fill={filled ? "currentColor" : "none"}
-      stroke="currentColor"
-      strokeWidth={1.6}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M8.5 3.5 L9 10 M11 2 L11.5 10 M13.5 3.5 L13 10" />
-      <path d="M6.5 10.5 C5.7 10.5 5 11.2 5 12 L5 15 C5 18.3 7.7 21 11 21 L13 21 C16.3 21 19 18.3 19 15 L19 13 C19 11.9 18.1 11 17 11 L16.5 11 L16 10 C15.6 9.3 14.8 9 14 9.3 L13 10 L13 3.5 C13 2.7 12.3 2 11.5 2 C10.7 2 10 2.7 10 3.5 L10 10 L9 10 L9 3.5 C9 2.7 8.3 2 7.5 2 C6.7 2 6 2.7 6 3.5 L6 10.5 L6.5 10.5 Z" />
-    </svg>
-  );
-}
 
 /**
  * InlineActionBar — Medium-style action bar that renders directly inside
@@ -105,13 +87,14 @@ export function InlineActionBar({
         <button
           type="button"
           onClick={handleLike}
-          className={`flex items-center gap-2 hover:text-foreground transition-colors group ${
-            liked ? "text-foreground font-bold" : ""
-          }`}
+          className={`flex items-center gap-2 hover:text-foreground transition-colors group ${liked ? "text-foreground font-bold" : ""
+            }`}
           title="Clap for this story"
         >
-          <ClapIcon filled={liked} className="h-5 w-5 transition-transform group-hover:scale-110" />
-          <span className="tabular-nums text-xs">{likeCount}</span>
+          <HeartIcon
+            fill={liked ? "currentColor" : "none"}
+            className="h-5 w-5 transition-transform group-hover:scale-110"
+          />          <span className="tabular-nums text-xs">{likeCount}</span>
         </button>
 
         <button
@@ -130,9 +113,8 @@ export function InlineActionBar({
         <button
           type="button"
           onClick={handleBookmark}
-          className={`hover:text-foreground transition-colors ${
-            bookmarked ? "text-foreground" : ""
-          }`}
+          className={`hover:text-foreground transition-colors ${bookmarked ? "text-foreground" : ""
+            }`}
           title={bookmarked ? "Saved" : "Save story"}
         >
           <Bookmark className={`h-5 w-5 ${bookmarked ? "fill-current" : ""}`} />
