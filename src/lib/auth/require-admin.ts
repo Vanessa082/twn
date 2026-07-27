@@ -17,8 +17,20 @@ export async function requireAdmin(): Promise<{ userId: string }> {
       throw new AdminAuthError("Unauthorized: sign in required.", 401);
     }
 
-    const user = await currentUser();
-    const role = typeof user?.publicMetadata?.role === "string" ? user.publicMetadata.role : null;
+    const claims = session.sessionClaims as Record<string, unknown> | null;
+    const metadata =
+      (claims?.metadata as Record<string, unknown> | undefined) ||
+      (claims?.publicMetadata as Record<string, unknown> | undefined);
+    let role = typeof metadata?.role === "string" ? metadata.role : null;
+
+    if (!role) {
+      try {
+        const user = await currentUser();
+        role = typeof user?.publicMetadata?.role === "string" ? user.publicMetadata.role : null;
+      } catch (err) {
+        console.warn("[requireAdmin] Notice: Clerk currentUser API call skipped/errored:", err);
+      }
+    }
 
     const allowed = isAuthorizedAdmin({
       userId,

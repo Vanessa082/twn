@@ -1,5 +1,5 @@
 import MarginNotesModerator from "@/components/admin/MarginNotesModerator";
-import { getAllMarginNotesAdmin } from "@/lib/services/margin-notes";
+import { getAllMarginNotesAdmin } from "@/modules/community";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 

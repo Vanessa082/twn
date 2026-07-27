@@ -1,5 +1,5 @@
 import SharedPagesSection from "@/components/home/SharedPagesSection";
-import { getApprovedSharedPages } from "@/lib/services/shared-pages";
+import { getApprovedSharedPages } from "@/modules/community";
 import type { Metadata } from "next";
 
 export const revalidate = 60;

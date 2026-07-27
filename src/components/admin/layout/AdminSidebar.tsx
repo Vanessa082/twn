@@ -4,9 +4,12 @@ import {
   BookOpen,
   FileText,
   Home,
+  Layers,
   LayoutDashboard,
   MessageSquare,
   Share2,
+  ShieldCheck,
+  Tag,
   Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -15,10 +18,13 @@ import { usePathname } from "next/navigation";
 export const adminNavItems = [
   { label: "Overview", href: "/admin", icon: LayoutDashboard },
   { label: "Articles", href: "/admin/articles", icon: FileText },
+  { label: "Collections", href: "/admin/collections", icon: Layers },
+  { label: "Tags", href: "/admin/tags", icon: Tag },
   { label: "Notebook", href: "/admin/content/notebook", icon: BookOpen },
   { label: "Shared Pages", href: "/admin/content/shared-pages", icon: Share2 },
   { label: "Margin Notes", href: "/admin/content/margin-notes", icon: MessageSquare },
   { label: "Subscribers", href: "/admin/newsletter", icon: Users },
+  { label: "Audit Log", href: "/admin/audit", icon: ShieldCheck },
 ];
 
 export default function AdminSidebar() {

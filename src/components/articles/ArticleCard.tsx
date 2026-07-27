@@ -1,11 +1,11 @@
 import ImageWithSkeleton from "@/components/ui/ImageWithSkeleton";
 import ScrollReveal from "@/components/ui/ScrollReveal";
-import type { Article } from "@/types";
+import type { Article, ArticleCard as ArticleCardType } from "@/types";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 
 interface ArticleCardProps {
-  article: Article;
+  article: Article | ArticleCardType;
 }
 
 export default function ArticleCard({ article }: ArticleCardProps) {

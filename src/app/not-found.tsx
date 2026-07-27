@@ -1,34 +1,45 @@
-import { HelpCircle } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { ArrowLeft, BookOpen } from "lucide-react";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Page Not Found",
+  title: "404 - Page Not Found | The Notebook of a Tech Woman",
 };
 
-export default async function NotFound() {
-  const t = await getTranslations("common");
-
+export default function NotFound() {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center py-20 px-4 text-center bg-background text-foreground transition-colors duration-300">
-      <div className="p-4 rounded-full bg-muted text-muted-foreground mb-6 animate-bounce">
-        <HelpCircle className="h-10 w-10 text-muted-gold" />
+    <div className="min-h-screen bg-background flex flex-col justify-center items-center px-4 py-16 text-center">
+      <div className="max-w-md mx-auto space-y-6">
+        <div className="p-4 rounded-full bg-muted-gold/10 text-muted-gold w-fit mx-auto">
+          <BookOpen className="h-8 w-8" />
+        </div>
+
+        <div className="space-y-2">
+          <span className="text-xs font-bold uppercase tracking-widest text-muted-gold">
+            Error 404
+          </span>
+          <h1 className="text-4xl font-serif font-black tracking-tight text-foreground sm:text-5xl">
+            Page Not Found
+          </h1>
+          <p className="text-muted-foreground text-sm leading-relaxed">
+            The note or entry you are looking for does not exist or may have been archived.
+          </p>
+        </div>
+
+        <div className="pt-4 flex items-center justify-center gap-4">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-foreground text-background font-bold text-xs uppercase tracking-wider hover:opacity-90 transition-opacity"
+          >
+            <ArrowLeft className="h-4 w-4" /> Go Back Home
+          </Link>
+          <Link
+            href="/articles"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border text-foreground font-bold text-xs uppercase tracking-wider hover:bg-muted transition-colors"
+          >
+            Browse Articles
+          </Link>
+        </div>
       </div>
-
-      <h1 className="text-4xl sm:text-5xl font-serif font-black tracking-tight text-foreground mb-4">
-        {t("notFound")}
-      </h1>
-
-      <p className="text-muted-foreground text-sm sm:text-base leading-relaxed max-w-xs sm:max-w-sm mb-8">
-        The page you are looking for does not exist, has been moved, or is temporarily unavailable.
-      </p>
-
-      <Link
-        href="/"
-        className="inline-flex h-12 items-center justify-center rounded-lg bg-deep-navy px-6 text-sm font-semibold text-white hover:bg-deep-navy/90 dark:bg-muted-gold dark:text-charcoal-black dark:hover:bg-muted-gold/90 shadow-md hover-lift transition-all"
-      >
-        {t("backHome")}
-      </Link>
     </div>
   );
 }

@@ -1,19 +1,40 @@
 "use server";
 
 import { env } from "@/lib/env";
+import {
+  enforceRateLimit,
+  isBotSubmission,
+  isDuplicateSubmission,
+} from "@/lib/security/submission-protection";
 
 /**
  * Server Action to handle Contact form submissions.
  * Validates inputs and returns success/error status.
  */
 export async function contactAction(_prevState: unknown, formData: FormData) {
-  // 1. Validate inputs
+  // 0. Honeypot check
+  const honeypot = formData.get("website")?.toString();
+  if (isBotSubmission(honeypot)) {
+    return { success: true, error: null };
+  }
+
+  // 1. Rate Limiting (max 3 contact submissions per 10 min)
+  const rateLimit = await enforceRateLimit("contact_form", 3);
+  if (!rateLimit.success) {
+    return { success: false, error: rateLimit.error! };
+  }
+
+  // 2. Validate inputs
   const name = formData.get("name")?.toString().trim();
   const email = formData.get("email")?.toString().trim().toLowerCase();
   const message = formData.get("message")?.toString().trim();
 
   if (!name || !email || !message) {
     return { success: false, error: "Please fill in all fields." };
+  }
+
+  if (await isDuplicateSubmission(message)) {
+    return { success: false, error: "You have already sent this message recently." };
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

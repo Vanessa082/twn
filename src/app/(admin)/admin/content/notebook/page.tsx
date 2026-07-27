@@ -1,6 +1,6 @@
 import NotebookEntriesManager from "@/components/admin/NotebookEntriesManager";
 import { getAllArticlesAdmin } from "@/lib/services/articles";
-import { getAllEntriesAdmin, getAllNotebooksAdmin } from "@/lib/services/notebook-entries";
+import { getAllEntriesAdmin, getAllNotebooksAdmin } from "@/modules/notebook";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 

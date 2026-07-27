@@ -29,6 +29,7 @@ export default function FooterSubscribeForm() {
           name="email"
           required
           placeholder="you@email.com"
+          aria-label="Email address for newsletter"
           disabled={isPending}
           className="flex-1 h-9 px-3 bg-transparent text-xs text-foreground placeholder:text-muted-foreground/70 focus:outline-none min-w-0"
         />

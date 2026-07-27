@@ -1,19 +1,33 @@
 "use client";
 
 import { createArticleAction, updateArticleAction } from "@/app/actions/articles";
-import type { Article, ArticleCategory, ArticleStatus } from "@/types";
-import { ArrowLeft, Edit2, Eye, Globe, Loader2, Save, Share2 } from "lucide-react";
+import { uploadImageAction } from "@/app/actions/upload";
+import { setArticleTagsAction } from "@/app/actions/tags";
+import RevisionHistory from "@/components/admin/RevisionHistory";
+import SaveStatusIndicator, { type SaveStatus } from "@/components/admin/ui/SaveStatusIndicator";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
+import type { Article, ArticleCategory, ArticleRevision, ArticleStatus, Tag } from "@/types";
+import { ArrowLeft, Edit2, Eye, Globe, Image as ImageIcon, Loader2, Save, Tag as TagIcon, Upload, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import SeoPreview from "./SeoPreview";
+import TagPicker from "./TagPicker";
 import TiptapEditor from "./TiptapEditor";
 
 interface ArticleFormProps {
   initialData?: Article;
+  allTags?: Tag[];
+  initialTags?: Tag[];
+  revisions?: ArticleRevision[];
 }
 
-export default function ArticleForm({ initialData }: ArticleFormProps) {
+export default function ArticleForm({
+  initialData,
+  allTags = [],
+  initialTags = [],
+  revisions = [],
+}: ArticleFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [previewMode, setPreviewMode] = useState(false);
@@ -24,11 +38,15 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
   const [excerpt, setExcerpt] = useState(initialData?.excerpt || "");
   const [content, setContent] = useState(initialData?.content || "");
   const [coverImage, setCoverImage] = useState(initialData?.cover_image || "");
+  const [isCoverUploading, setIsCoverUploading] = useState(false);
+  const [coverUploadError, setCoverUploadError] = useState<string | null>(null);
+  const coverFileRef = useRef<HTMLInputElement>(null);
   const [category, setCategory] = useState<ArticleCategory>(initialData?.category || "technology");
   const [status, setStatus] = useState<ArticleStatus>(initialData?.status || "draft");
   const [publishedAt, setPublishedAt] = useState(
     initialData?.published_at ? new Date(initialData.published_at).toISOString().slice(0, 16) : ""
   );
+  const [selectedTags, setSelectedTags] = useState<Tag[]>(initialTags);
 
   // Advanced SEO States
   const [seoTitle, setSeoTitle] = useState(initialData?.seo_title || "");
@@ -38,12 +56,58 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
 
   const [error, setError] = useState<string | null>(null);
 
+  // ── Save Status & Unsaved-Changes Guard ─────────────────────────────────────
+  // 'isDirty' is true once any field has been changed from the initial value.
+  // It drives both the browser beforeunload guard and the status badge.
+  const [isDirty, setIsDirty] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+
+  // Mark form dirty whenever a key field changes.
+  // We use useEffect so the flag is set after the first user interaction,
+  // not on the initial render with pre-populated edit data.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentional field tracking
+  useEffect(() => {
+    setIsDirty(true);
+    setSaveStatus("unsaved");
+  }, [
+    title,
+    excerpt,
+    content,
+    coverImage,
+    slug,
+    category,
+    status,
+    publishedAt,
+    seoTitle,
+    seoDescription,
+    ogImage,
+    canonicalUrl,
+  ]);
+
+  // Register the beforeunload guard — blocks tab close when there are unsaved changes.
+  useUnsavedChanges({ isDirty: isDirty && saveStatus === "unsaved" });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    if (!title || !content || !excerpt) {
-      setError("Please fill in the title, excerpt, and content.");
+    // ── Publishing validation ──────────────────────────────────────────────────
+    // Block submission if required fields are missing.
+    if (!title.trim()) {
+      setError("Title is required before saving.");
+      return;
+    }
+    if (!excerpt.trim()) {
+      setError("Excerpt is required — it appears on article listing cards.");
+      return;
+    }
+    if (!content.trim() || content.trim() === "<p></p>") {
+      setError("Content cannot be empty.");
+      return;
+    }
+    // Extra guard: block publish without a cover image
+    if (status === "published" && !coverImage.trim()) {
+      setError("A cover image is required before publishing.");
       return;
     }
 
@@ -62,18 +126,28 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
       canonical_url: canonicalUrl.trim() || null,
     };
 
+    setSaveStatus("saving");
     startTransition(async () => {
-      let result: { success: boolean; error: string | null; data?: unknown };
+      let result: { success: boolean; error: string | null; data?: Article | null };
       if (initialData?.id) {
         result = await updateArticleAction(initialData.id, payload);
       } else {
         result = await createArticleAction(payload);
       }
 
-      if (result.success) {
-        router.push("/admin/articles");
-        router.refresh();
+      if (result.success && result.data) {
+        const articleId = result.data.id;
+        const tagIds = selectedTags.map((t) => t.id);
+        await setArticleTagsAction(articleId, tagIds);
+        setSaveStatus("saved");
+        setIsDirty(false);
+        // Only redirect when publishing — Save stays on this page
+        if (payload.status === "published") {
+          router.push("/admin/articles");
+          router.refresh();
+        }
       } else {
+        setSaveStatus("unsaved");
         setError(result.error || "Something went wrong.");
       }
     });
@@ -90,10 +164,12 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
           >
             <ArrowLeft className="h-4 w-4" />
           </Link>
-          <div>
+          <div className="space-y-1">
             <h1 className="text-2xl font-serif font-black tracking-tight text-foreground">
               {initialData ? `Edit: ${initialData.title}` : "Create New Article"}
             </h1>
+            {/* Save status badge — shows Unsaved / Saving / Saved */}
+            <SaveStatusIndicator status={isPending ? "saving" : saveStatus} />
           </div>
         </div>
 
@@ -110,10 +186,20 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
               </>
             ) : (
               <>
-                <Eye className="h-4 w-4" /> Preview
+                <Eye className="h-4 w-4" /> Quick Preview
               </>
             )}
           </button>
+
+          {initialData?.id && (
+            <Link
+              href={`/admin/articles/${initialData.id}/preview`}
+              target="_blank"
+              className="flex-1 sm:flex-none inline-flex h-10 items-center justify-center gap-1.5 rounded-lg border border-muted-gold/40 bg-muted-gold/10 px-4 text-xs font-bold text-muted-gold hover:bg-muted-gold/20 transition-colors"
+            >
+              <Globe className="h-4 w-4" /> Full Preview
+            </Link>
+          )}
 
           <button
             type="submit"
@@ -245,6 +331,19 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
                 </select>
               </div>
 
+              {/* Tags (Granular Discovery) */}
+              <div className="space-y-2">
+                <span className="block text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <TagIcon className="h-3.5 w-3.5 text-muted-gold" />
+                  Tags
+                </span>
+                <TagPicker
+                  allTags={allTags}
+                  selectedTags={selectedTags}
+                  onChange={setSelectedTags}
+                />
+              </div>
+
               {/* Custom Slug */}
               <div className="space-y-2">
                 <label
@@ -263,20 +362,85 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
                 />
               </div>
 
-              {/* Cover Image URL */}
+              {/* Cover Image — upload OR paste URL */}
               <div className="space-y-2">
-                <label
-                  htmlFor="article-cover"
-                  className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
-                >
-                  Cover Image URL
-                </label>
+                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
+                  Cover Image
+                </span>
+
+                {/* Preview thumbnail */}
+                {coverImage && (
+                  <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-border bg-muted mb-2">
+                    <img src={coverImage} alt="Cover preview" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => { setCoverImage(""); setCoverUploadError(null); }}
+                      className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center text-foreground hover:bg-destructive hover:text-white transition-colors"
+                      aria-label="Remove cover image"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                )}
+
+                {/* Upload from device */}
+                <div className="relative">
+                  <input
+                    ref={coverFileRef}
+                    id="cover-image-upload"
+                    type="file"
+                    accept="image/*"
+                    className="sr-only"
+                    disabled={isCoverUploading}
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      setIsCoverUploading(true);
+                      setCoverUploadError(null);
+                      const formData = new FormData();
+                      formData.append("file", file);
+                      const res = await uploadImageAction(formData);
+                      if (res.success && res.url) {
+                        setCoverImage(res.url);
+                      } else {
+                        setCoverUploadError(res.error || "Upload failed");
+                      }
+                      setIsCoverUploading(false);
+                      if (coverFileRef.current) coverFileRef.current.value = "";
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => coverFileRef.current?.click()}
+                    disabled={isCoverUploading}
+                    className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground text-xs font-semibold flex items-center justify-center gap-2 hover:bg-muted transition-colors disabled:opacity-50"
+                  >
+                    {isCoverUploading ? (
+                      <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Uploading...</>
+                    ) : (
+                      <><Upload className="h-3.5 w-3.5" /> Upload from device</>
+                    )}
+                  </button>
+                </div>
+
+                {coverUploadError && (
+                  <p className="text-xs text-destructive font-semibold">{coverUploadError}</p>
+                )}
+
+                {/* Divider */}
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 h-px bg-border" />
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">or</span>
+                  <div className="flex-1 h-px bg-border" />
+                </div>
+
+                {/* URL input */}
                 <input
                   id="article-cover"
                   type="text"
                   value={coverImage}
                   onChange={(e) => setCoverImage(e.target.value)}
-                  placeholder="https://images.unsplash.com/..."
+                  placeholder="Paste image URL..."
                   className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
                 />
               </div>
@@ -410,7 +574,7 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
               {/* Live Social Preview */}
               <div className="space-y-3 pt-3 border-t border-border">
                 <div className="flex items-center gap-1.5">
-                  <Share2 className="h-4 w-4 text-muted-gold animate-bounce" />
+                  <Globe className="h-4 w-4 text-muted-gold" />
                   <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                     Social & Search Preview
                   </span>
@@ -426,6 +590,11 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
                 />
               </div>
             </div>
+
+            {/* Card 3: Revision History (Edit Mode only) */}
+            {initialData?.id && (
+              <RevisionHistory revisions={revisions} articleId={initialData.id} />
+            )}
           </div>
         </div>
       )}

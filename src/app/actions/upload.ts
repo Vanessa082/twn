@@ -1,13 +1,13 @@
 "use server";
 
 import crypto from "node:crypto";
-import { requireAdmin } from "@/lib/auth/require-admin";
+import { canAccessAdmin } from "@/lib/auth/policies";
 import { env } from "@/lib/env";
 
 export async function uploadImageAction(formData: FormData) {
   try {
     // 1. Secure it so only authenticated admins can upload images
-    await requireAdmin();
+    await canAccessAdmin();
 
     const file = formData.get("file") as File;
     if (!file) {

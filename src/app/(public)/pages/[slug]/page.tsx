@@ -1,4 +1,4 @@
-import { getApprovedSharedPageBySlug, getApprovedSharedPages } from "@/lib/services/shared-pages";
+import { getApprovedSharedPageBySlug, getApprovedSharedPages } from "@/modules/community";
 import { buildSharedPageSlug } from "@/lib/utils/shared-page-slug";
 import type { Metadata } from "next";
 import Link from "next/link";

@@ -4,7 +4,7 @@
  * 'use client' for mouse parallax tracking).
  */
 import HeroClient from "@/components/home/HeroClient";
-import { getAllActiveEntries, getRandomEntry } from "@/lib/services/notebook-entries";
+import { getAllActiveEntries, getRandomEntry } from "@/modules/notebook";
 import { getTranslations } from "next-intl/server";
 
 export default async function Hero() {

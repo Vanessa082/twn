@@ -1,6 +1,6 @@
 import { getAllArticlesAdmin } from "@/lib/services/articles";
-import { getAllEntriesAdmin } from "@/lib/services/notebook-entries";
-import { getAllSubscribersAdmin } from "@/lib/services/subscribers";
+import { getAllEntriesAdmin } from "@/modules/notebook";
+import { listSubscribersAdmin } from "@/modules/newsletter";
 import { ArrowLeft, BookOpen, ChevronRight, Sparkles, Users } from "lucide-react";
 import Link from "next/link";
 
@@ -20,7 +20,7 @@ export default async function AdminDashboardPage() {
     _publishedCount = articles.filter((a) => a.status === "published").length;
     _draftsCount = articles.filter((a) => a.status === "draft").length;
 
-    const subscribers = await getAllSubscribersAdmin();
+    const subscribers = await listSubscribersAdmin();
     subscribersCount = subscribers.length;
 
     const notebookEntries = await getAllEntriesAdmin();

@@ -77,6 +77,46 @@ export interface Tag {
   created_at: string;
 }
 
+/** Article projected with its associated tags */
+export type ArticleWithTags = Article & { tags: Tag[] };
+
+// ── Collection ────────────────────────────────────────────────────────────────
+export interface Collection {
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  cover_image: string | null;
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export type CollectionItem = {
+  article_id: string;
+  position: number;
+  article: ArticleCard;
+};
+
+export type CollectionWithArticles = Collection & {
+  items: CollectionItem[];
+};
+
+// ── Article Revision ─────────────────────────────────────────────────────────
+
+export interface ArticleRevision {
+  id: string;
+  article_id: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  cover_image: string | null;
+  category: string;
+  status: string;
+  saved_by_clerk_id: string | null;
+  created_at: string;
+}
+
 // ── Article ──────────────────────────────────────────────────────────────────
 
 export type ArticleStatus = "draft" | "published" | "scheduled";
@@ -165,6 +205,18 @@ export interface PaginatedResult<T> {
 }
 
 // ── Search ────────────────────────────────────────────────────────────────────
+
+export type SearchResultType = "article" | "notebook" | "shared_page" | "collection";
+
+export interface UnifiedSearchResult {
+  id: string;
+  type: SearchResultType;
+  title: string;
+  excerpt: string;
+  url: string;
+  categoryOrBadge?: string;
+  date?: string | null;
+}
 
 export interface SearchResult {
   article: ArticleCard;

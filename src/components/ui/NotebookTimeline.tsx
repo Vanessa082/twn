@@ -10,6 +10,7 @@
  * and highlight the current section label.
  */
 
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const STOPS = [
@@ -23,10 +24,13 @@ const STOPS = [
 ];
 
 export default function NotebookTimeline() {
+  const pathname = usePathname();
   const [activeId, setActiveId] = useState("hero");
   const [dotTop, setDotTop] = useState(0); // percentage top (0% to 100% of the track)
 
   useEffect(() => {
+    if (pathname !== "/") return;
+
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
@@ -55,7 +59,10 @@ export default function NotebookTimeline() {
     handleScroll();
 
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [pathname]);
+
+  // Only render DOM on the home/landing page
+  if (pathname !== "/") return null;
 
   const handleClick = (id: string) => {
     const el = document.getElementById(id);
