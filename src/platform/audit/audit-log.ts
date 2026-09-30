@@ -4,6 +4,7 @@ export interface AuditLogInput {
   userId: string;
   action: string;
   targetType:
+    | "note"
     | "article"
     | "margin_note"
     | "shared_page"

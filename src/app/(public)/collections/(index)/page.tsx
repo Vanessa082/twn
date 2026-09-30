@@ -1,7 +1,7 @@
 import ImageWithSkeleton from "@/components/ui/ImageWithSkeleton";
 import { Eyebrow, TextLink } from "@/components/ui/SectionHeading";
 import { pageMetadata } from "@/lib/seo";
-import { getPublicCollections } from "@/lib/services/collections";
+import { getPublicCollections } from "@/modules/editorial";
 import { routes } from "@/lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";

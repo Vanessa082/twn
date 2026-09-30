@@ -1,48 +1,51 @@
-import type { MarginNote, ModerationStatus } from "@/types";
-import {
-  type MarginNoteRepository,
-  SupabaseMarginNoteRepository,
-} from "../infrastructure/margin-note-repository";
+import { getNoteTitlesByIds } from "@/modules/editorial";
+import type { MarginNoteRepository } from "../domain/ports";
+import type { MarginNote, ModerationStatus } from "../domain/types";
 
-export async function getApprovedMarginNotesForArticle(
-  articleId: string,
-  repository: MarginNoteRepository = new SupabaseMarginNoteRepository()
+export async function getApprovedMarginNotesForNote(
+  noteId: string,
+  repository: MarginNoteRepository
 ): Promise<MarginNote[]> {
-  if (!articleId) return [];
+  if (!noteId) return [];
   try {
-    return await repository.findApprovedForArticle(articleId);
+    return await repository.findApprovedForNote(noteId);
   } catch {
     return [];
   }
 }
 
 export async function submitMarginNote(
-  articleId: string,
+  noteId: string,
   authorName: string,
   content: string,
-  repository: MarginNoteRepository = new SupabaseMarginNoteRepository()
+  repository: MarginNoteRepository
 ): Promise<MarginNote> {
   const trimmedAuthor = authorName.trim() || "Anonymous";
   const trimmedContent = content.trim();
 
-  if (!articleId) throw new Error("Article ID is required.");
+  if (!noteId) throw new Error("Note ID is required.");
   if (!trimmedContent) throw new Error("Reflection content cannot be empty.");
   if (trimmedContent.length > 120)
     throw new Error("Margin notes must be brief (maximum 120 characters).");
 
-  return repository.insert(articleId, trimmedAuthor, trimmedContent);
+  return repository.insert(noteId, trimmedAuthor, trimmedContent);
 }
 
 export async function getAllMarginNotesAdmin(
-  repository: MarginNoteRepository = new SupabaseMarginNoteRepository()
+  repository: MarginNoteRepository
 ): Promise<(MarginNote & { article_title?: string })[]> {
-  return repository.findAllAdmin();
+  const notes = await repository.findAllAdmin();
+  const titles = await getNoteTitlesByIds(notes.map((note) => note.article_id));
+  return notes.map((note) => ({
+    ...note,
+    article_title: titles[note.article_id] ?? "Unknown Note",
+  }));
 }
 
 export async function updateMarginNoteStatusAdmin(
   id: string,
   status: ModerationStatus,
-  repository: MarginNoteRepository = new SupabaseMarginNoteRepository()
+  repository: MarginNoteRepository
 ): Promise<MarginNote> {
   if (!id) throw new Error("ID is required");
   return repository.updateStatus(id, status);
@@ -51,7 +54,7 @@ export async function updateMarginNoteStatusAdmin(
 export async function updateMarginNotePinAdmin(
   id: string,
   pinned: boolean,
-  repository: MarginNoteRepository = new SupabaseMarginNoteRepository()
+  repository: MarginNoteRepository
 ): Promise<MarginNote> {
   if (!id) throw new Error("ID is required");
   return repository.updatePin(id, pinned);
@@ -59,7 +62,7 @@ export async function updateMarginNotePinAdmin(
 
 export async function deleteMarginNoteAdmin(
   id: string,
-  repository: MarginNoteRepository = new SupabaseMarginNoteRepository()
+  repository: MarginNoteRepository
 ): Promise<boolean> {
   if (!id) throw new Error("ID is required");
   return repository.delete(id);

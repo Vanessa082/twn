@@ -17,7 +17,7 @@
  * ✅ To enable:
  *   1. Purchase a domain (e.g. twnotebook.com)
  *   2. Verify it at resend.com/domains
- *   3. Update FROM_ADDRESS and SITE_URL in src/lib/services/email.ts
+ *   3. Update FROM_ADDRESS and SITE_URL in src/modules/newsletter/infrastructure/resend-email-adapter.ts
  *   4. Set this flag to `true`
  *
  * While disabled, visitors see a professional "Coming Soon" message instead

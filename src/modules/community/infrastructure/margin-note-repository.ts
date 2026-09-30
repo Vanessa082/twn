@@ -1,39 +1,31 @@
 import { createAdminClient, createClient } from "@/lib/db/server";
-import type { MarginNote, ModerationStatus } from "@/types";
-
-export interface MarginNoteRepository {
-  findApprovedForArticle(articleId: string): Promise<MarginNote[]>;
-  insert(articleId: string, authorName: string, content: string): Promise<MarginNote>;
-  findAllAdmin(): Promise<(MarginNote & { article_title?: string })[]>;
-  updateStatus(id: string, status: ModerationStatus): Promise<MarginNote>;
-  updatePin(id: string, pinned: boolean): Promise<MarginNote>;
-  delete(id: string): Promise<boolean>;
-}
+import type { MarginNoteRepository } from "../domain/ports";
+import type { MarginNote, ModerationStatus } from "../domain/types";
 
 export class SupabaseMarginNoteRepository implements MarginNoteRepository {
-  async findApprovedForArticle(articleId: string): Promise<MarginNote[]> {
+  async findApprovedForNote(noteId: string): Promise<MarginNote[]> {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("margin_notes")
       .select("*")
-      .eq("article_id", articleId)
+      .eq("article_id", noteId)
       .eq("status", "approved")
       .order("display_order", { ascending: true })
       .order("submitted_at", { ascending: false });
 
     if (error) {
-      console.warn("[MarginNoteRepository] findApprovedForArticle error:", error.message);
+      console.warn("[MarginNoteRepository] findApprovedForNote error:", error.message);
       return [];
     }
     return (data as MarginNote[]) ?? [];
   }
 
-  async insert(articleId: string, authorName: string, content: string): Promise<MarginNote> {
+  async insert(noteId: string, authorName: string, content: string): Promise<MarginNote> {
     const adminSupabase = createAdminClient();
     const { data, error } = await adminSupabase
       .from("margin_notes")
       .insert({
-        article_id: articleId,
+        article_id: noteId,
         author_name: authorName,
         content,
         status: "approved",
@@ -46,27 +38,15 @@ export class SupabaseMarginNoteRepository implements MarginNoteRepository {
     return data as MarginNote;
   }
 
-  async findAllAdmin(): Promise<(MarginNote & { article_title?: string })[]> {
+  async findAllAdmin(): Promise<MarginNote[]> {
     const adminSupabase = createAdminClient();
     const { data, error } = await adminSupabase
       .from("margin_notes")
-      .select(`*, articles(title)`)
+      .select("*")
       .order("submitted_at", { ascending: false });
 
     if (error) throw new Error(error.message);
-
-    return (data || []).map((row: any) => ({
-      id: row.id,
-      article_id: row.article_id,
-      author_name: row.author_name,
-      content: row.content,
-      status: row.status,
-      display_order: row.display_order,
-      submitted_at: row.submitted_at,
-      published_at: row.published_at,
-      updated_at: row.updated_at,
-      article_title: row.articles?.title || "Unknown Article",
-    }));
+    return (data as MarginNote[]) ?? [];
   }
 
   async updateStatus(id: string, status: ModerationStatus): Promise<MarginNote> {

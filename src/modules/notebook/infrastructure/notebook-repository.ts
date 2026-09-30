@@ -1,24 +1,8 @@
 import { createAdminClient, createClient } from "@/lib/db/server";
-import type { Notebook, NotebookEntry } from "@/types";
+import type { Notebook, NotebookEntry } from "../domain/types";
+import type { NotebookRepository } from "../domain/ports";
 
-// ── Port (interface) ──────────────────────────────────────────────────────────
-
-export interface NotebookRepository {
-  findAllActive(): Promise<NotebookEntry[]>;
-  findByDate(date: string): Promise<NotebookEntry | null>;
-  // Admin operations
-  findAllAdmin(): Promise<NotebookEntry[]>;
-  findAllNotebooks(): Promise<Notebook[]>;
-  getDefaultNotebookId(): Promise<string>;
-  create(input: Omit<NotebookEntry, "id" | "created_at" | "updated_at">): Promise<NotebookEntry>;
-  update(
-    id: string,
-    input: Partial<Omit<NotebookEntry, "id" | "created_at" | "updated_at">>
-  ): Promise<NotebookEntry>;
-  delete(id: string): Promise<boolean>;
-}
-
-// ── Supabase Implementation ───────────────────────────────────────────────────
+export type { NotebookRepository } from "../domain/ports";
 
 export class SupabaseNotebookRepository implements NotebookRepository {
   async findAllActive(): Promise<NotebookEntry[]> {

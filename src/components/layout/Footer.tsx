@@ -8,13 +8,17 @@
  */
 
 import { NEWSLETTER_ENABLED } from "@/lib/feature-flags";
-import type { SocialLink } from "@/types/cms";
+import type { SocialLink } from "@/modules/site/contracts";
 import { Clock } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 
 const FooterSubscribeForm = NEWSLETTER_ENABLED
-  ? dynamic(() => import("./FooterSubscribeForm"), { ssr: false })
+  ? dynamic(
+      () =>
+        import("@/modules/newsletter/ui").then((mod) => ({ default: mod.FooterSubscribeForm })),
+      { ssr: false }
+    )
   : null;
 
 interface FooterProps {

@@ -1,4 +1,4 @@
-import { optimizeImageUrl } from "@/lib/media/images";
+import { optimizeImageUrl } from "@/modules/media";
 import sanitizeHtml from "sanitize-html";
 
 /**

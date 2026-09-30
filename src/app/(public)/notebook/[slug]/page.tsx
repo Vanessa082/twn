@@ -1,18 +1,14 @@
-import RelatedArticles from "@/components/article/RelatedArticles";
-import { InlineActionBar } from "@/components/articles/ArticleEngagement";
-import MarginNotesList from "@/components/articles/MarginNotesList";
-import ReadingProgress from "@/components/articles/ReadingProgress";
-import NewsletterSection from "@/components/home/NewsletterSection";
-import NoteArticle from "@/components/notes/NoteArticle";
-import { chapterLabel } from "@/components/notes/note-format";
-import { getNoteAuthor } from "@/lib/about/portrait";
+
+
+import { NewsletterSection } from "@/modules/newsletter/ui";
+import { MarginNotesList } from "@/modules/community/ui";
+import { InlineActionBar, NoteLayout, ReadingProgress, RelatedNotes, chapterLabel } from "@/modules/editorial/ui";
 import { sanitizeNoteHtml } from "@/lib/security/sanitize-note-html";
 import { pageMetadata } from "@/lib/seo";
-import { getAboutData } from "@/lib/services/about";
-import { getArticleBySlug } from "@/lib/services/articles";
-import { getRelatedArticles, getTagsForArticle } from "@/lib/services/tags";
 import { absoluteUrl, routes, site } from "@/lib/site";
-import { getApprovedMarginNotesForArticle } from "@/modules/community";
+import { getApprovedMarginNotesForNote } from "@/modules/community";
+import { getNoteBySlug, getRelatedNotes, getTagsForNote } from "@/modules/editorial";
+import { getAboutData, getNoteAuthor } from "@/modules/site";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -24,7 +20,7 @@ interface NotePageProps {
 
 export const revalidate = 60;
 
-const getNote = cache((slug: string) => getArticleBySlug(slug));
+const getNote = cache((slug: string) => getNoteBySlug(slug));
 
 export async function generateMetadata({ params }: NotePageProps): Promise<Metadata> {
   const { slug } = await params;
@@ -54,11 +50,11 @@ export default async function NotePage({ params }: NotePageProps) {
   if (!note) notFound();
 
   const [marginNotes, tags, relatedNotes, about, t] = await Promise.all([
-    getApprovedMarginNotesForArticle(note.id),
-    getTagsForArticle(note.id),
-    getRelatedArticles(note.id, note.category),
+    getApprovedMarginNotesForNote(note.id),
+    getTagsForNote(note.id),
+    getRelatedNotes(note.id, note.category),
     getAboutData(),
-    getTranslations("articles"),
+    getTranslations("notes"),
   ]);
 
   const noteUrl = absoluteUrl(routes.note(note.slug));
@@ -110,7 +106,7 @@ export default async function NotePage({ params }: NotePageProps) {
       />
       <ReadingProgress />
 
-      <NoteArticle
+      <NoteLayout
         note={note}
         bodyHtml={sanitizeNoteHtml(note.content)}
         readingTime={t("readingTime", { minutes: note.reading_time || 1 })}
@@ -120,11 +116,11 @@ export default async function NotePage({ params }: NotePageProps) {
         afterBody={actionBar}
       >
         <div id="comments" className="scroll-mt-28 pb-20 pt-12">
-          <MarginNotesList articleId={note.id} notes={marginNotes} />
+          <MarginNotesList noteId={note.id} notes={marginNotes} />
         </div>
-      </NoteArticle>
+      </NoteLayout>
 
-      <RelatedArticles articles={relatedNotes} />
+      <RelatedNotes notes={relatedNotes} />
       <NewsletterSection />
     </div>
   );

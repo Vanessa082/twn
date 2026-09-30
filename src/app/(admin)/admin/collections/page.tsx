@@ -1,5 +1,5 @@
-import CollectionsManager from "@/components/admin/CollectionsManager";
-import { getAllCollectionsAdmin } from "@/lib/services/collections";
+import { CollectionsManager } from "@/modules/editorial/admin-ui";
+import { getAllCollectionsAdmin } from "@/modules/editorial";
 
 export const metadata = {
   title: "Collections | Admin Dashboard",

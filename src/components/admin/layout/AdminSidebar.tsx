@@ -20,7 +20,7 @@ import { usePathname } from "next/navigation";
 
 export const adminNavItems = [
   { label: "Overview", href: "/admin", icon: LayoutDashboard },
-  { label: "Articles", href: "/admin/articles", icon: FileText },
+  { label: "Notes", href: "/admin/notes", icon: FileText },
   { label: "Collections", href: "/admin/collections", icon: Layers },
   { label: "Tags", href: "/admin/tags", icon: Tag },
   { label: "Homepage", href: "/admin/content/homepage", icon: Home },

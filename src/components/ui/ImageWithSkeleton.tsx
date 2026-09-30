@@ -5,7 +5,7 @@
  * from the image CDN, and falls back to the TWN monogram if the file is gone.
  */
 
-import { optimizeImageUrl } from "@/lib/media/images";
+import { optimizeImageUrl } from "@/modules/media";
 import Image from "next/image";
 import { useState } from "react";
 

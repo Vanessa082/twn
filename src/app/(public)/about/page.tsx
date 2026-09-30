@@ -1,10 +1,10 @@
-import StillFiguringItOutSection from "@/components/about/StillFiguringItOutSection";
+
+import { StillFiguringItOutSection } from "@/modules/site/ui";
 import FramedPortrait from "@/components/ui/FramedPortrait";
 import SectionHeading, { Eyebrow, TextLink } from "@/components/ui/SectionHeading";
-import { getAuthorPortrait } from "@/lib/about/portrait";
 import { pageMetadata } from "@/lib/seo";
-import { getAboutData } from "@/lib/services/about";
 import { routes } from "@/lib/site";
+import { getAboutData, getAuthorPortrait } from "@/modules/site";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 

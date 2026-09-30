@@ -1,16 +1,17 @@
-import SearchPageForm from "@/components/search/SearchPageForm";
+
+import { SearchPageForm } from "@/modules/search/ui";
 import ImageWithSkeleton from "@/components/ui/ImageWithSkeleton";
 import Pagination from "@/components/ui/Pagination";
 import { Eyebrow } from "@/components/ui/SectionHeading";
 import { totalPagesFor, withPageParam } from "@/lib/pagination";
-import { getPopularSearches, getSearchIndex } from "@/lib/search/documents";
-import { SEARCH_DOC_TYPES, search } from "@/lib/search/engine";
+import { getPopularSearches, getSearchIndex } from "@/modules/search";
+import { SEARCH_DOC_TYPES, search } from "@/modules/search";
 import {
   SEARCH_RESULTS_PER_PAGE,
   SEARCH_TYPE_LABELS,
   SEARCH_TYPE_SINGULAR,
   searchQuerySchema,
-} from "@/lib/search/query";
+} from "@/modules/search";
 import { pageMetadata } from "@/lib/seo";
 import { routes } from "@/lib/site";
 import type { Metadata } from "next";

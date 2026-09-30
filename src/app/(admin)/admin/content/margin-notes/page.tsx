@@ -1,4 +1,4 @@
-import MarginNotesModerator from "@/components/admin/MarginNotesModerator";
+import { MarginNotesModerator } from "@/modules/community/admin-ui";
 import { getAllMarginNotesAdmin } from "@/modules/community";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";

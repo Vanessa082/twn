@@ -1,5 +1,5 @@
-import AboutEditor from "@/components/admin/about/AboutEditor";
-import { getAboutData } from "@/lib/services/about";
+import { AboutEditor } from "@/modules/site/admin-ui";
+import { getAboutData } from "@/modules/site";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 

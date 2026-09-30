@@ -1,5 +1,5 @@
-import type { AuthorPortrait } from "@/lib/about/portrait";
-import { optimizeImageUrl } from "@/lib/media/images";
+import { optimizeImageUrl } from "@/modules/media";
+import type { AuthorPortrait } from "@/modules/site/contracts";
 import Image from "next/image";
 
 interface FramedPortraitProps {

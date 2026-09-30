@@ -1,7 +1,8 @@
-import WorkbenchSection from "@/components/home/WorkbenchSection";
+
+import { WorkbenchSection } from "@/modules/workbench/ui";
 import { Eyebrow, TextLink } from "@/components/ui/SectionHeading";
 import { pageMetadata } from "@/lib/seo";
-import { getPublishedProjects } from "@/lib/services/projects";
+import { getPublishedProjects } from "@/modules/workbench";
 import { routes } from "@/lib/site";
 
 export const revalidate = 60;

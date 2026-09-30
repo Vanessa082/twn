@@ -1,7 +1,7 @@
 "use client";
 
 import ImageUploadField from "@/components/admin/media/ImageUploadField";
-import type { ImageUploadPurpose } from "@/lib/media/images";
+import type { ImageUploadPurpose } from "@/modules/media";
 import { Eye, EyeOff } from "lucide-react";
 import { useId } from "react";
 import { errorMessages, useFieldContext } from "./form-context";

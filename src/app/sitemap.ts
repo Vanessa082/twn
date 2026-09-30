@@ -1,10 +1,9 @@
-import { getPublishedNoteRefs } from "@/lib/services/articles";
-import { getPublicCollections } from "@/lib/services/collections";
-import { getAllTags } from "@/lib/services/tags";
 import { absoluteUrl, routes } from "@/lib/site";
-import { buildSharedPageSlug } from "@/lib/utils/shared-page-slug";
-import { articleCategoryEnum } from "@/lib/validation/schemas";
-import { getApprovedSharedPages } from "@/modules/community";
+import { noteChapterEnum } from "@/lib/validation/schemas";
+import { buildSharedPageSlug, getApprovedSharedPages } from "@/modules/community";
+import { getPublishedNoteRefs } from "@/modules/editorial";
+import { getPublicCollections } from "@/modules/editorial";
+import { getAllTags } from "@/modules/editorial";
 import type { MetadataRoute } from "next";
 
 export const revalidate = 3600;
@@ -46,7 +45,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: absoluteUrl("/collections"), changeFrequency: "weekly", priority: 0.5 },
   ];
 
-  const chapters: MetadataRoute.Sitemap = articleCategoryEnum.options.map((category) => ({
+  const chapters: MetadataRoute.Sitemap = noteChapterEnum.options.map((category) => ({
     url: absoluteUrl(routes.notebookTopic(category)),
     changeFrequency: "weekly",
     priority: 0.5,

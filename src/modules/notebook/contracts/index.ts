@@ -1,1 +1,1 @@
-export type { NotebookEntry, Notebook } from "@/types";
+export type { Notebook, NotebookEntry } from "../domain/types";

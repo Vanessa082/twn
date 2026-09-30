@@ -14,7 +14,7 @@ export default function AdminHeader() {
   // Simple title generator from pathname
   const getPageTitle = () => {
     if (pathname === "/admin") return "Overview";
-    if (pathname?.startsWith("/admin/articles")) return "Articles";
+    if (pathname?.startsWith("/admin/notes")) return "Notes";
     if (pathname?.startsWith("/admin/content/notebook")) return "Notebook Entries";
     if (pathname?.startsWith("/admin/content/shared-pages")) return "Shared Pages";
     if (pathname?.startsWith("/admin/content/margin-notes")) return "Margin Notes";

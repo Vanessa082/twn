@@ -1,13 +1,11 @@
-import { sendWelcomeEmail } from "@/lib/services/email";
+import type { EmailDeliveryPort } from "../domain/email-port";
 import type { SubscribeResult } from "../domain/subscriber";
-import {
-  type SubscriberRepository,
-  SupabaseSubscriberRepository,
-} from "../infrastructure/subscriber-repository";
+import type { SubscriberRepository } from "../domain/ports";
 
 export async function subscribeToNewsletter(
   email: string,
-  repository: SubscriberRepository = new SupabaseSubscriberRepository()
+  repository: SubscriberRepository,
+  mailer: EmailDeliveryPort
 ): Promise<SubscribeResult> {
   if (!email || typeof email !== "string") {
     return { success: false, error: "Email address is required." };
@@ -22,7 +20,7 @@ export async function subscribeToNewsletter(
 
   // Non-fatal welcome email dispatch
   try {
-    await sendWelcomeEmail(cleanEmail);
+    await mailer.sendWelcome(cleanEmail);
   } catch (emailError) {
     console.error("[subscribeToNewsletter] Welcome email failed:", emailError);
   }

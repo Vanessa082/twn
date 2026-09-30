@@ -7,7 +7,7 @@
  * - Distinguish operational logs (why did this fail?) from audit logs (who changed what?).
  *
  * Usage:
- *   logger.info("article.published", { articleId, actorId });
+ *   logger.info("note.published", { noteId, actorId });
  *   logger.error("cloudinary.upload.failed", { correlationId }, err);
  */
 

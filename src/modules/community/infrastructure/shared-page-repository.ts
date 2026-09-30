@@ -1,20 +1,7 @@
 import { createAdminClient, createClient } from "@/lib/db/server";
-import { findSharedPageByParam } from "@/lib/utils/shared-page-lookup";
-import type { ModerationStatus, SharedPage } from "@/types";
-
-export interface SharedPageRepository {
-  findAllApproved(): Promise<SharedPage[]>;
-  findBySlug(slug: string): Promise<SharedPage | null>;
-  insert(
-    authorName: string,
-    title: string | null,
-    content: string,
-    wordCount: number
-  ): Promise<SharedPage>;
-  findAllAdmin(): Promise<SharedPage[]>;
-  updateStatus(id: string, status: ModerationStatus): Promise<SharedPage>;
-  delete(id: string): Promise<boolean>;
-}
+import type { SharedPageRepository } from "../domain/ports";
+import { findSharedPageByParam } from "../domain/shared-page-lookup";
+import type { ModerationStatus, SharedPage } from "../domain/types";
 
 export class SupabaseSharedPageRepository implements SharedPageRepository {
   async findAllApproved(): Promise<SharedPage[]> {

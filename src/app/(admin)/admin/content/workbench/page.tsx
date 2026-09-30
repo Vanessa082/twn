@@ -1,5 +1,5 @@
-import WorkbenchManager from "@/components/admin/WorkbenchManager";
-import { getAllProjectsAdmin } from "@/lib/services/projects";
+import { WorkbenchManager } from "@/modules/workbench/admin-ui";
+import { getAllProjectsAdmin } from "@/modules/workbench";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 

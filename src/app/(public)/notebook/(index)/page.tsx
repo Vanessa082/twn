@@ -1,17 +1,18 @@
-import ArticleGrid from "@/components/articles/ArticleGrid";
+
+import { NoteGrid } from "@/modules/editorial/ui";
 import Pagination from "@/components/ui/Pagination";
 import { Eyebrow } from "@/components/ui/SectionHeading";
 import { parsePageParam, withPageParam } from "@/lib/pagination";
-import { getPublishedNotesPage } from "@/lib/services/articles";
+import { getPublishedNotesPage } from "@/modules/editorial";
 import { routes } from "@/lib/site";
-import { articleCategoryEnum } from "@/lib/validation/schemas";
-import type { ArticleCategory } from "@/types";
+import { noteChapterEnum } from "@/lib/validation/schemas";
+import type { NoteChapter } from "@/modules/editorial";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-interface ArticlesPageProps {
+interface NotesPageProps {
   searchParams: Promise<{ category?: string; page?: string }>;
 }
 
@@ -19,12 +20,12 @@ export const revalidate = 60; // ISR validation every minute
 
 const NOTES_PER_PAGE = 12;
 
-function parseCategory(value: string | undefined): ArticleCategory | undefined {
-  const parsed = articleCategoryEnum.safeParse(value);
+function parseCategory(value: string | undefined): NoteChapter | undefined {
+  const parsed = noteChapterEnum.safeParse(value);
   return parsed.success ? parsed.data : undefined;
 }
 
-export async function generateMetadata({ searchParams }: ArticlesPageProps): Promise<Metadata> {
+export async function generateMetadata({ searchParams }: NotesPageProps): Promise<Metadata> {
   const params = await searchParams;
   const category = parseCategory(params.category);
   const page = parsePageParam(params.page);
@@ -40,12 +41,12 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
   };
 }
 
-export default async function ArticlesPage({ searchParams }: ArticlesPageProps) {
+export default async function NotesPage({ searchParams }: NotesPageProps) {
   const resolvedParams = await searchParams;
   const activeCategory = parseCategory(resolvedParams.category);
   const page = parsePageParam(resolvedParams.page);
 
-  const t = await getTranslations("articles");
+  const t = await getTranslations("notes");
 
   const result = await getPublishedNotesPage({
     page,
@@ -53,12 +54,12 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
     category: activeCategory,
   });
   if (page > result.totalPages) notFound();
-  const articles = result.items;
+  const notes = result.items;
   const baseHref = activeCategory ? routes.notebookTopic(activeCategory) : routes.notebook;
   const firstShown = (page - 1) * NOTES_PER_PAGE + 1;
-  const lastShown = firstShown + articles.length - 1;
+  const lastShown = firstShown + notes.length - 1;
 
-  const categories: { label: string; value: ArticleCategory | "" }[] = [
+  const categories: { label: string; value: NoteChapter | "" }[] = [
     { label: "All Notes", value: "" },
     { label: "Technology", value: "technology" },
     { label: "Leadership", value: "leadership" },
@@ -106,14 +107,14 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
         </nav>
 
         {/* Results */}
-        {articles.length > 0 ? (
+        {notes.length > 0 ? (
           <>
             {result.totalPages > 1 && (
               <p className="-mt-6 mb-10 font-sans text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                 Notes {firstShown}–{lastShown} of {result.total}
               </p>
             )}
-            <ArticleGrid articles={articles} />
+            <NoteGrid notes={notes} />
             <Pagination
               page={page}
               totalPages={result.totalPages}
@@ -124,7 +125,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
           </>
         ) : (
           <div className="text-center py-20 border border-dashed border-border rounded-2xl max-w-md mx-auto">
-            <p className="text-muted-foreground text-sm mb-4">{t("noArticles")}</p>
+            <p className="text-muted-foreground text-sm mb-4">{t("noNotes")}</p>
             <Link
               href="/notebook"
               className="text-xs font-semibold text-foreground underline underline-offset-4"

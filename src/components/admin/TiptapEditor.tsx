@@ -185,7 +185,7 @@ interface TiptapEditorProps {
 export default function TiptapEditor({
   content,
   onChange,
-  placeholder = "Start writing your article...",
+  placeholder = "Start writing your note...",
 }: TiptapEditorProps) {
   const editor = useEditor({
     extensions: [

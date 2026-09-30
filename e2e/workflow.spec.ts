@@ -7,7 +7,7 @@ test.describe("TWN Core Workflow & Moderation Boundary E2E", () => {
     await expect(page.locator("body")).toBeVisible();
 
     // 2. Visit Articles Listing Page
-    await page.goto("/articles", { waitUntil: "domcontentloaded" });
+    await page.goto("/notes", { waitUntil: "domcontentloaded" });
     await expect(page.locator("body")).toBeVisible();
 
     // 3. Visit Topics Page

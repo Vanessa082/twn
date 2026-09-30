@@ -1,4 +1,5 @@
-import SharedPagesSection from "@/components/home/SharedPagesSection";
+
+import { SharedPagesSection } from "@/modules/community/ui";
 import { pageMetadata } from "@/lib/seo";
 import { routes } from "@/lib/site";
 import { getApprovedSharedPages } from "@/modules/community";

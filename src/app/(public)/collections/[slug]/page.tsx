@@ -1,8 +1,9 @@
-import ArticleCard from "@/components/articles/ArticleCard";
+
+import { NoteCard } from "@/modules/editorial/ui";
 import ImageWithSkeleton from "@/components/ui/ImageWithSkeleton";
 import { Eyebrow } from "@/components/ui/SectionHeading";
 import { pageMetadata } from "@/lib/seo";
-import { getCollectionBySlug } from "@/lib/services/collections";
+import { getCollectionBySlug } from "@/modules/editorial";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -88,7 +89,7 @@ export default async function CollectionDetailPage({ params }: CollectionDetailP
           <ol className="mt-4">
             {collection.items.map((item, idx) => (
               <li
-                key={item.article_id}
+                key={item.note_id}
                 className="grid grid-cols-[3rem_1fr] gap-4 border-b border-border py-10 sm:grid-cols-[5rem_1fr] sm:gap-8"
               >
                 <span
@@ -99,7 +100,7 @@ export default async function CollectionDetailPage({ params }: CollectionDetailP
                 </span>
                 <div className="max-w-3xl">
                   <span className="sr-only">Part {idx + 1}: </span>
-                  <ArticleCard article={item.article} />
+                  <NoteCard note={item.note} />
                 </div>
               </li>
             ))}

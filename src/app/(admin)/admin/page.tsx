@@ -1,4 +1,4 @@
-import { getAllArticlesAdmin } from "@/lib/services/articles";
+import { getAllNotesAdmin } from "@/modules/editorial";
 import { listSubscribersAdmin } from "@/modules/newsletter";
 import { getAllEntriesAdmin } from "@/modules/notebook";
 import { ArrowLeft, BookOpen, ChevronRight, Sparkles, Users } from "lucide-react";
@@ -8,17 +8,17 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
   // 1. Fetch real statistics from database using admin clients
-  let articlesCount = 0;
+  let notesCount = 0;
   let _publishedCount = 0;
   let _draftsCount = 0;
   let subscribersCount = 0;
   let notebookEntriesCount = 0;
 
   try {
-    const articles = await getAllArticlesAdmin();
-    articlesCount = articles.length;
-    _publishedCount = articles.filter((a) => a.status === "published").length;
-    _draftsCount = articles.filter((a) => a.status === "draft").length;
+    const notes = await getAllNotesAdmin();
+    notesCount = notes.length;
+    _publishedCount = notes.filter((a) => a.status === "published").length;
+    _draftsCount = notes.filter((a) => a.status === "draft").length;
 
     const subscribers = await listSubscribersAdmin();
     subscribersCount = subscribers.length;
@@ -31,8 +31,8 @@ export default async function AdminDashboardPage() {
 
   const stats = [
     {
-      label: "Total Articles",
-      value: articlesCount,
+      label: "Total Notes",
+      value: notesCount,
       icon: BookOpen,
       color: "text-blue-600 bg-blue-50 dark:bg-blue-900/20",
     },
@@ -100,22 +100,22 @@ export default async function AdminDashboardPage() {
       <h2 className="text-xl font-serif font-bold text-foreground mb-4">Quick Management</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Link
-          href="/admin/articles/new"
+          href="/admin/notes/new"
           className="p-6 rounded-xl border border-border bg-card hover:border-muted-gold hover-lift transition-all-premium flex items-center justify-between group"
         >
           <div>
-            <h3 className="font-bold text-sm text-foreground mb-1">Create New Article</h3>
+            <h3 className="font-bold text-sm text-foreground mb-1">Create New Note</h3>
             <p className="text-xs text-muted-foreground">Compose a draft or publish a new note.</p>
           </div>
           <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-muted-gold group-hover:translate-x-0.5 transition-all" />
         </Link>
 
         <Link
-          href="/admin/articles"
+          href="/admin/notes"
           className="p-6 rounded-xl border border-border bg-card hover:border-muted-gold hover-lift transition-all-premium flex items-center justify-between group"
         >
           <div>
-            <h3 className="font-bold text-sm text-foreground mb-1">Manage Articles</h3>
+            <h3 className="font-bold text-sm text-foreground mb-1">Manage Notes</h3>
             <p className="text-xs text-muted-foreground">
               Edit metadata, change categories, delete notes.
             </p>

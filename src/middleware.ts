@@ -1,4 +1,4 @@
-import { isAuthorizedAdmin } from "@/lib/auth/admin-access";
+import { isAuthorizedAdmin } from "@/modules/identity";
 import { clerkMiddleware } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 

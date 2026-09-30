@@ -12,7 +12,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
-const loadSearchOverlay = () => import("@/components/search/SearchOverlay");
+const loadSearchOverlay = () => import("@/modules/search/ui").then((mod) => ({ default: mod.SearchOverlay }));
 const SearchOverlay = dynamic(loadSearchOverlay, { ssr: false });
 
 const links = [

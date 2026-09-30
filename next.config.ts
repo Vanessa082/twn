@@ -129,6 +129,8 @@ const nextConfig: NextConfig = {
       { source: "/articles/:slug", destination: "/notebook/:slug", permanent: true },
       { source: "/blog", destination: "/notebook", permanent: true },
       { source: "/blog/:slug", destination: "/notebook/:slug", permanent: true },
+      { source: "/admin/articles", destination: "/admin/notes", permanent: true },
+      { source: "/admin/articles/:path*", destination: "/admin/notes/:path*", permanent: true },
     ];
   },
 };

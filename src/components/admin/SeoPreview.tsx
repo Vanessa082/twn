@@ -24,7 +24,7 @@ export default function SeoPreview({
 }: SeoPreviewProps) {
   const [activeTab, setActiveTab] = useState<"google" | "linkedin" | "whatsapp">("google");
 
-  const displayTitle = seoTitle.trim() || title || "Untitled Article";
+  const displayTitle = seoTitle.trim() || title || "Untitled Note";
   const displayDescription =
     seoDescription.trim() ||
     excerpt ||
@@ -33,7 +33,7 @@ export default function SeoPreview({
     ogImage.trim() ||
     coverImage ||
     "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80"; // Default generic placeholder image
-  const displaySlug = slug.trim() || "your-article-slug";
+  const displaySlug = slug.trim() || "your-note-slug";
 
   // Length checks
   const isTitleLong = displayTitle.length > 60;
@@ -89,7 +89,7 @@ export default function SeoPreview({
             <div className="flex items-center gap-1 text-[11px] text-muted-foreground font-sans">
               <span>twn.dev</span>
               <span>›</span>
-              <span>articles</span>
+              <span>notes</span>
               <span>›</span>
               <span className="truncate max-w-[200px]">{displaySlug}</span>
             </div>

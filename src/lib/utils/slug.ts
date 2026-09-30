@@ -1,8 +1,8 @@
 /**
- * Generates a clean URL slug from an article title.
+ * Generates a clean URL slug from an note title.
  * Removes special characters, converts to lowercase, and replaces spaces with hyphens.
  *
- * @param title The title of the article
+ * @param title The title of the note
  * @returns A validated, URL-friendly slug
  */
 export function generateSlug(title: string | null | undefined): string {

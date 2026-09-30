@@ -40,7 +40,7 @@ export const createClient = async (options?: { useCookies?: boolean }) => {
 
 /**
  * Creates a Supabase admin client that bypasses Row Level Security (RLS).
- * MUST only be used on the server for admin operations (e.g. creating/editing articles, reading subscriber lists).
+ * MUST only be used on the server for admin operations (e.g. creating/editing notes, reading subscriber lists).
  */
 export const createAdminClient = () => {
   return createBaseClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {

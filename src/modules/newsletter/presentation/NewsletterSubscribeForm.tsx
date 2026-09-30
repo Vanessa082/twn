@@ -1,6 +1,6 @@
 "use client";
 
-import { subscribeAction } from "@/app/actions/newsletter";
+import { subscribeAction } from "@/modules/newsletter/actions";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { useActionState, useEffect, useRef } from "react";
 
