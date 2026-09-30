@@ -9,7 +9,7 @@
 
 ### Technical Concept to Master
 - **Concept**: Single Database Table Ownership in Modular Monoliths.
-- **Plain Language**: In a modular architecture, every database table must have ONE clear module owner. Other modules cannot query or mutate that table directly—they must request data via the owner's contracts.
+- **Plain Language**: In a modular architecture, every database table must have ONE clear module owner. Other modules cannot query or mutate that table directly they must request data via the owner's contracts.
 - **TWN Code Reference**: `src/lib/db/schema.sql`.
 
 ### LinkedIn Post Template
@@ -30,7 +30,7 @@ In TWN's `schema.sql`, every table explicitly documents its owner module:
 │ audit_logs           │ Platform     │ Audit Log        │
 └──────────────────────┴──────────────┴──────────────────┘
 
-If `Search` needs Article data, it calls `ArticleSearchProvider` in Editorial—it NEVER queries the `articles` table directly.
+If `Search` needs Article data, it calls `ArticleSearchProvider` in Editorial it NEVER queries the `articles` table directly.
 
 Document database ownership early, and your schema will scale smoothly!
 
@@ -44,7 +44,7 @@ Document database ownership early, and your schema will scale smoothly!
   - *"Are your Next.js features querying each other's database tables directly?"*
   - *"Stop! In TWN, every PostgreSQL table has ONE owner module."*
   - *"Editorial owns articles, Community owns shared_pages."*
-  - *"If feature A needs feature B's data, it calls a contract interface—not the database table!"*
+  - *"If feature A needs feature B's data, it calls a contract interface not the database table!"*
 
 ---
 
@@ -98,7 +98,7 @@ In TWN, we implemented an Append-Only Revision Log (`article_revisions`).
 How it works:
 1. On every article edit (`updateArticle`), the system saves the update to `articles`.
 2. Simultaneously, a snapshot of the full title, excerpt, content, and cover image is written to `article_revisions` with a `revision_number`.
-3. Revisions are immutable—they are NEVER updated or deleted.
+3. Revisions are immutable they are NEVER updated or deleted.
 4. If an admin clicks "Restore Revision", the system fetches the snapshot and updates the active article record.
 
 Result:

@@ -6,13 +6,13 @@ Version 1.0
 
 I agree with starting here. If Volume 1 is weak, every future feature becomes random. If Volume 1 is strong, TWN can evolve for decades without losing its identity.
 
-One thing I want to change from what I originally suggested: this should not read like a startup pitch. It should read like the founding document of a publication—something you could revisit 20 years from now and still recognize.
+One thing I want to change from what I originally suggested: this should not read like a startup pitch. It should read like the founding document of a publication something you could revisit 20 years from now and still recognize.
 
 ---
 
 # TWN Product Blueprint
 
-# Volume 1 — Vision
+# Volume 1   Vision
 
 **Document Version:** 1.0
 
@@ -26,7 +26,7 @@ The Notebook of a Tech Woman (TWN) is not a traditional blog, social network, or
 
 It is a long-term editorial platform dedicated to preserving the ideas, experiences, technical knowledge, and reflections of women building the future through technology.
 
-The platform exists to create a permanent home for thoughtful writing—where knowledge is documented, conversations are meaningful, and ideas are allowed to mature over time.
+The platform exists to create a permanent home for thoughtful writing where knowledge is documented, conversations are meaningful, and ideas are allowed to mature over time.
 
 Every product decision, design choice, feature, and community guideline should reinforce this purpose.
 
@@ -183,7 +183,7 @@ Every interface should reduce cognitive load.
 
 ## 6.7 Community
 
-The community exists to contribute wisdom—not attention.
+The community exists to contribute wisdom not attention.
 
 Participation is encouraged.
 
@@ -447,7 +447,7 @@ This section becomes a safeguard against feature creep and ensures that, even as
 
 # TWN Product Blueprint
 
-# Volume 2 — Brand System
+# Volume 2   Brand System
 
 **Version:** 1.0
 
@@ -1047,7 +1047,7 @@ Never:
 * use clickbait
 * write for algorithms
 
-The tone should feel like an experienced engineer sharing lessons over coffee—not delivering a motivational speech.
+The tone should feel like an experienced engineer sharing lessons over coffee not delivering a motivational speech.
 
 ---
 
@@ -1084,7 +1084,7 @@ Accessibility is a design requirement.
 
 The default experience is **Light Mode**, inspired by paper and ink.
 
-Dark Mode should feel like reading a notebook at night—not simply inverting colors.
+Dark Mode should feel like reading a notebook at night not simply inverting colors.
 
 Avoid pure black backgrounds. Use deep charcoal with softened contrast to reduce eye strain.
 
@@ -1133,10 +1133,10 @@ Typography, spacing, illustration style, and motion may be refined over time, bu
 * The emphasis on thoughtful, long-lived content.
 * A restrained visual language centered on ink, paper, and clarity.
 
-This consistency allows TWN to grow into new products—such as podcasts, courses, events, or mobile apps—without losing its identity. Even ten years from now, someone should immediately recognize that a new TWN product belongs to the same family because it speaks the same visual and editorial language.
+This consistency allows TWN to grow into new products such as podcasts, courses, events, or mobile apps without losing its identity. Even ten years from now, someone should immediately recognize that a new TWN product belongs to the same family because it speaks the same visual and editorial language.
 
 
-# Volume 3 — Product Philosophy
+# Volume 3   Product Philosophy
 
 
 # Table of Contents
@@ -1220,7 +1220,7 @@ This document answers:
 
 ## Core Belief
 
-> Technology should help people preserve, understand, and share knowledge — not simply consume information faster.
+> Technology should help people preserve, understand, and share knowledge   not simply consume information faster.
 
 The modern internet is optimized for:
 
@@ -1470,7 +1470,7 @@ Good:
 
 # 3.7 Product Principles
 
-## Principle 1 — Depth Over Virality
+## Principle 1   Depth Over Virality
 
 TWN does not optimize for maximum attention.
 
@@ -1478,7 +1478,7 @@ A valuable article read by 500 people is better than shallow content viewed by 1
 
 ---
 
-## Principle 2 — Permanent Value Over Temporary Trends
+## Principle 2   Permanent Value Over Temporary Trends
 
 Before publishing:
 
@@ -1492,7 +1492,7 @@ Reconsider.
 
 ---
 
-## Principle 3 — Human Experience Matters
+## Principle 3   Human Experience Matters
 
 Technology is built by humans.
 
@@ -1502,7 +1502,7 @@ A technical article without context is incomplete.
 
 ---
 
-## Principle 4 — Quality Creates Trust
+## Principle 4   Quality Creates Trust
 
 Every published piece represents TWN.
 
@@ -1510,7 +1510,7 @@ Quality is not optional.
 
 ---
 
-## Principle 5 — Calm Over Chaos
+## Principle 5   Calm Over Chaos
 
 The product should reduce digital noise.
 
@@ -1524,7 +1524,7 @@ Not overwhelmed.
 
 ---
 
-## Principle 6 — Ownership Over Dependency
+## Principle 6   Ownership Over Dependency
 
 Writers should own their ideas.
 
@@ -1532,7 +1532,7 @@ TWN should never feel like a platform where creators are renting attention.
 
 ---
 
-## Principle 7 — Community Over Competition
+## Principle 7   Community Over Competition
 
 TWN is not about:
 
@@ -2001,7 +2001,7 @@ Does this make TWN clearer or more complicated?
 
 
 
-# Volume 4 — UX Bible
+# Volume 4   UX Bible
 
 > **Purpose**
 >
@@ -2872,7 +2872,7 @@ Motion should never feel:
 * Aggressive
 * Slow for the sake of being slow
 
-The goal is for users to notice the result of the animation—not the animation itself.
+The goal is for users to notice the result of the animation not the animation itself.
 
 ---
 
@@ -3129,7 +3129,7 @@ No scaling.
 
 # 4.24 Hover Behaviour
 
-Hover is feedback—not entertainment.
+Hover is feedback not entertainment.
 
 ---
 
@@ -3740,7 +3740,7 @@ For TWN, I would not stop at a sitemap. I would document every page, every route
 ---
 
 
-# Volume 5 — Information Architecture
+# Volume 5   Information Architecture
 
 To define the complete structure of TWN, including every page, route, navigation hierarchy, content relationship, user journey, and future expansion path.
 
@@ -4917,15 +4917,15 @@ Every future feature must satisfy these rules before it is added:
 4. **Discoverability:** Important content should be reachable within three interactions from the homepage.
 5. **Knowledge First:** Organize information around learning and preservation rather than product features.
 6. **Consistency:** Naming, URLs, navigation, and relationships should follow established conventions.
-7. **No Dead Ends:** Every page should connect readers to relevant next steps—related notes, collections, topics, or community contributions.
+7. **No Dead Ends:** Every page should connect readers to relevant next steps related notes, collections, topics, or community contributions.
 
 This volume becomes the architectural map of TWN. As the platform grows over the next decade, it ensures that every new page, feature, and product extension strengthens the original vision instead of fragmenting it.
 
 I think this volume deserves to be treated as one of the core books of the TWN Product Handbook. If we try to document every domain in one response, it will either be incomplete or too compressed to be useful.
 
-# Volume 6 — Product Domains
+# Volume 6   Product Domains
 
-## Chapter 6.1 — Editorial Domain
+## Chapter 6.1   Editorial Domain
 
 **Version:** 1.0
 
@@ -5101,7 +5101,7 @@ The purpose of writing is communication.
 
 Simple language is encouraged.
 
-Complexity should come from ideas—not wording.
+Complexity should come from ideas not wording.
 
 ---
 
@@ -5529,7 +5529,7 @@ The system should never skip stages automatically.
 
 ---
 
-# Stage 1 — Idea
+# Stage 1   Idea
 
 An article begins as an idea.
 
@@ -5570,7 +5570,7 @@ Initially this can remain outside the application.
 
 ---
 
-# Stage 2 — Draft Creation
+# Stage 2   Draft Creation
 
 When an editor decides to pursue an idea, a draft is created.
 
@@ -5612,7 +5612,7 @@ Draft
 
 ---
 
-# Stage 3 — Writing
+# Stage 3   Writing
 
 The article enters active writing.
 
@@ -5632,7 +5632,7 @@ The editor interface should remain distraction-free.
 
 ---
 
-# Stage 4 — Editing
+# Stage 4   Editing
 
 Once the first draft is complete:
 
@@ -5664,7 +5664,7 @@ Editing
 
 ---
 
-# Stage 5 — Internal Review
+# Stage 5   Internal Review
 
 Future expansion.
 
@@ -5686,7 +5686,7 @@ This workflow prepares TWN for a full editorial team.
 
 ---
 
-# Stage 6 — SEO Review
+# Stage 6   SEO Review
 
 The system automatically checks:
 
@@ -5720,7 +5720,7 @@ SEO warnings never block publication.
 
 ---
 
-# Stage 7 — Preview
+# Stage 7   Preview
 
 Editors can generate an exact preview.
 
@@ -5746,7 +5746,7 @@ Preview expires automatically.
 
 ---
 
-# Stage 8 — Ready
+# Stage 8   Ready
 
 Status:
 
@@ -5762,7 +5762,7 @@ Publishing button enabled.
 
 ---
 
-# Stage 9 — Scheduling
+# Stage 9   Scheduling
 
 The editor chooses:
 
@@ -5778,7 +5778,7 @@ No developer intervention required.
 
 ---
 
-# Stage 10 — Published
+# Stage 10   Published
 
 Publication triggers:
 
@@ -5812,7 +5812,7 @@ Published
 
 ---
 
-# Stage 11 — Maintenance
+# Stage 11   Maintenance
 
 Publishing is not the end.
 
@@ -5834,7 +5834,7 @@ Readers always access the latest version.
 
 ---
 
-# Stage 12 — Archive
+# Stage 12   Archive
 
 Some articles become historical.
 
@@ -6445,7 +6445,7 @@ Autosave should:
 
 ### Editorial Domain Summary
 
-At this point, the Editorial Domain defines the complete lifecycle of content—from the first idea to a permanently archived article. It specifies not only how editors write and publish, but also how TWN protects their work, preserves history, and ensures that every published piece becomes part of a long-lived knowledge archive.
+At this point, the Editorial Domain defines the complete lifecycle of content from the first idea to a permanently archived article. It specifies not only how editors write and publish, but also how TWN protects their work, preserves history, and ensures that every published piece becomes part of a long-lived knowledge archive.
 
 The next chapter of Volume VI should cover the **Notebook Domain**, which defines the behavior of notebook entries, the Living Hero, Today's Page, and how short reflections evolve into the unique identity of TWN. This is arguably the feature that most distinguishes TWN from a traditional blog.
 
@@ -7371,7 +7371,7 @@ Although TWN initially has a single administrator, the permission system should 
 
 # 6.26 Editorial Analytics
 
-Analytics exist to understand readers—not to chase vanity metrics.
+Analytics exist to understand readers not to chase vanity metrics.
 
 Key metrics include:
 
@@ -7503,10 +7503,10 @@ Planned capabilities include:
 
 ---
 
-With this chapter complete, the Editorial Domain becomes a fully specified subsystem—from organizing content with collections and categories to publishing standards, governance, analytics, and long-term scalability. It provides the foundation upon which every piece of TWN content will be created, managed, and preserved.
+With this chapter complete, the Editorial Domain becomes a fully specified subsystem from organizing content with collections and categories to publishing standards, governance, analytics, and long-term scalability. It provides the foundation upon which every piece of TWN content will be created, managed, and preserved.
 
 
-I think this chapter should be written as if it were an **internal engineering constitution**. This is the document that every future contributor reads before writing a single line of code. It explains *why* TWN is engineered the way it is—not just *how*.
+I think this chapter should be written as if it were an **internal engineering constitution**. This is the document that every future contributor reads before writing a single line of code. It explains *why* TWN is engineered the way it is not just *how*.
 
 I am also making one important assumption based on what I know about your constraints:
 
@@ -7520,9 +7520,9 @@ I am also making one important assumption based on what I know about your constr
 Those constraints influence every engineering decision below.
 
 -
-# Volume 7 — Engineering Blueprint
+# Volume 7   Engineering Blueprint
 
-## Chapter 7.1 — Engineering Philosophy
+## Chapter 7.1   Engineering Philosophy
 
 **Version:** 1.0
 
@@ -7641,7 +7641,7 @@ Every technical decision should improve at least one of these qualities without 
 
 Every architectural decision must satisfy the following principles.
 
-## Principle 1 — Readers First
+## Principle 1   Readers First
 
 Engineering serves readers.
 
@@ -7653,7 +7653,7 @@ Engineering choices should therefore optimize the reader experience before devel
 
 ---
 
-## Principle 2 — Simplicity Over Cleverness
+## Principle 2   Simplicity Over Cleverness
 
 Code is read far more often than it is written.
 
@@ -7667,7 +7667,7 @@ If a junior developer cannot understand a module after reading it carefully, the
 
 ---
 
-## Principle 3 — Build for Change
+## Principle 3   Build for Change
 
 Requirements will evolve.
 
@@ -7684,7 +7684,7 @@ No component should assume it will remain unchanged forever.
 
 ---
 
-## Principle 4 — Stability Before Innovation
+## Principle 4   Stability Before Innovation
 
 New technologies should be adopted only when they solve a real problem.
 
@@ -7694,7 +7694,7 @@ For example, introducing a new database, framework, or runtime should require a 
 
 ---
 
-## Principle 5 — Engineering Supports Editorial Excellence
+## Principle 5   Engineering Supports Editorial Excellence
 
 The primary product is thoughtful writing.
 
@@ -8051,9 +8051,9 @@ For a production-grade engineering handbook, I would organize it as follows.
 
 # TWN Product Handbook
 
-# Volume VII — Engineering Blueprint
+# Volume VII   Engineering Blueprint
 
-# Chapter 7.2 — Engineering Principles
+# Chapter 7.2   Engineering Principles
 
 **Version:** 1.0
 
@@ -8363,7 +8363,7 @@ Excellent. We will begin writing it as an **engineering specification**, not as 
 ---
 
 
-# Chapter 7.2.3 — Product Before Technology
+# Chapter 7.2.3   Product Before Technology
 
 **Status:** Mandatory Engineering Principle
 
@@ -8905,13 +8905,13 @@ This practice ensures that future contributors understand *why* a decision was m
 
 ---
 
-This single principle establishes the mindset for every future engineering decision. The next principle, **7.2.4 — Simplicity (KISS)**, builds directly on it by defining how to choose the simplest architecture that satisfies the product's needs without sacrificing quality or future growth.
+This single principle establishes the mindset for every future engineering decision. The next principle, **7.2.4   Simplicity (KISS)**, builds directly on it by defining how to choose the simplest architecture that satisfies the product's needs without sacrificing quality or future growth.
 
 # TWN Product Handbook
 
-# Volume VII — Engineering Blueprint
+# Volume VII   Engineering Blueprint
 
-# Chapter 7.2.4 — Simplicity (KISS)
+# Chapter 7.2.4   Simplicity (KISS)
 
 **Principle Name:** Keep It Simple, Stupid (KISS)
 
@@ -9624,9 +9624,9 @@ That principle is **Separation of Concerns (SoC).**
 
 # TWN Product Handbook
 
-# Volume VII — Engineering Blueprint
+# Volume VII   Engineering Blueprint
 
-# Chapter 7.2.6 — Separation of Concerns (SoC)
+# Chapter 7.2.6   Separation of Concerns (SoC)
 
 **Principle Name:** Separation of Concerns (SoC)
 
@@ -9644,7 +9644,7 @@ That principle is **Separation of Concerns (SoC).**
 
 The purpose of Separation of Concerns is to ensure that every part of TWN has a clearly defined responsibility and that responsibilities do not overlap.
 
-As software grows, complexity does not come from the amount of code—it comes from responsibilities becoming mixed together.
+As software grows, complexity does not come from the amount of code it comes from responsibilities becoming mixed together.
 
 When one component performs multiple unrelated tasks, it becomes harder to understand, test, maintain, and replace.
 
@@ -10260,7 +10260,7 @@ Together, these principles form the structural backbone of TWN's engineering pra
 
 ## Consultant's Recommendation for TWN
 
-Because you are building TWN largely on your own, strict separation of concerns is one of the highest-leverage investments you can make. As the platform expands—from Notebook Entries to Shared Pages, multilingual content, search, newsletters, AI assistance, and future community features—you should be able to add new capabilities by introducing new modules rather than rewriting existing ones.
+Because you are building TWN largely on your own, strict separation of concerns is one of the highest-leverage investments you can make. As the platform expands from Notebook Entries to Shared Pages, multilingual content, search, newsletters, AI assistance, and future community features you should be able to add new capabilities by introducing new modules rather than rewriting existing ones.
 
 If every feature is organized around its domain and every layer has a clear responsibility, TWN can realistically grow over the next decade while remaining understandable and maintainable, even as new contributors join the project.
 
@@ -10277,9 +10277,9 @@ Many engineers confuse the two. They are related but operate at different levels
 
 # TWN Product Handbook
 
-# Volume VII — Engineering Blueprint
+# Volume VII   Engineering Blueprint
 
-# Chapter 7.2.7 — Single Responsibility Principle (SRP)
+# Chapter 7.2.7   Single Responsibility Principle (SRP)
 
 **Principle Name:** Single Responsibility Principle (SRP)
 
@@ -10978,7 +10978,7 @@ Together, these principles create a codebase that is modular, understandable, an
 
 # Consultant's Recommendation for TWN
 
-As TWN grows over the next decade, some modules—particularly the Notebook, Community, and Editorial domains—will become significantly more sophisticated. Resist the temptation to create "manager" classes that absorb every new requirement. Instead, let responsibilities emerge naturally and split them when they represent distinct business capabilities.
+As TWN grows over the next decade, some modules particularly the Notebook, Community, and Editorial domains will become significantly more sophisticated. Resist the temptation to create "manager" classes that absorb every new requirement. Instead, let responsibilities emerge naturally and split them when they represent distinct business capabilities.
 
 A useful rule for TWN is this:
 
@@ -11008,9 +11008,9 @@ It means **"Never duplicate knowledge."**
 
 # TWN Product Handbook
 
-# Volume VII — Engineering Blueprint
+# Volume VII   Engineering Blueprint
 
-# Chapter 7.2.8 — Don't Repeat Yourself (DRY)
+# Chapter 7.2.8   Don't Repeat Yourself (DRY)
 
 **Principle Name:** Don't Repeat Yourself (DRY)
 
@@ -11617,11 +11617,11 @@ These principles reinforce one another. DRY should never be applied in isolation
 
 # Consultant's Recommendation for TWN
 
-As TWN evolves, you'll encounter many features that appear similar—Notebook Entries, Articles, Shared Pages, Margin Notes, Collections, and future content types. Resist the temptation to force them into a single "universal content" model too early. Let each domain mature independently.
+As TWN evolves, you'll encounter many features that appear similar Notebook Entries, Articles, Shared Pages, Margin Notes, Collections, and future content types. Resist the temptation to force them into a single "universal content" model too early. Let each domain mature independently.
 
 Apply DRY to **business rules**, not to every line of code. Use the Rule of Three before introducing shared abstractions. This approach will produce a codebase that remains both expressive and adaptable, avoiding the twin pitfalls of copy-paste programming and premature generalization.
 
-Excellent. At this point we've covered the **fundamental engineering principles** that every senior engineer should know. From here, we transition into **architectural principles**—the decisions that determine whether TWN remains maintainable after 5, 10, or even 20 years.
+Excellent. At this point we've covered the **fundamental engineering principles** that every senior engineer should know. From here, we transition into **architectural principles** the decisions that determine whether TWN remains maintainable after 5, 10, or even 20 years.
 
 The next chapter should be **Dependency Inversion Principle (DIP)**.
 
@@ -11631,9 +11631,9 @@ This is one of the five SOLID principles and is arguably the most misunderstood.
 
 # TWN Product Handbook
 
-# Volume VII — Engineering Blueprint
+# Volume VII   Engineering Blueprint
 
-# Chapter 7.2.9 — Dependency Inversion Principle (DIP)
+# Chapter 7.2.9   Dependency Inversion Principle (DIP)
 
 **Principle Name:** Dependency Inversion Principle (DIP)
 
@@ -11663,7 +11663,7 @@ AI providers change.
 
 Your product should survive all of those changes.
 
-The purpose of DIP is to make sure that **the business owns the technology—not the other way around.**
+The purpose of DIP is to make sure that **the business owns the technology not the other way around.**
 
 ---
 
@@ -12181,7 +12181,7 @@ instead of
 Article
 ```
 
-The framework should adapt to the product—not the reverse.
+The framework should adapt to the product not the reverse.
 
 ---
 
@@ -12232,7 +12232,7 @@ Apply DIP where external services are likely to change:
 * AI
 * Authentication
 
-For internal modules that are unlikely to change soon—such as a repository that only wraps Supabase—keep the implementation simple until there is a realistic need for additional providers. This follows the earlier **YAGNI** principle while still preserving a clean path for future evolution.
+For internal modules that are unlikely to change soon such as a repository that only wraps Supabase keep the implementation simple until there is a realistic need for additional providers. This follows the earlier **YAGNI** principle while still preserving a clean path for future evolution.
 
 This balanced approach avoids unnecessary abstraction today while ensuring TWN can adapt to new technologies over the next decade without rewriting its core business logic.
 
@@ -12240,15 +12240,15 @@ Excellent. At this point we've covered the engineering principles that determine
 
 The next principle should be **Open/Closed Principle (OCP)**.
 
-This principle is especially important for TWN because your vision spans at least ten years. You want to continuously add capabilities—Notebook Entries, Books, Podcasts, AI, Research, Community, Courses—without constantly rewriting old code.
+This principle is especially important for TWN because your vision spans at least ten years. You want to continuously add capabilities Notebook Entries, Books, Podcasts, AI, Research, Community, Courses without constantly rewriting old code.
 
 ---
 
 # TWN Product Handbook
 
-# Volume VII — Engineering Blueprint
+# Volume VII   Engineering Blueprint
 
-# Chapter 7.2.10 — Open/Closed Principle (OCP)
+# Chapter 7.2.10   Open/Closed Principle (OCP)
 
 **Principle Name:** Open/Closed Principle (OCP)
 
@@ -12347,7 +12347,7 @@ These additions should not require redesigning the entire architecture.
 
 ---
 
-# TWN Example — Notebook Entries
+# TWN Example   Notebook Entries
 
 Today:
 
@@ -12600,7 +12600,7 @@ Eventually:
 
 Multiple regional variants.
 
-Every new language should be added through translation resources—not by modifying every component.
+Every new language should be added through translation resources not by modifying every component.
 
 ---
 
@@ -12762,9 +12762,9 @@ Many developers skip this principle because they think it only applies to object
 
 # TWN Product Handbook
 
-# Volume VII — Engineering Blueprint
+# Volume VII   Engineering Blueprint
 
-# Chapter 7.2.11 — Interface Segregation Principle (ISP)
+# Chapter 7.2.11   Interface Segregation Principle (ISP)
 
 **Principle Name:** Interface Segregation Principle (ISP)
 
@@ -13289,7 +13289,7 @@ Together, these principles create an architecture that scales gracefully without
 
 TWN is expected to evolve into a broad editorial ecosystem over the next decade. That makes interface discipline especially important.
 
-As new domains emerge—Books, Research, Podcasts, AI, Community Programs—avoid extending one central "Content" or "Platform" interface. Instead, introduce focused contracts that model real business capabilities. This keeps modules loosely coupled, simplifies testing, and allows individual areas of the platform to evolve at different speeds without forcing unrelated changes across the codebase.
+As new domains emerge Books, Research, Podcasts, AI, Community Programs avoid extending one central "Content" or "Platform" interface. Instead, introduce focused contracts that model real business capabilities. This keeps modules loosely coupled, simplifies testing, and allows individual areas of the platform to evolve at different speeds without forcing unrelated changes across the codebase.
 
 **Note:** With this chapter complete, you've documented **four of the five SOLID principles**:
 
@@ -13302,7 +13302,7 @@ The remaining SOLID principle is **Liskov Substitution Principle (LSP)**. After 
 
 Excellent. This is the last SOLID principle. It is also the most misunderstood, and many senior developers struggle to explain it correctly.
 
-Unlike the other SOLID principles, **Liskov Substitution Principle (LSP)** is not primarily about organization—it is about **behavioral correctness**.
+Unlike the other SOLID principles, **Liskov Substitution Principle (LSP)** is not primarily about organization it is about **behavioral correctness**.
 
 For TWN, this principle will ensure that as the platform grows (Articles → Notebook Entries → Books → Podcasts → Research → AI Content), every new feature behaves predictably without breaking existing expectations.
 
@@ -13310,9 +13310,9 @@ For TWN, this principle will ensure that as the platform grows (Articles → Not
 
 # TWN Product Handbook
 
-# Volume VII — Engineering Blueprint
+# Volume VII   Engineering Blueprint
 
-# Chapter 7.2.12 — Liskov Substitution Principle (LSP)
+# Chapter 7.2.12   Liskov Substitution Principle (LSP)
 
 **Principle Name:** Liskov Substitution Principle (LSP)
 
@@ -13428,7 +13428,7 @@ Behavior must remain compatible.
 
 ---
 
-# TWN Example — Search Providers
+# TWN Example   Search Providers
 
 Current:
 
@@ -13462,7 +13462,7 @@ Every provider fulfills the same contract.
 
 ---
 
-# TWN Example — Storage
+# TWN Example   Storage
 
 Current:
 
@@ -13486,7 +13486,7 @@ The application should never care which provider stores the file.
 
 ---
 
-# TWN Example — Hero Entries
+# TWN Example   Hero Entries
 
 Suppose today:
 
@@ -13871,21 +13871,21 @@ Together, these five principles form the complete **SOLID** foundation of TWN's 
 
 | Principle                     | Central Question                                                  |
 | ----------------------------- | ----------------------------------------------------------------- |
-| **S — Single Responsibility** | Does this unit have one reason to change?                         |
-| **O — Open/Closed**           | Can I add new behavior without rewriting existing code?           |
-| **L — Liskov Substitution**   | Can one implementation replace another without breaking behavior? |
-| **I — Interface Segregation** | Are consumers depending only on what they actually need?          |
-| **D — Dependency Inversion**  | Does the business depend on abstractions instead of technologies? |
+| **S   Single Responsibility** | Does this unit have one reason to change?                         |
+| **O   Open/Closed**           | Can I add new behavior without rewriting existing code?           |
+| **L   Liskov Substitution**   | Can one implementation replace another without breaking behavior? |
+| **I   Interface Segregation** | Are consumers depending only on what they actually need?          |
+| **D   Dependency Inversion**  | Does the business depend on abstractions instead of technologies? |
 
-Together with the earlier principles you've documented—**Product Before Technology, KISS, YAGNI, Separation of Concerns, and DRY**—this gives TWN a rigorous engineering foundation comparable to what is used in long-lived software products.
+Together with the earlier principles you've documented **Product Before Technology, KISS, YAGNI, Separation of Concerns, and DRY** this gives TWN a rigorous engineering foundation comparable to what is used in long-lived software products.
 
 ## Consultant's Recommendation
 
-With Chapter **7.2.12** complete, I recommend **not** jumping immediately into microservices, Kubernetes, CQRS, or other advanced architectural patterns. Given your current situation—a single developer with limited budget—those would violate your own principles of **KISS** and **YAGNI**.
+With Chapter **7.2.12** complete, I recommend **not** jumping immediately into microservices, Kubernetes, CQRS, or other advanced architectural patterns. Given your current situation a single developer with limited budget those would violate your own principles of **KISS** and **YAGNI**.
 
  **software architecture**, beginning with:
 
-**7.3 — Architectural Patterns**
+**7.3   Architectural Patterns**
 
 1. **7.3.1 Why TWN Uses a Modular Monolith**
 2. **7.3.2 Domain-Driven Folder Structure**
@@ -13910,15 +13910,15 @@ I am writing this as if I were the Lead Architect delivering the technical bluep
 
 # TWN Product Handbook
 
-# Volume VII — Engineering Blueprint
+# Volume VII   Engineering Blueprint
 
-# Part III — Software Architecture
+# Part III   Software Architecture
 
 > *"Architecture is not about making software complicated. It is about making change inexpensive."*
 
 ---
 
-# Chapter 7.3.1 — Why TWN Uses a Modular Monolith
+# Chapter 7.3.1   Why TWN Uses a Modular Monolith
 
 **Status:** Foundational Architecture Decision
 
@@ -14569,7 +14569,7 @@ This increases cost without delivering user value.
 * Clear business boundaries through domains.
 * Straightforward migration path if individual services ever need to be extracted.
 
-This decision should be revisited only when there is concrete evidence—such as scaling bottlenecks, independent team ownership, or operational constraints—that the modular monolith no longer meets the platform's needs.
+This decision should be revisited only when there is concrete evidence such as scaling bottlenecks, independent team ownership, or operational constraints that the modular monolith no longer meets the platform's needs.
 
 ---
 
@@ -14577,16 +14577,16 @@ This decision should be revisited only when there is concrete evidence—such as
 
 The next chapter builds directly on this decision:
 
-# **Chapter 7.3.2 — Domain-Driven Folder Structure**
+# **Chapter 7.3.2   Domain-Driven Folder Structure**
 
-In that chapter, we will design the complete folder structure for TWN—from the root of the repository down to individual feature modules—covering every directory, naming convention, ownership rule, import boundary, and scalability consideration so that the codebase remains organized even after ten years of development.
+In that chapter, we will design the complete folder structure for TWN from the root of the repository down to individual feature modules covering every directory, naming convention, ownership rule, import boundary, and scalability consideration so that the codebase remains organized even after ten years of development.
 # TWN Product Handbook
 
-# Volume VII — Engineering Blueprint
+# Volume VII   Engineering Blueprint
 
-# Part III — Software Architecture
+# Part III   Software Architecture
 
-# Chapter 7.3.2 — Domain-Driven Folder Structure
+# Chapter 7.3.2   Domain-Driven Folder Structure
 
 **Status:** Core Architecture Decision
 
@@ -15410,7 +15410,7 @@ Interface
 Community
 ```
 
-Domains communicate through services or contracts—not by reaching into each other's internals.
+Domains communicate through services or contracts not by reaching into each other's internals.
 
 ---
 
@@ -15418,7 +15418,7 @@ Domains communicate through services or contracts—not by reaching into each ot
 
 Folders:
 
-✅ Singular or plural—choose one convention and keep it consistent.
+✅ Singular or plural choose one convention and keep it consistent.
 
 Files:
 
@@ -15636,17 +15636,17 @@ This keeps the App Router thin while preserving clear domain boundaries.
 
 The next chapter is one of the most important in the entire handbook:
 
-# **Chapter 7.3.3 — Clean Architecture for TWN**
+# **Chapter 7.3.3   Clean Architecture for TWN**
 
-In that chapter, we'll define every architectural layer—Presentation, Application, Domain, Infrastructure, and Cross-Cutting Concerns—and establish strict dependency rules, request lifecycles, data flow, error propagation, and testing boundaries. That chapter will serve as the master blueprint for how every feature in TWN should be implemented.
+In that chapter, we'll define every architectural layer Presentation, Application, Domain, Infrastructure, and Cross-Cutting Concerns and establish strict dependency rules, request lifecycles, data flow, error propagation, and testing boundaries. That chapter will serve as the master blueprint for how every feature in TWN should be implemented.
 
 # TWN Product Handbook
 
-# Volume VII — Engineering Blueprint
+# Volume VII   Engineering Blueprint
 
-# Part III — Software Architecture
+# Part III   Software Architecture
 
-# Chapter 7.3.3 — Clean Architecture for TWN
+# Chapter 7.3.3   Clean Architecture for TWN
 
 **Status:** Core Architecture Decision
 
@@ -15800,7 +15800,7 @@ The lower layers never know who is calling them.
 
 ---
 
-# Layer One — Presentation
+# Layer One   Presentation
 
 ## Purpose
 
@@ -15916,7 +15916,7 @@ Application answers.
 
 ---
 
-# Layer Two — Application
+# Layer Two   Application
 
 ## Purpose
 
@@ -16015,7 +16015,7 @@ Application layer must never:
 
 ---
 
-# Layer Three — Domain
+# Layer Three   Domain
 
 The Domain Layer is the heart of TWN.
 
@@ -16125,7 +16125,7 @@ Not SQL.
 
 ---
 
-# Layer Four — Infrastructure
+# Layer Four   Infrastructure
 
 Infrastructure connects TWN to the outside world.
 
@@ -16657,17 +16657,17 @@ A clean architecture is successful not because it has many layers, but because e
 
 The natural continuation is:
 
-**7.3.4 — Feature-First Architecture**
+**7.3.4   Feature-First Architecture**
 
 This chapter will define **how every feature inside a domain is organized**, including the lifecycle of a feature from idea → database → service → UI → tests → deployment, ensuring that every future capability added to TWN follows the same engineering process.
 
 # TWN Product Handbook
 
-# Volume VII — Engineering Blueprint
+# Volume VII   Engineering Blueprint
 
-# Part III — Software Architecture
+# Part III   Software Architecture
 
-# Chapter 7.3.5 — Server Components vs Client Components Architecture
+# Chapter 7.3.5   Server Components vs Client Components Architecture
 
 **Status:** Core Architecture Decision
 
@@ -16759,7 +16759,7 @@ The goal is to keep the third layer as small as possible.
 
 ---
 
-# Layer 1 — Static Server Components
+# Layer 1   Static Server Components
 
 These never require JavaScript.
 
@@ -16800,7 +16800,7 @@ No client JavaScript required.
 
 ---
 
-# Layer 2 — Dynamic Server Components
+# Layer 2   Dynamic Server Components
 
 These fetch dynamic data.
 
@@ -16846,7 +16846,7 @@ Still no hydration.
 
 ---
 
-# Layer 3 — Interactive Client Components
+# Layer 3   Interactive Client Components
 
 Only components that require browser interaction become Client Components.
 
@@ -17626,7 +17626,7 @@ These belong on the server.
 
 # Senior Architect Recommendations for TWN
 
-Given your constraints—a solo developer, limited budget, and a publishing platform—this approach is especially valuable.
+Given your constraints a solo developer, limited budget, and a publishing platform this approach is especially valuable.
 
 * Favor **Server Components** for all content rendering.
 * Introduce **Client Components** only for interactions that genuinely require them.
@@ -17642,17 +17642,17 @@ This architecture allows TWN to remain fast, maintainable, and scalable while mi
 
 The next chapter should be:
 
-**7.3.6 — Data Fetching, Caching, and Revalidation Strategy**
+**7.3.6   Data Fetching, Caching, and Revalidation Strategy**
 
 This chapter will define, in detail, how TWN retrieves data, uses Next.js caching primitives, handles Incremental Static Regeneration (ISR), cache invalidation, Server Actions, tag-based revalidation, and prepares for future scaling without changing the application's architecture.
 
 # TWN Product Handbook
 
-# Volume VII — Engineering Blueprint
+# Volume VII   Engineering Blueprint
 
-# Part III — Software Architecture
+# Part III   Software Architecture
 
-# Chapter 7.3.6 — Data Fetching, Caching, and Revalidation Strategy
+# Chapter 7.3.6   Data Fetching, Caching, and Revalidation Strategy
 
 **Status:** Core Architecture Decision
 
@@ -17753,7 +17753,7 @@ We classify data into five categories.
 
 ---
 
-# Type 1 — Static Data
+# Type 1   Static Data
 
 Changes extremely rarely.
 
@@ -17788,7 +17788,7 @@ Once per deployment
 
 ---
 
-# Type 2 — Slow-Changing Data
+# Type 2   Slow-Changing Data
 
 Changes occasionally.
 
@@ -17820,7 +17820,7 @@ Revalidate every 24 hours
 
 ---
 
-# Type 3 — Medium-Changing Data
+# Type 3   Medium-Changing Data
 
 Examples
 
@@ -17850,7 +17850,7 @@ Revalidate every 5–15 minutes
 
 ---
 
-# Type 4 — Frequently Changing Data
+# Type 4   Frequently Changing Data
 
 Examples
 
@@ -17878,7 +17878,7 @@ Server Actions
 
 ---
 
-# Type 5 — Real-Time Data
+# Type 5   Real-Time Data
 
 Future
 
@@ -18248,7 +18248,7 @@ Each action should:
 
 # Caching Layers
 
-## Layer 1 — Request Memoization
+## Layer 1   Request Memoization
 
 Within a single request, identical fetches should execute only once.
 
@@ -18256,7 +18256,7 @@ Next.js already supports request memoization for identical fetches. Design servi
 
 ---
 
-## Layer 2 — Route Cache
+## Layer 2   Route Cache
 
 Entire pages can be cached.
 
@@ -18272,7 +18272,7 @@ Revalidate
 
 ---
 
-## Layer 3 — Tag Cache
+## Layer 3   Tag Cache
 
 Future-proof the application by using cache tags.
 
@@ -18655,17 +18655,17 @@ This approach keeps TWN fast, cost-effective, and maintainable while leaving a c
 
 The next chapter should be:
 
-**7.3.7 — Database Architecture & Repository Pattern**
+**7.3.7   Database Architecture & Repository Pattern**
 
 This chapter will define the complete database philosophy for TWN, including schema design, normalization vs. denormalization, indexing strategy, soft deletes, audit fields, migrations, Row Level Security, repository contracts, transaction management, and long-term database evolution. It will serve as the definitive guide for every table and query created throughout the life of the platform.
 
 # TWN Product Handbook
 
-# Volume VII — Engineering Blueprint
+# Volume VII   Engineering Blueprint
 
-# Part III — Software Architecture
+# Part III   Software Architecture
 
-# Chapter 7.3.7 — Database Architecture & Repository Pattern
+# Chapter 7.3.7   Database Architecture & Repository Pattern
 
 **Status:** Permanent Engineering Standard
 
@@ -19630,17 +19630,17 @@ Given your constraints and vision, there are a few decisions I would make from t
 
 The next chapter is:
 
-**7.3.8 — API Design, Server Actions, and Internal Service Contracts**
+**7.3.8   API Design, Server Actions, and Internal Service Contracts**
 
 This chapter will define when to use Server Actions versus Route Handlers, how APIs should be versioned, request/response standards, validation contracts, error formats, idempotency, rate limiting, webhooks, and internal communication patterns across TWN's domains. This will complete the core backend architecture before moving into frontend engineering and UX architecture.
 
 # TWN Product Handbook
 
-# Volume VII — Engineering Blueprint
+# Volume VII   Engineering Blueprint
 
-# Part III — Software Architecture
+# Part III   Software Architecture
 
-# Chapter 7.3.8 — API Design, Server Actions & Internal Service Contracts
+# Chapter 7.3.8   API Design, Server Actions & Internal Service Contracts
 
 **Status:** Permanent Engineering Standard
 
@@ -20654,7 +20654,7 @@ Separate by bounded context.
 For a solo developer with limited resources, this architecture offers a strong balance between simplicity and scalability:
 
 * **Use Server Actions by default.** Most TWN features are forms or editorial workflows, making them an ideal fit.
-* **Keep Route Handlers rare and purposeful.** Introduce them only when another system—not your own React components—needs to communicate with TWN.
+* **Keep Route Handlers rare and purposeful.** Introduce them only when another system not your own React components needs to communicate with TWN.
 * **Standardize all action results and errors.** A consistent contract simplifies your frontend and reduces bugs.
 * **Design Application Services as stable business APIs.** They should outlive changes in the UI, database, or hosting platform.
 * **Plan for future integrations without building them today.** The architecture should make adding a mobile app or public API straightforward, but you shouldn't carry that complexity until it's needed.
@@ -20665,17 +20665,17 @@ For a solo developer with limited resources, this architecture offers a strong b
 
 The next chapter is:
 
-**7.3.9 — Security Architecture & Trust Boundaries**
+**7.3.9   Security Architecture & Trust Boundaries**
 
 This will define authentication, authorization, Row Level Security, secrets management, input sanitization, XSS/CSRF protection, Content Security Policy, file upload security, moderation safeguards, audit logging, dependency security, and incident response. It will become the definitive security standard for every part of TWN.
 
 # TWN Product Handbook
 
-# Volume VII — Engineering Blueprint
+# Volume VII   Engineering Blueprint
 
-# Part III — Software Architecture
+# Part III   Software Architecture
 
-# Chapter 7.3.9 — Security Architecture & Trust Boundaries
+# Chapter 7.3.9   Security Architecture & Trust Boundaries
 
 **Status:** Permanent Engineering Standard
 
@@ -21507,7 +21507,7 @@ Add only when necessary.
 
 # Senior Architect Recommendations for TWN
 
-For your current situation—a solo developer with no budget—the most valuable investments are not expensive security tools but disciplined engineering practices:
+For your current situation a solo developer with no budget the most valuable investments are not expensive security tools but disciplined engineering practices:
 
 1. **Turn on RLS before inserting production data.** Retrofitting policies later is significantly harder.
 2. **Keep the Service Role Key server-only.** Treat it as the most sensitive credential in the system.
@@ -21521,17 +21521,17 @@ For your current situation—a solo developer with no budget—the most valuable
 
 The next chapter should be:
 
-**7.3.10 — Observability, Monitoring, Logging & Operational Excellence**
+**7.3.10   Observability, Monitoring, Logging & Operational Excellence**
 
 This chapter will define logging architecture, metrics, health checks, uptime monitoring, error reporting, performance monitoring, tracing, alerting, dashboards, operational playbooks, and production readiness so TWN can be operated confidently as it grows from a personal publication into a mature platform.
 
 # TWN Product Handbook
 
-# Volume VII — Engineering Blueprint
+# Volume VII   Engineering Blueprint
 
-# Part III — Software Architecture
+# Part III   Software Architecture
 
-# Chapter 7.3.10 — Observability, Monitoring, Logging & Operational Excellence
+# Chapter 7.3.10   Observability, Monitoring, Logging & Operational Excellence
 
 **Status:** Permanent Engineering Standard
 
@@ -21607,7 +21607,7 @@ Every production system should have all four.
 
 ---
 
-# Pillar 1 — Logs
+# Pillar 1   Logs
 
 Logs answer
 
@@ -21639,7 +21639,7 @@ Logs tell the story.
 
 ---
 
-# Pillar 2 — Metrics
+# Pillar 2   Metrics
 
 Metrics answer
 
@@ -21665,7 +21665,7 @@ Metrics become charts.
 
 ---
 
-# Pillar 3 — Traces
+# Pillar 3   Traces
 
 Tracing answers
 
@@ -21707,7 +21707,7 @@ performance optimization becomes guessing.
 
 ---
 
-# Pillar 4 — Alerts
+# Pillar 4   Alerts
 
 Alerts answer
 
@@ -22574,11 +22574,11 @@ As TWN grows, you can progressively introduce more advanced tooling without chan
 
 The next chapter should be:
 
-**7.3.11 — Scalability, High Availability & Future Evolution Architecture**
+**7.3.11   Scalability, High Availability & Future Evolution Architecture**
 
 This chapter will define how TWN scales from a solo-managed publication to a platform serving millions of readers, covering horizontal scaling, CDN strategy, image optimization, search architecture, background jobs, queues, storage evolution, multi-region deployment, resilience patterns, and long-term infrastructure evolution while preserving the original architecture.
 
-# Volume 7 — Engineering Philosophy
+# Volume 7   Engineering Philosophy
 
 # 7.3 Non-Functional Requirements (NFR)
 
@@ -22615,7 +22615,7 @@ It is engineering entropy.
 
 # Engineering Principle
 
-Every new feature must make the system better—not more complicated.
+Every new feature must make the system better not more complicated.
 
 If adding one feature makes future development harder, the architecture has already failed.
 
@@ -25039,9 +25039,9 @@ From this point onward, I'm going to document this as I would for a company buil
 
 ---
 
-# Volume 7 — Engineering Handbook
+# Volume 7   Engineering Handbook
 
-# Chapter 7.4 — High-Level System Architecture
+# Chapter 7.4   High-Level System Architecture
 
 ---
 
@@ -25093,7 +25093,7 @@ The system should never prioritize unnecessary complexity over clarity.
 
 The architecture exists to satisfy several long-term goals.
 
-### Goal 1 — Fast Reading Experience
+### Goal 1   Fast Reading Experience
 
 Readers should spend their time reading rather than waiting.
 
@@ -25103,7 +25103,7 @@ JavaScript should enhance the experience, not create it.
 
 ---
 
-### Goal 2 — Calm User Experience
+### Goal 2   Calm User Experience
 
 The interface should remain stable.
 
@@ -25119,7 +25119,7 @@ Motion should support understanding, not compete for attention.
 
 ---
 
-### Goal 3 — Editorial Excellence
+### Goal 3   Editorial Excellence
 
 Every published article should feel permanent.
 
@@ -25138,7 +25138,7 @@ This influences:
 
 ---
 
-### Goal 4 — Progressive Growth
+### Goal 4   Progressive Growth
 
 The architecture must support gradual expansion.
 
@@ -25158,7 +25158,7 @@ Examples include:
 
 ---
 
-### Goal 5 — Financial Sustainability
+### Goal 5   Financial Sustainability
 
 The platform must be inexpensive to operate.
 
@@ -25176,7 +25176,7 @@ These are architectural decisions rather than coding rules.
 
 ---
 
-## Principle 1 — Server First
+## Principle 1   Server First
 
 Rendering should occur on the server whenever possible.
 
@@ -25202,7 +25202,7 @@ Everything else should remain server-rendered.
 
 ---
 
-## Principle 2 — Content First
+## Principle 2   Content First
 
 Content is the primary product.
 
@@ -25222,7 +25222,7 @@ Reader downloads 2 MB of JavaScript before reading.
 
 ---
 
-## Principle 3 — Modular Architecture
+## Principle 3   Modular Architecture
 
 Each major capability should exist independently.
 
@@ -25243,7 +25243,7 @@ This separation makes the system easier to maintain and evolve.
 
 ---
 
-## Principle 4 — Progressive Enhancement
+## Principle 4   Progressive Enhancement
 
 Every page should function without advanced browser features whenever possible.
 
@@ -25255,7 +25255,7 @@ The Living Hero should still display a notebook entry if JavaScript fails.
 
 ---
 
-## Principle 5 — Graceful Degradation
+## Principle 5   Graceful Degradation
 
 When something fails, the application should remain usable.
 
@@ -25393,7 +25393,7 @@ If TWN later migrates away from Supabase or Clerk, changes should primarily occu
 
 ---
 
-This establishes the architectural foundation. The next section, **7.4.5 — Architectural Decision Records (Current Technology Stack and Rationale)**, will explain *why* each major technology (Next.js, React, Supabase, Clerk, Tailwind, shadcn/ui, Vercel, TypeScript, etc.) was chosen, what alternatives were considered, the trade-offs involved, and the migration path if those choices need to change in the future. That section will serve as the canonical reference for every core technology decision in TWN.
+This establishes the architectural foundation. The next section, **7.4.5   Architectural Decision Records (Current Technology Stack and Rationale)**, will explain *why* each major technology (Next.js, React, Supabase, Clerk, Tailwind, shadcn/ui, Vercel, TypeScript, etc.) was chosen, what alternatives were considered, the trade-offs involved, and the migration path if those choices need to change in the future. That section will serve as the canonical reference for every core technology decision in TWN.
 
 # 7.4.5 Architecture Decision Records (ADRs)
 
@@ -25419,7 +25419,7 @@ This section documents those decisions.
 
 ---
 
-# ADR-001 — Why Next.js?
+# ADR-001   Why Next.js?
 
 ## Decision
 
@@ -25646,7 +25646,7 @@ This separation reduces migration cost.
 
 ---
 
-# ADR-002 — Why React?
+# ADR-002   Why React?
 
 ## Decision
 
@@ -25728,7 +25728,7 @@ Everything else remains server-rendered.
 
 ---
 
-# ADR-003 — Why TypeScript?
+# ADR-003   Why TypeScript?
 
 ## Decision
 
@@ -25804,7 +25804,7 @@ migration risk is extremely low.
 
 ---
 
-# ADR-004 — Why Tailwind CSS?
+# ADR-004   Why Tailwind CSS?
 
 ## Decision
 
@@ -25883,7 +25883,7 @@ Tailwind was selected due to simplicity, performance, and strong integration wit
 
 ---
 
-# ADR-005 — Why shadcn/ui?
+# ADR-005   Why shadcn/ui?
 
 ## Decision
 
@@ -25977,7 +25977,7 @@ These define the TWN brand and should remain bespoke.
 
 ---
 
-# ADR-006 — Why Vercel?
+# ADR-006   Why Vercel?
 
 ## Decision
 
@@ -26052,7 +26052,7 @@ These decisions are not permanent commitments. They are documented choices made 
 
 ---
 
-The next section, **7.4.6 — Core Technology Stack**, will go even deeper. Instead of explaining *why* a technology was chosen, it will document every technology in the system (Supabase, Clerk, Zod, React Hook Form, Framer Motion, MDX, Sharp, Resend or alternatives, testing tools, linting, formatting, and more), defining each one's responsibility, ownership, replacement strategy, and the rules governing when new dependencies may be introduced. This becomes TWN's official technology inventory.
+The next section, **7.4.6   Core Technology Stack**, will go even deeper. Instead of explaining *why* a technology was chosen, it will document every technology in the system (Supabase, Clerk, Zod, React Hook Form, Framer Motion, MDX, Sharp, Resend or alternatives, testing tools, linting, formatting, and more), defining each one's responsibility, ownership, replacement strategy, and the rules governing when new dependencies may be introduced. This becomes TWN's official technology inventory.
 
 Excellent. This section becomes the **official technology inventory** of TWN. Unlike the previous ADR section, this chapter answers:
 
@@ -26092,7 +26092,7 @@ Every dependency must solve a real problem.
 
 Before documenting the stack, every technology used in TWN must satisfy these principles.
 
-## Principle 1 — Prefer the Platform
+## Principle 1   Prefer the Platform
 
 Use native browser APIs before installing libraries.
 
@@ -26109,7 +26109,7 @@ Before adding another package.
 
 ---
 
-## Principle 2 — Prefer Framework Features
+## Principle 2   Prefer Framework Features
 
 If Next.js already solves the problem,
 
@@ -26130,7 +26130,7 @@ instead of third-party alternatives.
 
 ---
 
-## Principle 3 — Fewer Dependencies
+## Principle 3   Fewer Dependencies
 
 Every dependency introduces:
 
@@ -26144,7 +26144,7 @@ Smaller stacks are easier to maintain.
 
 ---
 
-## Principle 4 — Open Source First
+## Principle 4   Open Source First
 
 Whenever practical,
 
@@ -26159,7 +26159,7 @@ This aligns with:
 
 ---
 
-## Principle 5 — Replaceability
+## Principle 5   Replaceability
 
 Every dependency should be replaceable.
 
@@ -26885,13 +26885,13 @@ At this point, TWN has documented:
 * The rationale behind major technology decisions (**7.4.5 ADRs**)
 * The complete current and planned technology stack (**7.4.6**)
 
-The next section, **7.4.7 — System Context and Component Architecture**, will move from technology choices to the structure of the platform itself. It will define every major subsystem (Public Website, Editorial CMS, Authentication, Database, Search, Newsletter, Community, Analytics, etc.), how they communicate, their boundaries, ownership, data flow, and how the architecture evolves as TWN grows from a single-editor platform into a mature publishing ecosystem. This is where the actual architecture diagrams and component relationships begin.
+The next section, **7.4.7   System Context and Component Architecture**, will move from technology choices to the structure of the platform itself. It will define every major subsystem (Public Website, Editorial CMS, Authentication, Database, Search, Newsletter, Community, Analytics, etc.), how they communicate, their boundaries, ownership, data flow, and how the architecture evolves as TWN grows from a single-editor platform into a mature publishing ecosystem. This is where the actual architecture diagrams and component relationships begin.
  
  Excellent. This section is one of the most important in the entire Engineering Handbook.
 
 Everything we've documented so far explains **why** TWN exists and **what technologies** it uses. Now we define **what the system actually consists of**.
 
-Think of this as the **master blueprint** of the platform. Every future feature—from AI assistants to mobile apps—must fit into this architecture instead of changing it.
+Think of this as the **master blueprint** of the platform. Every future feature from AI assistants to mobile apps must fit into this architecture instead of changing it.
 
 ---
 
@@ -27665,7 +27665,7 @@ Every future feature must satisfy these rules:
 
 This chapter defines **what TWN is made of**. It establishes stable system boundaries that should remain valid even if individual technologies change.
 
-The next chapter, **7.4.8 — Request Lifecycle & Data Flow**, will trace a request from the moment a reader opens `https://twn.example/articles/...` through DNS resolution, CDN, Next.js routing, Server Components, business services, database queries, rendering, hydration (where applicable), and finally back to the browser. It will also document the data flows for publishing, moderation, newsletter subscriptions, and community submissions, providing an end-to-end operational view of the platform.
+The next chapter, **7.4.8   Request Lifecycle & Data Flow**, will trace a request from the moment a reader opens `https://twn.example/articles/...` through DNS resolution, CDN, Next.js routing, Server Components, business services, database queries, rendering, hydration (where applicable), and finally back to the browser. It will also document the data flows for publishing, moderation, newsletter subscriptions, and community submissions, providing an end-to-end operational view of the platform.
 
 Excellent. This is one of the most important sections of the entire architecture because it explains **how the system behaves** rather than what it is made of.
 
@@ -28532,7 +28532,7 @@ At this point, Chapter **7.4** now covers:
 * System context and component architecture
 * Complete request lifecycle and data flow
 
-The next section, **7.4.9 — Rendering Strategy & Caching Architecture**, should document exactly **how every page in TWN is rendered** (Server Components, Client Components, Static Rendering, Dynamic Rendering, Streaming, Suspense, Incremental Static Regeneration, cache invalidation, and future CDN strategy). This is one of the most critical performance documents in the handbook because it determines how the application behaves under load while maintaining an excellent reading experience.
+The next section, **7.4.9   Rendering Strategy & Caching Architecture**, should document exactly **how every page in TWN is rendered** (Server Components, Client Components, Static Rendering, Dynamic Rendering, Streaming, Suspense, Incremental Static Regeneration, cache invalidation, and future CDN strategy). This is one of the most critical performance documents in the handbook because it determines how the application behaves under load while maintaining an excellent reading experience.
 
 
 Excellent. This is arguably **the most important engineering document in TWN** because rendering strategy determines almost every performance characteristic of the application.
@@ -29336,7 +29336,7 @@ With this chapter complete, the engineering handbook now documents:
 * Rendering strategy
 * Caching architecture
 
-The logical next chapter is **7.4.10 — Data Architecture & Domain Model**, where the focus shifts from request handling to the information itself. That chapter will define every domain entity (Articles, Notebook Entries, Authors, Shared Pages, Margin Notes, Categories, Tags, Newsletter Subscribers, Media, etc.), their relationships, lifecycle, ownership, validation rules, indexing strategy, and database normalization principles. It becomes the canonical reference for the platform's data model.
+The logical next chapter is **7.4.10   Data Architecture & Domain Model**, where the focus shifts from request handling to the information itself. That chapter will define every domain entity (Articles, Notebook Entries, Authors, Shared Pages, Margin Notes, Categories, Tags, Newsletter Subscribers, Media, etc.), their relationships, lifecycle, ownership, validation rules, indexing strategy, and database normalization principles. It becomes the canonical reference for the platform's data model.
 
 Excellent. This is one of the largest and most important chapters in the entire engineering handbook.
 
@@ -29345,7 +29345,7 @@ Everything built in TWN ultimately revolves around **data**. Features come and g
 This chapter should be treated as the **canonical source of truth** for every entity in the platform.
 
 -
-I think we should revise this section before moving forward. Not because it's wrong—it isn't—but because after introducing **Journeys**, the domain model has fundamentally changed.
+I think we should revise this section before moving forward. Not because it's wrong it isn't but because after introducing **Journeys**, the domain model has fundamentally changed.
 
 A good architecture document should describe the **business as it really exists**, not the application as it exists today.
 
@@ -29785,7 +29785,7 @@ That keeps the architecture aligned with one of the principles we've already est
 
 I agree with your reasoning, but I would implement it in a different way.
 
-You're right that AI is accelerating software development. The cost of adding features in the future will likely be much lower than it is today. The bottleneck won't be writing code—it will be **maintaining a coherent product and data model**.
+You're right that AI is accelerating software development. The cost of adding features in the future will likely be much lower than it is today. The bottleneck won't be writing code it will be **maintaining a coherent product and data model**.
 
 So the question isn't:
 
@@ -30080,7 +30080,7 @@ A Journey remains meaningful regardless of whether its content is consumed as te
 
 Before continuing with entity specifications, I would insert one new section into Volume 7:
 
-**7.4.10A — Content Architecture Philosophy**
+**7.4.10A   Content Architecture Philosophy**
 
 It becomes the bridge between the overall Data Architecture (7.4.10) and the individual entity specifications (7.4.10.1 onward).
 
@@ -30093,7 +30093,7 @@ That chapter would define:
 5. How future media types integrate without redesigning the domain.
 6. Architectural rules that every future content type must follow.
 
-I believe that addition would make the entire handbook stronger, because every entity that follows—Articles, Notebook Entries, Journeys, Media, Books, Podcasts—would inherit the same philosophy instead of each defining its own.
+I believe that addition would make the entire handbook stronger, because every entity that follows Articles, Notebook Entries, Journeys, Media, Books, Podcasts would inherit the same philosophy instead of each defining its own.
 
 Yes, and that's exactly why I made the distinction between **domain entities** and **distribution channels**.
 
@@ -30348,7 +30348,7 @@ This question may appear simple, but it influences every future architectural de
 
 Without a clear answer, the platform eventually becomes a collection of unrelated features, content types, and publishing workflows.
 
-With a clear answer, every future addition—whether a book, podcast, video, course, or AI-generated experience—can fit naturally into the existing architecture.
+With a clear answer, every future addition whether a book, podcast, video, course, or AI-generated experience can fit naturally into the existing architecture.
 
 This document serves as the philosophical bridge between:
 
@@ -30575,7 +30575,7 @@ TWN organizes content into four layers.
 
 ---
 
-## Layer 1 — Narrative Layer
+## Layer 1   Narrative Layer
 
 This is the highest editorial layer.
 
@@ -30601,7 +30601,7 @@ Journeys may span years.
 
 ---
 
-## Layer 2 — Structural Layer
+## Layer 2   Structural Layer
 
 Contains:
 
@@ -30627,7 +30627,7 @@ Chapters organize a Journey into meaningful phases.
 
 ---
 
-## Layer 3 — Content Layer
+## Layer 3   Content Layer
 
 Contains individual editorial assets.
 
@@ -30651,7 +30651,7 @@ These are the actual things readers consume.
 
 ---
 
-## Layer 4 — Distribution Layer
+## Layer 4   Distribution Layer
 
 Contains external publication channels.
 
@@ -31068,7 +31068,7 @@ This philosophy becomes the foundation that every future domain entity must inhe
 
 The next logical section is:
 
-# 7.4.10.1 — Articles (Revised for the Journey Architecture)
+# 7.4.10.1   Articles (Revised for the Journey Architecture)
 
 We should not continue with the old version because the introduction of **Journeys** fundamentally changes what an Article is inside TWN.
 
@@ -31097,7 +31097,7 @@ This is a major evolution of the domain model.
 
 ---
 
-# 7.4.10.1 Domain Specification — Articles
+# 7.4.10.1 Domain Specification   Articles
 
 ---
 
@@ -31238,7 +31238,7 @@ Every Article exists simultaneously in multiple dimensions.
 
 ---
 
-## Dimension 1 — Category
+## Dimension 1   Category
 
 Answers:
 
@@ -31254,7 +31254,7 @@ Software Engineering
 
 ---
 
-## Dimension 2 — Tags
+## Dimension 2   Tags
 
 Answers:
 
@@ -31272,7 +31272,7 @@ Architecture
 
 ---
 
-## Dimension 3 — Journey
+## Dimension 3   Journey
 
 Answers:
 
@@ -31288,7 +31288,7 @@ Building TWN
 
 ---
 
-## Dimension 4 — Author
+## Dimension 4   Author
 
 Answers:
 
@@ -31615,9 +31615,9 @@ Every engineer working with Articles must remember:
 
 This revised specification makes Articles compatible with the Journey architecture while preserving normalization, editorial independence, and future support for books, podcasts, videos, courses, and other content types.
 
-Next, we should document **7.4.10.2 — Notebook Entries**, because Notebook Entries are the second half of TWN's identity and will participate in Journeys differently from Articles. They are not educational publications; they are the reflective voice of the platform. That distinction needs to be formalized before we move to Authors and Journeys.
+Next, we should document **7.4.10.2   Notebook Entries**, because Notebook Entries are the second half of TWN's identity and will participate in Journeys differently from Articles. They are not educational publications; they are the reflective voice of the platform. That distinction needs to be formalized before we move to Authors and Journeys.
 
-# 7.4.10.2 Domain Specification — Notebook Entries
+# 7.4.10.2 Domain Specification   Notebook Entries
 
 ---
 
@@ -32296,9 +32296,9 @@ Reflection
 
 form the dual foundation of TWN.
 
-The next entity should be **7.4.10.3 — Authors**, because Authors own Articles, Notebook Entries, and future Journeys. Once Authors are defined, we can formally model ownership throughout the editorial domain before documenting Journeys themselves.
+The next entity should be **7.4.10.3   Authors**, because Authors own Articles, Notebook Entries, and future Journeys. Once Authors are defined, we can formally model ownership throughout the editorial domain before documenting Journeys themselves.
 
-# 7.4.10.3 Domain Specification — Authors
+# 7.4.10.3 Domain Specification   Authors
 
 ---
 
@@ -33027,9 +33027,9 @@ Notebook Entries
 Reflection
 ```
 
-The next section should be **7.4.10.4 — Journeys**, because Journeys are now the narrative layer that connects Articles and Notebook Entries into meaningful long-term stories such as *Building TWN*, *Learning Architecture*, or *My Open Source Journey*. This is where TWN becomes significantly different from a traditional blog or CMS.
+The next section should be **7.4.10.4   Journeys**, because Journeys are now the narrative layer that connects Articles and Notebook Entries into meaningful long-term stories such as *Building TWN*, *Learning Architecture*, or *My Open Source Journey*. This is where TWN becomes significantly different from a traditional blog or CMS.
 
-# 7.4.10.4 Domain Specification — Journeys
+# 7.4.10.4 Domain Specification   Journeys
 
 ---
 
@@ -33808,9 +33808,9 @@ Notebook Entries provide reflection.
 
 Journeys provide meaning and progression.
 
-The next section is **7.4.10.5 — Journey Chapters**, which defines how large narratives are broken into meaningful phases and how content is ordered within those phases. This section is critical because it determines how readers move through a Journey.
+The next section is **7.4.10.5   Journey Chapters**, which defines how large narratives are broken into meaningful phases and how content is ordered within those phases. This section is critical because it determines how readers move through a Journey.
 
-# 7.4.10.5 Domain Specification — Journey Chapters
+# 7.4.10.5 Domain Specification   Journey Chapters
 
 ---
 
@@ -34565,9 +34565,9 @@ Content
 └── Notebook Entries
 ```
 
-The next section should be **7.4.10.6 — Categories**, where we formally define topical classification and clearly separate it from Journeys. This distinction is extremely important because Categories classify knowledge while Journeys contextualize knowledge.
+The next section should be **7.4.10.6   Categories**, where we formally define topical classification and clearly separate it from Journeys. This distinction is extremely important because Categories classify knowledge while Journeys contextualize knowledge.
 
-# 7.4.10.6 Domain Specification — Categories
+# 7.4.10.6 Domain Specification   Categories
 
 ---
 
@@ -35310,9 +35310,9 @@ Content
 Category
 ```
 
-The next section is **7.4.10.7 — Tags**, which will define fine-grained knowledge classification and explain why Tags describe content while Categories classify content and Journeys contextualize content. This distinction becomes increasingly important as TWN grows into hundreds or thousands of pieces of content.
+The next section is **7.4.10.7   Tags**, which will define fine-grained knowledge classification and explain why Tags describe content while Categories classify content and Journeys contextualize content. This distinction becomes increasingly important as TWN grows into hundreds or thousands of pieces of content.
 
-# 7.4.10.7 Domain Specification — Tags
+# 7.4.10.7 Domain Specification   Tags
 
 ---
 
@@ -36100,9 +36100,9 @@ Content
 └── Tags
 ```
 
-The next section should be **7.4.10.8 — Shared Pages**, where we begin documenting the Community Domain and define how community-generated content differs from editorial content while preserving TWN's premium, notebook-like identity.
+The next section should be **7.4.10.8   Shared Pages**, where we begin documenting the Community Domain and define how community-generated content differs from editorial content while preserving TWN's premium, notebook-like identity.
 
-# 7.4.10.8 Domain Specification — Shared Pages
+# 7.4.10.8 Domain Specification   Shared Pages
 
 ---
 
@@ -36768,9 +36768,9 @@ Shared Pages establish the first major component of the Community Domain.
 
 They allow TWN to evolve from a personal publication into a shared space for thoughtful reflection while maintaining editorial quality and coherence.
 
-The next section should be **7.4.10.9 — Margin Notes**, which defines the second community mechanism and one of the most unique features of TWN: allowing readers to leave short reflections directly alongside knowledge, much like writing in the margin of a physical notebook.
+The next section should be **7.4.10.9   Margin Notes**, which defines the second community mechanism and one of the most unique features of TWN: allowing readers to leave short reflections directly alongside knowledge, much like writing in the margin of a physical notebook.
 
-# 7.4.10.9 Domain Specification — Margin Notes
+# 7.4.10.9 Domain Specification   Margin Notes
 
 ---
 
@@ -37228,11 +37228,11 @@ Margin Notes
 
 "This changed how I think about architecture."
 
-— Anonymous
+  Anonymous
 
 "This felt painfully familiar."
 
-— Sofia T.
+  Sofia T.
 ```
 
 ---
@@ -37528,9 +37528,9 @@ Margin Notes answer:
 
 Together they create community participation without turning TWN into a traditional social platform.
 
-The next section should be **7.4.10.10 — Newsletter Subscribers**, because newsletters become the primary communication channel between TWN and readers and eventually power distribution, retention, audience growth, and future editorial products.
+The next section should be **7.4.10.10   Newsletter Subscribers**, because newsletters become the primary communication channel between TWN and readers and eventually power distribution, retention, audience growth, and future editorial products.
 
-# 7.4.10.10 Domain Specification — Newsletter Subscribers
+# 7.4.10.10 Domain Specification   Newsletter Subscribers
 
 ---
 
@@ -38160,7 +38160,7 @@ With Newsletter Subscribers complete, TWN now has its first fully documented com
 
 The next section should be:
 
-**7.4.10.11 — Media**
+**7.4.10.11   Media**
 
 This will be one of the most technically important sections because Media will eventually power:
 
@@ -38176,7 +38176,7 @@ This will be one of the most technically important sections because Media will e
 
 It becomes the foundation for every visual and multimedia asset across the entire platform.
 
-# 7.4.10.11 Domain Specification — Media
+# 7.4.10.11 Domain Specification   Media
 
 ---
 
@@ -38990,7 +38990,7 @@ At this point, the Editorial Domain, Community Domain, Communication Domain, and
 
 The final foundational section is:
 
-**7.4.10.12 — Identity, Roles & Permissions**
+**7.4.10.12   Identity, Roles & Permissions**
 
 This section will define:
 
@@ -39006,7 +39006,7 @@ This section will define:
 
 and becomes the security foundation for the entire platform.
 
-# 7.4.10.12 Domain Specification — Identity, Roles & Permissions
+# 7.4.10.12 Domain Specification   Identity, Roles & Permissions
 
 ---
 
@@ -39943,7 +39943,7 @@ Identity
 ├── Audit Logs
 ```
 
-Before moving to the next volume, I would recommend a dedicated section **7.4.11 — Database Schema Blueprint & Physical Data Model**, where we convert all these conceptual entities into actual tables, foreign keys, indexes, junction tables, constraints, RLS policies, and migration strategy. That's where architecture becomes implementation.
+Before moving to the next volume, I would recommend a dedicated section **7.4.11   Database Schema Blueprint & Physical Data Model**, where we convert all these conceptual entities into actual tables, foreign keys, indexes, junction tables, constraints, RLS policies, and migration strategy. That's where architecture becomes implementation.
 
 
 # 7.4.11 Database Schema Blueprint & Physical Data Model
@@ -39995,7 +39995,7 @@ The physical model must preserve the domain. It must not simplify a real busines
 
 # 7.4.11.2 Authoritative Design Principles
 
-## Principle 1 — PostgreSQL is the source of truth
+## Principle 1   PostgreSQL is the source of truth
 
 Published content, moderation decisions, ownership, lifecycle states, and relationships must be enforceable in the database.
 
@@ -40003,7 +40003,7 @@ Frontend validation improves usability but cannot guarantee integrity. PostgreSQ
 
 ---
 
-## Principle 2 — The schema models domains, not pages
+## Principle 2   The schema models domains, not pages
 
 Tables must represent stable business concepts.
 
@@ -40031,7 +40031,7 @@ The homepage is a presentation. It references editorial entities; it does not ow
 
 ---
 
-## Principle 3 — Every relationship must be explicit
+## Principle 3   Every relationship must be explicit
 
 Relationships must use foreign keys or dedicated junction tables.
 
@@ -40046,7 +40046,7 @@ Foreign keys allow PostgreSQL to prevent references to records that do not exist
 
 ---
 
-## Principle 4 — Content remains independent of Journeys
+## Principle 4   Content remains independent of Journeys
 
 Articles and Notebook Entries can exist without belonging to a Journey.
 
@@ -40063,7 +40063,7 @@ Journey membership belongs in relationship tables.
 
 ---
 
-## Principle 5 — Do not create one universal content table
+## Principle 5   Do not create one universal content table
 
 TWN must not store Articles, Notebook Entries, Podcasts, Books, Videos, and Courses in one large table distinguished only by `content_type`.
 
@@ -40084,7 +40084,7 @@ A shared abstraction may be introduced later for discovery or Journey ordering, 
 
 ---
 
-## Principle 6 — Normalize first
+## Principle 6   Normalize first
 
 The default target is a normalized relational model.
 
@@ -40100,7 +40100,7 @@ No data should be duplicated merely to make an early query easier.
 
 ---
 
-## Principle 7 — Constraints before application assumptions
+## Principle 7   Constraints before application assumptions
 
 The database must enforce rules that are always true.
 
@@ -40115,7 +40115,7 @@ Examples:
 
 ---
 
-## Principle 8 — RLS is mandatory on exposed tables
+## Principle 8   RLS is mandatory on exposed tables
 
 Supabase recommends enabling Row Level Security on tables exposed through its Data API. RLS policies behave like additional row filters and provide defence in depth even when data is accessed through client tooling. ([Supabase][2])
 
@@ -41188,7 +41188,7 @@ Video Essay
 
 There are two technically valid approaches.
 
-## Option A — Separate junction tables
+## Option A   Separate junction tables
 
 ```text
 journey_chapter_articles
@@ -41208,7 +41208,7 @@ Problem:
 
 A single cross-type reading order becomes difficult. An Article with order `2` and a Notebook Entry with order `3` are stored in different tables, and PostgreSQL cannot easily enforce that no other content type also uses order `2` within the same Chapter.
 
-## Option B — Generic content reference
+## Option B   Generic content reference
 
 ```text
 journey_chapter_items
@@ -42601,7 +42601,7 @@ Before approving a cross-module feature, verify:
 
 The next section is:
 
-# **7.4.13 — Deployment Topology, Runtime Boundaries & Environment Architecture**
+# **7.4.13   Deployment Topology, Runtime Boundaries & Environment Architecture**
 
 It will document:
 
@@ -42716,7 +42716,7 @@ Next.js Application
       └── Scheduled endpoints
       │
       ▼
-Vercel Functions — Node.js Runtime
+Vercel Functions   Node.js Runtime
       │
       ├── Domain modules
       ├── Application services
@@ -42740,7 +42740,7 @@ Vercel serves globally distributed content through its network, while Functions 
 
 TWN has five primary runtime zones.
 
-## Zone 1 — Browser
+## Zone 1   Browser
 
 The browser is untrusted.
 
@@ -42769,7 +42769,7 @@ Client-side validation improves usability but has no security authority.
 
 ---
 
-## Zone 2 — Global Delivery Network
+## Zone 2   Global Delivery Network
 
 The delivery network handles:
 
@@ -42802,7 +42802,7 @@ It only stores representations that can be regenerated.
 
 ---
 
-## Zone 3 — Next.js Server Runtime
+## Zone 3   Next.js Server Runtime
 
 This is the primary application execution boundary.
 
@@ -42822,7 +42822,7 @@ Vercel deploys App Router route handlers as server functions. Vercel currently s
 
 ---
 
-## Zone 4 — Data and Storage
+## Zone 4   Data and Storage
 
 This zone contains durable state:
 
@@ -42842,7 +42842,7 @@ A failed or replaced function should not lose business data.
 
 ---
 
-## Zone 5 — External Providers
+## Zone 5   External Providers
 
 Examples:
 
@@ -43102,7 +43102,7 @@ TWN should operate with clear environment separation.
 ```text
 Local Development
 Preview
-Staging — later, when affordable or necessary
+Staging   later, when affordable or necessary
 Production
 ```
 
@@ -43175,7 +43175,7 @@ A Preview deployment is externally reachable and should be treated as potentiall
 
 ## Recommended Preview data strategies
 
-### Strategy A — Shared non-production Supabase project
+### Strategy A   Shared non-production Supabase project
 
 Suitable initially.
 
@@ -43191,7 +43191,7 @@ Risks:
 * migrations may conflict;
 * one branch can affect another.
 
-### Strategy B — Isolated branch databases
+### Strategy B   Isolated branch databases
 
 Suitable later if supported and affordable.
 
@@ -43201,7 +43201,7 @@ Benefits:
 * branch isolation;
 * easier cleanup.
 
-### Strategy C — Mocked infrastructure
+### Strategy C   Mocked infrastructure
 
 Useful for UI-only previews.
 
@@ -43705,9 +43705,9 @@ Potential structure:
 ```text
 twn.example
 www.twn.example
-admin.twn.example — optional later
-api.twn.example — future public API
-media.twn.example — future custom media domain
+admin.twn.example   optional later
+api.twn.example   future public API
+media.twn.example   future custom media domain
 ```
 
 Version 1 should keep routing simple:
@@ -43938,7 +43938,7 @@ Before choosing where code runs, ask:
 
 The next section is:
 
-# **7.4.14 — Resilience, Availability & Failure-Recovery Architecture**
+# **7.4.14   Resilience, Availability & Failure-Recovery Architecture**
 
 It will define:
 
@@ -44047,7 +44047,7 @@ Data corruption is not.
 
 # 7.4.14.2 Resilience Principles
 
-## Principle 1 — Failure must remain local
+## Principle 1   Failure must remain local
 
 A failure in one optional subsystem should not spread into unrelated modules.
 
@@ -44061,7 +44061,7 @@ Examples:
 
 ---
 
-## Principle 2 — Core reading should outlive dynamic dependencies
+## Principle 2   Core reading should outlive dynamic dependencies
 
 Published content should use caching and pre-rendered representations where appropriate so that a temporary database or application failure does not immediately erase the entire reading experience.
 
@@ -44075,7 +44075,7 @@ The most important public pages should have the highest tolerance for upstream f
 
 ---
 
-## Principle 3 — Writes must fail honestly
+## Principle 3   Writes must fail honestly
 
 A failed write must never appear successful.
 
@@ -44089,7 +44089,7 @@ It should display a clear failure and allow safe retry.
 
 ---
 
-## Principle 4 — Retrying is not always safe
+## Principle 4   Retrying is not always safe
 
 Retries can improve recovery from temporary failures, but poorly controlled retries can amplify an outage and overload a struggling dependency. Exponential backoff with jitter is a standard mitigation because it spaces retries and prevents many callers from retrying simultaneously. ([Amazon Web Services, Inc.][1])
 
@@ -44104,13 +44104,13 @@ Every retry policy must answer:
 
 ---
 
-## Principle 5 — Transactions protect invariants
+## Principle 5   Transactions protect invariants
 
 PostgreSQL transactions group changes so they commit together or roll back together. TWN must use transactions where several database operations represent one indivisible business action. ([PostgreSQL][2])
 
 ---
 
-## Principle 6 — Recovery must be tested
+## Principle 6   Recovery must be tested
 
 A documented backup is not proof that TWN can recover.
 
@@ -44163,7 +44163,7 @@ Not all journeys have the same reliability priority.
 
 # 7.4.14.4 Service Criticality Tiers
 
-## Tier 0 — Data integrity and security
+## Tier 0   Data integrity and security
 
 Examples:
 
@@ -44186,7 +44186,7 @@ Immediate containment.
 
 ---
 
-## Tier 1 — Core public reading
+## Tier 1   Core public reading
 
 Examples:
 
@@ -44206,7 +44206,7 @@ High-priority recovery.
 
 ---
 
-## Tier 2 — Editorial operations
+## Tier 2   Editorial operations
 
 Examples:
 
@@ -44226,7 +44226,7 @@ Restore promptly, but preserve integrity over speed.
 
 ---
 
-## Tier 3 — Audience interaction
+## Tier 3   Audience interaction
 
 Examples:
 
@@ -44245,7 +44245,7 @@ Disable or queue safely; do not accept requests that cannot be stored.
 
 ---
 
-## Tier 4 — Optional enhancements
+## Tier 4   Optional enhancements
 
 Examples:
 
@@ -45229,7 +45229,7 @@ Automated restore verification plus periodic full disaster-recovery exercises.
 
 # 7.4.14.33 Disaster Scenarios
 
-## Scenario A — Bad deployment
+## Scenario A   Bad deployment
 
 Symptoms:
 
@@ -45247,7 +45247,7 @@ Response:
 
 ---
 
-## Scenario B — Faulty migration
+## Scenario B   Faulty migration
 
 Symptoms:
 
@@ -45266,7 +45266,7 @@ Response:
 
 ---
 
-## Scenario C — Accidental deletion
+## Scenario C   Accidental deletion
 
 Response:
 
@@ -45280,7 +45280,7 @@ Response:
 
 ---
 
-## Scenario D — Compromised administrative account
+## Scenario D   Compromised administrative account
 
 Response:
 
@@ -45295,7 +45295,7 @@ Response:
 
 ---
 
-## Scenario E — Object-storage loss
+## Scenario E   Object-storage loss
 
 Response:
 
@@ -45308,7 +45308,7 @@ Response:
 
 ---
 
-## Scenario F — Provider-wide outage
+## Scenario F   Provider-wide outage
 
 Response:
 
@@ -45323,7 +45323,7 @@ Response:
 
 # 7.4.14.34 Incident Severity Levels
 
-## SEV-1 — Critical
+## SEV-1   Critical
 
 Examples:
 
@@ -45339,7 +45339,7 @@ Immediate containment.
 
 ---
 
-## SEV-2 — High
+## SEV-2   High
 
 Examples:
 
@@ -45355,7 +45355,7 @@ Immediate investigation during active operations.
 
 ---
 
-## SEV-3 — Moderate
+## SEV-3   Moderate
 
 Examples:
 
@@ -45371,7 +45371,7 @@ Investigate promptly.
 
 ---
 
-## SEV-4 — Low
+## SEV-4   Low
 
 Examples:
 
@@ -45633,7 +45633,7 @@ Before shipping a feature, answer:
 
 The next section is:
 
-# **7.4.15 — Scalability Model, Capacity Planning & Growth Thresholds**
+# **7.4.15   Scalability Model, Capacity Planning & Growth Thresholds**
 
 It will define:
 
@@ -45813,7 +45813,7 @@ The database should not receive a fresh query for every view of every published 
 
 # 7.4.15.5 Workload Classes
 
-## Class A — Public immutable or slow-changing reads
+## Class A   Public immutable or slow-changing reads
 
 Examples:
 
@@ -45837,7 +45837,7 @@ These are the easiest workloads to scale.
 
 ---
 
-## Class B — Dynamic public reads
+## Class B   Dynamic public reads
 
 Examples:
 
@@ -45859,7 +45859,7 @@ Scaling tools:
 
 ---
 
-## Class C — Editorial writes
+## Class C   Editorial writes
 
 Examples:
 
@@ -45884,7 +45884,7 @@ Correctness is more important than extreme throughput.
 
 ---
 
-## Class D — Anonymous writes
+## Class D   Anonymous writes
 
 Examples:
 
@@ -45906,7 +45906,7 @@ These workloads may generate more abuse than legitimate scale.
 
 ---
 
-## Class E — Background and computational workloads
+## Class E   Background and computational workloads
 
 Examples:
 
@@ -46631,7 +46631,7 @@ It is part of the archive.
 
 # 7.4.15.25 Search Scaling
 
-## Stage 1 — PostgreSQL search
+## Stage 1   PostgreSQL search
 
 Suitable for early TWN when:
 
@@ -46640,7 +46640,7 @@ Suitable for early TWN when:
 * semantic ranking is not required;
 * operational simplicity is important.
 
-## Stage 2 — Dedicated Search
+## Stage 2   Dedicated Search
 
 Consider Meilisearch, Typesense, OpenSearch, or another evaluated engine when:
 
@@ -47095,7 +47095,7 @@ Exact thresholds should be adjusted using real usage, query complexity, cache ef
 
 ---
 
-## Stage 0 — Development and private launch
+## Stage 0   Development and private launch
 
 Approximate characteristics:
 
@@ -47124,7 +47124,7 @@ Correctness and product validation.
 
 ---
 
-## Stage 1 — Early publication
+## Stage 1   Early publication
 
 Possible characteristics:
 
@@ -47152,7 +47152,7 @@ Establish performance baselines and operational discipline.
 
 ---
 
-## Stage 2 — Growing audience
+## Stage 2   Growing audience
 
 Possible characteristics:
 
@@ -47182,7 +47182,7 @@ Protect database and editorial operations from audience growth.
 
 ---
 
-## Stage 3 — Established platform
+## Stage 3   Established platform
 
 Possible characteristics:
 
@@ -47214,7 +47214,7 @@ Isolate workloads and support organizational growth.
 
 ---
 
-## Stage 4 — Large knowledge platform
+## Stage 4   Large knowledge platform
 
 Possible characteristics:
 
@@ -47551,7 +47551,7 @@ Before scaling a subsystem, answer:
 
 The next section is:
 
-# **7.4.16 — Security Zones, Threat Model & Architectural Controls**
+# **7.4.16   Security Zones, Threat Model & Architectural Controls**
 
 It will document:
 
@@ -47614,7 +47614,7 @@ TWN adopts five security principles.
 
 ---
 
-## Principle 1 — Assume Breach
+## Principle 1   Assume Breach
 
 Assume:
 
@@ -47631,7 +47631,7 @@ Not merely try to prevent failure.
 
 ---
 
-## Principle 2 — Least Privilege
+## Principle 2   Least Privilege
 
 Every actor receives:
 
@@ -47657,7 +47657,7 @@ Moderator can manage database
 
 ---
 
-## Principle 3 — Trust Nothing by Default
+## Principle 3   Trust Nothing by Default
 
 Never trust:
 
@@ -47672,7 +47672,7 @@ Every trust boundary requires validation.
 
 ---
 
-## Principle 4 — Defense in Depth
+## Principle 4   Defense in Depth
 
 Security should not rely on one layer.
 
@@ -47694,7 +47694,7 @@ Failure of one layer should not immediately compromise the system.
 
 ---
 
-## Principle 5 — Security Must Remain Affordable
+## Principle 5   Security Must Remain Affordable
 
 TWN is not a bank.
 
@@ -47777,7 +47777,7 @@ TWN consists of several security zones.
 
 ---
 
-## Zone A — Public Internet
+## Zone A   Public Internet
 
 Actors:
 
@@ -47796,7 +47796,7 @@ Everything arriving from this zone must be validated.
 
 ---
 
-## Zone B — Browser
+## Zone B   Browser
 
 The browser belongs to the user.
 
@@ -47815,7 +47815,7 @@ Never place secrets here.
 
 ---
 
-## Zone C — Application Layer
+## Zone C   Application Layer
 
 This includes:
 
@@ -47834,7 +47834,7 @@ Business logic lives here.
 
 ---
 
-## Zone D — Database
+## Zone D   Database
 
 Contains:
 
@@ -47858,7 +47858,7 @@ Protected by:
 
 ---
 
-## Zone E — Storage
+## Zone E   Storage
 
 Contains:
 
@@ -47879,7 +47879,7 @@ Database metadata remains authoritative.
 
 ---
 
-## Zone F — External Providers
+## Zone F   External Providers
 
 Examples:
 
@@ -48084,7 +48084,7 @@ TWN adopts STRIDE for architectural threat analysis.
 
 ---
 
-## S — Spoofing
+## S   Spoofing
 
 Pretending to be another user.
 
@@ -48102,7 +48102,7 @@ Controls:
 
 ---
 
-## T — Tampering
+## T   Tampering
 
 Unauthorized modification.
 
@@ -48119,7 +48119,7 @@ Controls:
 
 ---
 
-## R — Repudiation
+## R   Repudiation
 
 Claiming an action never happened.
 
@@ -48137,7 +48137,7 @@ Controls:
 
 ---
 
-## I — Information Disclosure
+## I   Information Disclosure
 
 Unauthorized access.
 
@@ -48154,7 +48154,7 @@ Controls:
 
 ---
 
-## D — Denial of Service
+## D   Denial of Service
 
 Overloading resources.
 
@@ -48172,7 +48172,7 @@ Controls:
 
 ---
 
-## E — Elevation of Privilege
+## E   Elevation of Privilege
 
 Obtaining more permissions.
 
@@ -49427,7 +49427,7 @@ Transport Response
 
 ---
 
-## Layer 1 — Transport adapter
+## Layer 1   Transport adapter
 
 Examples:
 
@@ -49450,7 +49450,7 @@ It should not decide editorial business rules.
 
 ---
 
-## Layer 2 — Input validation
+## Layer 2   Input validation
 
 Validates structural input:
 
@@ -49476,7 +49476,7 @@ const PublishArticleInputSchema = z.object({
 
 ---
 
-## Layer 3 — Authentication
+## Layer 3   Authentication
 
 Determines the verified actor.
 
@@ -49492,7 +49492,7 @@ The browser’s claim that someone is an administrator is never authoritative.
 
 ---
 
-## Layer 4 — Authorization
+## Layer 4   Authorization
 
 Determines whether the actor may perform the operation.
 
@@ -49512,7 +49512,7 @@ Next.js explicitly warns that Server Functions are reachable through direct POST
 
 ---
 
-## Layer 5 — Application use case
+## Layer 5   Application use case
 
 Coordinates the operation.
 
@@ -49538,7 +49538,7 @@ Responsibilities may include:
 
 ---
 
-## Layer 6 — Domain rules
+## Layer 6   Domain rules
 
 Examples:
 
@@ -49552,7 +49552,7 @@ Domain rules must not depend on HTTP status codes or React.
 
 ---
 
-## Layer 7 — Repository
+## Layer 7   Repository
 
 Communicates with PostgreSQL or another canonical persistence mechanism.
 
@@ -49566,7 +49566,7 @@ Responsibilities:
 
 ---
 
-## Layer 8 — Result mapping
+## Layer 8   Result mapping
 
 Converts application results into:
 
@@ -51122,28 +51122,28 @@ Potential capabilities:
 
 ## Maturity stages
 
-### Stage 1 — Machine-readable publishing
+### Stage 1   Machine-readable publishing
 
 * RSS;
 * sitemap;
 * structured metadata;
 * JSON Feed.
 
-### Stage 2 — Internal mobile API
+### Stage 2   Internal mobile API
 
 * Articles;
 * Journeys;
 * Notebook Entries;
 * reader progress.
 
-### Stage 3 — Partner API
+### Stage 3   Partner API
 
 * authenticated institutional access;
 * rate limits;
 * contractual schemas;
 * specific integrations.
 
-### Stage 4 — Public developer API
+### Stage 4   Public developer API
 
 Requires:
 
@@ -51238,7 +51238,7 @@ A poorly maintained SDK becomes another compatibility obligation.
 
 The next section is:
 
-# **7.4.18 — Authentication, Session Lifecycle & Identity Provider Integration**
+# **7.4.18   Authentication, Session Lifecycle & Identity Provider Integration**
 
 It will define:
 
@@ -51639,7 +51639,7 @@ The provider ID remains a unique external reference.
 
 # 7.4.18.7 Authentication Modes by Product Stage
 
-## Phase 1 — Founder administration
+## Phase 1   Founder administration
 
 Supported:
 
@@ -51659,7 +51659,7 @@ No public reader registration.
 
 ---
 
-## Phase 2 — Editorial team
+## Phase 2   Editorial team
 
 Add:
 
@@ -51673,7 +51673,7 @@ Add:
 
 ---
 
-## Phase 3 — Reader accounts
+## Phase 3   Reader accounts
 
 Potential methods:
 
@@ -52797,13 +52797,13 @@ Not every authenticated session provides equal assurance.
 Potential levels:
 
 ```text
-Level 0 — Anonymous
+Level 0   Anonymous
 
-Level 1 — Authenticated with one factor
+Level 1   Authenticated with one factor
 
-Level 2 — Authenticated with MFA
+Level 2   Authenticated with MFA
 
-Level 3 — Recently reauthenticated with MFA
+Level 3   Recently reauthenticated with MFA
 ```
 
 Sensitive operations can require a higher level.
@@ -52909,7 +52909,7 @@ TWN local identity remains stable
 
 ## Migration phases
 
-### Phase 1 — Prepare
+### Phase 1   Prepare
 
 * implement new provider adapter;
 * add new provider-reference fields;
@@ -52917,7 +52917,7 @@ TWN local identity remains stable
 * test in isolation;
 * define account-linking verification.
 
-### Phase 2 — Dual mapping, not dual authority
+### Phase 2   Dual mapping, not dual authority
 
 A User may temporarily have:
 
@@ -52928,7 +52928,7 @@ new_provider_subject
 
 Only one provider is accepted for active authentication at each migration stage unless an explicit bridge is implemented.
 
-### Phase 3 — User transition
+### Phase 3   User transition
 
 * invite or migrate Users;
 * verify ownership;
@@ -52937,14 +52937,14 @@ Only one provider is accepted for active authentication at each migration stage 
 * update local mapping;
 * revoke old sessions.
 
-### Phase 4 — Cutover
+### Phase 4   Cutover
 
 * change canonical provider;
 * disable new sessions from old provider;
 * monitor failures;
 * retain rollback window.
 
-### Phase 5 — Retire
+### Phase 5   Retire
 
 * revoke old credentials;
 * remove old provider secrets;
@@ -53176,7 +53176,7 @@ Before introducing an authenticated feature, verify:
 
 The next section is:
 
-# **7.4.19 — Authorization Model, Permission Evaluation & Resource Ownership**
+# **7.4.19   Authorization Model, Permission Evaluation & Resource Ownership**
 
 It will formalize:
 
@@ -53262,7 +53262,7 @@ Authorization failures are security decisions, not ordinary validation errors.
 
 TWN follows five permanent principles.
 
-## Principle 1 — Deny by default
+## Principle 1   Deny by default
 
 No actor may perform a protected action unless an applicable policy explicitly permits it.
 
@@ -53276,7 +53276,7 @@ The absence of a restriction does not imply permission.
 
 ---
 
-## Principle 2 — Authorization is evaluated server-side
+## Principle 2   Authorization is evaluated server-side
 
 The browser may hide unavailable actions for usability.
 
@@ -53296,7 +53296,7 @@ Every Server Action, Route Handler, Cron task, webhook consumer, and worker must
 
 ---
 
-## Principle 3 — Permission and ownership are different
+## Principle 3   Permission and ownership are different
 
 A User may own or manage a resource but still lack authority to perform every operation.
 
@@ -53318,7 +53318,7 @@ Permissions authorize actions.
 
 ---
 
-## Principle 4 — Roles simplify assignment; permissions decide actions
+## Principle 4   Roles simplify assignment; permissions decide actions
 
 Roles are named groups of permissions.
 
@@ -53340,7 +53340,7 @@ The business capability remains clearer and more stable.
 
 ---
 
-## Principle 5 — Sensitive actions require current state
+## Principle 5   Sensitive actions require current state
 
 Authorization must not rely only on a long-lived or stale role value stored in the browser.
 
@@ -55574,7 +55574,7 @@ Before shipping a protected capability, answer:
 
 The next section is:
 
-# **7.4.20 — Content Persistence, Revision History, Draft Autosave & Editorial Conflict Resolution**
+# **7.4.20   Content Persistence, Revision History, Draft Autosave & Editorial Conflict Resolution**
 
 It will define:
 
@@ -55703,7 +55703,7 @@ The published revision is authoritative.
 
 # 7.4.20.2 Core Content-Integrity Principles
 
-## Principle 1 — Never overwrite published history
+## Principle 1   Never overwrite published history
 
 Editing a published Article must not silently replace the only stored copy of what readers previously saw.
 
@@ -55711,7 +55711,7 @@ The previous published revision must remain recoverable.
 
 ---
 
-## Principle 2 — One canonical editable source
+## Principle 2   One canonical editable source
 
 TWN must not maintain multiple independently editable versions such as:
 
@@ -55733,7 +55733,7 @@ Other formats are derived.
 
 ---
 
-## Principle 3 — Published content references a revision
+## Principle 3   Published content references a revision
 
 An Article’s public representation should not merely mean:
 
@@ -55751,7 +55751,7 @@ This prevents an unfinished draft edit from appearing publicly.
 
 ---
 
-## Principle 4 — Autosave protects work; it does not publish
+## Principle 4   Autosave protects work; it does not publish
 
 Autosave may update the working draft and create recovery checkpoints.
 
@@ -55765,7 +55765,7 @@ It must never:
 
 ---
 
-## Principle 5 — Revisions are immutable
+## Principle 5   Revisions are immutable
 
 A revision is historical evidence.
 
@@ -55775,7 +55775,7 @@ If a correction is needed, create another revision.
 
 ---
 
-## Principle 6 — Storage must remain portable
+## Principle 6   Storage must remain portable
 
 TWN’s canonical content should be exportable without requiring:
 
@@ -55813,7 +55813,7 @@ The editor can feel visual without storing arbitrary HTML.
 
 # 7.4.20.4 Formats Considered
 
-## Option A — Raw HTML
+## Option A   Raw HTML
 
 Example:
 
@@ -55846,7 +55846,7 @@ Sanitized HTML may be stored as a derived render cache, but it is replaceable.
 
 ---
 
-## Option B — Unrestricted MDX
+## Option B   Unrestricted MDX
 
 MDX combines Markdown with JSX, JavaScript expressions, and module imports or exports. That makes it powerful for developer-authored interactive content, but it also means unrestricted MDX behaves more like executable source code than ordinary editorial text. ([MDX][1])
 
@@ -55884,7 +55884,7 @@ Controlled MDX may later be supported for trusted technical authors through an a
 
 ---
 
-## Option C — Structured rich-text JSON
+## Option C   Structured rich-text JSON
 
 Example:
 
@@ -55927,7 +55927,7 @@ However, TWN must not store an editor library’s private JSON format without do
 
 ---
 
-## Option D — Portable Markdown with typed blocks
+## Option D   Portable Markdown with typed blocks
 
 Example:
 
@@ -56469,7 +56469,7 @@ It proves content equality, not authorship.
 
 TWN has two valid physical approaches.
 
-## Approach A — Current draft fields on `articles`
+## Approach A   Current draft fields on `articles`
 
 The Article row contains the latest editable fields.
 
@@ -56489,7 +56489,7 @@ Revisions are created at checkpoints.
 
 ---
 
-## Approach B — Current draft points to an immutable revision
+## Approach B   Current draft points to an immutable revision
 
 Every save creates a revision.
 
@@ -57454,9 +57454,9 @@ The history clearly shows that an old state was restored later.
 Suppose:
 
 ```text
-Revision 7 — original
-Revision 8 — update
-Revision 9 — correction
+Revision 7   original
+Revision 8   update
+Revision 9   correction
 ```
 
 If TWN simply points back to Revision 7, the restoration event may be harder to understand.
@@ -58929,7 +58929,7 @@ Cannot reconstruct actual content.
 
 # 7.4.20.101 Implementation Phases
 
-## Phase 1 — Safe single-editor foundation
+## Phase 1   Safe single-editor foundation
 
 Build:
 
@@ -58948,7 +58948,7 @@ Build:
 
 ---
 
-## Phase 2 — Editorial workflow
+## Phase 2   Editorial workflow
 
 Add:
 
@@ -58963,7 +58963,7 @@ Add:
 
 ---
 
-## Phase 3 — Team collaboration
+## Phase 3   Team collaboration
 
 Add only when needed:
 
@@ -58977,7 +58977,7 @@ Add only when needed:
 
 ---
 
-## Phase 4 — Multi-format publishing
+## Phase 4   Multi-format publishing
 
 Extend revision principles to:
 
@@ -58997,7 +58997,7 @@ Every new content type defines its canonical editable representation and immutab
 
 If TWN currently stores Article content directly in `articles.content_source`, migrate safely.
 
-## Step 1 — Add revision infrastructure
+## Step 1   Add revision infrastructure
 
 Create:
 
@@ -59010,7 +59010,7 @@ Do not remove existing content.
 
 ---
 
-## Step 2 — Backfill draft state
+## Step 2   Backfill draft state
 
 For every Article:
 
@@ -59029,7 +59029,7 @@ Calculate:
 
 ---
 
-## Step 3 — Create initial revision
+## Step 3   Create initial revision
 
 Create an imported revision for every Article.
 
@@ -59044,7 +59044,7 @@ Record original `published_at`.
 
 ---
 
-## Step 4 — Switch reads
+## Step 4   Switch reads
 
 Public pages read from the published revision.
 
@@ -59054,7 +59054,7 @@ Run comparison checks to ensure rendered output remains equivalent.
 
 ---
 
-## Step 5 — Switch writes
+## Step 5   Switch writes
 
 Server Actions update `article_drafts`.
 
@@ -59062,7 +59062,7 @@ Manual saves and publications create revisions.
 
 ---
 
-## Step 6 — Observe
+## Step 6   Observe
 
 Verify:
 
@@ -59074,7 +59074,7 @@ Verify:
 
 ---
 
-## Step 7 — Remove obsolete fields
+## Step 7   Remove obsolete fields
 
 Only after the new model is stable should the old mutable content columns be removed or retained temporarily as read-only compatibility fields.
 
@@ -59160,7 +59160,7 @@ Before shipping an editorial feature, verify:
 
 The next section is:
 
-# **7.4.21 — Search Architecture, Content Indexing & Discovery Model**
+# **7.4.21   Search Architecture, Content Indexing & Discovery Model**
 
 It will define:
 
@@ -59267,7 +59267,7 @@ Not to maximize page refreshes.
 
 # 7.4.21.2 Core Discovery Principles
 
-## Principle 1 — Search is editorial infrastructure
+## Principle 1   Search is editorial infrastructure
 
 Search is not a database query.
 
@@ -59277,7 +59277,7 @@ A technically correct result can still be a poor result.
 
 ---
 
-## Principle 2 — Published content only
+## Principle 2   Published content only
 
 Public search must never expose:
 
@@ -59290,7 +59290,7 @@ Public search must never expose:
 
 ---
 
-## Principle 3 — Discovery should reward quality
+## Principle 3   Discovery should reward quality
 
 A deeply researched article should outrank:
 
@@ -59306,7 +59306,7 @@ Artificial repetition
 
 ---
 
-## Principle 4 — Knowledge should remain connected
+## Principle 4   Knowledge should remain connected
 
 TWN's Journey model means content should not exist in isolation.
 
@@ -59314,7 +59314,7 @@ Search should surface relationships.
 
 ---
 
-## Principle 5 — Relevance must remain explainable
+## Principle 5   Relevance must remain explainable
 
 Avoid ranking systems nobody understands.
 
@@ -60219,7 +60219,7 @@ Only then evaluate:
 
 Next section:
 
-# **7.4.22 — Caching, Revalidation, CDN Strategy & Content Delivery Architecture**
+# **7.4.22   Caching, Revalidation, CDN Strategy & Content Delivery Architecture**
 
 This is one of the most important TWN sections because it will define:
 
@@ -60319,7 +60319,7 @@ Not to maximize page refreshes.
 
 # 7.4.21.2 Core Discovery Principles
 
-## Principle 1 — Search is editorial infrastructure
+## Principle 1   Search is editorial infrastructure
 
 Search is not a database query.
 
@@ -60329,7 +60329,7 @@ A technically correct result can still be a poor result.
 
 ---
 
-## Principle 2 — Published content only
+## Principle 2   Published content only
 
 Public search must never expose:
 
@@ -60342,7 +60342,7 @@ Public search must never expose:
 
 ---
 
-## Principle 3 — Discovery should reward quality
+## Principle 3   Discovery should reward quality
 
 A deeply researched article should outrank:
 
@@ -60358,7 +60358,7 @@ Artificial repetition
 
 ---
 
-## Principle 4 — Knowledge should remain connected
+## Principle 4   Knowledge should remain connected
 
 TWN's Journey model means content should not exist in isolation.
 
@@ -60366,7 +60366,7 @@ Search should surface relationships.
 
 ---
 
-## Principle 5 — Relevance must remain explainable
+## Principle 5   Relevance must remain explainable
 
 Avoid ranking systems nobody understands.
 
@@ -61271,7 +61271,7 @@ Only then evaluate:
 
 Next section:
 
-# **7.4.22 — Caching, Revalidation, CDN Strategy & Content Delivery Architecture**
+# **7.4.22   Caching, Revalidation, CDN Strategy & Content Delivery Architecture**
 
 This is one of the most important TWN sections because it will define:
 
@@ -61397,7 +61397,7 @@ TWN follows these primary frontend principles.
 
 ---
 
-## Principle 1 — Content Comes Before Interface Complexity
+## Principle 1   Content Comes Before Interface Complexity
 
 TWN is primarily a knowledge and narrative platform.
 
@@ -61426,7 +61426,7 @@ The reader should notice the ideas before noticing the framework.
 
 ---
 
-## Principle 2 — Server Components Are the Default
+## Principle 2   Server Components Are the Default
 
 Most TWN pages primarily read and display content.
 
@@ -61462,7 +61462,7 @@ Do not place `"use client"` at the top of large page trees merely for convenienc
 
 ---
 
-## Principle 3 — JavaScript Is Added Intentionally
+## Principle 3   JavaScript Is Added Intentionally
 
 Public content should remain useful even when:
 
@@ -61488,7 +61488,7 @@ It should not be required merely to display an Article.
 
 ---
 
-## Principle 4 — Progressive Enhancement
+## Principle 4   Progressive Enhancement
 
 Every important interaction begins with a functional server-backed foundation.
 
@@ -61515,7 +61515,7 @@ But the underlying action remains functional without relying entirely on client 
 
 ---
 
-## Principle 5 — The Public Site and CMS Are Different Experiences
+## Principle 5   The Public Site and CMS Are Different Experiences
 
 TWN contains at least two major frontend environments.
 
@@ -61571,7 +61571,7 @@ An overly minimal CMS may hide important state and create errors.
 
 ---
 
-## Principle 6 — User Interface State Must Reflect Server Reality
+## Principle 6   User Interface State Must Reflect Server Reality
 
 The interface should never claim:
 
@@ -61608,7 +61608,7 @@ They should not be used casually for:
 
 ---
 
-## Principle 7 — Accessibility Is Structural
+## Principle 7   Accessibility Is Structural
 
 Accessibility is not a final polishing task.
 
@@ -61630,7 +61630,7 @@ A visually beautiful interface that prevents users from navigating or understand
 
 ---
 
-## Principle 8 — Mobile Is a First-Class Reading Environment
+## Principle 8   Mobile Is a First-Class Reading Environment
 
 Many TWN readers may access content primarily through mobile devices.
 
@@ -61654,7 +61654,7 @@ The frontend should be designed from the content outward, not from desktop scree
 
 ---
 
-## Principle 9 — Motion Must Communicate Meaning
+## Principle 9   Motion Must Communicate Meaning
 
 Motion may support:
 
@@ -61681,7 +61681,7 @@ Every animation should answer:
 
 ---
 
-## Principle 10 — Frontend Architecture Must Remain Replaceable
+## Principle 10   Frontend Architecture Must Remain Replaceable
 
 The current implementation may use:
 
@@ -61873,7 +61873,7 @@ TWN should recognize its major frontend surfaces explicitly.
 
 ---
 
-## Surface 1 — Public Homepage
+## Surface 1   Public Homepage
 
 Responsibilities:
 
@@ -61891,7 +61891,7 @@ It is not the source of truth for the content it presents.
 
 ---
 
-## Surface 2 — Article Reader
+## Surface 2   Article Reader
 
 Responsibilities:
 
@@ -61905,7 +61905,7 @@ Responsibilities:
 
 ---
 
-## Surface 3 — Notebook Experience
+## Surface 3   Notebook Experience
 
 Responsibilities:
 
@@ -61917,7 +61917,7 @@ Responsibilities:
 
 ---
 
-## Surface 4 — Journey Reader
+## Surface 4   Journey Reader
 
 Responsibilities:
 
@@ -61930,7 +61930,7 @@ Responsibilities:
 
 ---
 
-## Surface 5 — Community Experience
+## Surface 5   Community Experience
 
 Responsibilities:
 
@@ -61942,7 +61942,7 @@ Responsibilities:
 
 ---
 
-## Surface 6 — Search and Discovery
+## Surface 6   Search and Discovery
 
 Responsibilities:
 
@@ -61955,7 +61955,7 @@ Responsibilities:
 
 ---
 
-## Surface 7 — Editorial CMS
+## Surface 7   Editorial CMS
 
 Responsibilities:
 
@@ -61970,7 +61970,7 @@ Responsibilities:
 
 ---
 
-## Surface 8 — Moderation Interface
+## Surface 8   Moderation Interface
 
 Responsibilities:
 
@@ -61983,7 +61983,7 @@ Responsibilities:
 
 ---
 
-## Surface 9 — Identity and Administration
+## Surface 9   Identity and Administration
 
 Responsibilities:
 
@@ -62391,7 +62391,7 @@ This subsection is complete when the team agrees that:
 
 The next subsection is:
 
-# **7.5.2 — Frontend Technology Stack and Framework Decisions**
+# **7.5.2   Frontend Technology Stack and Framework Decisions**
 
 It should document:
 
@@ -62896,10 +62896,10 @@ Client Component
 Good:
 
 ```text
-Article Page — Server
-├── Article Content — Server
-├── Journey Context — Server
-└── Margin Note Form — Client only where needed
+Article Page   Server
+├── Article Content   Server
+├── Journey Context   Server
+└── Margin Note Form   Client only where needed
 ```
 
 A large client boundary can force otherwise static descendants into the browser bundle.
@@ -63237,7 +63237,7 @@ Feature components should usually consume semantic values.
 
 # 7.5.2.10 Tailwind Usage Rules
 
-## Rule 1 — Use utilities for component-level styling
+## Rule 1   Use utilities for component-level styling
 
 Example:
 
@@ -63247,7 +63247,7 @@ Example:
 
 ---
 
-## Rule 2 — Extract repeated patterns
+## Rule 2   Extract repeated patterns
 
 When the same long class set appears repeatedly, create:
 
@@ -63262,7 +63262,7 @@ Extract when a meaningful reusable pattern exists.
 
 ---
 
-## Rule 3 — Avoid uncontrolled arbitrary values
+## Rule 3   Avoid uncontrolled arbitrary values
 
 Bad:
 
@@ -63278,7 +63278,7 @@ Repeated arbitrary values usually indicate missing tokens.
 
 ---
 
-## Rule 4 — Preserve readable markup
+## Rule 4   Preserve readable markup
 
 Avoid components with extremely long unreadable class strings.
 
@@ -63291,7 +63291,7 @@ Use:
 
 ---
 
-## Rule 5 — Do not construct class names dynamically from unrestricted strings
+## Rule 5   Do not construct class names dynamically from unrestricted strings
 
 Tailwind scans source files for class names.
 
@@ -63814,7 +63814,7 @@ Editorial display
 Editorial body
 Interface text
 Code text
-Handwritten accent — only where accessible and controlled
+Handwritten accent   only where accessible and controlled
 ```
 
 Do not assign fonts independently per component.
@@ -64505,7 +64505,7 @@ TWN may later require:
 
 * English;
 * French;
-* Nigerian Pidgin;
+* Cameroonn Pidgin;
 * indigenous-language content;
 * locale-aware dates;
 * translated interfaces;
@@ -64732,7 +64732,7 @@ A future frontend could reuse the domain and content without parsing React compo
 
 The next subsection is:
 
-# **7.5.3 — Frontend Project Structure, Route Groups & Module Organization**
+# **7.5.3   Frontend Project Structure, Route Groups & Module Organization**
 
 It will define:
 
@@ -65541,7 +65541,7 @@ Every component must belong to one of four classes.
 
 ---
 
-## Class 1 — Design System Components
+## Class 1   Design System Components
 
 Examples:
 
@@ -65557,7 +65557,7 @@ Reusable everywhere.
 
 ---
 
-## Class 2 — Domain Components
+## Class 2   Domain Components
 
 Examples:
 
@@ -65573,7 +65573,7 @@ Specific business meaning.
 
 ---
 
-## Class 3 — Page Components
+## Class 3   Page Components
 
 Examples:
 
@@ -65589,7 +65589,7 @@ Compose domain components.
 
 ---
 
-## Class 4 — Infrastructure Components
+## Class 4   Infrastructure Components
 
 Examples:
 
@@ -65945,7 +65945,7 @@ This section is complete when:
 
 Next:
 
-# **7.5.4 — Rendering Strategy (SSR, SSG, ISR, Dynamic Rendering, Streaming & Partial Prerendering)**
+# **7.5.4   Rendering Strategy (SSR, SSG, ISR, Dynamic Rendering, Streaming & Partial Prerendering)**
 
 This will be one of the most important sections because it determines exactly how Articles, Journeys, Notebook Entries, Search, CMS pages, future Podcasts, Books, and Videos are rendered and cached.
 
@@ -66151,7 +66151,7 @@ Current Next.js documentation ties its modern form to Cache Components, while ol
 
 Every route should answer the following questions.
 
-## Question 1 — Is the output the same for every reader?
+## Question 1   Is the output the same for every reader?
 
 If yes:
 
@@ -66180,7 +66180,7 @@ Examples:
 
 ---
 
-## Question 2 — Does the page depend on current request state?
+## Question 2   Does the page depend on current request state?
 
 Examples:
 
@@ -66197,7 +66197,7 @@ Do not make the whole route dynamic if only one small optional area requires Use
 
 ---
 
-## Question 3 — How quickly must editorial changes appear?
+## Question 3   How quickly must editorial changes appear?
 
 Possible expectations:
 
@@ -66213,7 +66213,7 @@ Most TWN editorial changes should appear after explicit on-demand revalidation.
 
 ---
 
-## Question 4 — Is stale content acceptable temporarily?
+## Question 4   Is stale content acceptable temporarily?
 
 For a published Article:
 
@@ -66229,7 +66229,7 @@ Stale data is unacceptable.
 
 ---
 
-## Question 5 — Is the route expensive to generate?
+## Question 5   Is the route expensive to generate?
 
 If expensive and public:
 
@@ -66241,7 +66241,7 @@ If expensive and public:
 
 ---
 
-## Question 6 — Does the route contain private data?
+## Question 6   Does the route contain private data?
 
 Private content must not enter shared caches.
 
@@ -66255,7 +66255,7 @@ Examples:
 
 ---
 
-## Question 7 — Can a slower area stream independently?
+## Question 7   Can a slower area stream independently?
 
 If yes, place it behind a meaningful Suspense boundary.
 
@@ -66276,7 +66276,7 @@ TWN classifies frontend routes into five rendering classes.
 
 ---
 
-## Class A — Fully static institutional pages
+## Class A   Fully static institutional pages
 
 Examples:
 
@@ -66306,7 +66306,7 @@ Refresh through deployment or explicit content revalidation if these pages later
 
 ---
 
-## Class B — Public editorial content
+## Class B   Public editorial content
 
 Examples:
 
@@ -66339,7 +66339,7 @@ This is the default for TWN’s canonical knowledge.
 
 ---
 
-## Class C — Public dynamic discovery
+## Class C   Public dynamic discovery
 
 Examples:
 
@@ -66368,7 +66368,7 @@ Search results should usually be generated for the query rather than producing s
 
 ---
 
-## Class D — Private application routes
+## Class D   Private application routes
 
 Examples:
 
@@ -66401,7 +66401,7 @@ These routes must never be stored in a shared public cache.
 
 ---
 
-## Class E — Mixed public and personalized routes
+## Class E   Mixed public and personalized routes
 
 Example:
 
@@ -66664,11 +66664,11 @@ Must remain personalized and isolated.
 Recommended structure:
 
 ```text
-Journey Page — cached public
-├── Journey Header — cached
-├── Chapter Structure — cached
-├── Content Previews — cached
-└── Reader Progress — dynamic isolated boundary
+Journey Page   cached public
+├── Journey Header   cached
+├── Chapter Structure   cached
+├── Content Previews   cached
+└── Reader Progress   dynamic isolated boundary
 ```
 
 A future reader account should not force the entire Journey route into per-request rendering.
@@ -67234,7 +67234,7 @@ Preview must:
 Example banner:
 
 ```text
-Previewing unpublished draft — Version 14
+Previewing unpublished draft   Version 14
 ```
 
 The preview URL must not grant permanent access merely by being known.
@@ -67864,7 +67864,7 @@ Produces incorrect assumptions and unstable behaviour.
 
 # 7.5.4.53 Implementation Phases
 
-## Phase 1 — Stable public rendering
+## Phase 1   Stable public rendering
 
 Implement:
 
@@ -67880,7 +67880,7 @@ Implement:
 
 ---
 
-## Phase 2 — Domain-aware cache invalidation
+## Phase 2   Domain-aware cache invalidation
 
 Add:
 
@@ -67894,7 +67894,7 @@ Add:
 
 ---
 
-## Phase 3 — Selective streaming
+## Phase 3   Selective streaming
 
 Add meaningful boundaries for:
 
@@ -67907,7 +67907,7 @@ Do not stream merely because the framework supports it.
 
 ---
 
-## Phase 4 — Personalised reading
+## Phase 4   Personalised reading
 
 Add:
 
@@ -67919,7 +67919,7 @@ Add:
 
 ---
 
-## Phase 5 — Large archive optimisation
+## Phase 5   Large archive optimisation
 
 Add:
 
@@ -68002,7 +68002,7 @@ Before implementing a route, answer:
 
 The next subsection is:
 
-# **7.5.5 — Server Component Architecture, Data Fetching & View-Model Composition**
+# **7.5.5   Server Component Architecture, Data Fetching & View-Model Composition**
 
 It will define:
 
@@ -69132,7 +69132,7 @@ The correct approach should be verified using actual query plans and payload siz
 
 There are two valid patterns.
 
-## Pattern A — Page owns the route query
+## Pattern A   Page owns the route query
 
 ```tsx
 export default async function ArticleRoute({ params }) {
@@ -69154,7 +69154,7 @@ Appropriate when:
 
 ---
 
-## Pattern B — Nested Server Components own independent queries
+## Pattern B   Nested Server Components own independent queries
 
 ```tsx
 export default async function ArticleRoute({ params }) {
@@ -70571,7 +70571,7 @@ This subsection is complete when:
 
 The next subsection is:
 
-# **7.5.6 — Client Component Architecture, Interaction Boundaries & Browser State**
+# **7.5.6   Client Component Architecture, Interaction Boundaries & Browser State**
 
 It will define:
 
@@ -70924,7 +70924,7 @@ TWN recognizes four categories of state.
 
 ---
 
-## Category 1 — URL State
+## Category 1   URL State
 
 State represented by the URL.
 
@@ -70952,7 +70952,7 @@ Benefits:
 
 ---
 
-## Category 2 — Local UI State
+## Category 2   Local UI State
 
 Examples:
 
@@ -70973,7 +70973,7 @@ const [open, setOpen] = useState(false);
 
 ---
 
-## Category 3 — Persisted Browser State
+## Category 3   Persisted Browser State
 
 Examples:
 
@@ -70999,7 +70999,7 @@ when appropriate.
 
 ---
 
-## Category 4 — Server State
+## Category 4   Server State
 
 Examples:
 
@@ -72124,7 +72124,7 @@ Validation exists in three layers.
 
 ---
 
-## Layer 1 — UI Validation
+## Layer 1   UI Validation
 
 Purpose:
 
@@ -72144,7 +72144,7 @@ Never trusted.
 
 ---
 
-## Layer 2 — Server Validation
+## Layer 2   Server Validation
 
 Purpose:
 
@@ -72165,7 +72165,7 @@ Journey structure
 
 ---
 
-## Layer 3 — Domain Validation
+## Layer 3   Domain Validation
 
 Purpose:
 
@@ -73120,7 +73120,7 @@ A valid UUID does not mean the User may edit the referenced Article.
 
 # 7.5.8.3 Validation Principles
 
-## Principle 1 — Treat every boundary as untrusted
+## Principle 1   Treat every boundary as untrusted
 
 Untrusted inputs include:
 
@@ -73142,7 +73142,7 @@ OWASP recommends validating untrusted input for expected type, range, length, fo
 
 ---
 
-## Principle 2 — Allow-lists are preferred
+## Principle 2   Allow-lists are preferred
 
 Define what is accepted.
 
@@ -73167,7 +73167,7 @@ status must not contain suspicious characters
 
 ---
 
-## Principle 3 — Validate early, but enforce at every relevant layer
+## Principle 3   Validate early, but enforce at every relevant layer
 
 Early validation improves user feedback and reduces wasted work.
 
@@ -73179,7 +73179,7 @@ It does not remove the need for:
 
 ---
 
-## Principle 4 — Reject invalid requests completely
+## Principle 4   Reject invalid requests completely
 
 Do not partially apply a command unless partial completion is an intentional business workflow.
 
@@ -73195,7 +73195,7 @@ Do not silently skip the invalid Chapter and save the rest.
 
 ---
 
-## Principle 5 — Validation errors must be deterministic
+## Principle 5   Validation errors must be deterministic
 
 The same input under the same relevant state should produce the same validation result.
 
@@ -73210,7 +73210,7 @@ Time-sensitive rules should receive the relevant clock value explicitly where pr
 
 ---
 
-## Principle 6 — Valid format does not imply valid business meaning
+## Principle 6   Valid format does not imply valid business meaning
 
 A date may be syntactically valid but still be inappropriate.
 
@@ -73226,7 +73226,7 @@ OWASP distinguishes ordinary format validation from validating business meaning:
 
 ---
 
-## Principle 7 — Validation must not leak sensitive state
+## Principle 7   Validation must not leak sensitive state
 
 A public form should not reveal:
 
@@ -75589,7 +75589,7 @@ Editors begin ignoring important issues.
 
 # 7.5.8.90 Implementation Phases
 
-## Phase 1 — Core validation foundation
+## Phase 1   Core validation foundation
 
 Implement:
 
@@ -75603,7 +75603,7 @@ Implement:
 * database constraints;
 * form-error accessibility.
 
-## Phase 2 — Content validation
+## Phase 2   Content validation
 
 Add:
 
@@ -75614,7 +75614,7 @@ Add:
 * Notebook rules;
 * Journey structural validation.
 
-## Phase 3 — Community and Media
+## Phase 3   Community and Media
 
 Add:
 
@@ -75625,7 +75625,7 @@ Add:
 * asynchronous processing state;
 * Media publication requirements.
 
-## Phase 4 — Integrations and AI
+## Phase 4   Integrations and AI
 
 Add:
 
@@ -75636,7 +75636,7 @@ Add:
 * citation verification workflow;
 * validation telemetry.
 
-## Phase 5 — Governance
+## Phase 5   Governance
 
 Add:
 
@@ -75730,7 +75730,7 @@ Before shipping a mutation or input boundary, answer:
 
 The next subsection is:
 
-# **7.5.9 — Form Architecture, Submission States & Accessible Error Handling**
+# **7.5.9   Form Architecture, Submission States & Accessible Error Handling**
 
 It will define:
 
@@ -75895,7 +75895,7 @@ TWN defines five major categories.
 
 ---
 
-## Category 1 — Public Forms
+## Category 1   Public Forms
 
 Examples:
 
@@ -75913,7 +75913,7 @@ Characteristics:
 
 ---
 
-## Category 2 — Editorial Forms
+## Category 2   Editorial Forms
 
 Examples:
 
@@ -75931,7 +75931,7 @@ Characteristics:
 
 ---
 
-## Category 3 — Administrative Forms
+## Category 3   Administrative Forms
 
 Examples:
 
@@ -75947,7 +75947,7 @@ Characteristics:
 
 ---
 
-## Category 4 — Search Forms
+## Category 4   Search Forms
 
 Examples:
 
@@ -75964,7 +75964,7 @@ Characteristics:
 
 ---
 
-## Category 5 — Upload Forms
+## Category 5   Upload Forms
 
 Examples:
 
@@ -77651,7 +77651,7 @@ Yes. Staying strictly within the original blueprint.
 We are still inside:
 
 ```text
-Volume 7 — Technical Architecture
+Volume 7   Technical Architecture
 
 7.5 Frontend Architecture
 ```
@@ -78510,9 +78510,9 @@ State bugs are often interaction bugs.
 
 Next:
 
-**7.5.12 — Design System Integration Architecture**
+**7.5.12   Design System Integration Architecture**
 
-This will define how Volume 4 (Design System) is consumed by the frontend implementation, including component ownership, design-token usage, shadcn/ui integration, theming, typography implementation, spacing systems, and design-system governance—without redefining the Design System itself.
+This will define how Volume 4 (Design System) is consumed by the frontend implementation, including component ownership, design-token usage, shadcn/ui integration, theming, typography implementation, spacing systems, and design-system governance without redefining the Design System itself.
 
 # 7.5.12 Design System Integration Architecture
 
@@ -83395,8 +83395,8 @@ was implemented.
 # 7.5.21 Frontend Architecture Decision Record, Governance & Completion Criteria
 
 **Status:** Final Frontend Architecture Specification
-**Parent chapter:** Volume 7 — Technical Architecture
-**Current scope:** Section 7.5 — Frontend Architecture
+**Parent chapter:** Volume 7   Technical Architecture
+**Current scope:** Section 7.5   Frontend Architecture
 **Applies to:** TWN public website, Editorial CMS, Notebook, Journeys, Library, Search, Community interfaces, Media interfaces, reader accounts, and future Books, Podcasts, Videos, Courses, Events, and other browser-facing experiences
 **Primary objective:** Consolidate the decisions made throughout Section 7.5, define how those decisions are governed, identify what remains outside Frontend Architecture, and establish objective criteria for declaring the frontend architecture complete
 
@@ -83521,7 +83521,7 @@ The following decisions are binding unless replaced through a documented Archite
 
 ---
 
-## Decision 1 — Next.js App Router is the frontend framework
+## Decision 1   Next.js App Router is the frontend framework
 
 TWN uses the App Router for:
 
@@ -83541,7 +83541,7 @@ A legacy Pages Router route may exist only during an intentional migration.
 
 ---
 
-## Decision 2 — React Server Components are the default
+## Decision 2   React Server Components are the default
 
 Server Components are the default rendering and composition mechanism.
 
@@ -83564,7 +83564,7 @@ A component must not become a Client Component merely because it displays dynami
 
 ---
 
-## Decision 3 — Client Components are narrow interaction islands
+## Decision 3   Client Components are narrow interaction islands
 
 A Client Component is justified when the feature requires:
 
@@ -83597,7 +83597,7 @@ Entire application hydrated by default
 
 ---
 
-## Decision 4 — Public content remains readable without extensive client execution
+## Decision 4   Public content remains readable without extensive client execution
 
 Canonical public content should not depend on client-side fetching before it becomes readable.
 
@@ -83609,7 +83609,7 @@ It must not be required merely to reveal their primary content.
 
 ---
 
-## Decision 5 — Rendering strategy is route-specific
+## Decision 5   Rendering strategy is route-specific
 
 TWN does not use one rendering strategy for every route.
 
@@ -83627,7 +83627,7 @@ Caching details remain governed by the chosen, pinned Next.js version. Current N
 
 ---
 
-## Decision 6 — Published content renders from published state
+## Decision 6   Published content renders from published state
 
 The public frontend must never infer publication from the latest editable data.
 
@@ -83649,7 +83649,7 @@ The frontend responsibility is to consume a clearly public query contract.
 
 ---
 
-## Decision 7 — Frontend routes do not query database infrastructure directly
+## Decision 7   Frontend routes do not query database infrastructure directly
 
 Route files and ordinary presentation components should consume:
 
@@ -83683,7 +83683,7 @@ The detailed Backend and Database architecture is deferred to Sections 7.6 and 7
 
 ---
 
-## Decision 8 — Server Components do not call internal HTTP APIs unnecessarily
+## Decision 8   Server Components do not call internal HTTP APIs unnecessarily
 
 A Server Component running inside the same application should call an application or query service directly.
 
@@ -83706,7 +83706,7 @@ The complete HTTP design belongs to Section 7.7 and Volume 9.
 
 ---
 
-## Decision 9 — Frontend data is expressed through view models
+## Decision 9   Frontend data is expressed through view models
 
 Frontend components should not receive unrestricted database rows or oversized domain objects.
 
@@ -83733,7 +83733,7 @@ This protects:
 
 ---
 
-## Decision 10 — TypeScript is mandatory
+## Decision 10   TypeScript is mandatory
 
 TWN frontend code uses TypeScript with strict checking.
 
@@ -83753,7 +83753,7 @@ TypeScript does not replace runtime input validation.
 
 ---
 
-## Decision 11 — State remains minimal and locally owned
+## Decision 11   State remains minimal and locally owned
 
 State ownership follows this priority:
 
@@ -83791,7 +83791,7 @@ It must not become a second copy of server data.
 
 ---
 
-## Decision 12 — Forms use native semantics and progressive enhancement
+## Decision 12   Forms use native semantics and progressive enhancement
 
 Forms begin with:
 
@@ -83821,7 +83821,7 @@ Backend commands, transactions, and persistence rules belong to later sections.
 
 ---
 
-## Decision 13 — Validation is layered
+## Decision 13   Validation is layered
 
 Within Frontend Architecture:
 
@@ -83836,7 +83836,7 @@ Full domain, API, database, and security validation is specified later.
 
 ---
 
-## Decision 14 — Tailwind CSS implements the visual system
+## Decision 14   Tailwind CSS implements the visual system
 
 TWN uses Tailwind CSS 4 and semantic CSS variables to implement the Design System.
 
@@ -83864,7 +83864,7 @@ Page-specific button styles
 
 ---
 
-## Decision 15 — The Design System remains the visual authority
+## Decision 15   The Design System remains the visual authority
 
 Volume 4 owns:
 
@@ -83895,7 +83895,7 @@ Consume it in the feature
 
 ---
 
-## Decision 16 — Responsive design is content-first and mobile-first
+## Decision 16   Responsive design is content-first and mobile-first
 
 TWN builds from the smallest supported viewport upward.
 
@@ -83921,7 +83921,7 @@ The frontend should adapt layout rather than create separate mobile and desktop 
 
 ---
 
-## Decision 17 — Accessibility is an implementation requirement
+## Decision 17   Accessibility is an implementation requirement
 
 Every frontend feature must support:
 
@@ -83940,13 +83940,13 @@ Automated testing helps identify issues but does not replace manual keyboard and
 
 Accessibility remains governed jointly by:
 
-* Volume 3 — UX Bible;
-* Volume 4 — Design System;
-* Section 7.5 — implementation architecture.
+* Volume 3   UX Bible;
+* Volume 4   Design System;
+* Section 7.5   implementation architecture.
 
 ---
 
-## Decision 18 — Performance is controlled primarily through architecture
+## Decision 18   Performance is controlled primarily through architecture
 
 Frontend performance should result from:
 
@@ -83965,7 +83965,7 @@ Performance should not rely on hiding slow architecture behind spinners.
 
 ---
 
-## Decision 19 — Loading, empty, error, and recovery states are first-class
+## Decision 19   Loading, empty, error, and recovery states are first-class
 
 No important feature is complete if only its successful state is implemented.
 
@@ -83989,7 +83989,7 @@ React Suspense can coordinate loading fallbacks for supported server and client 
 
 ---
 
-## Decision 20 — Frontend security is defensive, not authoritative
+## Decision 20   Frontend security is defensive, not authoritative
 
 The browser is untrusted.
 
@@ -84015,7 +84015,7 @@ Those responsibilities belong to Sections 7.9, 7.10, 7.26 and Volume 10.
 
 ---
 
-## Decision 21 — Frontend testing is user-oriented
+## Decision 21   Frontend testing is user-oriented
 
 Tests should focus on behaviour visible to users and editors.
 
@@ -84033,7 +84033,7 @@ Implementation details should not become the primary test contract.
 
 ---
 
-## Decision 22 — Frontend observability measures user outcomes
+## Decision 22   Frontend observability measures user outcomes
 
 Frontend visibility should answer:
 
@@ -84053,7 +84053,7 @@ The complete operational monitoring system belongs to later Volume 7 chapters.
 
 ---
 
-## Decision 23 — Frontend evolution is incremental
+## Decision 23   Frontend evolution is incremental
 
 TWN should not periodically rewrite its entire frontend merely to follow framework trends.
 
@@ -84322,7 +84322,7 @@ These may only be reconsidered through documented evidence and architecture revi
 
 To prevent context drift, the following are explicitly outside Section 7.5.
 
-## Section 7.6 — Backend Architecture
+## Section 7.6   Backend Architecture
 
 Will define:
 
@@ -84334,7 +84334,7 @@ Will define:
 * service abstractions;
 * backend module organization.
 
-## Section 7.7 — API Architecture
+## Section 7.7   API Architecture
 
 Will define:
 
@@ -84346,7 +84346,7 @@ Will define:
 * versioning;
 * rate limiting at the API boundary.
 
-## Section 7.8 — Database Architecture
+## Section 7.8   Database Architecture
 
 Will define:
 
@@ -84369,7 +84369,7 @@ Will define:
 * permissions;
 * resource access.
 
-## Section 7.11 — CMS Architecture
+## Section 7.11   CMS Architecture
 
 Will define:
 
@@ -84381,7 +84381,7 @@ Will define:
 * editorial review;
 * content lifecycle.
 
-## Section 7.12 — Search Architecture
+## Section 7.12   Search Architecture
 
 Will define:
 
@@ -84391,7 +84391,7 @@ Will define:
 * semantic retrieval;
 * search freshness.
 
-## Section 7.13 — Caching Strategy
+## Section 7.13   Caching Strategy
 
 Will define:
 
@@ -85261,7 +85261,7 @@ It should not become the Database Bible, API Bible, Security Volume, or CMS spec
 # 7.6.1 Purpose, Scope & Backend Philosophy
 
 **Status:** Foundational Backend Architecture Specification
-**Parent chapter:** Volume 7 — Technical Architecture
+**Parent chapter:** Volume 7   Technical Architecture
 **Applies to:** Editorial operations, Notebook operations, Journeys, Community submissions, Media coordination, Newsletter workflows, Search coordination, Identity integration, administrative operations, and future Books, Podcasts, Videos, Courses, Events, Collections, and AI-assisted workflows
 **Initial architectural style:** Modular monolith
 **Primary runtime:** Node.js within the Next.js application environment
@@ -85840,7 +85840,7 @@ The concrete database implementation belongs outside the domain.
 
 TWN should avoid both extremes.
 
-## Extreme 1 — No structure
+## Extreme 1   No structure
 
 ```text
 Server Action
@@ -85856,7 +85856,7 @@ all in one function.
 
 This becomes difficult to test and maintain.
 
-## Extreme 2 — Ceremony for every line
+## Extreme 2   Ceremony for every line
 
 ```text
 Controller
@@ -87412,7 +87412,7 @@ This subsection is complete when the team agrees that:
 
 The next subsection is:
 
-# **7.6.2 — Backend Module Structure, Boundaries & Dependency Rules**
+# **7.6.2   Backend Module Structure, Boundaries & Dependency Rules**
 
 It will remain strictly within Backend Architecture and define:
 
@@ -87436,8 +87436,8 @@ It will remain strictly within Backend Architecture and define:
 # 7.6.2 Backend Module Structure, Boundaries & Dependency Rules
 
 **Status:** Backend Architecture Specification
-**Parent chapter:** Volume 7 — Technical Architecture
-**Current scope:** Section 7.6 — Backend Architecture
+**Parent chapter:** Volume 7   Technical Architecture
+**Current scope:** Section 7.6   Backend Architecture
 **Applies to:** Editorial, Notebook, Journeys, Community, Media, Newsletter, Search, Identity integration, Analytics coordination, administrative operations, and future content domains
 **Primary objective:** Define how TWN’s backend code is divided into modules, how those modules communicate, what they may depend on, and how the modular monolith avoids becoming an unstructured monolith
 
@@ -88391,11 +88391,11 @@ Circular imports create:
 
 When a cycle appears, use one of these approaches.
 
-## Option 1 — Reverse the dependency
+## Option 1   Reverse the dependency
 
 Determine which module truly owns the operation.
 
-## Option 2 — Extract a narrow contract
+## Option 2   Extract a narrow contract
 
 Example:
 
@@ -88405,15 +88405,15 @@ ContentReferenceResolver
 
 rather than exposing the entire Editorial module.
 
-## Option 3 — Use an application coordinator
+## Option 3   Use an application coordinator
 
 A higher orchestration layer invokes both modules.
 
-## Option 4 — Use a domain event
+## Option 4   Use a domain event
 
 Appropriate when the dependency concerns a completed secondary reaction.
 
-## Option 5 — Move a shared concept
+## Option 5   Move a shared concept
 
 Only when the concept is genuinely shared and not owned by either existing module.
 
@@ -89333,7 +89333,7 @@ This subsection is complete when:
 
 The next subsection is:
 
-# **7.6.3 — Application Layer Architecture**
+# **7.6.3   Application Layer Architecture**
 
 It will define how backend use cases are coordinated, including:
 
@@ -89352,8 +89352,8 @@ It will define how backend use cases are coordinated, including:
 # 7.6.3 Application Layer Architecture
 
 **Status:** Backend Architecture Specification
-**Parent chapter:** Volume 7 — Technical Architecture
-**Current scope:** Section 7.6 — Backend Architecture
+**Parent chapter:** Volume 7   Technical Architecture
+**Current scope:** Section 7.6   Backend Architecture
 **Applies to:** Editorial, Notebook, Journeys, Community, Media, Newsletter, Search coordination, Identity integration, Analytics coordination, Administration, and future domain modules
 **Primary objective:** Define how TWN coordinates backend use cases without placing business rules in transport handlers, persistence adapters, or framework code
 
@@ -91756,7 +91756,7 @@ This subsection is complete when:
 
 The next subsection is:
 
-# **7.6.4 — Domain Layer Architecture**
+# **7.6.4   Domain Layer Architecture**
 
 It will define:
 
@@ -91786,8 +91786,8 @@ It will define:
 # 7.6.4 Domain Layer Architecture
 
 **Status:** Backend Architecture Specification
-**Parent chapter:** Volume 7 — Technical Architecture
-**Current scope:** Section 7.6 — Backend Architecture
+**Parent chapter:** Volume 7   Technical Architecture
+**Current scope:** Section 7.6   Backend Architecture
 **Applies to:** Editorial, Notebook, Journeys, Community, Media, Newsletter, Identity, Analytics coordination, Administration, and future TWN content domains
 **Primary objective:** Define how TWN models business knowledge, rules, concepts, lifecycles, and invariants independently of frameworks, databases, APIs, providers, and user interfaces.
 
@@ -93091,7 +93091,7 @@ This subsection is complete when:
 
 Next:
 
-# **7.6.5 — Infrastructure Layer Architecture**
+# **7.6.5   Infrastructure Layer Architecture**
 
 This is where we will define:
 
@@ -93112,8 +93112,8 @@ This is a critical section because it will determine whether TWN can evolve for 
 # 7.6.5 Infrastructure Layer Architecture
 
 **Status:** Backend Architecture Specification
-**Parent chapter:** Volume 7 — Technical Architecture
-**Current scope:** Section 7.6 — Backend Architecture
+**Parent chapter:** Volume 7   Technical Architecture
+**Current scope:** Section 7.6   Backend Architecture
 **Applies to:** Persistence implementations, external provider integrations, storage access, search adapters, email adapters, AI-provider adapters, queue clients, clocks, identifier generators, transaction managers, configuration, and other technical implementations used by TWN’s backend modules
 **Primary objective:** Isolate technical implementation details behind stable application-facing contracts so that TWN’s business logic remains testable, comprehensible, secure, and capable of evolving without unnecessary provider lock-in
 
@@ -95343,7 +95343,7 @@ Produces weak abstractions and hidden incompatibilities.
 
 # 7.6.5.80 Implementation Sequence
 
-## Phase 1 — Core infrastructure foundation
+## Phase 1   Core infrastructure foundation
 
 Implement:
 
@@ -95356,7 +95356,7 @@ Implement:
 * explicit composition root;
 * infrastructure error translation.
 
-## Phase 2 — Essential provider adapters
+## Phase 2   Essential provider adapters
 
 Implement only required providers:
 
@@ -95365,7 +95365,7 @@ Implement only required providers:
 * Search implementation;
 * queue or outbox integration where introduced.
 
-## Phase 3 — Operational resilience
+## Phase 3   Operational resilience
 
 Add:
 
@@ -95376,7 +95376,7 @@ Add:
 * rate-limit interpretation;
 * idempotency support.
 
-## Phase 4 — Advanced providers
+## Phase 4   Advanced providers
 
 Add as product requirements become real:
 
@@ -95386,7 +95386,7 @@ Add as product requirements become real:
 * semantic Search provider;
 * document export provider.
 
-## Phase 5 — Provider evolution
+## Phase 5   Provider evolution
 
 Add:
 
@@ -95527,7 +95527,7 @@ This subsection is complete when:
 
 The next subsection is:
 
-# **7.6.6 — Transport Layer Architecture**
+# **7.6.6   Transport Layer Architecture**
 
 It will remain strictly within Backend Architecture and define:
 
@@ -95555,8 +95555,8 @@ It will remain strictly within Backend Architecture and define:
 # 7.6.6 Transport Layer Architecture
 
 **Status:** Backend Architecture Specification
-**Parent chapter:** Volume 7 — Technical Architecture
-**Current scope:** Section 7.6 — Backend Architecture
+**Parent chapter:** Volume 7   Technical Architecture
+**Current scope:** Section 7.6   Backend Architecture
 **Applies to:** Server Actions, Route Handlers, webhook receivers, background-job consumers, scheduled-task entry points, administrative scripts, and future external transport mechanisms
 **Primary objective:** Define how requests enter TWN’s backend, how transport-specific data is converted into application commands and queries, and how results are returned without placing business logic inside framework handlers
 
@@ -97929,7 +97929,7 @@ May duplicate external or internal effects.
 
 # 7.6.6.91 Implementation Sequence
 
-## Phase 1 — First-party transports
+## Phase 1   First-party transports
 
 Implement:
 
@@ -97941,7 +97941,7 @@ Implement:
 * redirect and revalidation boundary;
 * transport tests.
 
-## Phase 2 — HTTP transports
+## Phase 2   HTTP transports
 
 Implement:
 
@@ -97952,7 +97952,7 @@ Implement:
 * API result mapping;
 * request-size controls.
 
-## Phase 3 — External transports
+## Phase 3   External transports
 
 Implement as providers require:
 
@@ -97962,7 +97962,7 @@ Implement as providers require:
 * durable event deduplication;
 * provider acknowledgement rules.
 
-## Phase 4 — Asynchronous transports
+## Phase 4   Asynchronous transports
 
 Implement:
 
@@ -97972,7 +97972,7 @@ Implement:
 * scheduler entry points;
 * retry/dead-letter mapping.
 
-## Phase 5 — Operational governance
+## Phase 5   Operational governance
 
 Add:
 
@@ -98074,8 +98074,8 @@ This subsection is complete when:
 # 7.6.7 Command Architecture
 
 **Status:** Backend Architecture Specification
-**Parent chapter:** Volume 7 — Technical Architecture
-**Current scope:** Section 7.6 — Backend Architecture
+**Parent chapter:** Volume 7   Technical Architecture
+**Current scope:** Section 7.6   Backend Architecture
 **Applies to:** All state-changing backend operations in Editorial, Notebook, Journeys, Community, Media, Newsletter, Identity, Administration, and future TWN domains
 **Primary objective:** Define how TWN represents, validates, authorizes, executes, persists, and reports requests that change authoritative application state
 
@@ -100889,7 +100889,7 @@ Produces unpredictable partial state.
 
 # 7.6.7.108 Implementation Sequence
 
-## Phase 1 — Core command foundation
+## Phase 1   Core command foundation
 
 Implement:
 
@@ -100901,7 +100901,7 @@ Implement:
 * transaction integration;
 * stable error/result mapping.
 
-## Phase 2 — Editorial and Journey commands
+## Phase 2   Editorial and Journey commands
 
 Implement core commands:
 
@@ -100915,7 +100915,7 @@ Implement core commands:
 * reorder;
 * attach content.
 
-## Phase 3 — Idempotent external commands
+## Phase 3   Idempotent external commands
 
 Implement:
 
@@ -100925,7 +100925,7 @@ Implement:
 * scheduled publication;
 * durable command identity.
 
-## Phase 4 — Administrative and bulk commands
+## Phase 4   Administrative and bulk commands
 
 Implement:
 
@@ -100934,7 +100934,7 @@ Implement:
 * elevated authorization;
 * progress and resumability where required.
 
-## Phase 5 — Execution governance
+## Phase 5   Execution governance
 
 Add only when justified:
 
@@ -101046,7 +101046,7 @@ This subsection is complete when:
 
 The next subsection is:
 
-# **7.6.8 — Query Architecture**
+# **7.6.8   Query Architecture**
 
 It will remain strictly within Backend Architecture and define:
 
@@ -101079,8 +101079,8 @@ It will remain strictly within Backend Architecture and define:
 # 7.6.8 Query Architecture
 
 **Status:** Backend Architecture Specification
-**Parent chapter:** Volume 7 — Technical Architecture
-**Current scope:** Section 7.6 — Backend Architecture
+**Parent chapter:** Volume 7   Technical Architecture
+**Current scope:** Section 7.6   Backend Architecture
 **Applies to:** Editorial, Notebook, Journeys, Community, Search, Profiles, Analytics, Newsletter, Media, Administration, and all future TWN read operations
 **Primary objective:** Define how TWN retrieves information, composes read models, enforces visibility rules, optimizes performance, and serves data without leaking business mutations into read operations
 
@@ -101835,7 +101835,7 @@ Remaining major sections include:
 
 So 7.6.8 is roughly **30–35% complete**. The remaining sections are the more advanced and important parts where we define caching, search, consistency, projections, and performance strategy for TWN.
 
-# 7.6.8 Query Architecture — Continued
+# 7.6.8 Query Architecture   Continued
 
 ---
 
@@ -104151,7 +104151,7 @@ Creates write cost and storage without proven benefit.
 
 # 7.6.8.103 Implementation Sequence
 
-## Phase 1 — Core read contracts
+## Phase 1   Core read contracts
 
 Implement:
 
@@ -104162,7 +104162,7 @@ Implement:
 * visibility and authorization;
 * stable collection ordering.
 
-## Phase 2 — Pagination and composition
+## Phase 2   Pagination and composition
 
 Implement:
 
@@ -104173,7 +104173,7 @@ Implement:
 * Journey content composition;
 * optional dependency failure policy.
 
-## Phase 3 — Performance discipline
+## Phase 3   Performance discipline
 
 Add:
 
@@ -104184,7 +104184,7 @@ Add:
 * purpose-specific indexes;
 * count strategy.
 
-## Phase 4 — Derived read systems
+## Phase 4   Derived read systems
 
 Add only when justified:
 
@@ -104194,7 +104194,7 @@ Add only when justified:
 * recommendation projections;
 * cross-domain reporting views.
 
-## Phase 5 — Query governance
+## Phase 5   Query governance
 
 Maintain:
 
@@ -104311,7 +104311,7 @@ This subsection is complete when:
 
 The next subsection is:
 
-# **7.6.9 — Domain Entities, Value Objects & Aggregate Boundaries**
+# **7.6.9   Domain Entities, Value Objects & Aggregate Boundaries**
 
 This will remain within Backend Architecture and refine the concepts introduced in 7.6.4 by defining:
 
@@ -104344,8 +104344,8 @@ This will remain within Backend Architecture and refine the concepts introduced 
 # 7.6.9 Domain Entities, Value Objects & Aggregate Boundaries
 
 **Status:** Backend Architecture Specification
-**Parent chapter:** Volume 7 — Technical Architecture
-**Current scope:** Section 7.6 — Backend Architecture
+**Parent chapter:** Volume 7   Technical Architecture
+**Current scope:** Section 7.6   Backend Architecture
 **Applies to:** Editorial, Notebook, Journeys, Community, Identity, Newsletter, Media, Search, Analytics and future TWN domains
 **Primary objective:** Define how TWN models business concepts through Entities, Value Objects, and Aggregate boundaries while avoiding unnecessary complexity and preserving long-term maintainability.
 
@@ -105186,7 +105186,7 @@ Remaining major sections include:
 
 So **7.6.9 is roughly 35–40% complete**. The remaining sections are where we define the actual aggregate boundaries for TWN and avoid the common mistake of turning the modular monolith into a giant object graph.
 
-# 7.6.9 Domain Entities, Value Objects & Aggregate Boundaries — Continued
+# 7.6.9 Domain Entities, Value Objects & Aggregate Boundaries   Continued
 
 ---
 
@@ -106401,7 +106401,7 @@ Do not change it merely to match a new table structure.
 
 ---
 
-# 7.6.9.69 TWN Aggregate Catalog — Editorial
+# 7.6.9.69 TWN Aggregate Catalog   Editorial
 
 ## Article Aggregate
 
@@ -106461,7 +106461,7 @@ Article Revisions require careful treatment.
 
 Possible models:
 
-## Model A — Revision is part of Article Aggregate
+## Model A   Revision is part of Article Aggregate
 
 Appropriate when:
 
@@ -106473,7 +106473,7 @@ Risk:
 
 * complete revision history can make the Aggregate very large.
 
-## Model B — Current draft revision participates in the Article consistency boundary, while immutable historical revisions are stored separately
+## Model B   Current draft revision participates in the Article consistency boundary, while immutable historical revisions are stored separately
 
 Appropriate when:
 
@@ -106483,7 +106483,7 @@ Appropriate when:
 
 This is likely the stronger initial direction for TWN.
 
-## Model C — Every Revision is a separate Aggregate
+## Model C   Every Revision is a separate Aggregate
 
 Appropriate only if Revisions have substantial independent lifecycle and behaviour.
 
@@ -106567,7 +106567,7 @@ Do not create a large Tag Aggregate containing all associated content.
 
 ---
 
-# 7.6.9.74 TWN Aggregate Catalog — Notebook
+# 7.6.9.74 TWN Aggregate Catalog   Notebook
 
 ## Notebook Entry Aggregate
 
@@ -106640,7 +106640,7 @@ Do not force it into NotebookEntry before those rules are confirmed.
 
 ---
 
-# 7.6.9.76 TWN Aggregate Catalog — Journeys
+# 7.6.9.76 TWN Aggregate Catalog   Journeys
 
 ## Journey Aggregate
 
@@ -106823,7 +106823,7 @@ That complexity is not required initially.
 
 ---
 
-# 7.6.9.81 TWN Aggregate Catalog — Community
+# 7.6.9.81 TWN Aggregate Catalog   Community
 
 ## Shared Page Aggregate
 
@@ -106906,7 +106906,7 @@ The final Community and Database specifications will decide this.
 
 ---
 
-# 7.6.9.84 TWN Aggregate Catalog — Media
+# 7.6.9.84 TWN Aggregate Catalog   Media
 
 ## Media Asset Aggregate
 
@@ -106973,7 +106973,7 @@ Final Media Processing Architecture will decide the exact boundary.
 
 ---
 
-# 7.6.9.86 TWN Aggregate Catalog — Newsletter
+# 7.6.9.86 TWN Aggregate Catalog   Newsletter
 
 ## Subscriber Aggregate
 
@@ -107034,7 +107034,7 @@ Campaign delivery attempts and recipient-level events likely remain outside the 
 
 ---
 
-# 7.6.9.88 TWN Aggregate Catalog — Identity
+# 7.6.9.88 TWN Aggregate Catalog   Identity
 
 ## User Aggregate
 
@@ -107513,7 +107513,7 @@ This subsection is complete when:
 
 The next subsection is:
 
-# **7.6.10 — Domain Policies, Business Rules & Invariant Enforcement**
+# **7.6.10   Domain Policies, Business Rules & Invariant Enforcement**
 
 It will remain within Backend Architecture and define:
 
@@ -107539,8 +107539,8 @@ It will remain within Backend Architecture and define:
 # 7.6.10 Domain Policies, Business Rules & Invariant Enforcement
 
 **Status:** Backend Architecture Specification
-**Parent chapter:** Volume 7 — Technical Architecture
-**Current scope:** Section 7.6 — Backend Architecture
+**Parent chapter:** Volume 7   Technical Architecture
+**Current scope:** Section 7.6   Backend Architecture
 **Applies to:** Editorial, Notebook, Journeys, Community, Media, Newsletter, Identity and future TWN domains
 **Primary objective:** Define how TWN captures, enforces, tests and evolves business rules while preventing rule duplication across the application.
 
@@ -108345,7 +108345,7 @@ Remaining major sections include:
 
 So **7.6.10 is about 30–35% complete**. The remaining sections are where we define how TWN enforces rules across modules, scheduling, publication workflows, moderation, permissions, and long-term rule evolution.
 
-# 7.6.10 Domain Policies, Business Rules & Invariant Enforcement — Continued
+# 7.6.10 Domain Policies, Business Rules & Invariant Enforcement   Continued
 
 ---
 
@@ -109980,7 +109980,7 @@ Remaining sections:
 
 After that we complete **7.6.10 entirely** and move into **7.6.11 Domain Events & Event-Driven Architecture**, which is one of the most important chapters because it connects Editorial, Journeys, Search, Newsletter, Analytics, and future AI capabilities without turning the modular monolith into a tightly coupled system.
 
-# 7.6.10 Domain Policies, Business Rules & Invariant Enforcement — Continued
+# 7.6.10 Domain Policies, Business Rules & Invariant Enforcement   Continued
 
 ---
 
@@ -110264,7 +110264,7 @@ The following rules are already established by the TWN Blueprint and may be trea
 
 ---
 
-## Editorial Rule E-001 — Published State Uses Published Content
+## Editorial Rule E-001   Published State Uses Published Content
 
 ```text
 A public Article must render from its approved
@@ -110281,7 +110281,7 @@ It must not render automatically from the latest editable draft.
 
 ---
 
-## Editorial Rule E-002 — Soft-Deleted Content Is Not Public
+## Editorial Rule E-002   Soft-Deleted Content Is Not Public
 
 ```text
 Content with an active deletion state
@@ -110295,7 +110295,7 @@ must not appear through ordinary public queries.
 
 ---
 
-## Editorial Rule E-003 — Lifecycle Transitions Are Explicit
+## Editorial Rule E-003   Lifecycle Transitions Are Explicit
 
 ```text
 Content state cannot be changed by assigning
@@ -110320,7 +110320,7 @@ Workflow state must be validated on the server for every request rather than rel
 
 ---
 
-## Editorial Rule E-004 — Publication Is Separate from Featuring
+## Editorial Rule E-004   Publication Is Separate from Featuring
 
 ```text
 Published
@@ -110336,7 +110336,7 @@ Feature eligibility is a separate policy.
 
 ---
 
-## Editorial Rule E-005 — Article Identity Is Stable
+## Editorial Rule E-005   Article Identity Is Stable
 
 ```text
 Changing the Article title or slug
@@ -110352,7 +110352,7 @@ does not create a new Article identity.
 
 ---
 
-## Journey Rule J-001 — Journey Is First-Class
+## Journey Rule J-001   Journey Is First-Class
 
 ```text
 A Journey is not a Tag, Category,
@@ -110372,7 +110372,7 @@ It has its own:
 
 ---
 
-## Journey Rule J-002 — Chapters Belong to One Journey
+## Journey Rule J-002   Chapters Belong to One Journey
 
 ```text
 A Journey Chapter belongs to exactly one Journey.
@@ -110384,7 +110384,7 @@ A Journey Chapter belongs to exactly one Journey.
 
 ---
 
-## Journey Rule J-003 — Chapter Identity Is Not Position
+## Journey Rule J-003   Chapter Identity Is Not Position
 
 ```text
 Moving Chapter 3 to position 1
@@ -110398,7 +110398,7 @@ Chapter identity remains stable.
 
 ---
 
-## Journey Rule J-004 — Chapter Order Is Deterministic
+## Journey Rule J-004   Chapter Order Is Deterministic
 
 Within one Journey:
 
@@ -110418,7 +110418,7 @@ The Domain must reject:
 
 ---
 
-## Journey Rule J-005 — Membership Order Is Deterministic
+## Journey Rule J-005   Membership Order Is Deterministic
 
 Within a Journey Chapter:
 
@@ -110432,7 +110432,7 @@ one valid position in the ordered sequence.
 
 ---
 
-## Journey Rule J-006 — Membership References Content by Identity
+## Journey Rule J-006   Membership References Content by Identity
 
 A Journey membership references:
 
@@ -110449,7 +110449,7 @@ It does not own or embed the complete Article, Notebook Entry, Podcast Episode, 
 
 ---
 
-## Journey Rule J-007 — Journey Structure Is Content-Type Aware
+## Journey Rule J-007   Journey Structure Is Content-Type Aware
 
 Only implemented and approved content-reference types may be attached.
 
@@ -110463,7 +110463,7 @@ Future Books, Podcasts, Videos, Courses, and Events are added when their real Do
 
 ---
 
-## Journey Rule J-008 — Publication Validates References
+## Journey Rule J-008   Publication Validates References
 
 Before a Journey becomes public, its publication policy must verify that required referenced content is eligible for public inclusion.
 
@@ -110482,7 +110482,7 @@ No behaviour should be guessed prematurely.
 
 ---
 
-## Journey Rule J-009 — Journey Membership Is Owned by Journeys
+## Journey Rule J-009   Journey Membership Is Owned by Journeys
 
 An Article may participate in one or more Journeys.
 
@@ -110501,7 +110501,7 @@ The Journeys module owns:
 
 ---
 
-## Notebook Rule N-001 — Notebook Entry Is Not an Article Subtype by Default
+## Notebook Rule N-001   Notebook Entry Is Not an Article Subtype by Default
 
 Notebook Entries and Articles may share technical capabilities.
 
@@ -110520,7 +110520,7 @@ may differ.
 
 ---
 
-## Notebook Rule N-002 — Public Entry Has Public Content
+## Notebook Rule N-002   Public Entry Has Public Content
 
 A publicly visible Notebook Entry must reference an eligible public content representation.
 
@@ -110528,7 +110528,7 @@ The exact revision model will be confirmed in CMS Architecture and Volume 8.
 
 ---
 
-## Notebook Rule N-003 — Archived Entry Cannot Be Actively Featured
+## Notebook Rule N-003   Archived Entry Cannot Be Actively Featured
 
 An archived or deleted Notebook Entry cannot remain selected as an active public feature such as Today’s Page.
 
@@ -110537,7 +110537,7 @@ An archived or deleted Notebook Entry cannot remain selected as an active public
 
 ---
 
-## Notebook Rule N-004 — Today’s Page Has Separate Selection Semantics
+## Notebook Rule N-004   Today’s Page Has Separate Selection Semantics
 
 The Today’s Page concept must not be implemented merely as an uncontrolled Boolean field on multiple Entries unless its rules guarantee:
 
@@ -110561,7 +110561,7 @@ That product decision remains open.
 
 ---
 
-## Community Rule C-001 — Public Community Content Requires Approved State
+## Community Rule C-001   Public Community Content Requires Approved State
 
 A Shared Page or moderated Margin Note must not become publicly visible before the required moderation decision.
 
@@ -110570,7 +110570,7 @@ A Shared Page or moderated Margin Note must not become publicly visible before t
 
 ---
 
-## Community Rule C-002 — Moderation Transitions Are Explicit
+## Community Rule C-002   Moderation Transitions Are Explicit
 
 Moderation state changes use approved operations such as:
 
@@ -110588,7 +110588,7 @@ They are not arbitrary status assignments.
 
 ---
 
-## Community Rule C-003 — Moderation Decision Is Accountable
+## Community Rule C-003   Moderation Decision Is Accountable
 
 A consequential moderation decision should retain:
 
@@ -110604,7 +110604,7 @@ The exact visible explanation and retention period belong to Community, Audit, a
 
 ---
 
-## Community Rule C-004 — Repeated Moderation Must Follow State Rules
+## Community Rule C-004   Repeated Moderation Must Follow State Rules
 
 Example:
 
@@ -110625,7 +110625,7 @@ or equivalent no-op outcome where appropriate.
 
 ---
 
-## Community Rule C-005 — Target Content Must Exist
+## Community Rule C-005   Target Content Must Exist
 
 A Margin Note must reference a valid eligible target.
 
@@ -110641,7 +110641,7 @@ It must not read private content tables directly.
 
 ---
 
-## Community Rule C-006 — Removal Does Not Rewrite Source Content
+## Community Rule C-006   Removal Does Not Rewrite Source Content
 
 Archiving or rejecting a Margin Note must not modify the Article or Notebook Entry to which it was attached.
 
@@ -110653,7 +110653,7 @@ The two concepts are separate Aggregates.
 
 ---
 
-## Media Rule M-001 — Declared Upload Is Not Verified Media
+## Media Rule M-001   Declared Upload Is Not Verified Media
 
 A User declaring:
 
@@ -110670,7 +110670,7 @@ Media must pass the required server-side inspection and lifecycle transitions be
 
 ---
 
-## Media Rule M-002 — Active Media References a Verified Object
+## Media Rule M-002   Active Media References a Verified Object
 
 A Media Asset cannot become active or publishable unless the authoritative Media process confirms that its required storage object exists and satisfies the required checks.
 
@@ -110678,7 +110678,7 @@ The exact checks belong to Storage, Media Processing, and Security Architecture.
 
 ---
 
-## Media Rule M-003 — Deleted Media Cannot Receive New References
+## Media Rule M-003   Deleted Media Cannot Receive New References
 
 Once Media is in a deleted or permanently unavailable state, new content relationships must be rejected.
 
@@ -110686,7 +110686,7 @@ Existing references require an explicit broken-reference, archival, or replaceme
 
 ---
 
-## Media Rule M-004 — Provider Details Are Not Domain State
+## Media Rule M-004   Provider Details Are Not Domain State
 
 The Domain may store a provider-neutral storage reference.
 
@@ -110694,7 +110694,7 @@ It must not base business policy directly on a Supabase, Cloudinary, or other pr
 
 ---
 
-## Media Rule M-005 — Processing Transitions Are Controlled
+## Media Rule M-005   Processing Transitions Are Controlled
 
 Potential states such as:
 
@@ -110722,7 +110722,7 @@ The final state machine is deferred to Media Processing Architecture.
 
 ---
 
-## Newsletter Rule NL-001 — Consent Is Required
+## Newsletter Rule NL-001   Consent Is Required
 
 A Subscriber must not become actively eligible for email delivery without the consent state required by TWN’s legal and product policy.
 
@@ -110731,7 +110731,7 @@ A Subscriber must not become actively eligible for email delivery without the co
 
 ---
 
-## Newsletter Rule NL-002 — Unsubscribe Is Authoritative
+## Newsletter Rule NL-002   Unsubscribe Is Authoritative
 
 An unsubscribed recipient must not be reintroduced into an active campaign merely because:
 
@@ -110744,7 +110744,7 @@ The send workflow must consult authoritative subscription state at the appropria
 
 ---
 
-## Newsletter Rule NL-003 — Email Identity Is Normalized
+## Newsletter Rule NL-003   Email Identity Is Normalized
 
 Duplicate handling must use the approved normalized email semantics.
 
@@ -110754,7 +110754,7 @@ TWN should avoid unsafe assumptions such as lowercasing or rewriting every email
 
 ---
 
-## Newsletter Rule NL-004 — Campaign Dispatch Is Duplicate-Safe
+## Newsletter Rule NL-004   Campaign Dispatch Is Duplicate-Safe
 
 A one-time Campaign must not be dispatched twice because of:
 
@@ -110767,7 +110767,7 @@ Dispatch requires strong idempotency.
 
 ---
 
-## Newsletter Rule NL-005 — Sent Campaign Is Historical
+## Newsletter Rule NL-005   Sent Campaign Is Historical
 
 Once a Campaign has been sent, editing its historical sent representation must not rewrite what recipients previously received.
 
@@ -110789,7 +110789,7 @@ The complete model belongs to Sections 7.9 and 7.10.
 
 ---
 
-## Identity Rule I-001 — Client Does Not Choose Actor Identity
+## Identity Rule I-001   Client Does Not Choose Actor Identity
 
 The authenticated Actor is resolved through trusted server-side authentication state.
 
@@ -110797,7 +110797,7 @@ A browser-submitted `userId` does not establish identity.
 
 ---
 
-## Identity Rule I-002 — Authentication Does Not Imply Permission
+## Identity Rule I-002   Authentication Does Not Imply Permission
 
 A valid authenticated session establishes who the Actor is.
 
@@ -110813,7 +110813,7 @@ Authorization must be evaluated for every protected request. OWASP specifically 
 
 ---
 
-## Identity Rule I-003 — System Actor Is Explicit
+## Identity Rule I-003   System Actor Is Explicit
 
 Workers, schedulers, and integration handlers use an explicit System Actor.
 
@@ -110821,7 +110821,7 @@ They do not fabricate an ordinary User session.
 
 ---
 
-## Identity Rule I-004 — Administrative Authority Does Not Bypass Domain Invariants
+## Identity Rule I-004   Administrative Authority Does Not Bypass Domain Invariants
 
 An administrator may receive elevated authorization.
 
@@ -110841,7 +110841,7 @@ It does not eliminate structural truth.
 
 ---
 
-## Cross-Domain Rule X-001 — Ownership Is Singular
+## Cross-Domain Rule X-001   Ownership Is Singular
 
 Every business rule and mutable business concept has one owning domain.
 
@@ -110856,7 +110856,7 @@ They must not independently redefine its rules.
 
 ---
 
-## Cross-Domain Rule X-002 — Cross-Aggregate Rules Receive Facts
+## Cross-Domain Rule X-002   Cross-Aggregate Rules Receive Facts
 
 A Domain policy spanning several Aggregates receives explicit facts assembled by the Application layer.
 
@@ -110866,7 +110866,7 @@ Domain services are appropriate for rules spanning several entities or Aggregate
 
 ---
 
-## Cross-Domain Rule X-003 — Secondary Reactions Do Not Rewrite Primary Success
+## Cross-Domain Rule X-003   Secondary Reactions Do Not Rewrite Primary Success
 
 Example:
 
@@ -110882,7 +110882,7 @@ Search catches up through durable retry and reconciliation unless the approved p
 
 ---
 
-## Cross-Domain Rule X-004 — Events Announce Facts
+## Cross-Domain Rule X-004   Events Announce Facts
 
 Events such as:
 
@@ -110900,7 +110900,7 @@ Domain events are intended to represent completed domain changes and coordinate 
 
 ---
 
-## Cross-Domain Rule X-005 — UI Rules Are Advisory Until Server-Enforced
+## Cross-Domain Rule X-005   UI Rules Are Advisory Until Server-Enforced
 
 The frontend may:
 
@@ -111338,7 +111338,7 @@ Server-side workflow state validation is essential because frontend logic alone 
 
 ---
 
-## Anti-Pattern 1 — Boolean-Only Decisions
+## Anti-Pattern 1   Boolean-Only Decisions
 
 ```typescript
 return false;
@@ -111352,7 +111352,7 @@ No explanation.
 
 ---
 
-## Anti-Pattern 2 — Rules Embedded in Server Actions
+## Anti-Pattern 2   Rules Embedded in Server Actions
 
 ```typescript
 if (formData.get("category")) {
@@ -111366,7 +111366,7 @@ if (formData.get("category")) {
 
 ---
 
-## Anti-Pattern 3 — Rules Embedded in React Components
+## Anti-Pattern 3   Rules Embedded in React Components
 
 ```tsx
 disabled={!article.category}
@@ -111380,7 +111380,7 @@ treated as enforcement.
 
 ---
 
-## Anti-Pattern 4 — Repository Makes Business Decisions
+## Anti-Pattern 4   Repository Makes Business Decisions
 
 ```typescript
 if (row.status === "draft") {
@@ -111394,7 +111394,7 @@ if (row.status === "draft") {
 
 ---
 
-## Anti-Pattern 5 — Database Trigger as Sole Business Workflow
+## Anti-Pattern 5   Database Trigger as Sole Business Workflow
 
 A trigger changes lifecycle and creates hidden side effects.
 
@@ -111404,7 +111404,7 @@ A trigger changes lifecycle and creates hidden side effects.
 
 ---
 
-## Anti-Pattern 6 — Arbitrary Status Assignment
+## Anti-Pattern 6   Arbitrary Status Assignment
 
 ```typescript
 entity.status = input.status;
@@ -111416,7 +111416,7 @@ entity.status = input.status;
 
 ---
 
-## Anti-Pattern 7 — Hidden Infrastructure in Policy
+## Anti-Pattern 7   Hidden Infrastructure in Policy
 
 ```typescript
 publicationPolicy.evaluate()
@@ -111430,7 +111430,7 @@ secretly queries several repositories.
 
 ---
 
-## Anti-Pattern 8 — Authorization Mixed with Eligibility
+## Anti-Pattern 8   Authorization Mixed with Eligibility
 
 ```text
 Publication denied.
@@ -111447,7 +111447,7 @@ without identifying whether:
 
 ---
 
-## Anti-Pattern 9 — Every Recommendation Becomes a Blocking Rule
+## Anti-Pattern 9   Every Recommendation Becomes a Blocking Rule
 
 **Consequence:** Editors cannot publish because of subjective or optional guidance.
 
@@ -111455,7 +111455,7 @@ without identifying whether:
 
 ---
 
-## Anti-Pattern 10 — Arbitrary Thresholds Invented During Coding
+## Anti-Pattern 10   Arbitrary Thresholds Invented During Coding
 
 Example:
 
@@ -111471,7 +111471,7 @@ with no approved product reason.
 
 ---
 
-## Anti-Pattern 11 — Rules Stored as Uncontrolled Database Expressions
+## Anti-Pattern 11   Rules Stored as Uncontrolled Database Expressions
 
 **Consequence:** Weak typing, difficult testing, hidden changes, security exposure.
 
@@ -111479,7 +111479,7 @@ with no approved product reason.
 
 ---
 
-## Anti-Pattern 12 — Current Rules Applied Blindly to History
+## Anti-Pattern 12   Current Rules Applied Blindly to History
 
 **Consequence:** Historical content unexpectedly becomes invalid.
 
@@ -111487,7 +111487,7 @@ with no approved product reason.
 
 ---
 
-## Anti-Pattern 13 — Policy Creates Side Effects
+## Anti-Pattern 13   Policy Creates Side Effects
 
 A policy sends email or updates state while deciding.
 
@@ -111497,7 +111497,7 @@ A policy sends email or updates state while deciding.
 
 ---
 
-## Anti-Pattern 14 — Duplicate Rules Per Transport
+## Anti-Pattern 14   Duplicate Rules Per Transport
 
 ```text
 CMS publication policy
@@ -111513,7 +111513,7 @@ Scheduler publication policy
 
 ---
 
-## Anti-Pattern 15 — Rule Failure Logged as System Error
+## Anti-Pattern 15   Rule Failure Logged as System Error
 
 **Consequence:** Alert noise and misleading reliability metrics.
 
@@ -111521,7 +111521,7 @@ Scheduler publication policy
 
 ---
 
-## Anti-Pattern 16 — System Error Converted into Rule Failure
+## Anti-Pattern 16   System Error Converted into Rule Failure
 
 Database failure becomes:
 
@@ -111535,7 +111535,7 @@ Article not eligible.
 
 ---
 
-## Anti-Pattern 17 — Policies Receive Entire Application Context
+## Anti-Pattern 17   Policies Receive Entire Application Context
 
 **Consequence:** Hidden dependencies and accidental coupling.
 
@@ -111543,7 +111543,7 @@ Article not eligible.
 
 ---
 
-## Anti-Pattern 18 — Rule Catalog Becomes Source of Executable Truth
+## Anti-Pattern 18   Rule Catalog Becomes Source of Executable Truth
 
 Documentation is updated but code is not, or code is generated blindly from prose.
 
@@ -111597,7 +111597,7 @@ Before approving a rule change, verify:
 
 # 7.6.10.125 Architecture Decision Record
 
-**Decision:** TWN centralizes authoritative business rules in its owning Domain through Entity behaviour, Aggregate invariants, Value Objects, Specifications, and pure Domain Policies. Application handlers assemble authoritative facts and invoke those rules, while transports, interfaces, repositories, and database constraints provide supporting—not competing—enforcement.
+**Decision:** TWN centralizes authoritative business rules in its owning Domain through Entity behaviour, Aggregate invariants, Value Objects, Specifications, and pure Domain Policies. Application handlers assemble authoritative facts and invoke those rules, while transports, interfaces, repositories, and database constraints provide supporting not competing enforcement.
 
 **Supporting decisions:**
 
@@ -111691,7 +111691,7 @@ This subsection is complete when:
 
 The next planned subsection in the agreed **7.6 Backend Architecture** outline is:
 
-# **7.6.11 — Application Services**
+# **7.6.11   Application Services**
 
 This should not repeat **7.6.3 Application Layer Architecture**.
 
@@ -111714,7 +111714,7 @@ It will focus specifically on when a reusable Application Service is justified b
 [5]: https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-events-design-implementation?utm_source=chatgpt.com "Domain events: Design and implementation - .NET"
 [6]: https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-model-layer-validations?utm_source=chatgpt.com "Designing validations in the domain model layer - .NET"
 
-# 7.6 Backend Architecture — Progress
+# 7.6 Backend Architecture   Progress
 
 Completed:
 
@@ -111758,8 +111758,8 @@ That means **10 of 24 subsections are complete**, or approximately **42% of 7.6*
 # 7.6.11 Application Services
 
 **Status:** Backend Architecture Specification
-**Parent chapter:** Volume 7 — Technical Architecture
-**Current scope:** Section 7.6 — Backend Architecture
+**Parent chapter:** Volume 7   Technical Architecture
+**Current scope:** Section 7.6   Backend Architecture
 **Applies to:** Reusable application-level coordination within Editorial, Notebook, Journeys, Community, Media, Newsletter, Identity, Administration, and future TWN modules
 **Primary objective:** Define when TWN should introduce reusable Application Services, what those services may coordinate, and how to prevent them from becoming oversized procedural containers
 
@@ -113569,12 +113569,12 @@ This subsection is complete when:
 
 The next subsection is:
 
-# **7.6.12 — Repository Architecture**
+# **7.6.12   Repository Architecture**
 
 It will define repository ownership, Aggregate persistence, query adapters, purpose-specific repository methods, transaction participation, optimistic concurrency, mapping, error translation, contract testing, and why TWN should avoid universal generic CRUD repositories.
 
 
-# 7.6 Backend Architecture — Progress
+# 7.6 Backend Architecture   Progress
 
 Completed:
 
@@ -113599,8 +113599,8 @@ After this subsection, **12 sections will remain** before 7.6 is complete.
 # 7.6.12 Repository Architecture
 
 **Status:** Backend Architecture Specification
-**Parent chapter:** Volume 7 — Technical Architecture
-**Current scope:** Section 7.6 — Backend Architecture
+**Parent chapter:** Volume 7   Technical Architecture
+**Current scope:** Section 7.6   Backend Architecture
 **Applies to:** Aggregate persistence, command-side state retrieval, query projections, transactions, optimistic concurrency, soft deletion, mapping, and persistence testing across all TWN backend modules
 **Primary objective:** Define how TWN loads and persists authoritative Domain state without allowing database concepts, ORM models, or generic CRUD operations to control the business model
 
@@ -114534,7 +114534,7 @@ Internal database metadata remains an implementation detail.
 
 TWN must choose one consistent policy.
 
-## Option A — Database increments version
+## Option A   Database increments version
 
 ```sql
 version = version + 1
@@ -114542,7 +114542,7 @@ version = version + 1
 
 Repository returns the new version.
 
-## Option B — Domain increments version
+## Option B   Domain increments version
 
 Aggregate produces the next version and Repository checks the expected previous version.
 
@@ -116142,7 +116142,7 @@ This subsection is complete when:
 
 Next:
 
-# **7.6.13 — Provider Adapter Architecture**
+# **7.6.13   Provider Adapter Architecture**
 
 It will define:
 
@@ -116166,7 +116166,7 @@ It will define:
 [3]: https://martinfowler.com/eaaDev/EventSourcing.html?utm_source=chatgpt.com "Event Sourcing"
 [4]: https://nextjs.org/docs/app/guides/data-security?utm_source=chatgpt.com "Guides: Data Security"
 
-# 7.6 Backend Architecture — Progress
+# 7.6 Backend Architecture   Progress
 
 Completed:
 
@@ -116208,9 +116208,9 @@ Remaining:
 
 **Status:** Backend Architecture Specification
 
-**Parent chapter:** Volume 7 — Technical Architecture
+**Parent chapter:** Volume 7   Technical Architecture
 
-**Current scope:** Section 7.6 — Backend Architecture
+**Current scope:** Section 7.6   Backend Architecture
 
 **Applies to:** Email providers, storage providers, AI providers, search providers, analytics providers, queue providers, payment providers, notification providers, external APIs, and future TWN integrations
 
@@ -117409,7 +117409,7 @@ This subsection is complete when:
 
 Next:
 
-# **7.6.14 — Transaction Management**
+# **7.6.14   Transaction Management**
 
 This will define:
 
@@ -117424,7 +117424,7 @@ This will define:
 * consistency guarantees;
 * eventual consistency inside the TWN modular monolith.
 
-# 7.6 Backend Architecture — Progress
+# 7.6 Backend Architecture   Progress
 
 Completed:
 
@@ -117451,8 +117451,8 @@ After this subsection, **10 subsections will remain** before 7.6 is complete.
 # 7.6.14 Transaction Management
 
 **Status:** Backend Architecture Specification
-**Parent chapter:** Volume 7 — Technical Architecture
-**Current scope:** Section 7.6 — Backend Architecture
+**Parent chapter:** Volume 7   Technical Architecture
+**Current scope:** Section 7.6   Backend Architecture
 **Applies to:** All commands that modify authoritative TWN state, including editorial publication, Journey structure, moderation, Media lifecycle, newsletter consent, identity administration, Audit recording and durable event registration
 **Primary objective:** Define how TWN groups state changes atomically, controls transaction ownership, handles rollback, coordinates Domain events, avoids long-running transactions and manages consistency across modules and external systems
 
@@ -120021,7 +120021,7 @@ This subsection is complete when:
 
 Next:
 
-# **7.6.15 — Idempotency Architecture**
+# **7.6.15   Idempotency Architecture**
 
 It will define:
 
@@ -120053,7 +120053,7 @@ It will define:
 [9]: https://learn.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction?utm_source=chatgpt.com "Compensating Transaction Pattern - Azure"
 [10]: https://microservices.io/patterns/data/saga.html?utm_source=chatgpt.com "Pattern: Saga"
 
-# 7.6 Backend Architecture — Progress
+# 7.6 Backend Architecture   Progress
 
 Completed:
 
@@ -120095,9 +120095,9 @@ Remaining:
 
 **Status:** Backend Architecture Specification
 
-**Parent chapter:** Volume 7 — Technical Architecture
+**Parent chapter:** Volume 7   Technical Architecture
 
-**Current scope:** Section 7.6 — Backend Architecture
+**Current scope:** Section 7.6   Backend Architecture
 
 **Applies to:** Commands, webhooks, background jobs, scheduled tasks, queue consumers, provider callbacks, administrative actions, publication workflows, moderation actions, newsletter delivery and all operations that may be executed more than once
 
@@ -121200,7 +121200,7 @@ This subsection is complete when:
 
 Next:
 
-# **7.6.16 — Concurrency Architecture**
+# **7.6.16   Concurrency Architecture**
 
 This will define:
 
@@ -121219,7 +121219,7 @@ This will define:
 
 This is one of the most important sections because it directly affects publishing, editing, moderation, newsletters, jobs, and future AI workflows across TWN.
 
-# 7.6 Backend Architecture — Progress
+# 7.6 Backend Architecture   Progress
 
 Completed:
 
@@ -121248,8 +121248,8 @@ After this subsection, **8 subsections will remain** before 7.6 is complete.
 # 7.6.16 Concurrency Architecture
 
 **Status:** Backend Architecture Specification
-**Parent chapter:** Volume 7 — Technical Architecture
-**Current scope:** Section 7.6 — Backend Architecture
+**Parent chapter:** Volume 7   Technical Architecture
+**Current scope:** Section 7.6   Backend Architecture
 **Applies to:** Editorial editing, publishing, Journey ordering, moderation, scheduled work, webhook processing, queue consumers, Media processing, newsletter campaigns, account administration and all operations that may overlap in time
 **Primary objective:** Define how TWN preserves correctness when several Users, workers, requests or external systems attempt to read or modify the same state concurrently
 
@@ -123615,7 +123615,7 @@ This subsection is complete when:
 
 Next:
 
-# **7.6.17 — Error Handling Architecture**
+# **7.6.17   Error Handling Architecture**
 
 It will define:
 
@@ -123646,7 +123646,7 @@ It will define:
 [8]: https://www.postgresql.org/docs/9.5/functions-admin.html?utm_source=chatgpt.com "9.26. System Administration Functions"
 [9]: https://www.postgresql.org/docs/current/view-pg-locks.html?utm_source=chatgpt.com "Documentation: 18: 53.13. pg_locks"
 
-# 7.6 Backend Architecture — Progress
+# 7.6 Backend Architecture   Progress
 
 Completed:
 
@@ -123688,9 +123688,9 @@ Remaining:
 
 **Status:** Backend Architecture Specification
 
-**Parent chapter:** Volume 7 — Technical Architecture
+**Parent chapter:** Volume 7   Technical Architecture
 
-**Current scope:** Section 7.6 — Backend Architecture
+**Current scope:** Section 7.6   Backend Architecture
 
 **Applies to:** Commands, queries, API routes, server actions, background jobs, workers, webhooks, scheduled processes, queue consumers, provider adapters and administrative operations
 
@@ -124892,7 +124892,7 @@ This subsection is complete when:
 
 Next:
 
-# **7.6.18 — Background Work Boundaries**
+# **7.6.18   Background Work Boundaries**
 
 This will define:
 
@@ -124914,7 +124914,7 @@ This will define:
 * recovery and reconciliation.
 
 
-# 7.6 Backend Architecture — Progress
+# 7.6 Backend Architecture   Progress
 
 Completed:
 
@@ -124945,8 +124945,8 @@ After this subsection, **six subsections will remain** before 7.6 is complete.
 # 7.6.18 Background Work Boundaries
 
 **Status:** Backend Architecture Specification
-**Parent chapter:** Volume 7 — Technical Architecture
-**Current scope:** Section 7.6 — Backend Architecture
+**Parent chapter:** Volume 7   Technical Architecture
+**Current scope:** Section 7.6   Backend Architecture
 **Applies to:** Outbox processing, Search indexing, Media processing, AI tasks, newsletter delivery, scheduled publication, Analytics projections, exports, imports, cleanup, reconciliation and future long-running workflows
 **Primary objective:** Define which work runs asynchronously, how jobs are represented and processed, how workers recover from failure, and how TWN prevents background infrastructure from becoming a second uncontrolled backend
 
@@ -127640,7 +127640,7 @@ This catalog is provisional and must be updated as the corresponding product dom
 
 # 7.6.18.108 Implementation Sequence
 
-## Phase 1 — Foundational durable work
+## Phase 1   Foundational durable work
 
 Implement:
 
@@ -127653,7 +127653,7 @@ Implement:
 * failure persistence;
 * basic observability.
 
-## Phase 2 — Core product jobs
+## Phase 2   Core product jobs
 
 Implement as required:
 
@@ -127663,7 +127663,7 @@ Implement as required:
 * newsletter transactional email;
 * cleanup jobs.
 
-## Phase 3 — Operational resilience
+## Phase 3   Operational resilience
 
 Add:
 
@@ -127675,7 +127675,7 @@ Add:
 * graceful worker shutdown;
 * deployment compatibility checks.
 
-## Phase 4 — Long workflows
+## Phase 4   Long workflows
 
 Add only for real requirements:
 
@@ -127685,7 +127685,7 @@ Add only for real requirements:
 * multi-stage Media workflows;
 * AI pipelines.
 
-## Phase 5 — Advanced platform evaluation
+## Phase 5   Advanced platform evaluation
 
 Evaluate a dedicated broker or durable workflow platform only when workload, operational complexity or workflow duration justifies migration.
 
@@ -127796,7 +127796,7 @@ This subsection is complete when:
 
 Next:
 
-# **7.6.19 — Cross-Module Communication**
+# **7.6.19   Cross-Module Communication**
 
 It will define:
 
@@ -127825,7 +127825,7 @@ It will define:
 [9]: https://learn.microsoft.com/en-us/azure/architecture/patterns/choreography?utm_source=chatgpt.com "Choreography Pattern - Azure Architecture Center"
 
 
-# 7.6 Backend Architecture — Progress
+# 7.6 Backend Architecture   Progress
 
 Completed:
 
@@ -127867,9 +127867,9 @@ Remaining:
 
 **Status:** Backend Architecture Specification
 
-**Parent chapter:** Volume 7 — Technical Architecture
+**Parent chapter:** Volume 7   Technical Architecture
 
-**Current scope:** Section 7.6 — Backend Architecture
+**Current scope:** Section 7.6   Backend Architecture
 
 **Applies to:** Editorial, Community, Search, Newsletter, Media, Analytics, Identity, AI, Notifications, Billing, Future Services and all internal TWN modules
 
@@ -128960,7 +128960,7 @@ This subsection is complete when:
 
 Next:
 
-# **7.6.20 — Backend Testing Boundaries**
+# **7.6.20   Backend Testing Boundaries**
 
 This will define:
 
@@ -128977,7 +128977,7 @@ This will define:
 * CI enforcement;
 * coverage philosophy;
 * testing responsibilities per module.
-# 7.6 Backend Architecture — Progress
+# 7.6 Backend Architecture   Progress
 
 Completed:
 
@@ -129019,9 +129019,9 @@ Remaining:
 
 **Status:** Backend Architecture Specification
 
-**Parent chapter:** Volume 7 — Technical Architecture
+**Parent chapter:** Volume 7   Technical Architecture
 
-**Current scope:** Section 7.6 — Backend Architecture
+**Current scope:** Section 7.6   Backend Architecture
 
 **Applies to:** Every backend module, Aggregate, Repository, Application Service, Adapter, Worker, Scheduler, Event Consumer, Query, Command and Infrastructure component
 
@@ -129058,7 +129058,7 @@ This subsection defines:
 
 The central rule is:
 
-> TWN tests behaviour—not implementation.
+> TWN tests behaviour not implementation.
 
 A passing test suite should prove that the system behaves correctly under realistic conditions, not merely that individual functions execute.
 
@@ -129608,7 +129608,7 @@ Examples:
 
 A surviving mutation indicates insufficient test quality.
 
-Mutation testing should complement—not replace—traditional testing.
+Mutation testing should complement not replace traditional testing.
 
 ---
 
@@ -129805,7 +129805,7 @@ This subsection is complete when:
 
 Next:
 
-# **7.6.21 — Backend Observability Responsibilities**
+# **7.6.21   Backend Observability Responsibilities**
 
 This subsection will define:
 
@@ -129822,7 +129822,7 @@ This subsection will define:
 * incident response instrumentation;
 * production diagnostics and monitoring responsibilities.
 
-# 7.6 Backend Architecture — Progress
+# 7.6 Backend Architecture   Progress
 
 Completed:
 
@@ -129864,9 +129864,9 @@ Remaining:
 
 **Status:** Backend Architecture Specification
 
-**Parent chapter:** Volume 7 — Technical Architecture
+**Parent chapter:** Volume 7   Technical Architecture
 
-**Current scope:** Section 7.6 — Backend Architecture
+**Current scope:** Section 7.6   Backend Architecture
 
 **Applies to:** Interactive requests, commands, queries, transactions, repositories, provider adapters, background jobs, schedulers, event consumers, outbox processing, Search, Media, Newsletter, AI tasks and all future backend modules
 
@@ -132383,7 +132383,7 @@ Allows eventual-consistency drift to remain invisible.
 
 # 7.6.21.112 Implementation Sequence
 
-## Phase 1 — Core Instrumentation
+## Phase 1   Core Instrumentation
 
 Implement:
 
@@ -132396,7 +132396,7 @@ Implement:
 * error classification;
 * redaction.
 
-## Phase 2 — Dependency Visibility
+## Phase 2   Dependency Visibility
 
 Add:
 
@@ -132406,7 +132406,7 @@ Add:
 * database-pool dashboard;
 * provider dashboards.
 
-## Phase 3 — Reliability Signals
+## Phase 3   Reliability Signals
 
 Add:
 
@@ -132417,7 +132417,7 @@ Add:
 * runbooks;
 * release markers.
 
-## Phase 4 — Advanced Operations
+## Phase 4   Advanced Operations
 
 Add where justified:
 
@@ -132523,7 +132523,7 @@ This subsection is complete when:
 
 Next:
 
-# **7.6.22 — Backend Evolution Strategy**
+# **7.6.22   Backend Evolution Strategy**
 
 It will define:
 
@@ -132555,7 +132555,7 @@ It will define:
 [10]: https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html?utm_source=chatgpt.com "Logging - OWASP Cheat Sheet Series"
 [11]: https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html?utm_source=chatgpt.com "REST Security - OWASP Cheat Sheet Series"
 
-# 7.6 Backend Architecture — Progress
+# 7.6 Backend Architecture   Progress
 
 Completed:
 
@@ -132597,9 +132597,9 @@ Remaining:
 
 **Status:** Backend Architecture Specification
 
-**Parent chapter:** Volume 7 — Technical Architecture
+**Parent chapter:** Volume 7   Technical Architecture
 
-**Current scope:** Section 7.6 — Backend Architecture
+**Current scope:** Section 7.6   Backend Architecture
 
 **Applies to:** Every backend module, repository, event contract, API contract, worker, database schema, provider adapter, deployment pipeline and future architectural evolution.
 
@@ -132632,7 +132632,7 @@ This subsection defines:
 
 The central rule is:
 
-> TWN must evolve through controlled, incremental change—not through periodic rewrites.
+> TWN must evolve through controlled, incremental change not through periodic rewrites.
 
 Architecture should support continuous evolution rather than large-scale replacement projects.
 
@@ -133470,11 +133470,11 @@ This subsection is complete when:
 
 Next:
 
-# **7.6.23 — Backend Architecture Decision Record**
+# **7.6.23   Backend Architecture Decision Record**
 
-This subsection will consolidate all major backend architectural decisions made throughout Sections **7.6.1–7.6.22** into a single authoritative reference, documenting the chosen architecture, rejected alternatives, rationale, trade-offs, and long-term implications before concluding with **7.6.24 — Backend Completion Criteria**.
+This subsection will consolidate all major backend architectural decisions made throughout Sections **7.6.1–7.6.22** into a single authoritative reference, documenting the chosen architecture, rejected alternatives, rationale, trade-offs, and long-term implications before concluding with **7.6.24   Backend Completion Criteria**.
 
-# 7.6 Backend Architecture — Progress
+# 7.6 Backend Architecture   Progress
 
 Completed:
 
@@ -133516,9 +133516,9 @@ Remaining:
 
 **Status:** Backend Architecture Specification
 
-**Parent chapter:** Volume 7 — Technical Architecture
+**Parent chapter:** Volume 7   Technical Architecture
 
-**Current scope:** Section 7.6 — Backend Architecture
+**Current scope:** Section 7.6   Backend Architecture
 
 **Applies to:** Every current and future backend capability of TWN.
 
@@ -133595,7 +133595,7 @@ The architecture prioritizes strong internal boundaries rather than distributed 
 
 ---
 
-# 7.6.23.4 Rejected Alternative — Layered Monolith Without Modules
+# 7.6.23.4 Rejected Alternative   Layered Monolith Without Modules
 
 Rejected because:
 
@@ -133607,7 +133607,7 @@ Rejected because:
 
 ---
 
-# 7.6.23.5 Rejected Alternative — Immediate Microservices
+# 7.6.23.5 Rejected Alternative   Immediate Microservices
 
 Rejected because:
 
@@ -133893,7 +133893,7 @@ Optimize infrastructure
 Extract modules only if justified
 ```
 
-Distribution is the final optimization—not the first.
+Distribution is the final optimization not the first.
 
 ---
 
@@ -134196,7 +134196,7 @@ This subsection is complete when:
 
 Next:
 
-# **7.6.24 — Backend Completion Criteria**
+# **7.6.24   Backend Completion Criteria**
 
 This final subsection will serve as the acceptance checklist for the entire **7.6 Backend Architecture** chapter, consolidating the completion requirements from **7.6.1 through 7.6.23** into one comprehensive, implementation-ready definition of done.
 
@@ -134214,7 +134214,7 @@ Throughout Volume 7, the recommendations are aligned with well-established sourc
 * **OWASP Cheat Sheets**
 * **Kubernetes documentation**
 * **PostgreSQL documentation**
-* **Temporal documentation** (workflow concepts—not recommending adoption)
+* **Temporal documentation** (workflow concepts not recommending adoption)
 * **Stripe engineering articles** (idempotency concepts)
 * **GitHub Engineering** and **Shopify Engineering** articles where applicable.
 
@@ -134279,9 +134279,9 @@ One improvement I will make from the next chapter onward is to **increase the de
 
 **Status:** Backend Architecture Specification
 
-**Parent chapter:** Volume 7 — Technical Architecture
+**Parent chapter:** Volume 7   Technical Architecture
 
-**Current scope:** Section 7.6 — Backend Architecture
+**Current scope:** Section 7.6   Backend Architecture
 
 **Primary objective:** Define the objective acceptance criteria that determine when the backend architecture is complete, internally consistent, production-ready, and ready to transition into detailed implementation.
 
@@ -134678,7 +134678,7 @@ Optional future infrastructure
 
 You should not build every advanced component now. That would waste your time and increase complexity without improving the first release.
 
-7.6 Backend Architecture — Progress
+7.6 Backend Architecture   Progress
 
 Completed:
 
@@ -134713,9 +134713,9 @@ Final subsection:
 
 Status: Final Backend Architecture Acceptance Specification
 
-Parent chapter: Volume 7 — Technical Architecture
+Parent chapter: Volume 7   Technical Architecture
 
-Current scope: Section 7.6 — Backend Architecture
+Current scope: Section 7.6   Backend Architecture
 
 Applies to: All backend modules, commands, queries, Domain models, repositories, transport handlers, provider adapters, transactions, workers, schedulers, events, tests and operational instrumentation
 
@@ -134783,19 +134783,19 @@ Future capabilities can be introduced without redesigning the entire backend.
 
 Backend completion is divided into four levels.
 
-Level 1 — Architecture Defined
+Level 1   Architecture Defined
 
 The relevant boundaries, contracts and rules are documented.
 
-Level 2 — Implementation Ready
+Level 2   Implementation Ready
 
 A developer can implement the capability without inventing fundamental architecture during coding.
 
-Level 3 — Feature Release Ready
+Level 3   Feature Release Ready
 
 The implemented feature satisfies its correctness, testing and operational requirements.
 
-Level 4 — Scale Ready
+Level 4   Scale Ready
 
 Infrastructure has been validated under measured production workload.
 
@@ -135506,7 +135506,7 @@ Completion requires:
 The next major section, **7.7**, should move into a new technical concern (for example, Frontend Architecture) without revisiting backend implementation details already covered here.
 Agreed. The next logical section is **7.7 Frontend Architecture**.
 
-Just as with 7.6, I will keep it at software architecture level—not UI/UX (covered earlier), not API design (Volume 9), not database (Volume 8), and not security implementation (Volume 10).
+Just as with 7.6, I will keep it at software architecture level not UI/UX (covered earlier), not API design (Volume 9), not database (Volume 8), and not security implementation (Volume 10).
 
 The same standard will apply:
 
@@ -135550,9 +135550,9 @@ The same standard will apply:
 
 **Status:** Frontend Architecture Specification
 
-**Parent chapter:** Volume 7 — Technical Architecture
+**Parent chapter:** Volume 7   Technical Architecture
 
-**Current scope:** Section 7.7 — Frontend Architecture
+**Current scope:** Section 7.7   Frontend Architecture
 
 **Applies to:** Every web interface of TWN including the public website, editorial workspace, community platform, notebook experience, dashboards and future frontend applications.
 
@@ -135893,9 +135893,9 @@ Remaining:
 
 **Status:** Frontend Architecture Specification
 
-**Parent chapter:** Volume 7 — Technical Architecture
+**Parent chapter:** Volume 7   Technical Architecture
 
-**Current scope:** Section 7.7 — Frontend Architecture
+**Current scope:** Section 7.7   Frontend Architecture
 
 **Applies to:** Every frontend feature, route, component, workspace, reusable library and future interface developed for TWN.
 
@@ -136610,9 +136610,9 @@ Remaining:
 
 **Status:** Frontend Architecture Specification
 
-**Parent chapter:** Volume 7 — Technical Architecture
+**Parent chapter:** Volume 7   Technical Architecture
 
-**Current scope:** Section 7.7 — Frontend Architecture
+**Current scope:** Section 7.7   Frontend Architecture
 
 **Applies to:** Every page, route, dashboard, editor, workspace, profile, search experience and future frontend capability.
 
@@ -137219,9 +137219,9 @@ Remaining:
 
 **Status:** Frontend Architecture Specification
 
-**Parent chapter:** Volume 7 — Technical Architecture
+**Parent chapter:** Volume 7   Technical Architecture
 
-**Current scope:** Section 7.7 — Frontend Architecture
+**Current scope:** Section 7.7   Frontend Architecture
 
 **Applies to:** Every page, layout, workspace, dashboard, editor, authenticated area, API interaction entry point, and future frontend capability.
 
@@ -137822,7 +137822,7 @@ This subsection is complete when:
 
 ### Architectural review note
 
-While writing this section, I intentionally avoided prescribing a specific router API or file naming convention. Those are implementation details that may evolve with framework versions. Instead, the architectural principles—stable URLs, feature ownership, nested layouts, resource-oriented routing, and URL-backed navigation state—are consistent with current React and Next.js guidance and are likely to remain valid even as implementation details change. This separation helps keep the blueprint useful over a 10-year lifespan rather than tying it to a particular version of a framework.
+While writing this section, I intentionally avoided prescribing a specific router API or file naming convention. Those are implementation details that may evolve with framework versions. Instead, the architectural principles stable URLs, feature ownership, nested layouts, resource-oriented routing, and URL-backed navigation state are consistent with current React and Next.js guidance and are likely to remain valid even as implementation details change. This separation helps keep the blueprint useful over a 10-year lifespan rather than tying it to a particular version of a framework.
 
 # Volume 7 – Technical Architecture
 
@@ -137864,9 +137864,9 @@ Remaining:
 
 **Status:** Frontend Architecture Specification
 
-**Parent chapter:** Volume 7 — Technical Architecture
+**Parent chapter:** Volume 7   Technical Architecture
 
-**Current scope:** Section 7.7 — Frontend Architecture
+**Current scope:** Section 7.7   Frontend Architecture
 
 **Applies to:** Every UI component, page, layout, widget, editor, dashboard, form, dialog and reusable frontend element within TWN.
 
@@ -138363,7 +138363,7 @@ Optimization should follow measurement rather than premature assumptions.
 
 # 7.7.5.23 Memoization Philosophy
 
-Memoization is an optimization technique—not an architectural default.
+Memoization is an optimization technique not an architectural default.
 
 Apply memoization only when profiling demonstrates meaningful benefit.
 
@@ -138571,9 +138571,9 @@ Remaining:
 
 **Status:** Frontend Architecture Specification
 
-**Parent chapter:** Volume 7 — Technical Architecture
+**Parent chapter:** Volume 7   Technical Architecture
 
-**Current scope:** Section 7.7 — Frontend Architecture
+**Current scope:** Section 7.7   Frontend Architecture
 
 **Applies to:** Every UI component, page, layout, widget, editor, dashboard, form, dialog and reusable frontend element within TWN.
 
@@ -139070,7 +139070,7 @@ Optimization should follow measurement rather than premature assumptions.
 
 # 7.7.5.23 Memoization Philosophy
 
-Memoization is an optimization technique—not an architectural default.
+Memoization is an optimization technique not an architectural default.
 
 Apply memoization only when profiling demonstrates meaningful benefit.
 
@@ -139278,9 +139278,9 @@ Remaining:
 
 **Status:** Frontend Architecture Specification
 
-**Parent chapter:** Volume 7 — Technical Architecture
+**Parent chapter:** Volume 7   Technical Architecture
 
-**Current scope:** Section 7.7 — Frontend Architecture
+**Current scope:** Section 7.7   Frontend Architecture
 
 **Applies to:** Every page, feature module, component, layout, editor, dashboard and future frontend capability within TWN.
 
@@ -139886,9 +139886,9 @@ In the next section (**7.7.7 Data Fetching Architecture**), I will go deeper int
 
 Status: Frontend Architecture Specification
 
-Parent chapter: Volume 7 — Technical Architecture
+Parent chapter: Volume 7   Technical Architecture
 
-Current scope: Section 7.7 — Frontend Architecture
+Current scope: Section 7.7   Frontend Architecture
 
 Applies to: Every frontend interaction requiring backend data, including public pages, dashboards, editors, search, community features, media workflows and future frontend capabilities.
 
@@ -140249,9 +140249,9 @@ Remaining:
 
 **Status:** Frontend Architecture Specification
 
-**Parent chapter:** Volume 7 — Technical Architecture
+**Parent chapter:** Volume 7   Technical Architecture
 
-**Current scope:** Section 7.7 — Frontend Architecture
+**Current scope:** Section 7.7   Frontend Architecture
 
 **Applies to:** Every interaction between the frontend and backend, including page rendering, mutations, search, editors, dashboards, media, authentication-aware pages, background synchronization and future integrations.
 
@@ -140908,7 +140908,7 @@ This subsection is complete when:
 
 ### Architectural review note
 
-This section intentionally avoids prescribing **TanStack Query**, **SWR**, **Apollo**, **RTK Query**, or any other specific data-fetching library. Those are implementation choices that may change over the lifetime of TWN. Instead, the blueprint defines architectural principles—server-first retrieval, request locality, parallelization, explicit cache ownership, predictable invalidation, streaming, and synchronization—that remain applicable regardless of the library or framework version used. This approach aligns with the goal of producing a framework-resilient architecture rather than documentation tied to today's tooling.
+This section intentionally avoids prescribing **TanStack Query**, **SWR**, **Apollo**, **RTK Query**, or any other specific data-fetching library. Those are implementation choices that may change over the lifetime of TWN. Instead, the blueprint defines architectural principles server-first retrieval, request locality, parallelization, explicit cache ownership, predictable invalidation, streaming, and synchronization that remain applicable regardless of the library or framework version used. This approach aligns with the goal of producing a framework-resilient architecture rather than documentation tied to today's tooling.
 
 
 # Volume 7 – Technical Architecture
@@ -140951,9 +140951,9 @@ Remaining:
 
 **Status:** Frontend Architecture Specification
 
-**Parent chapter:** Volume 7 — Technical Architecture
+**Parent chapter:** Volume 7   Technical Architecture
 
-**Current scope:** Section 7.7 — Frontend Architecture
+**Current scope:** Section 7.7   Frontend Architecture
 
 **Applies to:** Every feature module, page, component, form, API interaction, cache entry and UI representation within TWN.
 
@@ -141530,7 +141530,7 @@ This subsection is complete when:
 
 ### Architectural review note
 
-One refinement I made compared with many frontend guides is **explicitly separating Transport Models, UI Models, and View Models**. React and Next.js documentation don't prescribe this layering, but enterprise architecture guidance (particularly Fowler's Presentation Model pattern and Microsoft's application architecture guidance) consistently recommends insulating the UI from API contracts. For a long-lived product like TWN—where APIs, editors, mobile clients, and integrations may evolve independently—this separation will significantly reduce the impact of backend changes and make the frontend easier to maintain over the coming years.
+One refinement I made compared with many frontend guides is **explicitly separating Transport Models, UI Models, and View Models**. React and Next.js documentation don't prescribe this layering, but enterprise architecture guidance (particularly Fowler's Presentation Model pattern and Microsoft's application architecture guidance) consistently recommends insulating the UI from API contracts. For a long-lived product like TWN where APIs, editors, mobile clients, and integrations may evolve independently this separation will significantly reduce the impact of backend changes and make the frontend easier to maintain over the coming years.
 
 
 # Volume 7 – Technical Architecture
@@ -141573,9 +141573,9 @@ Remaining:
 
 **Status:** Frontend Architecture Specification
 
-**Parent chapter:** Volume 7 — Technical Architecture
+**Parent chapter:** Volume 7   Technical Architecture
 
-**Current Scope:** Section 7.7 — Frontend Architecture
+**Current Scope:** Section 7.7   Frontend Architecture
 
 **Applies To:** Every user input workflow including authentication, editorial tools, notebook creation, comments, settings, moderation, search, uploads, onboarding, profile management, newsletters and future product capabilities.
 
@@ -141637,7 +141637,7 @@ The architecture should assume:
 
 Native HTML forms remain the architectural foundation.
 
-JavaScript should enhance forms—not replace them.
+JavaScript should enhance forms not replace them.
 
 This aligns with React's renewed emphasis on leveraging the platform rather than rebuilding browser behavior.
 
@@ -141807,7 +141807,7 @@ The architecture should avoid making all inputs controlled by default.
 
 # 7.7.9.9 Validation Philosophy
 
-Validation exists to improve user experience—not replace backend validation.
+Validation exists to improve user experience not replace backend validation.
 
 Every submission must still be validated authoritatively by the backend.
 
@@ -142129,7 +142129,7 @@ This subsection is complete when:
 
 ### Architectural review
 
-This section intentionally reflects the current direction of the React ecosystem rather than older SPA-era practices. React 19 and the Next.js App Router have shifted emphasis back toward the browser's native form capabilities, server-side handling, and progressive enhancement. Consequently, the architecture does **not** prescribe JavaScript-controlled forms as the default. Instead, it treats HTML forms as the baseline and layers richer interactions—such as live validation, autosave, optimistic updates, and progress indicators—only where they provide measurable user value. This approach reduces complexity, improves resilience, and better aligns with modern web platform capabilities.
+This section intentionally reflects the current direction of the React ecosystem rather than older SPA-era practices. React 19 and the Next.js App Router have shifted emphasis back toward the browser's native form capabilities, server-side handling, and progressive enhancement. Consequently, the architecture does **not** prescribe JavaScript-controlled forms as the default. Instead, it treats HTML forms as the baseline and layers richer interactions such as live validation, autosave, optimistic updates, and progress indicators only where they provide measurable user value. This approach reduces complexity, improves resilience, and better aligns with modern web platform capabilities.
 
 # Volume 7 – Technical Architecture
 
@@ -142176,9 +142176,9 @@ Remaining:
 
 **Status:** Frontend Architecture Specification
 
-**Parent chapter:** Volume 7 — Technical Architecture
+**Parent chapter:** Volume 7   Technical Architecture
 
-**Current scope:** Section 7.7 — Frontend Architecture
+**Current scope:** Section 7.7   Frontend Architecture
 
 **Applies to:** Route segments, layouts, pages, Server Components, Client Components, asynchronous data retrieval, mutations, forms, editors, media workflows, browser operations and other user-facing frontend failures.
 
@@ -142234,7 +142234,7 @@ A network interruption should preserve the user's work and support retry.
 
 A complete application crash should be the final containment layer, not the default response.
 
-Next.js explicitly separates expected errors—such as validation failures or unsuccessful requests during ordinary operation—from uncaught exceptions that indicate defects or conditions the application did not handle. ([nextjs.org][2])
+Next.js explicitly separates expected errors such as validation failures or unsuccessful requests during ordinary operation from uncaught exceptions that indicate defects or conditions the application did not handle. ([nextjs.org][2])
 
 ---
 
@@ -143280,9 +143280,9 @@ Remaining:
 
 **Status:** Frontend Architecture Specification
 
-**Parent chapter:** Volume 7 — Technical Architecture
+**Parent chapter:** Volume 7   Technical Architecture
 
-**Current scope:** Section 7.7 — Frontend Architecture
+**Current scope:** Section 7.7   Frontend Architecture
 
 **Applies to:** Every page, layout, component, route, interaction, rendering pipeline, media asset, network request and browser execution path within TWN.
 
@@ -143315,7 +143315,7 @@ This section is informed by:
 * MDN Performance documentation
 * Chrome Aurora guidance
 
-Performance is treated as an architectural concern—not merely an optimization task performed near release.
+Performance is treated as an architectural concern not merely an optimization task performed near release.
 
 ---
 
@@ -143570,7 +143570,7 @@ The frontend should minimize:
 * duplicated requests;
 * unnecessary polling.
 
-Network efficiency should complement—not replace—effective caching.
+Network efficiency should complement not replace effective caching.
 
 ---
 
@@ -143692,7 +143692,7 @@ User interaction should remain fluid across supported devices.
 
 # 7.7.11.23 Animation Performance
 
-Animations should support comprehension—not decoration.
+Animations should support comprehension not decoration.
 
 Animations should be:
 
@@ -143938,7 +143938,7 @@ This section is based on guidance from:
 
 This section intentionally **does not prescribe implementing a full Progressive Web App (PWA)**.
 
-Offline capability is treated as a product decision—not a framework requirement.
+Offline capability is treated as a product decision not a framework requirement.
 
 ---
 
@@ -144063,7 +144063,7 @@ Where technically feasible, core workflows should continue functioning without r
 
 # 7.7.12.7 Browser Capability Detection
 
-The frontend should detect capabilities—not browsers.
+The frontend should detect capabilities not browsers.
 
 Avoid:
 
@@ -144561,7 +144561,7 @@ The previous standalone sections 7.7.17 and 7.7.18 will be merged into 7.7.16.
 
 **Status:** Required Frontend Architecture Standard
 
-**Parent:** Volume 7 — Technical Architecture
+**Parent:** Volume 7   Technical Architecture
 
 **Scope:** The responsibilities of frontend architecture, feature modules, components and content-rendering systems in ensuring that TWN remains perceivable, operable, understandable and robust.
 
@@ -144845,9 +144845,9 @@ Titles should identify both:
 Examples:
 
 ```text
-Writing in Public — The Notebook of a Tech Woman
-Edit Article — TWN
-Community Guidelines — TWN
+Writing in Public   The Notebook of a Tech Woman
+Edit Article   TWN
+Community Guidelines   TWN
 ```
 
 Client-side route changes must provide equivalent orientation to traditional document navigation.
@@ -145494,7 +145494,7 @@ Remaining:
 
 # Purpose
 
-Frontend testing exists to increase confidence—not to maximize the number of tests.
+Frontend testing exists to increase confidence not to maximize the number of tests.
 
 The objective is to detect regressions before users do while keeping the test suite maintainable, fast and valuable.
 
@@ -145617,7 +145617,7 @@ Integration tests provide significantly more value than excessive isolated compo
 
 End-to-end (E2E) tests should protect only the application's highest-value workflows.
 
-The goal is confidence—not exhaustive browser automation.
+The goal is confidence not exhaustive browser automation.
 
 Critical journeys include:
 
@@ -145650,7 +145650,7 @@ Each major feature should verify:
 * form validation;
 * screen reader announcements where applicable.
 
-Automated accessibility tools should supplement—but not replace—manual verification.
+Automated accessibility tools should supplement but not replace manual verification.
 
 ---
 
@@ -145737,7 +145737,7 @@ Detailed performance monitoring belongs to the observability strategy rather tha
 
 # 7.7.14.13 Mocking Strategy
 
-Mock external systems—not internal application logic.
+Mock external systems not internal application logic.
 
 Suitable mocks include:
 
@@ -147101,7 +147101,7 @@ Where user-facing behaviour changes significantly, communication should accompan
 
 # 7.7.16.6 Technical Debt
 
-Technical debt should be treated as an intentional engineering decision—not an accident.
+Technical debt should be treated as an intentional engineering decision not an accident.
 
 Each known debt item should document:
 
@@ -147160,7 +147160,7 @@ Business logic should remain independent of:
 * monitoring vendor;
 * styling solution.
 
-The framework should support the architecture—not define it.
+The framework should support the architecture not define it.
 
 ---
 
@@ -147219,7 +147219,7 @@ The following decisions define the TWN frontend architecture.
 ### Data
 
 * Backend remains the source of truth.
-* Frontend models represent—not redefine—domain rules.
+* Frontend models represent not redefine domain rules.
 
 ### Forms
 
@@ -147429,20 +147429,20 @@ The next chapter should no longer be **API Architecture** or **Database Architec
 
 The next architecture chapter should instead be **7.8 CMS Architecture**, because the CMS is a core application subsystem unique to TWN and belongs within the system architecture rather than the dedicated Database or API volumes. This keeps Volume 7 focused on the architecture of the product itself and avoids repeating material that will be covered in later volumes.
 
-# Volume 7 — Technical Architecture
+# Volume 7   Technical Architecture
 
-# Chapter 7.8 — Content Management System (CMS) Architecture
+# Chapter 7.8   Content Management System (CMS) Architecture
 
 **Version:** 1.0
 **Status:** Canonical Architecture
 **Owner:** TWN Engineering
 **Related Volumes:**
 
-* Volume 8 — Database Architecture
-* Volume 9 — API Architecture
-* Volume 10 — Security Architecture
-* Volume 11 — Editorial Governance
-* Volume 15 — Observability & Analytics
+* Volume 8   Database Architecture
+* Volume 9   API Architecture
+* Volume 10   Security Architecture
+* Volume 11   Editorial Governance
+* Volume 15   Observability & Analytics
 
 ---
 
@@ -147580,7 +147580,7 @@ Instead, the CMS is designed around **TWN's editorial model**, allowing the plat
 
 The vision for the TWN CMS is simple.
 
-> **Writers should think about ideas—not software.**
+> **Writers should think about ideas not software.**
 
 When an author opens the editor, the platform should disappear.
 
@@ -147615,7 +147615,7 @@ These principles should outlive frameworks, programming languages and infrastruc
 
 ---
 
-## Principle 1 — Content is the Primary Asset
+## Principle 1   Content is the Primary Asset
 
 Everything else exists to support content.
 
@@ -147631,7 +147631,7 @@ The CMS therefore optimizes for protecting and improving editorial work rather t
 
 ---
 
-## Principle 2 — Authors Come Before Administrators
+## Principle 2   Authors Come Before Administrators
 
 Many CMS platforms prioritize administrative flexibility.
 
@@ -147649,7 +147649,7 @@ Administrative capabilities should exist, but they must not dominate the everyda
 
 ---
 
-## Principle 3 — Structure Before Presentation
+## Principle 3   Structure Before Presentation
 
 Content should describe meaning.
 
@@ -147665,7 +147665,7 @@ An author writes:
 * Image
 * List
 
-—not:
+ not:
 
 * 24px bold text
 * blue background
@@ -147680,7 +147680,7 @@ This separation allows TWN to redesign its interface without rewriting published
 
 ---
 
-## Principle 4 — Long-Term Preservation
+## Principle 4   Long-Term Preservation
 
 Content created today should remain understandable years from now.
 
@@ -147697,7 +147697,7 @@ Knowledge should outlive technology.
 
 ---
 
-## Principle 5 — Protect User Work
+## Principle 5   Protect User Work
 
 Nothing is more valuable than a user's writing.
 
@@ -147715,7 +147715,7 @@ The CMS should always prioritize preserving work before introducing convenience 
 
 ---
 
-## Principle 6 — Progressive Evolution
+## Principle 6   Progressive Evolution
 
 The CMS should evolve continuously.
 
@@ -147792,7 +147792,7 @@ Instead, it coordinates editorial operations while delegating specialized respon
 
 ---
 
-# Architecture Decision Record — ADR 7.8.001
+# Architecture Decision Record   ADR 7.8.001
 
 ## Title
 
@@ -148285,7 +148285,7 @@ The CMS must avoid:
 
 ---
 
-# Architecture Decision Record — ADR 7.8.002
+# Architecture Decision Record   ADR 7.8.002
 
 ## Title
 
@@ -148346,7 +148346,7 @@ This section is complete when:
 
 The CMS does more than store content.
 
-It manages the entire editorial journey of that content—from the moment an idea is conceived until it is eventually archived.
+It manages the entire editorial journey of that content from the moment an idea is conceived until it is eventually archived.
 
 An editorial workflow provides structure to this journey.
 
@@ -148378,7 +148378,7 @@ Language becomes clearer.
 
 The CMS should therefore encourage refinement rather than rushing authors toward publication.
 
-Publishing is viewed as the final stage of an editorial process—not the beginning.
+Publishing is viewed as the final stage of an editorial process not the beginning.
 
 ---
 
@@ -148789,7 +148789,7 @@ Avoid:
 
 ---
 
-# Architecture Decision Record — ADR 7.8.003
+# Architecture Decision Record   ADR 7.8.003
 
 ## Title
 
@@ -149362,7 +149362,7 @@ The CMS must avoid:
 
 ---
 
-# Architecture Decision Record — ADR 7.8.004
+# Architecture Decision Record   ADR 7.8.004
 
 ## Title
 
@@ -149783,7 +149783,7 @@ Deleting one paragraph should not require rebuilding the entire document.
 
 Documents preserve block order explicitly.
 
-Moving a block changes its position—not its identity.
+Moving a block changes its position not its identity.
 
 This distinction simplifies:
 
@@ -149983,7 +149983,7 @@ Avoid:
 
 ---
 
-# Architecture Decision Record — ADR 7.8.005
+# Architecture Decision Record   ADR 7.8.005
 
 ## Title
 
@@ -150520,7 +150520,7 @@ Avoid:
 
 ---
 
-# Architecture Decision Record — ADR 7.8.006
+# Architecture Decision Record   ADR 7.8.006
 
 ## Title
 
@@ -151123,7 +151123,7 @@ Avoid:
 
 ---
 
-# Architecture Decision Record — ADR 7.8.007
+# Architecture Decision Record   ADR 7.8.007
 
 ## Title
 
@@ -151250,7 +151250,7 @@ For TWN, metadata is treated as a first-class architectural concern.
 
 The CMS adopts several principles governing metadata.
 
-## Principle 1 — Metadata Describes, It Does Not Decorate
+## Principle 1   Metadata Describes, It Does Not Decorate
 
 Metadata exists to describe a document.
 
@@ -151260,7 +151260,7 @@ Every metadata field should answer a meaningful editorial or technical question.
 
 ---
 
-## Principle 2 — Metadata Should Be Structured
+## Principle 2   Metadata Should Be Structured
 
 Metadata should never be stored as arbitrary text when its meaning can be expressed structurally.
 
@@ -151282,7 +151282,7 @@ Structured metadata enables validation, discovery and future automation.
 
 ---
 
-## Principle 3 — Metadata Belongs to the Document
+## Principle 3   Metadata Belongs to the Document
 
 Metadata is part of the content.
 
@@ -151297,7 +151297,7 @@ A document exported five years from now should still carry its metadata.
 
 ---
 
-## Principle 4 — Metadata Evolves
+## Principle 4   Metadata Evolves
 
 Metadata is not static.
 
@@ -151801,7 +151801,7 @@ Avoid:
 
 ---
 
-# Architecture Decision Record — ADR 7.8.008
+# Architecture Decision Record   ADR 7.8.008
 
 ## Title
 
@@ -153138,7 +153138,7 @@ The CMS must avoid:
 
 ---
 
-# Architecture Decision Record — ADR 7.8.009
+# Architecture Decision Record   ADR 7.8.009
 
 ## Title
 
@@ -153609,7 +153609,7 @@ Avoid:
 
 ---
 
-# Architecture Decision Record — ADR 7.8.010
+# Architecture Decision Record   ADR 7.8.010
 
 ## Title
 
@@ -153678,7 +153678,7 @@ This section is complete when:
 [3]: https://developer.wordpress.org/plugins/plugin-basics/?utm_source=chatgpt.com "Plugin Basics – Plugin Handbook | Developer.WordPress.org"
 [4]: https://owasp.org/Top10/2025/A03_2025-Software_Supply_Chain_Failures/?utm_source=chatgpt.com "A03 Software Supply Chain Failures - OWASP Top 10:2025"
 
-I am. The last section is an example of that—I deliberately incorporated ideas from WordPress' hook architecture, Strapi's extension boundaries, Contentful's App Framework, and OWASP's software supply-chain guidance instead of inventing an extension model from scratch. Going forward, I'll continue doing that where external architectural knowledge materially improves the blueprint, rather than just generating prose.
+I am. The last section is an example of that I deliberately incorporated ideas from WordPress' hook architecture, Strapi's extension boundaries, Contentful's App Framework, and OWASP's software supply-chain guidance instead of inventing an extension model from scratch. Going forward, I'll continue doing that where external architectural knowledge materially improves the blueprint, rather than just generating prose.
 
 One thing I'd also point out from an architect's perspective: **this blueprint should not merely document TWN; it should be opinionated.** It should explain *why* a decision was made, *why alternatives were rejected*, and *how the architecture can survive for 10+ years*. That's the standard I'm aiming for.
 
@@ -153765,7 +153765,7 @@ Each layer answers a different question.
 
 ---
 
-# Layer 1 — Structural Validation
+# Layer 1   Structural Validation
 
 Structural validation verifies that content is internally consistent.
 
@@ -153785,7 +153785,7 @@ Structural validation answers:
 
 ---
 
-# Layer 2 — Editorial Validation
+# Layer 2   Editorial Validation
 
 Editorial validation evaluates writing quality from a platform perspective.
 
@@ -153804,7 +153804,7 @@ These are editorial recommendations rather than technical failures.
 
 ---
 
-# Layer 3 — Publication Validation
+# Layer 3   Publication Validation
 
 Publication validation evaluates whether the content satisfies platform publication requirements.
 
@@ -154203,7 +154203,7 @@ Avoid:
 
 ---
 
-# Architecture Decision Record — ADR 7.8.011
+# Architecture Decision Record   ADR 7.8.011
 
 ## Title
 
@@ -154775,7 +154775,7 @@ These are related but distinct editorial processes.
 
 The architecture follows several foundational principles.
 
-## Principle 1 — One Knowledge Base
+## Principle 1   One Knowledge Base
 
 Knowledge exists once.
 
@@ -154785,7 +154785,7 @@ The CMS should avoid creating isolated content silos.
 
 ---
 
-## Principle 2 — Language Is Metadata
+## Principle 2   Language Is Metadata
 
 Language describes content.
 
@@ -154795,7 +154795,7 @@ Changing language should never create a new conceptual document.
 
 ---
 
-## Principle 3 — Every Translation Is Independent
+## Principle 3   Every Translation Is Independent
 
 A translated document is not merely a copy.
 
@@ -154811,7 +154811,7 @@ Translation should preserve meaning while allowing editorial independence.
 
 ---
 
-## Principle 4 — Relationships Cross Languages
+## Principle 4   Relationships Cross Languages
 
 Knowledge relationships should survive translation.
 
@@ -155295,7 +155295,7 @@ Avoid:
 
 ---
 
-# Architecture Decision Record — ADR 7.8.012
+# Architecture Decision Record   ADR 7.8.012
 
 ## Title
 
@@ -155401,7 +155401,7 @@ The architecture therefore treats portability as a first-class quality attribute
 
 The import and export architecture is governed by the following principles.
 
-## Principle 1 — Content Owns the Platform
+## Principle 1   Content Owns the Platform
 
 The platform exists to serve content.
 
@@ -155409,7 +155409,7 @@ Content should never be permanently dependent on the CMS that stores it.
 
 ---
 
-## Principle 2 — Canonical Representation
+## Principle 2   Canonical Representation
 
 Internally, every document should be represented using a single canonical content model.
 
@@ -155421,7 +155421,7 @@ This prevents exponential conversion complexity.
 
 ---
 
-## Principle 3 — Lossless Conversion Where Possible
+## Principle 3   Lossless Conversion Where Possible
 
 Conversions should preserve:
 
@@ -155438,7 +155438,7 @@ Silent data loss is unacceptable.
 
 ---
 
-## Principle 4 — Platform Independence
+## Principle 4   Platform Independence
 
 Importers and exporters should not depend on frontend implementations.
 
@@ -155446,7 +155446,7 @@ Content portability belongs to the CMS domain rather than presentation layers.
 
 ---
 
-## Principle 5 — Deterministic Transformations
+## Principle 5   Deterministic Transformations
 
 The same input should always produce the same canonical representation.
 
@@ -155594,7 +155594,7 @@ They produce read-only representations of existing knowledge.
 
 The import pipeline consists of several sequential stages.
 
-## Stage 1 — Source Detection
+## Stage 1   Source Detection
 
 The CMS identifies the incoming format.
 
@@ -155608,7 +155608,7 @@ Possible inputs include:
 
 ---
 
-## Stage 2 — Parsing
+## Stage 2   Parsing
 
 The parser converts source syntax into a structured intermediate representation.
 
@@ -155616,7 +155616,7 @@ Parsing should be tolerant of minor formatting inconsistencies while rejecting m
 
 ---
 
-## Stage 3 — Normalization
+## Stage 3   Normalization
 
 Normalization removes platform-specific inconsistencies.
 
@@ -155630,7 +155630,7 @@ Examples include:
 
 ---
 
-## Stage 4 — Block Conversion
+## Stage 4   Block Conversion
 
 Imported structures are mapped into TWN's canonical block model.
 
@@ -155645,7 +155645,7 @@ Unsupported constructs should be preserved where possible using generic fallback
 
 ---
 
-## Stage 5 — Metadata Mapping
+## Stage 5   Metadata Mapping
 
 Metadata is extracted and mapped to canonical fields.
 
@@ -155661,7 +155661,7 @@ Examples include:
 
 ---
 
-## Stage 6 — Media Resolution
+## Stage 6   Media Resolution
 
 Media assets are imported separately.
 
@@ -155674,7 +155674,7 @@ The importer should:
 
 ---
 
-## Stage 7 — Validation
+## Stage 7   Validation
 
 Imported content is validated using the CMS validation architecture described in Section 7.8.18.
 
@@ -155682,7 +155682,7 @@ Issues are reported before editorial review begins.
 
 ---
 
-## Stage 8 — Draft Creation
+## Stage 8   Draft Creation
 
 Successfully imported content becomes an editable draft rather than immediately entering the publication workflow.
 
@@ -156086,7 +156086,7 @@ Avoid:
 
 ---
 
-# Architecture Decision Record — ADR 7.8.013
+# Architecture Decision Record   ADR 7.8.013
 
 ## Title
 
@@ -156247,7 +156247,7 @@ The CMS becomes the central source of truth for every delivery channel.
 
 # Architectural Principles
 
-## Principle 1 — Content First
+## Principle 1   Content First
 
 Knowledge exists independently of presentation.
 
@@ -156255,7 +156255,7 @@ Rendering is a consumer responsibility.
 
 ---
 
-## Principle 2 — API First
+## Principle 2   API First
 
 Every capability exposed to the TWN website should be available through documented APIs.
 
@@ -156263,7 +156263,7 @@ Internal consumers should not receive privileged architectural shortcuts.
 
 ---
 
-## Principle 3 — Channel Independence
+## Principle 3   Channel Independence
 
 The CMS should never assume:
 
@@ -156275,7 +156275,7 @@ The CMS should never assume:
 
 ---
 
-## Principle 4 — Stable Contracts
+## Principle 4   Stable Contracts
 
 Consumers depend on API contracts rather than implementation details.
 
@@ -156283,7 +156283,7 @@ Breaking API changes require explicit versioning.
 
 ---
 
-## Principle 5 — Presentation Agnostic
+## Principle 5   Presentation Agnostic
 
 The CMS stores semantic information rather than visual layout.
 
@@ -156781,7 +156781,7 @@ Avoid:
 
 ---
 
-# Architecture Decision Record — ADR 7.8.014
+# Architecture Decision Record   ADR 7.8.014
 
 ## Title
 
@@ -156892,7 +156892,7 @@ Analytics should therefore improve editorial decision-making rather than replace
 
 # Architectural Principles
 
-## Principle 1 — Mission Before Metrics
+## Principle 1   Mission Before Metrics
 
 Success should not be measured solely through popularity.
 
@@ -156902,7 +156902,7 @@ Analytics should support the platform's mission rather than distort it.
 
 ---
 
-## Principle 2 — Privacy by Design
+## Principle 2   Privacy by Design
 
 Editorial analytics should minimize personal data collection.
 
@@ -156918,7 +156918,7 @@ The system should measure content performance without becoming a surveillance pl
 
 ---
 
-## Principle 3 — Actionable Insights
+## Principle 3   Actionable Insights
 
 Metrics without context provide little value.
 
@@ -156926,7 +156926,7 @@ Every dashboard should help answer a meaningful editorial question.
 
 ---
 
-## Principle 4 — Explainability
+## Principle 4   Explainability
 
 Editors should understand:
 
@@ -156939,7 +156939,7 @@ Opaque analytics undermine trust.
 
 ---
 
-## Principle 5 — Separation of Concerns
+## Principle 5   Separation of Concerns
 
 Analytics should observe editorial workflows rather than influence them directly.
 
@@ -157323,7 +157323,7 @@ Avoid:
 
 ---
 
-# Architecture Decision Record — ADR 7.8.015
+# Architecture Decision Record   ADR 7.8.015
 
 ## Title
 
@@ -157446,7 +157446,7 @@ The CMS security architecture shall achieve the following objectives:
 
 # Security Principles
 
-## Principle 1 — Least Privilege
+## Principle 1   Least Privilege
 
 Every user, service and integration shall receive only the permissions necessary to perform its responsibilities.
 
@@ -157454,7 +157454,7 @@ Additional privileges shall require explicit authorization.
 
 ---
 
-## Principle 2 — Default Deny
+## Principle 2   Default Deny
 
 Access shall be denied unless explicitly granted.
 
@@ -157462,7 +157462,7 @@ Security policies should begin from zero trust rather than inherited trust.
 
 ---
 
-## Principle 3 — Defense in Depth
+## Principle 3   Defense in Depth
 
 Critical operations shall be protected by multiple independent controls.
 
@@ -157478,7 +157478,7 @@ Failure of one control should not immediately compromise the system.
 
 ---
 
-## Principle 4 — Secure by Default
+## Principle 4   Secure by Default
 
 The default configuration should represent the safest operational state.
 
@@ -157486,7 +157486,7 @@ Security should not depend upon administrators remembering to enable optional pr
 
 ---
 
-## Principle 5 — Assume Breach
+## Principle 5   Assume Breach
 
 The architecture assumes that some attacks will succeed.
 
@@ -157969,7 +157969,7 @@ Avoid:
 
 ---
 
-# Architecture Decision Record — ADR 7.8.016
+# Architecture Decision Record   ADR 7.8.016
 
 ## Title
 
@@ -158090,7 +158090,7 @@ The observability architecture shall:
 
 # Observability Principles
 
-## Principle 1 — Observe Without Interference
+## Principle 1   Observe Without Interference
 
 Observability systems should monitor production behaviour without changing application behaviour.
 
@@ -158098,7 +158098,7 @@ Instrumentation must never alter business logic.
 
 ---
 
-## Principle 2 — Every Important Event Leaves Evidence
+## Principle 2   Every Important Event Leaves Evidence
 
 Significant operations should produce observable records.
 
@@ -158106,7 +158106,7 @@ Invisible behaviour is difficult to investigate.
 
 ---
 
-## Principle 3 — Correlation Over Isolation
+## Principle 3   Correlation Over Isolation
 
 Individual events become significantly more valuable when they can be connected.
 
@@ -158114,7 +158114,7 @@ Logs, metrics and traces should share correlation identifiers wherever practical
 
 ---
 
-## Principle 4 — Audit Records Are Immutable
+## Principle 4   Audit Records Are Immutable
 
 Audit history should never be modified after creation.
 
@@ -158122,7 +158122,7 @@ Corrections should create additional records rather than altering existing ones.
 
 ---
 
-## Principle 5 — Operational Data Has Different Lifecycles
+## Principle 5   Operational Data Has Different Lifecycles
 
 Metrics, logs, traces and audit records have different purposes.
 
@@ -158672,7 +158672,7 @@ Avoid:
 
 ---
 
-# Architecture Decision Record — ADR 7.8.017
+# Architecture Decision Record   ADR 7.8.017
 
 ## Title
 
@@ -158745,7 +158745,7 @@ Its purpose is to make knowledge discoverable.
 
 Knowledge that cannot be found is, for practical purposes, indistinguishable from knowledge that does not exist.
 
-As TWN grows from hundreds of articles to tens of thousands of interconnected knowledge objects—including Articles, Journeys, Journey Chapters, Notebook Entries, Shared Pages, Margin Notes, Media and future knowledge entities—the ability to efficiently locate relevant information becomes one of the defining characteristics of the platform.
+As TWN grows from hundreds of articles to tens of thousands of interconnected knowledge objects including Articles, Journeys, Journey Chapters, Notebook Entries, Shared Pages, Margin Notes, Media and future knowledge entities the ability to efficiently locate relevant information becomes one of the defining characteristics of the platform.
 
 Search is therefore not an optional feature.
 
@@ -158958,7 +158958,7 @@ The architecture developed in this chapter intentionally prepares the platform f
 
 The architecture is governed by several foundational principles.
 
-## Principle 1 — Knowledge First
+## Principle 1   Knowledge First
 
 Search retrieves knowledge rather than pages.
 
@@ -158968,7 +158968,7 @@ The retrieval engine should prioritize conceptual relevance over simple textual 
 
 ---
 
-## Principle 2 — Fast by Default
+## Principle 2   Fast by Default
 
 Search should provide interactive performance.
 
@@ -158978,7 +158978,7 @@ Performance optimization should never compromise correctness.
 
 ---
 
-## Principle 3 — Relevance Before Popularity
+## Principle 3   Relevance Before Popularity
 
 Highly visited content is not necessarily the most appropriate content.
 
@@ -158988,7 +158988,7 @@ Popularity may influence ranking only where appropriate.
 
 ---
 
-## Principle 4 — Explainable Results
+## Principle 4   Explainable Results
 
 Users should understand why important results appear.
 
@@ -159004,7 +159004,7 @@ Explainability increases trust in search behaviour.
 
 ---
 
-## Principle 5 — Incremental Intelligence
+## Principle 5   Incremental Intelligence
 
 The search architecture should become more intelligent over time without requiring replacement of earlier systems.
 
@@ -159012,7 +159012,7 @@ Traditional search, semantic search and AI retrieval should coexist rather than 
 
 ---
 
-## Principle 6 — Search Should Teach
+## Principle 6   Search Should Teach
 
 Unlike commercial search engines optimized primarily for rapid navigation, TWN search should actively support learning.
 
@@ -159765,7 +159765,7 @@ Avoid:
 
 ---
 
-# Architecture Decision Record — ADR 7.9.001
+# Architecture Decision Record   ADR 7.9.001
 
 ## Title
 
@@ -159820,7 +159820,7 @@ This section is complete when:
 
 ## End of 7.9.2
 
-**Next Section:** **7.9.3 Search Architecture Overview**, where the end-to-end architecture—including indexing pipelines, search services, query processing, ranking, caches and delivery APIs—will be introduced before diving into each subsystem in detail.
+**Next Section:** **7.9.3 Search Architecture Overview**, where the end-to-end architecture including indexing pipelines, search services, query processing, ranking, caches and delivery APIs will be introduced before diving into each subsystem in detail.
 
 # 7.9.3 Search Architecture Overview
 
@@ -160376,7 +160376,7 @@ These concerns are implemented consistently across the subsystem rather than ind
 
 ---
 
-# Architecture Decision Record — ADR 7.9.002
+# Architecture Decision Record   ADR 7.9.002
 
 ## Title
 
@@ -160430,7 +160430,7 @@ This section is complete when:
 
 ## End of 7.9.3
 
-**Next Section:** **7.9.4 Indexing Architecture**, where the complete lifecycle of transforming published knowledge into searchable representations—including event ingestion, document projection, indexing workflows, synchronization strategies and recovery mechanisms—will be specified.
+**Next Section:** **7.9.4 Indexing Architecture**, where the complete lifecycle of transforming published knowledge into searchable representations including event ingestion, document projection, indexing workflows, synchronization strategies and recovery mechanisms will be specified.
 
 # 7.9.4 Indexing Architecture
 
@@ -160499,7 +160499,7 @@ This distinction has important architectural implications:
 
 The indexing subsystem adheres to the following principles.
 
-## Principle 1 — Event-Driven Synchronization
+## Principle 1   Event-Driven Synchronization
 
 Indexes shall never poll the CMS for changes.
 
@@ -160518,7 +160518,7 @@ This reduces unnecessary database activity while ensuring timely synchronization
 
 ---
 
-## Principle 2 — Eventual Consistency
+## Principle 2   Eventual Consistency
 
 Search does not require strict transactional consistency with the CMS.
 
@@ -160550,7 +160550,7 @@ This design significantly improves scalability and fault tolerance.
 
 ---
 
-## Principle 3 — Idempotent Indexing
+## Principle 3   Idempotent Indexing
 
 Every indexing operation shall be idempotent.
 
@@ -160565,7 +160565,7 @@ Benefits include:
 
 ---
 
-## Principle 4 — Immutable Events
+## Principle 4   Immutable Events
 
 Publication events should never be modified after emission.
 
@@ -161010,7 +161010,7 @@ These metrics enable proactive operational management.
 
 ---
 
-# Architecture Decision Record — ADR 7.9.003
+# Architecture Decision Record   ADR 7.9.003
 
 ## Title
 
@@ -161066,7 +161066,7 @@ This section is complete when:
 
 ## End of 7.9.4
 
-**Next Section:** **7.9.5 Search Index Design**, where the internal structure of search indexes—including document schemas, mappings, analyzers, shard strategy, replication, lifecycle management and storage optimization—will be defined in accordance with modern information retrieval and distributed search best practices.
+**Next Section:** **7.9.5 Search Index Design**, where the internal structure of search indexes including document schemas, mappings, analyzers, shard strategy, replication, lifecycle management and storage optimization will be defined in accordance with modern information retrieval and distributed search best practices.
 
 # 7.9.5 Search Index Design
 
@@ -161129,7 +161129,7 @@ The Search subsystem stores optimized representations for discovery.
        Optimized Retrieval Model
 ```
 
-The index exists to answer questions quickly—not to preserve every editorial detail.
+The index exists to answer questions quickly not to preserve every editorial detail.
 
 ---
 
@@ -161620,7 +161620,7 @@ Avoid:
 
 ---
 
-# Architecture Decision Record — ADR 7.9.004
+# Architecture Decision Record   ADR 7.9.004
 
 ## Title
 
@@ -161676,7 +161676,7 @@ This section is complete when:
 
 ## End of 7.9.5
 
-**Next Section:** **7.9.6 Query Processing Pipeline**, where the lifecycle of a search request—from user input through parsing, normalization, intent interpretation, retrieval orchestration and response generation—will be defined using modern information retrieval and distributed search best practices.
+**Next Section:** **7.9.6 Query Processing Pipeline**, where the lifecycle of a search request from user input through parsing, normalization, intent interpretation, retrieval orchestration and response generation will be defined using modern information retrieval and distributed search best practices.
 
 # 7.9.6 Query Processing Pipeline
 
@@ -161842,7 +161842,7 @@ It is **not** responsible for:
 
 ---
 
-# Stage 1 — Request Validation
+# Stage 1   Request Validation
 
 Every request is validated before processing begins.
 
@@ -161859,7 +161859,7 @@ Invalid requests should fail fast before consuming retrieval resources.
 
 ---
 
-# Stage 2 — Query Parsing
+# Stage 2   Query Parsing
 
 The parser converts raw user input into a structured internal representation.
 
@@ -161903,7 +161903,7 @@ The parser should preserve semantic structure rather than treating every query a
 
 ---
 
-# Stage 3 — Query Normalization
+# Stage 3   Query Normalization
 
 Normalization ensures equivalent inputs produce equivalent retrieval behaviour.
 
@@ -161929,7 +161929,7 @@ Normalization reduces unnecessary variation while preserving meaning.
 
 ---
 
-# Stage 4 — Language Detection
+# Stage 4   Language Detection
 
 When the user's preferred language is unknown, the pipeline should infer the query language.
 
@@ -161964,7 +161964,7 @@ Where user preferences are known, explicit preferences take precedence over auto
 
 ---
 
-# Stage 5 — Tokenization
+# Stage 5   Tokenization
 
 The normalized query is decomposed into searchable tokens.
 
@@ -161990,7 +161990,7 @@ The tokenizer must therefore be configurable rather than hardcoded.
 
 ---
 
-# Stage 6 — Linguistic Analysis
+# Stage 6   Linguistic Analysis
 
 Following tokenization, language-specific analysis is applied.
 
@@ -162026,7 +162026,7 @@ These transformations improve recall while preserving precision.
 
 ---
 
-# Stage 7 — Intent Recognition
+# Stage 7   Intent Recognition
 
 Not every query expresses the same intention.
 
@@ -162046,7 +162046,7 @@ Future AI models may enhance this stage, but deterministic rules remain the defa
 
 ---
 
-# Stage 8 — Query Enrichment
+# Stage 8   Query Enrichment
 
 The original query may be enriched with additional context.
 
@@ -162086,7 +162086,7 @@ Enrichment should improve discovery without significantly increasing irrelevant 
 
 ---
 
-# Stage 9 — Retrieval Planning
+# Stage 9   Retrieval Planning
 
 Rather than querying every index indiscriminately, the pipeline constructs an optimized retrieval plan.
 
@@ -162295,7 +162295,7 @@ Avoid:
 
 ---
 
-# Architecture Decision Record — ADR 7.9.005
+# Architecture Decision Record   ADR 7.9.005
 
 ## Title
 
@@ -162998,7 +162998,7 @@ Lexical retrieval remains an essential component of a modern hybrid search archi
 
 ---
 
-# Architecture Decision Record — ADR 7.9.006
+# Architecture Decision Record   ADR 7.9.006
 
 ## Title
 
@@ -163658,7 +163658,7 @@ Facets should remain meaningful, performant and context-aware.
 
 ---
 
-# Architecture Decision Record — ADR 7.9.007
+# Architecture Decision Record   ADR 7.9.007
 
 ## Title
 
@@ -164331,7 +164331,7 @@ Knowledge Graph Search should remain focused, explainable and tightly integrated
 
 ---
 
-# Architecture Decision Record — ADR 7.9.009
+# Architecture Decision Record   ADR 7.9.009
 
 ## Title
 
@@ -165003,7 +165003,7 @@ Knowledge Graph Search should remain focused, explainable and tightly integrated
 
 ---
 
-# Architecture Decision Record — ADR 7.9.009
+# Architecture Decision Record   ADR 7.9.009
 
 ## Title
 
@@ -165636,7 +165636,7 @@ Multilingual support should remain a first-class architectural capability rather
 
 ---
 
-# Architecture Decision Record — ADR 7.9.010
+# Architecture Decision Record   ADR 7.9.010
 
 ## Title
 
@@ -166339,7 +166339,7 @@ Autocomplete should remain fast, predictable and contextually relevant.
 
 ---
 
-# Architecture Decision Record — ADR 7.9.011
+# Architecture Decision Record   ADR 7.9.011
 
 ## Title
 
@@ -167062,11 +167062,11 @@ Avoid:
 * exposing vector similarity scores directly to end users without context;
 * assuming semantic similarity always implies educational relevance.
 
-Semantic retrieval should enhance—not replace—the broader search architecture.
+Semantic retrieval should enhance not replace the broader search architecture.
 
 ---
 
-# Architecture Decision Record — ADR 7.9.012
+# Architecture Decision Record   ADR 7.9.012
 
 ## Title
 
@@ -167258,7 +167258,7 @@ It is **not** responsible for:
 
 The Search API follows several architectural principles.
 
-## Principle 1 — Resource-Oriented Design
+## Principle 1   Resource-Oriented Design
 
 Operations expose business capabilities rather than infrastructure.
 
@@ -167278,7 +167278,7 @@ Query Elasticsearch
 
 ---
 
-## Principle 2 — Stable Contracts
+## Principle 2   Stable Contracts
 
 API contracts should evolve independently of internal implementation.
 
@@ -167291,7 +167291,7 @@ Consumers must remain unaffected when:
 
 ---
 
-## Principle 3 — Stateless Requests
+## Principle 3   Stateless Requests
 
 Every request should contain sufficient information to execute independently.
 
@@ -167299,7 +167299,7 @@ The Search API should not rely upon server-side conversational state.
 
 ---
 
-## Principle 4 — Predictable Responses
+## Principle 4   Predictable Responses
 
 Regardless of search type, response structures should remain consistent.
 
@@ -167813,7 +167813,7 @@ The Search API should remain stable, technology-agnostic and focused on business
 
 ---
 
-# Architecture Decision Record — ADR 7.9.013
+# Architecture Decision Record   ADR 7.9.013
 
 ## Title
 
@@ -168549,7 +168549,7 @@ Performance and resilience should emerge from deliberate architectural design ra
 
 ---
 
-# Architecture Decision Record — ADR 7.9.014
+# Architecture Decision Record   ADR 7.9.014
 
 ## Title
 
@@ -169086,7 +169086,7 @@ Examples include:
 * "Didn't find what I needed."
 * "Report irrelevant result."
 
-Feedback should supplement—not replace—objective analytics.
+Feedback should supplement not replace objective analytics.
 
 ---
 
@@ -169220,7 +169220,7 @@ Continuous improvement should remain data-informed, privacy-conscious and aligne
 
 ---
 
-# Architecture Decision Record — ADR 7.9.015
+# Architecture Decision Record   ADR 7.9.015
 
 ## Title
 
@@ -169458,6 +169458,6 @@ The Search Architecture is considered complete when:
 
 ---
 
-## End of Chapter 7.9 — Search Architecture
+## End of Chapter 7.9   Search Architecture
 
-**Next Chapter:** **7.10 AI Architecture**, where the platform's artificial intelligence capabilities—including model orchestration, Retrieval-Augmented Generation (RAG), AI-assisted authoring, intelligent recommendations, prompt architecture, agent workflows, model governance and safety controls—will be defined.
+**Next Chapter:** **7.10 AI Architecture**, where the platform's artificial intelligence capabilities including model orchestration, Retrieval-Augmented Generation (RAG), AI-assisted authoring, intelligent recommendations, prompt architecture, agent workflows, model governance and safety controls will be defined.

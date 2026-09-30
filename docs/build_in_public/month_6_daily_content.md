@@ -100,7 +100,7 @@ Before tagging a production release for TWN, we enforce **4 Mandatory Verificati
 
 If ANY gate fails, the release is blocked.
 
-Quality isn't a feeling—it's a verifiable metric!
+Quality isn't a feeling it's a verifiable metric!
 
 #CI_CD #QualityAssurance #NextJS #TypeScript #SoftwareEngineering
 ```

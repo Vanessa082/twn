@@ -3,7 +3,7 @@
 - **Status**: Accepted
 - **Date**: 2026-07-24
 - **Decision owners**: TWN Engineering (Vanessa)
-- **Related blueprint volumes**: Volume 7 — System Architecture
+- **Related blueprint volumes**: Volume 7   System Architecture
 
 ---
 
@@ -12,9 +12,9 @@
 TWN is a solo-built editorial platform. The codebase must support long-term feature growth across editorial, community, notebook, search, newsletter, and identity capabilities.
 
 The options considered were:
-1. A flat monolith — all code organized by technical type (`services/`, `actions/`, `components/`)
-2. A modular monolith — code organized by domain capability (`modules/editorial/`, `modules/community/`, etc.) inside one deployable unit
-3. Microservices — separate deployed services per capability
+1. A flat monolith   all code organized by technical type (`services/`, `actions/`, `components/`)
+2. A modular monolith   code organized by domain capability (`modules/editorial/`, `modules/community/`, etc.) inside one deployable unit
+3. Microservices   separate deployed services per capability
 
 ---
 

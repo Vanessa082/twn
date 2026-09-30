@@ -3,7 +3,7 @@
 - **Status**: Accepted
 - **Date**: 2026-07-24
 - **Decision owners**: TWN Engineering (Vanessa)
-- **Related blueprint volumes**: Volume 7 — System Architecture
+- **Related blueprint volumes**: Volume 7   System Architecture
 
 ---
 
@@ -66,7 +66,7 @@ Images are optimized at display time using Cloudinary's URL transformation param
 
 ## Operational Implications
 - Cloudinary asset management is done through the Cloudinary dashboard
-- No automated asset cleanup on article deletion — periodic manual review recommended
+- No automated asset cleanup on article deletion   periodic manual review recommended
 
 ---
 

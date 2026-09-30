@@ -1,14 +1,14 @@
 "use client";
 
 /**
- * ScrollReveal — wraps any content and triggers a scroll-based entrance animation.
+ * ScrollReveal   wraps any content and triggers a scroll-based entrance animation.
  *
  * How it works:
  *  1. The wrapper starts with the CSS class "reveal" (opacity:0, translateY(24px)).
  *  2. An IntersectionObserver watches when the element enters the viewport.
  *  3. When 15% of the element is visible, we add "in-view" which CSS transitions
  *     to opacity:1 / translateY(0) using a smooth cubic-bezier easing.
- *  4. We disconnect the observer after first trigger — no need to keep watching.
+ *  4. We disconnect the observer after first trigger   no need to keep watching.
  *
  * The `stagger` prop adds "reveal-stagger" which auto-delays each direct child
  * child element by 80ms increments for a beautiful cascade effect.
@@ -19,7 +19,7 @@ import { useEffect, useRef } from "react";
 interface ScrollRevealProps {
   children: React.ReactNode;
   className?: string;
-  /** Use stagger variant — children cascade in one by one */
+  /** Use stagger variant   children cascade in one by one */
   stagger?: boolean;
   /** Delay before animation fires after element enters viewport (ms) */
   delay?: number;

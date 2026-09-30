@@ -4,10 +4,10 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 /**
- * PageTransition — white-sheet page turn on route navigation.
+ * PageTransition   white-sheet page turn on route navigation.
  *
  * A white overlay slides up from the bottom (entering), then slides up
- * and out the top (exiting) — like turning a page in a notebook.
+ * and out the top (exiting)   like turning a page in a notebook.
  *
  * Mounts globally in layout.tsx. Watches pathname for changes.
  */

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * InkLine — The TWN brand signature ink line.
+ * InkLine   The TWN brand signature ink line.
  *
  * This path is designed to match the Figma image exactly:
  *   - Starts from the left side (under the typewriter thought).

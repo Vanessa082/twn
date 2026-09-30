@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 /**
- * ReadingLine — a thin 2px vertical line on the left edge of the viewport.
+ * ReadingLine   a thin 2px vertical line on the left edge of the viewport.
  *
  * It grows from top to bottom as the user scrolls down the page.
  * It communicates: "You're moving through someone's notebook, one page at a time."

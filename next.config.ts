@@ -12,7 +12,7 @@ import createNextIntlPlugin from "next-intl/plugin";
 /**
  * 🧠 LEARNING POINT: Plugin Wrapping Pattern
  * `next-intl` extends Next.js's behavior to enable server-side translations.
- * It uses the "Higher-Order Function" pattern — it takes `nextConfig` and
+ * It uses the "Higher-Order Function" pattern   it takes `nextConfig` and
  * returns a new, enhanced config object. This is the standard way plugins
  * extend Next.js without overriding your config.
  *
@@ -70,7 +70,7 @@ const nextConfig: NextConfig = {
    * common web attacks.
    *
    * - X-Frame-Options: DENY
-   *   Prevents Clickjacking — stops malicious sites from embedding your site in
+   *   Prevents Clickjacking   stops malicious sites from embedding your site in
    *   an invisible iframe to trick users into clicking harmful elements.
    *
    * - X-Content-Type-Options: nosniff

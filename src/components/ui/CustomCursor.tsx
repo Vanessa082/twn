@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * CustomCursor — desktop-only fine-pointer cursor replacement.
+ * CustomCursor   desktop-only fine-pointer cursor replacement.
  *
  * Behavior:
  * - Default:  tiny 8px black dot

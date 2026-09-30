@@ -1,12 +1,18 @@
 import { isAuthorizedAdmin } from "@/lib/auth/admin-access";
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkMiddleware } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
-
+/**
+ * Clerk runs only on the admin surface. Readers never authenticate (ADR-005), so
+ * public pages must stay outside the matcher: otherwise every document request
+ * is routed through Clerk's handshake, which breaks crawlers, link previews and
+ * anyone arriving without Clerk cookies.
+ *
+ * Admin server actions POST to /admin/* URLs, so they stay covered. Any admin
+ * action invoked from a public URL fails closed because `auth()` requires this
+ * middleware to have run.
+ */
 export default clerkMiddleware(async (auth, req) => {
-  if (!isAdminRoute(req)) return;
-
   const session = await auth();
 
   if (!session.userId) {
@@ -35,8 +41,5 @@ export default clerkMiddleware(async (auth, req) => {
 });
 
 export const config = {
-  matcher: [
-    "/((?!_next|[^?]*\\.(?:html|css|js|jpe?g|webp|png|gif|svg|css|js|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    "/(api|trpc)(.*)",
-  ],
+  matcher: ["/admin", "/admin/:path*"],
 };

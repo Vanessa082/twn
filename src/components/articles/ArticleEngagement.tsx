@@ -11,7 +11,7 @@ interface ArticleEngagementProps {
 
 
 /**
- * InlineActionBar — Medium-style action bar that renders directly inside
+ * InlineActionBar   Medium-style action bar that renders directly inside
  * the article content column (max-w-[680px]). No floating elements.
  */
 export function InlineActionBar({
@@ -134,7 +134,7 @@ export function InlineActionBar({
 }
 
 /**
- * ArticleEngagement — Floating sidebar removed completely per user request.
+ * ArticleEngagement   Floating sidebar removed completely per user request.
  * All engagement features (Claps, Responses, Save, Share) are now handled
  * exclusively by InlineActionBar inside the article column.
  */

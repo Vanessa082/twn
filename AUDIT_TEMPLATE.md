@@ -42,11 +42,11 @@ understanding and decisions; they do not optimize only for speed.
 
 ## Sources of truth
 
-1. `blueprint.md` — immutable master product and architecture blueprint.
-2. `docs/blueprint/` — source-preserving splits, analyses, and indexes.
-3. `docs/features/` — approved cross-volume implementation packets.
-4. Existing code — evidence of current implementation, not proof of intended behavior.
-5. Tests and browser evidence — proof of what currently works.
+1. `blueprint.md`   immutable master product and architecture blueprint.
+2. `docs/blueprint/`   source-preserving splits, analyses, and indexes.
+3. `docs/features/`   approved cross-volume implementation packets.
+4. Existing code   evidence of current implementation, not proof of intended behavior.
+5. Tests and browser evidence   proof of what currently works.
 
 Never modify, shorten, overwrite, or silently reinterpret `blueprint.md`.
 

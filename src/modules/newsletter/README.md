@@ -27,14 +27,14 @@ Manages newsletter subscriber collection and consent tracking. Email delivery is
 - `subscriberExists(email)` → checks for existing subscription
 
 ## Published Contracts
-- `EmailDeliveryPort`: interface defining send operations — currently implemented by `DisabledEmailAdapter`
+- `EmailDeliveryPort`: interface defining send operations   currently implemented by `DisabledEmailAdapter`
 - See `contracts/index.ts`
 
 ## Consumed Contracts
 - `SubmissionProtectionPort` (Security): rate limiting and duplicate prevention on public subscribe
 
 ## Routes
-- `/admin/subscribers` — admin subscriber list and management
+- `/admin/subscribers`   admin subscriber list and management
 
 ## Permissions
 - Public insert: anyone may subscribe (subject to rate limiting)
@@ -48,7 +48,7 @@ Manages newsletter subscriber collection and consent tracking. Email delivery is
 ## Forbidden Dependencies
 - Must not import from `@/modules/editorial`
 - Must not import from `@/modules/community`
-- Must never call Resend directly from application layer — always through `EmailDeliveryPort`
+- Must never call Resend directly from application layer   always through `EmailDeliveryPort`
 
 ## Known Limitations
 - **Email delivery is disabled.** A `DisabledEmailAdapter` is the active implementation. No confirmation emails, no campaign sends, and no welcome messages are delivered until a verified sending domain is configured.

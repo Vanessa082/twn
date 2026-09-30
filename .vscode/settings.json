@@ -1,0 +1,10 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "pnpm": true,
+        "mv": true,
+        "/^cd /home/wah-vanessa/Desktop/projects/twn && python - <<'PY'\nimport shutil, os\np = '\\.next'\nif os\\.path\\.exists\\(p\\):\n    shutil\\.rmtree\\(p\\)\nprint\\('cleaned \\.next'\\)\nPY\npnpm build$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

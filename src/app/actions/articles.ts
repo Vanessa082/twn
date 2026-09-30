@@ -7,10 +7,10 @@ import {
   deleteArticleAdmin,
   updateArticleAdmin,
 } from "@/lib/services/articles";
-import { recordAuditLog } from "@/platform/audit/audit-log";
 import { createRevision, getRevisionById } from "@/lib/services/revisions";
+import { createArticleSchema, entityIdSchema, updateArticleSchema } from "@/lib/validation/schemas";
 import { broadcastNewArticle } from "@/modules/newsletter";
-import { createArticleSchema, updateArticleSchema } from "@/lib/validation/schemas";
+import { recordAuditLog } from "@/platform/audit/audit-log";
 import type { CreateArticleInput, UpdateArticleInput } from "@/types";
 import { revalidatePath } from "next/cache";
 
@@ -62,13 +62,14 @@ export async function createArticleAction(input: CreateArticleInput) {
 export async function updateArticleAction(id: string, input: UpdateArticleInput) {
   try {
     const { userId } = await canManageArticles();
+    const validatedId = entityIdSchema.parse(id);
     const validated = updateArticleSchema.parse(input);
     const updatePayload: UpdateArticleInput = {
       ...validated,
       cover_image:
         validated.cover_image === undefined ? undefined : (validated.cover_image ?? null),
     };
-    const article = await updateArticleAdmin(id, updatePayload);
+    const article = await updateArticleAdmin(validatedId, updatePayload);
 
     // Save a revision snapshot so the editor can restore any previous version.
     // Fire-and-forget: revision failure should never block the main save.
@@ -107,7 +108,8 @@ export async function updateArticleAction(id: string, input: UpdateArticleInput)
 export async function restoreRevisionAction(revisionId: string) {
   try {
     const { userId } = await canManageArticles();
-    const revision = await getRevisionById(revisionId);
+    const validatedRevisionId = entityIdSchema.parse(revisionId);
+    const revision = await getRevisionById(validatedRevisionId);
     if (!revision) return { success: false, error: "Revision not found" };
 
     // Save current state before overwriting (safety net)
@@ -133,7 +135,7 @@ export async function restoreRevisionAction(revisionId: string) {
       action: "article.updated",
       targetType: "article",
       targetId: revision.article_id,
-      details: { restored_from_revision: revisionId, title: revision.title },
+      details: { restored_from_revision: validatedRevisionId, title: revision.title },
     });
 
     revalidatePath("/");
@@ -154,13 +156,14 @@ export async function restoreRevisionAction(revisionId: string) {
 export async function deleteArticleAction(id: string) {
   try {
     const { userId } = await canManageArticles();
-    await deleteArticleAdmin(id);
+    const validatedId = entityIdSchema.parse(id);
+    await deleteArticleAdmin(validatedId);
 
     await recordAuditLog({
       userId,
       action: "article.deleted",
       targetType: "article",
-      targetId: id,
+      targetId: validatedId,
     });
 
     revalidatePath("/");

@@ -42,7 +42,7 @@ Personal Publication Platform / Digital Magazine / Thought Leadership Blog
 
 **The Notebook of a Tech Woman (TWN)** is a modern digital publication where a woman in technology documents observations, lessons, experiences, ideas, and reflections on technology, leadership, learning, society, community building, and life.
 
-Unlike traditional tech blogs that focus only on tutorials or industry news, TWN serves as an intellectual notebook—a place where technical knowledge meets human experience.
+Unlike traditional tech blogs that focus only on tutorials or industry news, TWN serves as an intellectual notebook a place where technical knowledge meets human experience.
 
 The platform should feel:
 
@@ -276,7 +276,7 @@ No clutter.
 
 ---
 
-## Section 1 — Hero
+## Section 1   Hero
 
 Large statement.
 
@@ -302,7 +302,7 @@ No giant image.
 
 ---
 
-## Section 2 — Featured Article
+## Section 2   Featured Article
 
 Large card.
 
@@ -322,7 +322,7 @@ Read More →
 
 ---
 
-## Section 3 — Latest Articles
+## Section 3   Latest Articles
 
 Grid layout.
 
@@ -332,7 +332,7 @@ Grid layout.
 
 ---
 
-## Section 4 — Categories
+## Section 4   Categories
 
 Minimal cards.
 
@@ -348,7 +348,7 @@ Reflections
 
 ---
 
-## Section 5 — Newsletter
+## Section 5   Newsletter
 
 Simple.
 
@@ -365,7 +365,7 @@ Receive new notes directly.
 
 ---
 
-## Section 6 — Footer
+## Section 6   Footer
 
 About
 

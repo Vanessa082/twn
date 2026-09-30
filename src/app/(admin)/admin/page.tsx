@@ -124,13 +124,26 @@ export default async function AdminDashboardPage() {
         </Link>
 
         <Link
+          href="/admin/content/about"
+          className="p-6 rounded-xl border border-border bg-card hover:border-muted-gold hover-lift transition-all-premium flex items-center justify-between group"
+        >
+          <div>
+            <h3 className="font-bold text-sm text-foreground mb-1">Manage About Page</h3>
+            <p className="text-xs text-muted-foreground">
+              Customize published sections, timeline milestones, and reflections.
+            </p>
+          </div>
+          <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-muted-gold group-hover:translate-x-0.5 transition-all" />
+        </Link>
+
+        <Link
           href="/admin/content/notebook"
           className="p-6 rounded-xl border border-border bg-card hover:border-muted-gold hover-lift transition-all-premium flex items-center justify-between group"
         >
           <div>
             <h3 className="font-bold text-sm text-foreground mb-1">Manage Notebook Entries</h3>
             <p className="text-xs text-muted-foreground">
-              Add sentences and thoughts to the drying-ink hero rotation.
+              Keep short-form thoughts for notebook and search surfaces.
             </p>
           </div>
           <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-muted-gold group-hover:translate-x-0.5 transition-all" />

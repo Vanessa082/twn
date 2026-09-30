@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * NotebookTimeline — A premium vertical scroll timeline.
+ * NotebookTimeline   A premium vertical scroll timeline.
  *
  * Placed on the far left (outside main container) at left-4.
  * Tracks the user's scroll progress through the notebook sections.

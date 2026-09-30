@@ -6,6 +6,7 @@ import { setArticleTagsAction } from "@/app/actions/tags";
 import RevisionHistory from "@/components/admin/RevisionHistory";
 import SaveStatusIndicator, { type SaveStatus } from "@/components/admin/ui/SaveStatusIndicator";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
+import { createArticleSchema } from "@/lib/validation/schemas";
 import type { Article, ArticleCategory, ArticleRevision, ArticleStatus, Tag } from "@/types";
 import { ArrowLeft, Edit2, Eye, Globe, Image as ImageIcon, Loader2, Save, Tag as TagIcon, Upload, X } from "lucide-react";
 import Link from "next/link";
@@ -84,7 +85,7 @@ export default function ArticleForm({
     canonicalUrl,
   ]);
 
-  // Register the beforeunload guard — blocks tab close when there are unsaved changes.
+  // Register the beforeunload guard   blocks tab close when there are unsaved changes.
   useUnsavedChanges({ isDirty: isDirty && saveStatus === "unsaved" });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -98,7 +99,7 @@ export default function ArticleForm({
       return;
     }
     if (!excerpt.trim()) {
-      setError("Excerpt is required — it appears on article listing cards.");
+      setError("Excerpt is required; it introduces the article in Today’s Page and article lists.");
       return;
     }
     if (!content.trim() || content.trim() === "<p></p>") {
@@ -125,14 +126,24 @@ export default function ArticleForm({
       og_image: ogImage.trim() || null,
       canonical_url: canonicalUrl.trim() || null,
     };
+    const validation = createArticleSchema.safeParse(payload);
+    if (!validation.success) {
+      setError(validation.error.issues[0]?.message ?? "Check the article details.");
+      return;
+    }
+    const validatedArticle = {
+      ...validation.data,
+      cover_image: validation.data.cover_image ?? null,
+      published_at: validation.data.published_at ?? null,
+    };
 
     setSaveStatus("saving");
     startTransition(async () => {
       let result: { success: boolean; error: string | null; data?: Article | null };
       if (initialData?.id) {
-        result = await updateArticleAction(initialData.id, payload);
+        result = await updateArticleAction(initialData.id, validatedArticle);
       } else {
-        result = await createArticleAction(payload);
+        result = await createArticleAction(validatedArticle);
       }
 
       if (result.success && result.data) {
@@ -141,8 +152,8 @@ export default function ArticleForm({
         await setArticleTagsAction(articleId, tagIds);
         setSaveStatus("saved");
         setIsDirty(false);
-        // Only redirect when publishing — Save stays on this page
-        if (payload.status === "published") {
+        // Only redirect when publishing   Save stays on this page
+        if (validatedArticle.status === "published") {
           router.push("/admin/articles");
           router.refresh();
         }
@@ -168,7 +179,7 @@ export default function ArticleForm({
             <h1 className="text-2xl font-serif font-black tracking-tight text-foreground">
               {initialData ? `Edit: ${initialData.title}` : "Create New Article"}
             </h1>
-            {/* Save status badge — shows Unsaved / Saving / Saved */}
+            {/* Save status badge   shows Unsaved / Saving / Saved */}
             <SaveStatusIndicator status={isPending ? "saving" : saveStatus} />
           </div>
         </div>
@@ -277,16 +288,26 @@ export default function ArticleForm({
                 htmlFor="article-excerpt"
                 className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
               >
-                Excerpt
+                Excerpt <span className="text-destructive">*</span>
+                <span className="mt-0.5 block text-[10px] font-normal normal-case tracking-normal">
+                  Required. This introduces the latest article in Today&apos;s Page and article
+                  lists.
+                </span>
               </label>
               <textarea
                 id="article-excerpt"
                 value={excerpt}
                 onChange={(e) => setExcerpt(e.target.value)}
-                placeholder="Write a short summary (excerpt) for listing cards..."
+                placeholder="Write the short introduction that invites readers into the article…"
                 rows={3}
+                minLength={10}
+                maxLength={500}
+                required
                 className="w-full p-4 rounded-lg border border-border bg-card text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm resize-none"
               />
+              <p className="text-right text-[10px] text-muted-foreground">
+                {excerpt.length}/500
+              </p>
             </div>
 
             {/* Content editor */}
@@ -362,7 +383,7 @@ export default function ArticleForm({
                 />
               </div>
 
-              {/* Cover Image — upload OR paste URL */}
+              {/* Cover Image   upload OR paste URL */}
               <div className="space-y-2">
                 <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
                   Cover Image

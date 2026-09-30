@@ -1,62 +1,95 @@
 "use client";
 
-/**
- * HeroClient — The soul of TWN.
- *
- * Layout (pixel-perfect match to design image):
- *   - Far-left margin: 01 / 06 page numbers (book atmosphere)
- *   - Left col (55%): WELCOME label → H1 → Typewriter thought → CTA
- *   - Right col (45%): NotebookSketch with subtle drift + InkLine overlay
- *
- * Hero height: min 700px. Almost 90% whitespace.
- * H1: Playfair Display 74px, line-height 0.95.
- * Thought: Cormorant Garamond 50px weight 500.
- */
-
-import HeroTypewriter from "@/components/home/HeroTypewriter";
 import InkLine from "@/components/home/InkLine";
 import NotebookSketch from "@/components/home/NotebookSketch";
-import type { NotebookEntry } from "@/types";
-import { useEffect, useRef, useState } from "react";
+import { TextLink } from "@/components/ui/SectionHeading";
+import type { Article } from "@/types";
+import { ArrowRight, Dot } from "lucide-react";
+import Link from "next/link";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
 
 interface HeroClientProps {
-  initialEntry: NotebookEntry;
-  allEntries: NotebookEntry[];
+  eyebrow: string;
   title: string;
+  topics: string[];
+  authorName: string;
+  todaysArticle: Article | null;
 }
 
-type AnimationPhase = "entering" | "visible" | "exiting" | "gap";
+function formatArticleDate(article: Article) {
+  const date = article.published_at ? new Date(article.published_at) : new Date();
+  return date.toLocaleDateString("en-GB", { day: "numeric", month: "long" });
+}
 
-const ENTER_DURATION = 1500;
-const VISIBLE_DURATION = 5000;
-const EXIT_DURATION = 900;
-const GAP_DURATION = 400;
+/**
+ * Splits an editorial headline at the word boundary nearest its visual centre.
+ * Both lines stay intact; responsive container units then fit the longer line.
+ */
+function balanceHeadline(headline: string): string[] {
+  const words = headline.trim().split(/\s+/);
+  if (words.length < 2) return words;
 
-export default function HeroClient({ initialEntry, allEntries, title }: HeroClientProps) {
-  const sectionRef = useRef<HTMLDivElement>(null);
+  const weakLineEndings = new Set([
+    "a",
+    "an",
+    "and",
+    "but",
+    "for",
+    "from",
+    "i",
+    "in",
+    "of",
+    "or",
+    "the",
+    "to",
+    "with",
+  ]);
+  let splitAt = 1;
+  let bestScore = Number.POSITIVE_INFINITY;
+  for (let index = 1; index < words.length; index += 1) {
+    const firstLength = words.slice(0, index).join(" ").length;
+    const secondLength = words.slice(index).join(" ").length;
+    const difference = Math.abs(firstLength - secondLength);
+    const endingPenalty = weakLineEndings.has(words[index - 1].toLowerCase()) ? 20 : 0;
+    const score = difference + endingPenalty;
+    if (score < bestScore) {
+      bestScore = score;
+      splitAt = index;
+    }
+  }
+
+  return [words.slice(0, splitAt).join(" "), words.slice(splitAt).join(" ")];
+}
+
+export default function HeroClient({
+  eyebrow,
+  title,
+  topics,
+  authorName,
+  todaysArticle,
+}: HeroClientProps) {
+  const sectionRef = useRef<HTMLElement>(null);
   const rafRef = useRef<number | null>(null);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
 
-  const [mouseX, setMouseX] = useState(0);
-  const [mouseY, setMouseY] = useState(0);
-  const [currentIdx, setCurrentIdx] = useState<number>(() => {
-    const idx = allEntries.findIndex((e) => e.id === initialEntry.id);
-    return idx !== -1 ? idx : 0;
-  });
-  const [phase, setPhase] = useState<AnimationPhase>("entering");
-
-  // ── Mouse parallax for the illustration ────────────────────────────────────
+  // Mouse parallax on the sketch — fine pointers only, never when motion is reduced.
   useEffect(() => {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion || !window.matchMedia("(pointer: fine)").matches) return;
+
     const onMove = (e: MouseEvent) => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = requestAnimationFrame(() => {
         const section = sectionRef.current;
         if (!section) return;
         const rect = section.getBoundingClientRect();
-        setMouseX((e.clientX - rect.left - rect.width / 2) / (rect.width / 2));
-        setMouseY((e.clientY - rect.top - rect.height / 2) / (rect.height / 2));
+        setMouse({
+          x: (e.clientX - rect.left - rect.width / 2) / (rect.width / 2),
+          y: (e.clientY - rect.top - rect.height / 2) / (rect.height / 2),
+        });
       });
     };
+
     window.addEventListener("mousemove", onMove, { passive: true });
     return () => {
       window.removeEventListener("mousemove", onMove);
@@ -64,130 +97,139 @@ export default function HeroClient({ initialEntry, allEntries, title }: HeroClie
     };
   }, []);
 
-  // ── Thought rotation cycle ─────────────────────────────────────────────────
-  useEffect(() => {
-    const schedule = (fn: () => void, delay: number) => {
-      timerRef.current = setTimeout(fn, delay);
-    };
-    const runCycle = () => {
-      setPhase("entering");
-      schedule(() => {
-        setPhase("visible");
-        schedule(() => {
-          setPhase("exiting");
-          schedule(() => {
-            setPhase("gap");
-            setCurrentIdx((prev) => (prev + 1) % Math.max(allEntries.length, 1));
-            schedule(runCycle, GAP_DURATION);
-          }, EXIT_DURATION);
-        }, VISIBLE_DURATION);
-      }, ENTER_DURATION);
-    };
-    runCycle();
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const formatNum = (n: number) => String(n + 1).padStart(2, "0");
-  const totalEntries = Math.max(allEntries.length, 1);
-  const currentEntry = allEntries[currentIdx] ?? initialEntry;
-
-  const illustrationStyle: React.CSSProperties = {
-    transform: `translate(${mouseX * 5}px, ${mouseY * 5}px)`,
-    transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
-    willChange: "transform",
+  const illustrationStyle: CSSProperties = {
+    transform: `translate3d(${mouse.x * 5}px, ${mouse.y * 5}px, 0)`,
+    transition: "transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
   };
 
-  // Lines behind the title — ruled-paper effect
-  const lineBg = {
-    backgroundImage:
-      "repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(0,0,0,0.04) 28px)",
-    backgroundSize: "100% 28px",
-  };
+  const rise = (delay: number): CSSProperties => ({
+    animation: `softFadeIn 1s cubic-bezier(0.16,1,0.3,1) ${delay}ms both`,
+  });
+
+  const headline = todaysArticle?.title ?? title;
+  const headlineLines = balanceHeadline(headline);
+  const longestLine = Math.max(...headlineLines.map((line) => line.length));
+  const responsiveHeadlineSize = `clamp(1.15rem, ${100 / Math.max(longestLine * 0.5, 1)}cqw, 4rem)`;
 
   return (
     <section
       ref={sectionRef}
       id="hero"
-      aria-label="Hero — The Notebook of a Tech Woman"
-      className="relative bg-background overflow-hidden border-b border-border min-h-[700px] flex items-center"
+      aria-labelledby="hero-title"
+      className="relative flex min-h-[540px] items-center overflow-hidden border-b border-border bg-background sm:min-h-[600px] lg:min-h-[640px]"
     >
-      {/* Ruled paper background */}
-      <div
-        className="absolute inset-0 pointer-events-none select-none"
-        style={lineBg}
-        aria-hidden="true"
-      />
+      <div className="twn-hero-atmosphere" aria-hidden="true" />
+      <div className="twn-paper-grain" aria-hidden="true" />
 
-      {/* ── Far-left margin numbers ── */}
-      <div
-        className="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center gap-2 select-none"
-        aria-hidden="true"
-        style={{ animation: "softFadeIn 0.6s cubic-bezier(0.16,1,0.3,1) 1.8s both" }}
-      >
-        <span className="text-[10px] font-mono font-bold text-foreground leading-none">
-          {formatNum(currentIdx)}
-        </span>
-        <div className="w-px h-[80px] bg-foreground/20 relative overflow-hidden">
-          <div
-            className="absolute left-0 right-0 bg-foreground/60 transition-all duration-700"
-            style={{
-              top: `${totalEntries > 1 ? (currentIdx / totalEntries) * 100 : 0}%`,
-              height: `${100 / totalEntries}%`,
-              minHeight: "10px",
-            }}
-          />
-        </div>
-        <span className="text-[10px] font-mono font-bold text-foreground/35 leading-none">
-          {formatNum(totalEntries - 1)}
-        </span>
-      </div>
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-5 py-16 sm:px-10 sm:py-20 lg:px-20">
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
+          <div className="flex flex-col [container-type:inline-size] lg:col-span-8">
+            {eyebrow && (
+              <span
+                className="text-[10px] font-sans font-semibold uppercase tracking-[0.28em] text-muted-foreground"
+                style={rise(0)}
+              >
+                {eyebrow}
+              </span>
+            )}
 
-      {/* Main content grid */}
-      <div className="relative z-10 mx-auto max-w-7xl w-full px-5 sm:px-10 lg:px-20 py-20 sm:py-28">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          {/* ── Left content col (55%) ── */}
-          <div className="lg:col-span-7 flex flex-col gap-7">
-            {/* Label */}
-            <span
-              className="text-[10px] font-sans font-bold uppercase tracking-[0.28em] text-muted-foreground/70"
-              style={{ animation: "softFadeIn 0.7s cubic-bezier(0.16,1,0.3,1) 200ms both" }}
-            >
-              Welcome to my notebook
-            </span>
-
-            {/* H1 — Playfair, ~74px, line-height 0.95 */}
             <h1
-              className="font-serif font-bold text-foreground leading-[0.96] tracking-[-0.02em] text-[3.5rem] sm:text-[4rem] lg:text-[4.6rem]"
-              style={{ animation: "softFadeInUp 1s cubic-bezier(0.16,1,0.3,1) 350ms both" }}
+              id="hero-title"
+              aria-label={headline}
+              className="mt-6 w-full font-serif font-bold leading-[0.98] tracking-[-0.035em] text-foreground"
+              style={{ fontSize: responsiveHeadlineSize, ...rise(120) }}
             >
-              {title}
+              <span aria-hidden="true">
+                {headlineLines.map((line) => (
+                  <span key={line} className="block whitespace-nowrap">
+                    {line}
+                  </span>
+                ))}
+              </span>
             </h1>
 
-            {/* ── Cormorant Typewriter thought ── */}
-            <div
-              className="mt-1"
-              style={{ animation: "softFadeIn 0.8s cubic-bezier(0.16,1,0.3,1) 1000ms both" }}
-            >
-              <HeroTypewriter currentEntry={currentEntry} phase={phase} />
+            {todaysArticle && (
+              <figure
+                className="mt-14 max-w-md border-l border-border pl-5"
+                style={rise(480)}
+                aria-labelledby="todays-page-caption"
+              >
+                <figcaption
+                  id="todays-page-caption"
+                  className="text-[10px] font-sans font-semibold uppercase tracking-[0.24em] text-ink-accent"
+                >
+                  Today&apos;s page · {todaysArticle.category} ·{" "}
+                  <time dateTime={todaysArticle.published_at ?? undefined}>
+                    {formatArticleDate(todaysArticle)}
+                  </time>
+                </figcaption>
+                <Link
+                  href={`/articles/${todaysArticle.slug}`}
+                  data-cursor="link"
+                  className="group mt-2 block"
+                  aria-label={`Read ${todaysArticle.title}`}
+                >
+                  <blockquote className="line-clamp-2 font-quote text-xl leading-snug text-foreground/80 transition-colors group-hover:text-foreground">
+                    &ldquo;{todaysArticle.excerpt}&rdquo;
+                  </blockquote>
+                  <span className="mt-3 inline-flex items-center gap-2 text-[10px] font-sans font-semibold uppercase tracking-[0.2em] text-muted-foreground transition-colors group-hover:text-foreground">
+                    Read the full note
+                    <ArrowRight
+                      className="size-3 transition-transform duration-300 group-hover:translate-x-1"
+                      aria-hidden="true"
+                    />
+                  </span>
+                </Link>
+              </figure>
+            )}
+
+            {topics.length > 0 && (
+              <p
+                className="mt-7 flex flex-wrap items-center gap-x-3 gap-y-1 font-quote text-lg italic text-muted-foreground sm:text-xl"
+                style={rise(240)}
+              >
+                {topics.map((topic, index) => (
+                  <span key={topic} className="inline-flex items-center gap-3">
+                    {index > 0 && (
+                      <span className="not-italic text-foreground/25" aria-hidden="true">
+                        <Dot />
+                      </span>
+                    )}
+                    {topic}
+                  </span>
+                ))}
+              </p>
+            )}
+            <div className="mt-10 flex flex-wrap items-center gap-8" style={rise(360)}>
+              <Link
+                href={
+                  todaysArticle ? `/articles/${todaysArticle.slug}` : "/articles"}
+                data-cursor="link"
+                className="group inline-flex h-11 items-center justify-center gap-2 rounded-[4px] bg-foreground px-6 text-[11px] font-sans font-semibold uppercase tracking-[0.18em] text-background transition-opacity duration-300 hover:opacity-85"
+              >
+                <span>Read More</span>
+                <ArrowRight
+                  className="size-3.5 transition-transform duration-300 group-hover:translate-x-1"
+                  aria-hidden="true"
+                />
+              </Link>
+              <TextLink href="/about">Meet {authorName}</TextLink>
             </div>
           </div>
 
-          {/* ── Right illustration col (45%) ── */}
           <div
-            className="lg:col-span-5 flex items-center justify-center lg:justify-end mt-8 lg:mt-0 relative"
-            style={{ animation: "softFadeIn 1.2s cubic-bezier(0.16,1,0.3,1) 600ms both" }}
+            className="relative hidden items-center justify-center sm:flex lg:col-span-4 lg:justify-end"
+            style={{ animation: "softFadeIn 1.2s cubic-bezier(0.16,1,0.3,1) 300ms both" }}
+            aria-hidden="true"
           >
-            {/* Ink line overlay — draws once across the hero */}
-            <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+            <div className="pointer-events-none absolute inset-0">
               <InkLine />
             </div>
-
-            {/* Notebook illustration with subtle drift animation */}
-            <div className="w-full max-w-[420px] twn-notebook-drift" style={illustrationStyle}>
-              <NotebookSketch mouseX={mouseX} mouseY={mouseY} />
+            <div
+              className="twn-notebook-drift w-full max-w-[340px] sm:max-w-[380px] lg:max-w-[420px]"
+              style={illustrationStyle}
+            >
+              <NotebookSketch mouseX={mouse.x} mouseY={mouse.y} />
             </div>
           </div>
         </div>

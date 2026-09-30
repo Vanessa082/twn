@@ -3,13 +3,16 @@
 import {
   BookOpen,
   FileText,
+  Hammer,
   Home,
   Layers,
   LayoutDashboard,
   MessageSquare,
+  NotebookPen,
   Share2,
   ShieldCheck,
   Tag,
+  User,
   Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -20,6 +23,10 @@ export const adminNavItems = [
   { label: "Articles", href: "/admin/articles", icon: FileText },
   { label: "Collections", href: "/admin/collections", icon: Layers },
   { label: "Tags", href: "/admin/tags", icon: Tag },
+  { label: "Homepage", href: "/admin/content/homepage", icon: Home },
+  { label: "Field Notes", href: "/admin/content/field-notes", icon: NotebookPen },
+  { label: "Workbench", href: "/admin/content/workbench", icon: Hammer },
+  { label: "About Page", href: "/admin/content/about", icon: User },
   { label: "Notebook", href: "/admin/content/notebook", icon: BookOpen },
   { label: "Shared Pages", href: "/admin/content/shared-pages", icon: Share2 },
   { label: "Margin Notes", href: "/admin/content/margin-notes", icon: MessageSquare },

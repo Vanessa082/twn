@@ -45,12 +45,12 @@
     }
   },
   "articles": {
-    "title": "All Articles",
-    "description": "Reflections and records on writing code, leading teams, and building technology.",
+    "title": "The Notebook",
+    "description": "Essays, field notes and reflections on writing code, leading teams, and building a life in technology.",
     "readMore": "Read more",
     "readingTime": "{minutes} min read",
     "publishedOn": "Published {date}",
-    "backToArticles": "← Back to Articles",
+    "backToArticles": "← Back to the notebook",
     "share": "Share this article",
     "related": "Related Articles",
     "noArticles": "No articles found.",
@@ -58,11 +58,11 @@
   },
   "about": {
     "title": "About",
-    "subtitle": "The author behind the notebook"
+    "subtitle": "A notebook. A record. A becoming."
   },
   "newsletter": {
     "title": "The Notebook",
-    "description": "A newsletter about technology, leadership, and the journey of becoming — written by a woman in tech.",
+    "description": "A newsletter about technology, leadership, and the journey of becoming   written by a woman in tech.",
     "subscribe": "Subscribe",
     "placeholder": "your@email.com",
     "success": "You're in! Expect something thoughtful in your inbox soon.",

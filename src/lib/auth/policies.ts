@@ -4,7 +4,7 @@ import { requireAdmin } from "./require-admin";
 
 /**
  * Centralized Domain Authorization Policies for TWN.
- * Hiding UI buttons is NOT security — every administrative operation
+ * Hiding UI buttons is NOT security   every administrative operation
  * MUST invoke its explicit domain policy on the server before mutating data.
  */
 
@@ -29,5 +29,17 @@ export async function canModerateMarginNotes(): Promise<{ userId: string }> {
 }
 
 export async function canManageSubscribers(): Promise<{ userId: string }> {
+  return await requireAdmin();
+}
+
+export async function canManageProjects(): Promise<{ userId: string }> {
+  return await requireAdmin();
+}
+
+export async function canManageFieldNotes(): Promise<{ userId: string }> {
+  return await requireAdmin();
+}
+
+export async function canManageHomepage(): Promise<{ userId: string }> {
   return await requireAdmin();
 }

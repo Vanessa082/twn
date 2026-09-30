@@ -1,4 +1,5 @@
 import ArticleGrid from "@/components/articles/ArticleGrid";
+import { Eyebrow } from "@/components/ui/SectionHeading";
 import { getArticlesByCategory, getLatestArticles } from "@/lib/services/articles";
 import type { ArticleCategory } from "@/types";
 import { getTranslations } from "next-intl/server";
@@ -32,37 +33,42 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
   ];
 
   return (
-    <div className="py-16 sm:py-24 bg-background transition-colors duration-300">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h1 className="text-4xl sm:text-5xl font-serif font-black tracking-tight text-foreground mb-4">
+    <div className="bg-background pb-24 pt-16 sm:pt-24">
+      <div className="mx-auto max-w-7xl px-5 sm:px-10 lg:px-20">
+        <div className="max-w-2xl">
+          <Eyebrow>All notes</Eyebrow>
+          <h1
+            className="mt-5 font-serif font-bold leading-[0.96] tracking-[-0.03em] text-foreground"
+            style={{ fontSize: "clamp(2.8rem, 6vw, 4.5rem)" }}
+          >
             {t("title")}
           </h1>
-          <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+          <p className="mt-5 max-w-lg font-serif text-[1.1rem] leading-[1.7] text-muted-foreground">
             {t("description")}
           </p>
         </div>
 
-        {/* Category Filters */}
-        <div className="flex flex-wrap items-center justify-center gap-2.5 mb-16">
+        <nav
+          aria-label="Filter notes by chapter"
+          className="mb-14 mt-10 flex flex-wrap gap-x-6 gap-y-3 border-t border-border pt-6"
+        >
           {categories.map((cat) => {
             const isActive = (cat.value === "" && !activeCategory) || cat.value === activeCategory;
             return (
               <Link
                 key={cat.label}
                 href={cat.value ? `/articles?category=${cat.value}` : "/articles"}
-                className={`inline-flex items-center justify-center px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-200 border shadow-xs ${
-                  isActive
-                    ? "bg-deep-navy text-white border-deep-navy dark:bg-muted-gold dark:text-charcoal-black dark:border-muted-gold"
-                    : "bg-card text-muted-foreground border-border hover:border-muted-gold hover:text-muted-gold"
+                aria-current={isActive ? "page" : undefined}
+                data-active={isActive ? "true" : undefined}
+                className={`nav-ink-link text-[11px] font-sans font-semibold uppercase tracking-[0.2em] transition-colors ${
+                  isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {cat.label}
               </Link>
             );
           })}
-        </div>
+        </nav>
 
         {/* Results */}
         {articles.length > 0 ? (
@@ -72,7 +78,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
             <p className="text-muted-foreground text-sm mb-4">{t("noArticles")}</p>
             <Link
               href="/articles"
-              className="text-xs font-bold text-deep-navy dark:text-muted-gold hover:underline"
+              className="text-xs font-semibold text-foreground underline underline-offset-4"
             >
               Reset Filters
             </Link>

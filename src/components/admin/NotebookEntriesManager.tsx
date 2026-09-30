@@ -5,6 +5,7 @@ import {
   deleteEntryAction,
   updateEntryAction,
 } from "@/app/actions/notebook-entries";
+import { createNotebookEntrySchema } from "@/lib/validation/schemas";
 import type { Article, Notebook, NotebookEntry } from "@/types";
 import { AlertCircle, Calendar, Check, Edit2, Plus, Sparkles, Trash2, X } from "lucide-react";
 import { useState, useTransition } from "react";
@@ -65,35 +66,37 @@ export default function NotebookEntriesManager({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!thought.trim()) {
-      setFormError("The thought content is required.");
+    const validation = createNotebookEntrySchema.safeParse({
+      notebook_id: notebookId,
+      title: title.trim() || null,
+      thought: thought.trim(),
+      slug: null,
+      source_article_id: sourceArticleId || null,
+      is_active: isActive,
+      priority: Number(priority),
+      display_date: displayDate || null,
+    });
+    if (!validation.success) {
+      setFormError(validation.error.issues[0]?.message ?? "Check the notebook entry.");
       return;
     }
+    setFormError(null);
 
     startTransition(async () => {
-      const payload = {
-        notebook_id: notebookId,
-        title: title.trim() || null,
-        thought: thought.trim(),
-        slug: null,
-        source_article_id: sourceArticleId || null,
-        is_active: isActive,
-        priority: Number(priority),
-        display_date: displayDate || null,
-      };
-
       if (editingEntry) {
-        const result = await updateEntryAction(editingEntry.id, payload);
+        const result = await updateEntryAction(editingEntry.id, validation.data);
         if (result.success && result.data) {
-          setEntries((prev) => prev.map((e) => (e.id === editingEntry.id ? result.data! : e)));
+          const savedEntry = result.data;
+          setEntries((prev) => prev.map((e) => (e.id === editingEntry.id ? savedEntry : e)));
           resetForm();
         } else {
           setFormError(result.error || "Failed to update entry");
         }
       } else {
-        const result = await createEntryAction(payload);
+        const result = await createEntryAction(validation.data);
         if (result.success && result.data) {
-          setEntries((prev) => [result.data!, ...prev]);
+          const savedEntry = result.data;
+          setEntries((prev) => [savedEntry, ...prev]);
           resetForm();
         } else {
           setFormError(result.error || "Failed to create entry");
@@ -120,7 +123,8 @@ export default function NotebookEntriesManager({
       const newActive = !entry.is_active;
       const result = await updateEntryAction(entry.id, { is_active: newActive });
       if (result.success && result.data) {
-        setEntries((prev) => prev.map((e) => (e.id === entry.id ? result.data! : e)));
+        const savedEntry = result.data;
+        setEntries((prev) => prev.map((e) => (e.id === entry.id ? savedEntry : e)));
       } else {
         alert(result.error || "Failed to toggle status");
       }
@@ -136,7 +140,7 @@ export default function NotebookEntriesManager({
             Notebook Entries
           </h1>
           <p className="text-xs text-muted-foreground mt-1">
-            Write and schedule thoughts for the home page ink-drying hero and Today&apos;s Page.
+            Keep short-form thoughts that can appear in notebook and search surfaces.
           </p>
         </div>
         {!isFormOpen && (
@@ -241,7 +245,7 @@ export default function NotebookEntriesManager({
                 htmlFor="displayDate"
                 className="text-xs font-bold uppercase tracking-wider text-foreground"
               >
-                Today&apos;s Page Schedule (Optional)
+                Entry Date (Optional)
               </label>
               <input
                 id="displayDate"
@@ -251,8 +255,7 @@ export default function NotebookEntriesManager({
                 className="w-full p-3 rounded-lg border border-border bg-background text-sm text-foreground focus:outline-none focus:border-foreground transition-colors"
               />
               <p className="text-[10px] text-muted-foreground">
-                Assign a calendar day to pin this entry on the home page as &ldquo;Today&apos;s
-                Page&rdquo;.
+                Record when this thought belongs in the notebook.
               </p>
             </div>
 
@@ -297,7 +300,7 @@ export default function NotebookEntriesManager({
                 className="w-full p-3 rounded-lg border border-border bg-background text-sm text-foreground focus:outline-none focus:border-foreground transition-colors"
               />
               <p className="text-[10px] text-muted-foreground">
-                Higher numbers appear more frequently in the hero rotation (0 = standard).
+                Higher numbers sort first on notebook surfaces (0 = standard).
               </p>
             </div>
 

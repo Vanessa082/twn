@@ -3,7 +3,16 @@ import { createAdminClient } from "@/lib/db/server";
 export interface AuditLogInput {
   userId: string;
   action: string;
-  targetType: "article" | "margin_note" | "shared_page" | "notebook_entry" | "subscriber";
+  targetType:
+    | "article"
+    | "margin_note"
+    | "shared_page"
+    | "notebook_entry"
+    | "subscriber"
+    | "about_settings"
+    | "project"
+    | "field_note"
+    | "homepage_settings";
   targetId?: string | null;
   details?: Record<string, unknown>;
 }

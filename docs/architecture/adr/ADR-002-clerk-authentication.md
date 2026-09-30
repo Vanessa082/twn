@@ -3,7 +3,7 @@
 - **Status**: Accepted
 - **Date**: 2026-07-24
 - **Decision owners**: TWN Engineering (Vanessa)
-- **Related blueprint volumes**: Volume 7 — System Architecture, Volume 10 — Security Architecture
+- **Related blueprint volumes**: Volume 7   System Architecture, Volume 10   Security Architecture
 
 ---
 
@@ -65,7 +65,7 @@ Admin identity is resolved through the `Identity` module's published contracts, 
 ## Migration Implications
 Replacing Clerk in the future requires:
 1. Implementing a new `AuthAdapter` satisfying the `AuthorizationPort` interface in `identity/contracts/index.ts`
-2. Updating `identity/infrastructure/` only — no business logic changes required
+2. Updating `identity/infrastructure/` only   no business logic changes required
 3. Updating middleware to use the new provider's session verification
 
 ---

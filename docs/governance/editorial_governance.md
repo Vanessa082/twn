@@ -1,7 +1,7 @@
 # TWN Editorial and Moderation Governance
 
 **Document Version**: 1.0
-**Status**: Canonical — Phase 2
+**Status**: Canonical   Phase 2
 **Date**: 2026-07-24
 **Authority**: TWN Editorial Team (Vanessa)
 
@@ -185,4 +185,4 @@ This document is versioned. The version active at the time of a moderation decis
 
 | Version | Date | Author | Changes |
 |---|---|---|---|
-| 1.0 | 2026-07-24 | Vanessa | Initial policy — Phase 2 |
+| 1.0 | 2026-07-24 | Vanessa | Initial policy   Phase 2 |

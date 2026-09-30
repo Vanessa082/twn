@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════════
--- SQL Migration: Editorial Collections (Milestone 4 — Final Phase)
+-- SQL Migration: Editorial Collections (Milestone 4   Final Phase)
 -- Copy and paste this into the Supabase SQL Editor.
 -- ═══════════════════════════════════════════════════════════════════════════════
 

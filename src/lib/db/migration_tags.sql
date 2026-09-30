@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════════
--- SQL Migration: Tags System (Milestone 4 — Editorial Discovery)
+-- SQL Migration: Tags System (Milestone 4   Editorial Discovery)
 -- Copy and paste this into the Supabase SQL Editor.
 -- ═══════════════════════════════════════════════════════════════════════════════
 

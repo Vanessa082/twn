@@ -208,3 +208,32 @@ export async function setArticleTagsAdmin(articleId: string, tagIds: string[]): 
     .insert(tagIds.map((tag_id) => ({ article_id: articleId, tag_id })));
   if (insertError) throw new Error(insertError.message);
 }
+
+// ── Categories ────────────────────────────────────────────────────────────────
+
+/**
+ * Fetch all editorial categories in their canonical display order.
+ * Categories are seeded and stable: technology, leadership, learning,
+ * community, reflections. Falls back to the seeded values if the DB is unreachable.
+ */
+export async function getCategories(): Promise<import("@/types").Category[]> {
+  type Cat = import("@/types").Category;
+  const ORDER = ["technology", "leadership", "learning", "community", "reflections"];
+  const FALLBACK: Cat[] = [
+    { id: "1", name: "Technology", slug: "technology" },
+    { id: "2", name: "Leadership", slug: "leadership" },
+    { id: "3", name: "Learning", slug: "learning" },
+    { id: "4", name: "Community", slug: "community" },
+    { id: "5", name: "Personal Reflections", slug: "reflections" },
+  ];
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase.from("categories").select("id, name, slug");
+    if (error || !data || data.length === 0) return FALLBACK;
+    return (data as Cat[]).sort(
+      (a, b) => ORDER.indexOf(a.slug) - ORDER.indexOf(b.slug)
+    );
+  } catch {
+    return FALLBACK;
+  }
+}

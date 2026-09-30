@@ -3,7 +3,7 @@
 - **Status**: Accepted
 - **Date**: 2026-07-24
 - **Decision owners**: TWN Engineering (Vanessa)
-- **Related blueprint volumes**: Volume 7 — System Architecture
+- **Related blueprint volumes**: Volume 7   System Architecture
 
 ---
 
@@ -36,7 +36,7 @@ Business logic, database queries, and authentication checks remain in Server Com
 
 **Client-first (everything `"use client"`)**: Simpler mental model for developers familiar with React pre-App Router. But eliminates the performance and security benefits of RSC, and requires moving all data fetching to client-side effects with extra loading states.
 
-**Hybrid without clear rules**: Leads to inconsistency — developers add `"use client"` when encountering errors rather than reasoning about the boundary deliberately.
+**Hybrid without clear rules**: Leads to inconsistency   developers add `"use client"` when encountering errors rather than reasoning about the boundary deliberately.
 
 ---
 

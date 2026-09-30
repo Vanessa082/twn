@@ -40,7 +40,7 @@ const playfair = Playfair_Display({
 });
 
 /**
- * Cormorant Garamond — the "notebook thought" font.
+ * Cormorant Garamond   the "notebook thought" font.
  * Used exclusively for the hero typewriter text and blockquotes.
  * At 500 weight it reads like words written with an elegant pen.
  */

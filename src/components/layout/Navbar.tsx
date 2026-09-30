@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Navbar — 88px height, invisible until scrolled 50px.
+ * Navbar   88px height, invisible until scrolled 50px.
  * Pure editorial: tiny uppercase links, serif logo, CTA with hover lift.
  */
 
@@ -19,11 +19,10 @@ export default function Navbar() {
   const lastScrollY = useRef(0);
 
   const links = [
-    { label: t("home"), href: "/" },
-    { label: t("articles"), href: "/articles" },
-    { label: t("about"), href: "/about" },
-    { label: t("newsletter"), href: "/newsletter" },
-    { label: t("contact"), href: "/contact" },
+    { label: "Notebook", href: "/articles" },
+    { label: "Workbench", href: "/workbench" },
+    { label: "About", href: "/about" },
+    { label: "Archive", href: "/archive" },
   ];
 
   const isActive = (path: string) => {
@@ -76,7 +75,7 @@ export default function Navbar() {
 
           {/* ── Desktop Nav — centered absolutely ── */}
           <nav
-            className="hidden lg:flex items-center gap-7 absolute left-1/2 -translate-x-1/2"
+            className="hidden lg:flex items-center gap-8 absolute left-1/2 -translate-x-1/2"
             aria-label="Primary navigation"
           >
             {links.map((link) => (
@@ -87,7 +86,7 @@ export default function Navbar() {
                 className={[
                   "nav-ink-link text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors duration-200",
                   isActive(link.href)
-                    ? "text-foreground"
+                    ? "text-foreground font-bold"
                     : "text-muted-foreground hover:text-foreground",
                 ].join(" ")}
                 {...(isActive(link.href) ? { "data-active": "true" } : {})}
@@ -103,29 +102,19 @@ export default function Navbar() {
               href="/search"
               aria-label={t("search")}
               data-cursor="button"
-              className="text-muted-foreground hover:text-foreground transition-colors duration-200"
+              className="text-muted-foreground hover:text-foreground transition-colors duration-200 p-2"
             >
               <Search className="h-[18px] w-[18px]" strokeWidth={1.5} />
-            </Link>
-
-            {/* LEAVE A PAGE — black button, 8px radius, hover lifts 2px */}
-            <Link
-              href="/?leave-page=true#community"
-              data-cursor="button"
-              className="hidden md:inline-flex h-[42px] items-center justify-center bg-foreground text-background text-[10px] font-bold uppercase tracking-[0.15em] border border-foreground
-                hover:-translate-y-[2px] hover:shadow-[0_8px_18px_rgba(0,0,0,0.12)]
-                transition-all duration-300 rounded-[8px] px-[22px]"
-            >
-              Leave a Page
             </Link>
 
             {/* Mobile hamburger */}
             <button
               type="button"
               onClick={() => setIsOpen((v) => !v)}
-              className="inline-flex items-center justify-center p-2 text-muted-foreground hover:text-foreground transition-colors lg:hidden"
+              className="inline-flex items-center justify-center p-2 text-muted-foreground hover:text-foreground transition-colors lg:hidden cursor-pointer"
               aria-expanded={isOpen}
-              aria-label="Open menu"
+              aria-controls="mobile-menu"
+              aria-label={isOpen ? "Close menu" : "Open menu"}
               data-cursor="button"
             >
               {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -136,7 +125,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="lg:hidden fixed inset-0 top-[88px] z-40 bg-background/97 backdrop-blur-md">
+        <div id="mobile-menu" className="lg:hidden fixed inset-0 top-[88px] z-40 bg-background">
           <div className="flex flex-col h-full px-8 pt-10 pb-10 space-y-1">
             {links.map((link) => (
               <Link
@@ -150,13 +139,14 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
-            <div className="pt-8">
+            <div className="pt-6">
               <Link
                 onClick={() => setIsOpen(false)}
-                href="/?leave-page=true#community"
-                className="flex w-full h-12 items-center justify-center bg-foreground text-[11px] font-bold uppercase tracking-[0.15em] text-background rounded-[8px]"
+                href="/search"
+                className="flex items-center gap-2 py-3 text-sm font-sans font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground"
               >
-                Leave a Page
+                <Search className="h-4 w-4" />
+                Search the Notebook
               </Link>
             </div>
           </div>

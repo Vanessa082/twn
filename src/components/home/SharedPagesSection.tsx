@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * SharedPagesSection — "Pages from the Community" section.
+ * SharedPagesSection   "Pages from the Community" section.
  * Matches design image exactly:
  *
  * Layout: 2-column
@@ -12,7 +12,7 @@
  * Cards: white, 16px radius, faint shadow, no avatars, no likes
  *        Large " quotation mark (Cormorant, amber #AE8D64)
  *        Quote text in Cormorant, ~20px
- *        "— Name" author line, tiny date
+ *        "  Name" author line, tiny date
  *
  * Carousel arrows: top-right, circular border-only buttons, hover fills black
  */
@@ -111,7 +111,7 @@ export default function SharedPagesSection({ initialPages }: SharedPagesSectionP
 
           {/* ── RIGHT: carousel ── */}
           <div className="lg:col-span-8 relative">
-            {/* Carousel arrows — top right */}
+            {/* Carousel arrows   top right */}
             <div className="flex justify-end gap-2 mb-5">
               <button
                 onClick={() => scroll("left")}
@@ -185,7 +185,7 @@ export default function SharedPagesSection({ initialPages }: SharedPagesSectionP
                     <div className="flex flex-col gap-2">
                       <div className="flex flex-col gap-0.5">
                         <span className="text-[13px] font-sans font-semibold text-foreground">
-                          — {page.author_name}
+                            {page.author_name}
                         </span>
                         <span className="text-[11px] text-muted-foreground/70">
                           {formatDate(page.submitted_at)}

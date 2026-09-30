@@ -1,18 +1,21 @@
 /**
  * Hero — Server Component wrapper.
- * Fetches data on the server and passes it to the HeroClient (which needs
- * 'use client' for mouse parallax tracking).
+ *
+ * The identity of the notebook (overline, title, topics) comes from homepage
+ * settings; Today's Page promotes the latest published article.
  */
+
 import HeroClient from "@/components/home/HeroClient";
-import { getAllActiveEntries, getRandomEntry } from "@/modules/notebook";
-import { getTranslations } from "next-intl/server";
+import type { Article } from "@/types";
 
-export default async function Hero() {
-  const [t, initialEntry, allEntries] = await Promise.all([
-    getTranslations("home.hero"),
-    getRandomEntry(),
-    getAllActiveEntries(),
-  ]);
+interface HeroProps {
+  eyebrow: string;
+  title: string;
+  topics: string[];
+  authorName: string;
+  todaysArticle: Article | null;
+}
 
-  return <HeroClient initialEntry={initialEntry} allEntries={allEntries} title={t("title")} />;
+export default function Hero(props: HeroProps) {
+  return <HeroClient {...props} />;
 }

@@ -44,10 +44,10 @@ export async function GET(_req: NextRequest) {
 
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-    // Lightweight read-only ping — does not create any records
+    // Lightweight read-only ping   does not create any records
     const { error } = await supabase.from("articles").select("id").limit(1).single();
 
-    // PGRST116 = "no rows found" — that's still a healthy DB response
+    // PGRST116 = "no rows found"   that's still a healthy DB response
     if (error && error.code !== "PGRST116") {
       status.database = "error";
       status.ok = false;

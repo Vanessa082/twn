@@ -1,14 +1,14 @@
 "use client";
 
 /**
- * HeroTypewriter — Cormorant Garamond ink-drying thought reveal.
+ * HeroTypewriter   Cormorant Garamond ink-drying thought reveal.
  *
  * Typography from design image:
  *   - Font: Cormorant Garamond (--font-quote), ~50px, weight 500
  *   - Normal text: near-black (#111)
  *   - *italic* words: warm amber #AE8D64, italic style
  *   - Cursor: thin 1.5px, blinks gently
- *   - CTA: "READ THE LATEST NOTE →" — tiny uppercase Inter
+ *   - CTA: "READ THE LATEST NOTE →"   tiny uppercase Inter
  */
 
 import type { NotebookEntry } from "@/types";
@@ -68,7 +68,7 @@ export default function HeroTypewriter({ currentEntry, phase }: HeroTypewriterPr
           style={{ fontSize: "clamp(2rem, 4vw, 3.1rem)", maxWidth: "480px" }}
         >
           <RichThought text={currentEntry.thought} />
-          {/* Blinking cursor — 1px thin, very subtle */}
+          {/* Blinking cursor   1px thin, very subtle */}
           <span
             aria-hidden="true"
             className={[
@@ -86,7 +86,7 @@ export default function HeroTypewriter({ currentEntry, phase }: HeroTypewriterPr
         >
           <span>Read the latest note</span>
           <span className="group-hover:translate-x-1.5 transition-transform duration-300 inline-block">
-            ——&gt;
+              &gt;
           </span>
         </Link>
       </div>

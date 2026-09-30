@@ -45,7 +45,7 @@ const articles = [
       "Exploring the fundamentals of software architecture, engineering standards, and scaling digital frameworks for sustainable high-traffic operations.",
     content: `
       <h2>The Foundation of Modern Scaling</h2>
-      <p>Building high-performance software systems requires moving beyond simple compute scaling. It demands a structured approach to modular services, caching strategies, and robust data persistence. When we look at modern web systems, the bottleneck is rarely CPU or memory—it is almost always data access, state transitions, and connection pooling.</p>
+      <p>Building high-performance software systems requires moving beyond simple compute scaling. It demands a structured approach to modular services, caching strategies, and robust data persistence. When we look at modern web systems, the bottleneck is rarely CPU or memory it is almost always data access, state transitions, and connection pooling.</p>
       
       <h2>Decoupling and Message Streams</h2>
       <p>To eliminate cascading failures, engineering leaders must prioritize decoupling critical services. Event-driven message buses like Apache Kafka or RabbitMQ act as shock absorbers, ensuring that a surge of incoming user registration requests does not overwhelm payment or user-profiling services.</p>
@@ -86,7 +86,7 @@ const articles = [
     title: "Continuous Growth: The Life of a Lifelong Learner",
     slug: "continuous-growth-life-of-lifelong-learner",
     excerpt:
-      "In the rapidly evolving world of technology, learning is not a phase—it is a perpetual state. Exploring tools, reading resources, and retaining tech concepts.",
+      "In the rapidly evolving world of technology, learning is not a phase it is a perpetual state. Exploring tools, reading resources, and retaining tech concepts.",
     content: `
       <h2>Embracing the Growth Mindset</h2>
       <p>The tech stack you use today will likely look different in five years. If you rely solely on your current knowledge, you risk obsolescence. Embracing a growth mindset means viewing new technologies not as obstacles, but as opportunities to expand your analytical toolbox.</p>
@@ -109,7 +109,7 @@ const articles = [
       "A deep dive into why open source contribution is the ultimate collaborative workspace, and how tech groups create global, inclusive ecosystems.",
     content: `
       <h2>The Global Tech Commons</h2>
-      <p>Open source software is the foundation of the modern internet. Contributing to public codebases is not just a way to build a portfolio—it is an exercise in global collaboration, code standard compliance, and distributed team synchronization.</p>
+      <p>Open source software is the foundation of the modern internet. Contributing to public codebases is not just a way to build a portfolio it is an exercise in global collaboration, code standard compliance, and distributed team synchronization.</p>
 
       <h2>Overcoming the Imposter Barrier</h2>
       <p>You do not need to be a seasoned software architect to contribute to open source. Documentation updates, bug reports, localization, and automated tests are highly valued contributions that help maintain ecosystem health. Start small by fixing typos or resolving open issues in utility packages.</p>
@@ -209,7 +209,7 @@ const articles = [
       "Practical strategies for tech community organizers to build safe, welcoming, and inclusive spaces for underrepresented voices.",
     content: `
       <h2>The Importance of Diverse Teams</h2>
-      <p>Tech solutions built by homogeneous teams reflect their blind spots. Fostering diverse communities is not just about ethics—it is about bringing varied cognitive styles and problem-solving perspectives to build better products for everyone.</p>
+      <p>Tech solutions built by homogeneous teams reflect their blind spots. Fostering diverse communities is not just about ethics it is about bringing varied cognitive styles and problem-solving perspectives to build better products for everyone.</p>
 
       <h2>Creating Low-Barrier Entryways</h2>
       <p>Beginners often feel intimidated entering professional developer groups. Organizing welcoming sessions, dedicated study groups, and clear codes of conduct help break down entry barriers for underrepresented engineers.</p>

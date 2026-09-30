@@ -7,9 +7,9 @@
  * navigation away from the editor.
  *
  * Two layers of protection:
- *   1. `beforeunload` — fires when the user closes the tab or refreshes.
+ *   1. `beforeunload`   fires when the user closes the tab or refreshes.
  *      The browser shows its own built-in "Leave site?" dialog.
- *   2. `isDirty` — returned flag used by the component to show a status
+ *   2. `isDirty`   returned flag used by the component to show a status
  *      indicator and optionally disable links.
  *
  * Pattern reference:

@@ -15,10 +15,10 @@ interface SaveStatusIndicatorProps {
  * continuous feedback on whether their work is saved.
  *
  * States:
- *   idle     — no changes have been made since the page loaded
- *   unsaved  — the author has typed something but not saved
- *   saving   — the save action is in flight (isPending from useTransition)
- *   saved    — the save action completed successfully
+ *   idle       no changes have been made since the page loaded
+ *   unsaved    the author has typed something but not saved
+ *   saving     the save action is in flight (isPending from useTransition)
+ *   saved      the save action completed successfully
  */
 export default function SaveStatusIndicator({ status }: SaveStatusIndicatorProps) {
   if (status === "idle") return null;

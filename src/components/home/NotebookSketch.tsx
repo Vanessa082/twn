@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * NotebookSketch — The signature TWN Hero Notebook.
+ * NotebookSketch   The signature TWN Hero Notebook.
  *
  * Implements the Figma / Design Specification:
  *   - Rotated ~15° clockwise, subtle 3/4 camera perspective.

@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════════
--- SQL Migration: Article Revision History (Milestone 5 — CMS Reliability)
+-- SQL Migration: Article Revision History (Milestone 5   CMS Reliability)
 -- Copy and paste this into the Supabase SQL Editor.
 -- ═══════════════════════════════════════════════════════════════════════════════
 

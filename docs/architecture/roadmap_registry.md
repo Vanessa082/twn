@@ -22,7 +22,7 @@ This registry records the known and proposed volumes of the TWN Product Blueprin
 | `Canonical` | Formally written, reviewed, and accepted as authoritative |
 | `Draft` | Content exists but is not yet formally reviewed or accepted |
 | `Proposed` | A placeholder volume number with an agreed subject but no written content |
-| `Deferred` | Intentionally postponed — not relevant to the current phase |
+| `Deferred` | Intentionally postponed   not relevant to the current phase |
 | `Unconfirmed` | Volume number reserved but subject not yet agreed |
 
 ---
@@ -31,21 +31,21 @@ This registry records the known and proposed volumes of the TWN Product Blueprin
 
 | Volume | Title | Status | Implementation Phase | Source of Authority |
 |---|---|---|---|---|
-| Volume 1 | Vision | Canonical | Foundational | `Blueprint.md` — confirmed |
-| Volume 2 | Editorial Domain | Canonical | Phase 1/2 | `Blueprint.md` — confirmed |
-| Volume 3 | Notebook Domain | Canonical | Phase 1/2 | `Blueprint.md` — confirmed |
-| Volume 4 | Community Domain | Canonical | Phase 2 | `Blueprint.md` — confirmed |
-| Volume 5 | Newsletter Domain | Canonical | Phase 2 | `Blueprint.md` — confirmed |
-| Volume 6 | Search Domain | Canonical | Phase 2 | `Blueprint.md` — confirmed |
-| Volume 7 | System Architecture | Canonical | Phase 2 | `Blueprint.md` — confirmed |
-| Volume 8 | Database Architecture | Canonical | Phase 2 (Milestone 9.2) | `Blueprint.md` — confirmed |
-| Volume 9 | API Architecture | Canonical | Phase 2 (Milestone 9.3) | `Blueprint.md` — confirmed |
-| Volume 10 | Security Architecture | Canonical | Phase 2 (Milestone 9.4) | `Blueprint.md` — confirmed |
-| Volume 11 | Editorial Governance | Canonical | Phase 2 (Milestone 9.5) | `Blueprint.md` — confirmed |
+| Volume 1 | Vision | Canonical | Foundational | `Blueprint.md`   confirmed |
+| Volume 2 | Editorial Domain | Canonical | Phase 1/2 | `Blueprint.md`   confirmed |
+| Volume 3 | Notebook Domain | Canonical | Phase 1/2 | `Blueprint.md`   confirmed |
+| Volume 4 | Community Domain | Canonical | Phase 2 | `Blueprint.md`   confirmed |
+| Volume 5 | Newsletter Domain | Canonical | Phase 2 | `Blueprint.md`   confirmed |
+| Volume 6 | Search Domain | Canonical | Phase 2 | `Blueprint.md`   confirmed |
+| Volume 7 | System Architecture | Canonical | Phase 2 | `Blueprint.md`   confirmed |
+| Volume 8 | Database Architecture | Canonical | Phase 2 (Milestone 9.2) | `Blueprint.md`   confirmed |
+| Volume 9 | API Architecture | Canonical | Phase 2 (Milestone 9.3) | `Blueprint.md`   confirmed |
+| Volume 10 | Security Architecture | Canonical | Phase 2 (Milestone 9.4) | `Blueprint.md`   confirmed |
+| Volume 11 | Editorial Governance | Canonical | Phase 2 (Milestone 9.5) | `Blueprint.md`   confirmed |
 | Volume 12 | _Not yet confirmed_ | Unconfirmed | Unknown | No authoritative source found |
 | Volume 13 | _Not yet confirmed_ | Unconfirmed | Unknown | No authoritative source found |
 | Volume 14 | _Not yet confirmed_ | Unconfirmed | Unknown | No authoritative source found |
-| Volume 15 | Observability and Analytics | Canonical | Phase 2 (Milestone 9.6) | `Blueprint.md` — confirmed |
+| Volume 15 | Observability and Analytics | Canonical | Phase 2 (Milestone 9.6) | `Blueprint.md`   confirmed |
 | Volume 16 | _Not yet confirmed_ | Unconfirmed | Unknown | No authoritative source found |
 
 ---
@@ -70,8 +70,8 @@ These are speculative. No implementation work should reference them until they a
 
 | Phase | Governing Volumes |
 |---|---|
-| Phase 1 — Foundation | Volumes 1, 2, 3 |
-| Phase 2 — Secure Editorial and Knowledge Foundation | Volumes 4, 5, 6, 7, 8, 9, 10, 11, 15 |
+| Phase 1   Foundation | Volumes 1, 2, 3 |
+| Phase 2   Secure Editorial and Knowledge Foundation | Volumes 4, 5, 6, 7, 8, 9, 10, 11, 15 |
 | Phase 3 and beyond | To be determined based on confirmed future volumes |
 
 ---
@@ -86,4 +86,4 @@ This document should be updated when:
 
 | Version | Date | Author | Changes |
 |---|---|---|---|
-| 1.0 | 2026-07-24 | Vanessa | Initial registry — Phase 2 |
+| 1.0 | 2026-07-24 | Vanessa | Initial registry   Phase 2 |

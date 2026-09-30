@@ -1,50 +1,85 @@
-import BrowseByTopic from "@/components/home/BrowseByTopic";
+import ChapterStrip from "@/components/home/ChapterStrip";
 import FeaturedArticle from "@/components/home/FeaturedArticle";
+import FieldNotesSection from "@/components/home/FieldNotesSection";
+import FromTheNotebookSection from "@/components/home/FromTheNotebookSection";
 import Hero from "@/components/home/Hero";
-import LatestNotesSection from "@/components/home/LatestNotesSection";
-import NewsletterSection from "@/components/home/NewsletterSection";
-// import SharedPagesSection from "@/components/home/SharedPagesSection";
-import TodaysPage from "@/components/home/TodaysPage";
+import VersionsOfMeSection from "@/components/home/VersionsOfMeSection";
+import WorkbenchSection from "@/components/home/WorkbenchSection";
+import { getAboutData } from "@/lib/services/about";
 import { getLatestArticles } from "@/lib/services/articles";
-import { getTodaysEntry } from "@/modules/notebook";
-import { getApprovedSharedPages } from "@/modules/community";
+import { getPublishedFieldNotes } from "@/lib/services/field-notes";
+import { getHomepageSettings } from "@/lib/services/homepage-settings";
+import { getPublishedProjects } from "@/lib/services/projects";
 
 export const revalidate = 60; // ISR
 
+/**
+ * Every section is fed by the CMS and disappears when its source is empty:
+ *   Hero, volume, featured note → Admin → Homepage
+ *   From the notebook           → Admin → Articles
+ *   Field notes                 → Admin → Field Notes
+ *   Workbench                   → Admin → Workbench
+ *   Versions of me              → Admin → About Page → Voice & Versions
+ *   Today's page (hero margin)  → latest published article's required excerpt
+ *   The notebook continues      → Admin → Tags (categories)
+ */
 export default async function HomePage() {
-  const [articles, todaysEntry,
-    //  sharedPages
-  ] = await Promise.all([
-    getLatestArticles(7),
-    getTodaysEntry(),
-    getApprovedSharedPages(),
+  const [settings, articles, fieldNotes, projects, about] = await Promise.all([
+    getHomepageSettings(),
+    getLatestArticles(6),
+    getPublishedFieldNotes(3),
+    getPublishedProjects(3),
+    getAboutData(),
   ]);
 
-  const featuredArticle = articles.length > 0 ? articles[0] : null;
-  const latestArticles = articles.length > 1 ? articles.slice(1) : [];
+  const todaysArticle = articles[0] ?? null;
+  const featured =
+    settings.featured_article ??
+    articles.find((article) => article.id !== todaysArticle?.id) ??
+    null;
+  const recent = articles
+    .filter((article) => article.id !== todaysArticle?.id && article.id !== featured?.id)
+    .slice(0, 4);
+  const authorName = about.hero.title;
+  const showVersions = about.section_visibility.identity_stages !== false;
 
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* 1. Hero — animated entrance + parallax notebook */}
-      <Hero />
+    <div className="flex min-h-screen flex-col">
+      <Hero
+        eyebrow={settings.hero_eyebrow}
+        title={settings.hero_title}
+        topics={settings.hero_topics}
+        authorName={authorName}
+        todaysArticle={todaysArticle}
+      />
 
-      {/* 2. Today's Page — sequential border-draw entry */}
-      {todaysEntry && <TodaysPage entry={todaysEntry} />}
+      {/* {featured && (
+        <FeaturedArticle
+          article={featured}
+          volume={{
+            label: settings.volume_label,
+            season: settings.volume_season,
+            theme: settings.volume_subtitle,
+          }}
+        />
+      )} */}
 
-      {/* 3. Featured Article */}
-      {featuredArticle && <FeaturedArticle article={featuredArticle} />}
+      <FromTheNotebookSection articles={recent} />
 
-      {/* 4. Latest Notes — staggered card reveal */}
-      <LatestNotesSection articles={latestArticles} />
+      <FieldNotesSection notes={fieldNotes} />
 
-      {/* 5. Community Shared Pages — paper-placement cards */}
-      {/* <SharedPagesSection initialPages={sharedPages} /> */}
+      <WorkbenchSection projects={projects} />
 
-      {/* 6. Browse by Topic — icon-draw grid */}
-      <BrowseByTopic />
+      {showVersions && (
+        <VersionsOfMeSection
+          versions={about.identity_stages ?? []}
+          authorName={authorName}
+          portraitUrl={about.hero.image_url}
+          lead={about.hero.lead}
+        />
+      )}
 
-      {/* 7. Newsletter — calm ending */}
-      <NewsletterSection />
+      <ChapterStrip />
     </div>
   );
 }

@@ -77,7 +77,7 @@ export async function getLatestArticles(limit = 10): Promise<Article[]> {
       return FALLBACK_ARTICLES.slice(0, safeLimit);
     }
 
-    // Return real data — empty array when DB has no published articles yet
+    // Return real data   empty array when DB has no published articles yet
     return data ? (data as DatabaseArticleRow[]).map(mapToArticle) : [];
   } catch (error) {
     console.warn("[getLatestArticles] Service error, falling back to local seed:", error);
@@ -115,7 +115,7 @@ export async function getArticlesByCategory(
       return FALLBACK_ARTICLES.filter((a) => a.category === category).slice(0, safeLimit);
     }
 
-    // Return real data — empty array when category has no published articles yet
+    // Return real data   empty array when category has no published articles yet
     return data ? (data as DatabaseArticleRow[]).map(mapToArticle) : [];
   } catch (error) {
     console.warn("[getArticlesByCategory] Service error, falling back to local seed:", error);

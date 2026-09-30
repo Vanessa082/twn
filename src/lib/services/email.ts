@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Email Service — Resend Integration
+// Email Service   Resend Integration
 // Handles all transactional emails: welcome, article broadcast, etc.
 // Only ever called server-side (never imported by client components).
 //
@@ -15,7 +15,7 @@ import { Resend } from "resend";
 
 const resend = new Resend(env.RESEND_API_KEY);
 
-/** Site URL — update this when a custom domain is purchased. */
+/** Site URL   update this when a custom domain is purchased. */
 const SITE_URL = "https://twn-note.vercel.app";
 
 /**
@@ -29,7 +29,7 @@ const FROM_ADDRESS = "TWN <onboarding@resend.dev>";
 /**
  * Sends a welcome email to a new newsletter subscriber.
  * Called immediately after a successful DB insert in addSubscriber().
- * Fails silently — a broken email must never block the subscription itself.
+ * Fails silently   a broken email must never block the subscription itself.
  */
 export async function sendWelcomeEmail(email: string): Promise<void> {
   try {
@@ -63,10 +63,10 @@ export async function sendWelcomeEmail(email: string): Promise<void> {
           <tr>
             <td style="padding:32px 40px;">
               <p style="margin:0 0 20px;font-size:15px;line-height:1.7;color:#444444;">
-                Thank you for subscribing. You'll receive new notebook entries, articles, and reflections directly in your inbox — no noise, no spam.
+                Thank you for subscribing. You'll receive new notebook entries, articles, and reflections directly in your inbox   no noise, no spam.
               </p>
               <p style="margin:0 0 20px;font-size:15px;line-height:1.7;color:#444444;">
-                TWN is a place for thoughtful writing at the intersection of technology and lived experience. We believe knowledge deserves to be preserved carefully — like pages in a notebook that lasts for years.
+                TWN is a place for thoughtful writing at the intersection of technology and lived experience. We believe knowledge deserves to be preserved carefully   like pages in a notebook that lasts for years.
               </p>
               <blockquote style="margin:28px 0;padding:16px 20px;border-left:3px solid #AE8D64;background:#F9F9F7;border-radius:0 8px 8px 0;">
                 <p style="margin:0;font-size:15px;font-style:italic;color:#555555;line-height:1.6;">
@@ -74,7 +74,7 @@ export async function sendWelcomeEmail(email: string): Promise<void> {
                 </p>
               </blockquote>
               <p style="margin:20px 0 0;font-size:14px;line-height:1.7;color:#777777;">
-                If you ever want to leave a page — share a reflection, a lesson, or a thought — you can do so at any time on the site.
+                If you ever want to leave a page   share a reflection, a lesson, or a thought   you can do so at any time on the site.
               </p>
             </td>
           </tr>
@@ -104,7 +104,7 @@ export async function sendWelcomeEmail(email: string): Promise<void> {
       `.trim(),
     });
   } catch (err) {
-    // Non-fatal: log but don't throw — a broken email must not break the subscription
+    // Non-fatal: log but don't throw   a broken email must not break the subscription
     console.error("[sendWelcomeEmail] Failed to send welcome email:", err);
   }
 }
@@ -125,7 +125,7 @@ export interface ArticleBroadcastPayload {
 /**
  * Sends a "new article published" notification to a single subscriber.
  * Designed to be called in a loop by broadcastNewArticle() in subscribers.ts.
- * Fails silently — one bad email address must not stop the rest of the batch.
+ * Fails silently   one bad email address must not stop the rest of the batch.
  */
 export async function sendArticleNewsletterEmail(
   to: string,

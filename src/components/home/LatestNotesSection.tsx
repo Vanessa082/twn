@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * LatestNotesSection — 3-column, 2-row grid. Matches design image exactly.
+ * LatestNotesSection   3-column, 2-row grid. Matches design image exactly.
  *
  * Section header: "Latest Notes" (serif left) | "VIEW ALL ARTICLES →" (tiny right)
  * Cards: white bg, 14px radius, subtle border, fixed image height 220px
@@ -83,7 +83,7 @@ export default function LatestNotesSection({ articles }: LatestNotesSectionProps
                 hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(0,0,0,0.07)]
                 transition-all duration-300"
             >
-              {/* Cover image — fixed 220px height */}
+              {/* Cover image   fixed 220px height */}
               <div className="relative h-[220px] w-full overflow-hidden bg-neutral-100 flex-shrink-0">
                 {article.cover_image ? (
                   <ImageWithSkeleton
@@ -94,10 +94,9 @@ export default function LatestNotesSection({ articles }: LatestNotesSectionProps
                     className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                   />
                 ) : (
-                  <div className="absolute inset-0 flex items-center justify-center bg-neutral-100">
-                    <span className="font-serif font-black text-4xl tracking-widest text-neutral-200">
-                      TWN
-                    </span>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-muted gap-2">
+                    <span className="font-serif font-black text-3xl tracking-[0.15em] text-muted-foreground/20">TWN</span>
+                    <span className="w-8 h-px bg-muted-foreground/15" />
                   </div>
                 )}
               </div>

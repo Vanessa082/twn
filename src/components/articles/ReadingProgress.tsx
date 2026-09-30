@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * ReadingProgress — a thin progress bar at the very top of the page
+ * ReadingProgress   a thin progress bar at the very top of the page
  * that fills as the user scrolls through the article.
  *
  * Medium uses this exact pattern. It:

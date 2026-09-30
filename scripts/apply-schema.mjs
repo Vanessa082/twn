@@ -10,7 +10,7 @@ import { readFileSync } from "node:fs";
 import { createClient } from "@supabase/supabase-js";
 
 const SUPABASE_URL = "https://ajafekyeeuvygqdyrlpu.supabase.co";
-// Using the key from .env.local — this is the anon key (service role key is the same currently)
+// Using the key from .env.local   this is the anon key (service role key is the same currently)
 const SUPABASE_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqYWZla3llZXV2eWdxZHlybHB1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NjkyNjUsImV4cCI6MjA5NzA0NTI2NX0.o9zDSn5UQaqlvHboulG168MVzeS-NCtZFIQl-3QxOUc";
 

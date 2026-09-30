@@ -2,13 +2,13 @@
 
 import { toAdminActionError } from "@/lib/auth/admin-errors";
 import { canManageNotebookEntries } from "@/lib/auth/policies";
-import { recordAuditLog } from "@/platform/audit/audit-log";
 import {
-  createEntryAdmin,
-  deleteEntryAdmin,
-  updateEntryAdmin,
-} from "@/modules/notebook";
-import { createNotebookEntrySchema, updateNotebookEntrySchema } from "@/lib/validation/schemas";
+  createNotebookEntrySchema,
+  entityIdSchema,
+  updateNotebookEntrySchema,
+} from "@/lib/validation/schemas";
+import { createEntryAdmin, deleteEntryAdmin, updateEntryAdmin } from "@/modules/notebook";
+import { recordAuditLog } from "@/platform/audit/audit-log";
 import type { NotebookEntry } from "@/types";
 import { revalidatePath } from "next/cache";
 
@@ -47,8 +47,9 @@ export async function updateEntryAction(
 ) {
   try {
     const { userId } = await canManageNotebookEntries();
+    const validatedId = entityIdSchema.parse(id);
     const validated = updateNotebookEntrySchema.parse(input);
-    const entry = await updateEntryAdmin(id, validated);
+    const entry = await updateEntryAdmin(validatedId, validated);
 
     await recordAuditLog({
       userId,
@@ -73,13 +74,14 @@ export async function updateEntryAction(
 export async function deleteEntryAction(id: string) {
   try {
     const { userId } = await canManageNotebookEntries();
-    await deleteEntryAdmin(id);
+    const validatedId = entityIdSchema.parse(id);
+    await deleteEntryAdmin(validatedId);
 
     await recordAuditLog({
       userId,
       action: "notebook_entry.deleted",
       targetType: "notebook_entry",
-      targetId: id,
+      targetId: validatedId,
     });
 
     revalidatePath("/");

@@ -3,7 +3,7 @@
 - **Status**: Accepted
 - **Date**: 2026-07-24
 - **Decision owners**: TWN Engineering (Vanessa)
-- **Related blueprint volumes**: Volume 1 — Vision, Volume 7 — System Architecture
+- **Related blueprint volumes**: Volume 1   Vision, Volume 7   System Architecture
 
 ---
 
@@ -23,7 +23,7 @@ However, building reader authentication also introduces:
 
 **No reader authentication in Phase 2.**
 
-All public-facing TWN features in Phase 2 — article reading, margin note submission, shared page submission, newsletter subscription, and search — operate without requiring readers to create accounts.
+All public-facing TWN features in Phase 2   article reading, margin note submission, shared page submission, newsletter subscription, and search   operate without requiring readers to create accounts.
 
 Community contributions (margin notes and shared pages) use anonymous submission with name fields. They are protected by rate limiting, honeypot fields, and duplicate detection.
 
@@ -47,7 +47,7 @@ The only authentication in Phase 2 is admin authentication via Clerk for the CMS
 - No PII beyond newsletter email addresses is stored in Phase 2
 - Privacy obligations remain minimal (newsletter email only)
 - No account security surface for public users to attack
-- Community submissions are genuinely anonymous — lower barrier to contribution
+- Community submissions are genuinely anonymous   lower barrier to contribution
 
 ### Negative consequences
 - No personalization for readers

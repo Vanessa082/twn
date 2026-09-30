@@ -32,9 +32,9 @@ Every day's content is backed by official engineering documentation, system desi
 - **OWASP Application Security**: [OWASP Top 10 Web Application Security Risks](https://owasp.org/Top10/)
 
 ### 📐 TWN System Architecture & Blueprint References
-- **`Blueprint.md` Volume 1 — Vision**: Product philosophy & long-term editorial journal goals (`Blueprint.md:L15`)
-- **`Blueprint.md` Volume 6 — Product Domains**: Editorial, Community & Notebook domain specs (`Blueprint.md:L4926`)
-- **`Blueprint.md` Volume 7 — Engineering Handbook & Architecture**: Modular monolith boundaries, SOLID principles, Clean Architecture (`Blueprint.md:L7523`, `Blueprint.md:L24075`)
+- **`Blueprint.md` Volume 1   Vision**: Product philosophy & long-term editorial journal goals (`Blueprint.md:L15`)
+- **`Blueprint.md` Volume 6   Product Domains**: Editorial, Community & Notebook domain specs (`Blueprint.md:L4926`)
+- **`Blueprint.md` Volume 7   Engineering Handbook & Architecture**: Modular monolith boundaries, SOLID principles, Clean Architecture (`Blueprint.md:L7523`, `Blueprint.md:L24075`)
 - **TWN System Architecture Diagrams**: `docs/architecture/adr/ADR-001-modular-monolith.md`
 - **TWN Editorial Governance Standard**: `docs/governance/editorial_governance.md`
 

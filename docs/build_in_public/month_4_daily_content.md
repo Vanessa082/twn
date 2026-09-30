@@ -40,7 +40,7 @@ Zero friction for real users. 100% effective against basic spam bots.
   - *"Here is how I stop spam bots in TWN without CAPTCHAs."*
   - *"I add a hidden input field called `hp_field`."*
   - *"Humans can't see it, but spam bots fill out every input they find."*
-  - *"If `hp_field` has text on submit—BAM! Bot detected!"*
+  - *"If `hp_field` has text on submit BAM! Bot detected!"*
 
 ---
 
@@ -90,7 +90,7 @@ State machines keep workflow logic predictable and bug-free!
 
 ### LinkedIn Post Template
 ```text
-Software engineering isn't just about writing code—it's also about building governance systems.
+Software engineering isn't just about writing code it's also about building governance systems.
 
 In TWN, we created a formal 13-section `editorial_governance.md` document that defines:
 

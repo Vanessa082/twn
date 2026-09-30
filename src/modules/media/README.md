@@ -39,7 +39,7 @@ None. Media references are stored and queried by the owning module (e.g., Editor
 - `IdentityPort` (Identity): verifies uploader is an authorized administrator
 
 ## Routes
-- `/api/upload` — server endpoint for image upload (admin only)
+- `/api/upload`   server endpoint for image upload (admin only)
 
 ## Permissions
 - All upload operations require admin authorization
@@ -54,7 +54,7 @@ None. Media references are stored and queried by the owning module (e.g., Editor
 - Must not expose raw Cloudinary credentials to the application or presentation layer
 
 ## Known Limitations
-- Only image uploads are supported — no video, PDF, or document uploads
+- Only image uploads are supported   no video, PDF, or document uploads
 - No automatic image deletion when an article is deleted (Cloudinary orphan accumulation)
-- No media library management UI — images are uploaded per-article, not catalogued centrally
+- No media library management UI   images are uploaded per-article, not catalogued centrally
 - Upload size limit is enforced at the Next.js Route Handler level, not in the domain layer

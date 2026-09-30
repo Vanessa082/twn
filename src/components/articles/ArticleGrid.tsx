@@ -2,7 +2,7 @@
  * ARTICLE GRID COMPONENT
  *
  * 🧠 LEARNING POINT: Presentational vs. Container Components
- * This is a pure "presentational" component — it only knows how to render articles.
+ * This is a pure "presentational" component   it only knows how to render articles.
  * It doesn't fetch data itself; data comes in via `props` from a parent Server Component.
  *
  * Pattern:
@@ -32,7 +32,7 @@ export default function ArticleGrid({ articles }: ArticleGridProps) {
    * or when a category has no posts. Instead of rendering an empty broken grid,
    * we show a friendly empty-state UI with an icon and message.
    *
-   * This is called an "empty state" or "zero-data state" — a key UX pattern that tells
+   * This is called an "empty state" or "zero-data state"   a key UX pattern that tells
    * the user: "Nothing is broken, there's just nothing here yet."
    */
   if (!articles || articles.length === 0) {
@@ -49,7 +49,7 @@ export default function ArticleGrid({ articles }: ArticleGridProps) {
   /**
    * 🧠 LEARNING POINT: Array.map() for Rendering Lists
    * `.map()` transforms each item in the array into a React element.
-   * The `key` prop is mandatory — React uses it internally to efficiently
+   * The `key` prop is mandatory   React uses it internally to efficiently
    * re-render only the items that changed, not the entire list.
    * Always use a stable unique identifier (like a database `id`) as the key.
    * Never use the array index as a key if the list can be reordered.

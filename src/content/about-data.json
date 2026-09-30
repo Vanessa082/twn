@@ -1,0 +1,213 @@
+{
+  "hero": {
+    "title": "Vanessa",
+    "tagline": "The woman behind the notebook",
+    "lead": "I'm figuring it out in public.",
+    "story": [
+      "I'm a developer, writer, educator and builder documenting my life around technology — the things I'm learning, the things I'm building, the work I'm looking for, the ideas that fail, the ideas that survive, and the questions I'm still trying to answer.",
+      "TWN — The Notebook of a Tech Woman — is where I keep that record."
+    ],
+    "roles": [
+      {
+        "label": "Developer",
+        "sub": "Frontend & full-stack architectures"
+      },
+      {
+        "label": "Writer",
+        "sub": "Technical notes, essays, documentation"
+      },
+      {
+        "label": "Educator",
+        "sub": "Robotics, HTML, beginner programming"
+      },
+      {
+        "label": "Builder",
+        "sub": "Digital products, open knowledge, communities"
+      }
+    ],
+    "image_url": "/images/vanessa.jpg",
+    "image_caption": "Vanessa — Technologist, Writer, Educator"
+  },
+  "short_version": {
+    "heading": "A young Cameroonian technologist finding her place in public.",
+    "body": "There has never been a single, static version of me. Rather than waiting for a neatly summarised career milestone, this notebook keeps the ongoing work of building software, teaching others, and contributing to open archives."
+  },
+  "timeline": [
+    {
+      "period": "2021",
+      "title": "BoulotMan",
+      "detail": "First steps — WordPress, understanding the web as an accessible creative craft."
+    },
+    {
+      "period": "2022–2024",
+      "title": "Rebase Code Camp",
+      "detail": "Learning how software actually works. Later returning to mentor and teach HTML to newcomers."
+    },
+    {
+      "period": "2025",
+      "title": "Jalpha Health",
+      "detail": "React.js applications for healthcare — patient and hospital-facing digital experiences with real stakes."
+    },
+    {
+      "period": "2025–2026",
+      "title": "Remote full-stack engineering",
+      "detail": "Headless Shopify storefronts, Next.js web applications, collaborating across remote international teams."
+    },
+    {
+      "period": "2025–2026",
+      "title": "Robotics & education",
+      "detail": "Guiding 14+ young learners through Bee-Bots, Ozobots, NAO, and Marty across 75+ hours of hands-on sessions."
+    },
+    {
+      "period": "2026",
+      "title": "Open knowledge",
+      "detail": "Wikipedia, Wikidata, Wikimedia. Co-founded Wiki Alliance for Open Knowledge Cameroon to preserve regional stories."
+    },
+    {
+      "period": "Now",
+      "title": "Building. Writing. Learning.",
+      "detail": "Looking for the next team and challenge where I can contribute meaningful technical work."
+    }
+  ],
+  "projects": [
+    {
+      "name": "Jalpha Health",
+      "desc": "React.js healthcare applications focused on hospital workflow and patient consultation interfaces.",
+      "tag": "Healthcare"
+    },
+    {
+      "name": "Headless Commerce",
+      "desc": "Next.js and Shopify storefronts optimized for fluid performance, dynamic carts, and custom checkout flows.",
+      "tag": "E-Commerce"
+    },
+    {
+      "name": "Meyalo",
+      "desc": "An initiative exploring how people discover experiences, gatherings, and culture across Cameroon and beyond.",
+      "tag": "Product"
+    }
+  ],
+  "open_knowledge": {
+    "heading": "From writing on the internet to helping preserve knowledge on it.",
+    "lead": "I work around Wikipedia, Wikidata and Wikimedia — documenting stories, notable figures, and community histories that might otherwise disappear from the open web. In 2026, I co-founded the Wiki Alliance for Open Knowledge Cameroon.",
+    "quote": "If something isn't documented with reliable care, finding it later becomes much harder than it should ever be.",
+    "topics": [
+      "Wikipedia Documentation",
+      "Wikidata Knowledge Graph",
+      "Wikimedia Commons Media",
+      "African Knowledge Sourcing",
+      "Open Source Mentorship",
+      "Digital Archiving"
+    ],
+    "closing": "That commitment to preserving knowledge shapes TWN. If we don’t document our own technical experiences, who will?"
+  },
+  "manifesto": {
+    "quote": "There are plenty of polished stories about people who have already made it. I wanted somewhere to document the middle.",
+    "body": "The learning. The uncertainty. The applications. The projects that don't work. The things I'm proud of. The things I'm still figuring out. The person I'm becoming while all of that is happening.",
+    "closing": "TWN is not a finished story. It's the notebook."
+  },
+  "currently": [
+    {
+      "verb": "Learning",
+      "detail": "Distributed systems, deeper frontend engineering patterns, and resilient interface design."
+    },
+    {
+      "verb": "Building",
+      "detail": "Digital products that transform experimental ideas into robust, working software."
+    },
+    {
+      "verb": "Writing",
+      "detail": "TWN essays, engineering notes, and documenting technical workflows in public."
+    },
+    {
+      "verb": "Contributing",
+      "detail": "Wikimedia open knowledge initiatives and improving Cameroon's digital representation."
+    },
+    {
+      "verb": "Teaching",
+      "detail": "Mentoring early-stage programmers and demystifying robotics for young learners."
+    },
+    {
+      "verb": "Looking for",
+      "detail": "A high-trust engineering team where I can solve meaningful problems and grow."
+    }
+  ],
+  "still_figuring_out": [
+    {
+      "question": "The tension between speed and craftsmanship",
+      "reflection": "Early in development, the pressure is always to ship immediately. But as codebases grow, poorly chosen abstractions become heavy anchors. I am learning how to build with velocity without surrendering architectural dignity.",
+      "tag": "Architecture"
+    },
+    {
+      "question": "Building tools vs. building audiences",
+      "reflection": "Writing the code is rarely the hardest part of a product. The real craft begins when you ask whether anyone genuinely needs what you built. I am learning to start with listening before opening an editor.",
+      "tag": "Product"
+    },
+    {
+      "question": "Finding an authentic voice in technical writing",
+      "reflection": "Too much engineering writing reads like a sanitized press release. I want technical essays that retain human curiosity, admit where things broke down, and respect the reader's intelligence.",
+      "tag": "Editorial"
+    },
+    {
+      "question": "Balancing independent creation with economic reality",
+      "reflection": "Navigating freelance contracts, open-source volunteering, community teaching, and personal projects requires constant prioritization. I am discovering how to protect creative energy without burning out.",
+      "tag": "Career"
+    },
+    {
+      "question": "Preserving African digital memory",
+      "reflection": "So much local innovation and history lives only on ephemeral platforms that can vanish overnight. I am figuring out how to build permanent, open records that future generations of African builders can actually find.",
+      "tag": "Archiving"
+    },
+    {
+      "question": "Defining what kind of engineer I want to become",
+      "reflection": "Specialist or generalist? Deep in the browser or across the full distributed pipeline? I am realizing that being adaptable and product-minded matters far more than clinging to a narrow title.",
+      "tag": "Growth"
+    }
+  ],
+  "identity_stages": [
+    {
+      "number": "01",
+      "role": "Learner",
+      "description": "The beginning was curiosity before certainty. WordPress, HTML, the realization that creativity and code could share the same space."
+    },
+    {
+      "number": "02",
+      "role": "Builder",
+      "description": "Moving from reading about how things are made to actually making them. BoulotMan, Meyalo, Jalpha — projects that taught me more than any course."
+    },
+    {
+      "number": "03",
+      "role": "Teacher",
+      "description": "Teaching robotics and programming to beginners. Discovering that explaining something clearly is harder and more rewarding than just doing it yourself."
+    },
+    {
+      "number": "04",
+      "role": "Documentarian",
+      "description": "Building TWN and realizing that the record of the work matters as much as the work itself. A public notebook is an act of generosity and discipline."
+    },
+    {
+      "number": "05",
+      "role": "Writer",
+      "description": "Finding that essays, notes, and observations give the technical work a voice. Writing is how I think in public."
+    },
+    {
+      "number": "06",
+      "role": "Still Becoming",
+      "description": "There is no final version. The point is to keep the notebook open, keep building in public, and stay curious enough to change direction when the work demands it."
+    }
+  ],
+  "closing": {
+    "quote": "I’m not documenting the finished version of myself. I’m documenting the becoming."
+  },
+  "section_visibility": {
+    "hero": true,
+    "short_version": true,
+    "timeline": true,
+    "projects": true,
+    "open_knowledge": true,
+    "manifesto": true,
+    "currently": true,
+    "still_figuring_out": true,
+    "closing": true,
+    "identity_stages": true
+  }
+}

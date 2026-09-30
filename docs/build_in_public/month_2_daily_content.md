@@ -26,7 +26,7 @@ In TWN, every action begins with:
 
 If that check fails, execution stops immediately before any database write happens.
 
-Never treat Server Actions as safe by default—always authorize explicitly!
+Never treat Server Actions as safe by default always authorize explicitly!
 
 #NextJS #CyberSecurity #WebSecurity #TypeScript #AppRouter
 ```
@@ -153,7 +153,7 @@ If we ever switch auth providers, we write ONE new adapter file. The rest of TWN
 - **Script**:
   - *"Love Clerk? Great! But don't let Clerk SDK imports spread across your entire codebase."*
   - *"In TWN, Clerk lives exclusively inside `modules/identity/infrastructure/` behind a port."*
-  - *"If we ever change auth providers, we swap one file—not fifty!"*
+  - *"If we ever change auth providers, we swap one file not fifty!"*
 
 ---
 

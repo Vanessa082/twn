@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * BrowseByTopic — 5 equal tiles matching design image exactly.
+ * BrowseByTopic   5 equal tiles matching design image exactly.
  *
  * Section header: "BROWSE BY TOPIC" label (tiny caps) | "EXPLORE ALL TOPICS →"
  * Grid: 5 equal tiles, each 170px min-height, 16px radius
@@ -156,9 +156,6 @@ export default function BrowseByTopic() {
           }}
         >
           <div>
-            <p className="text-[9px] font-sans font-bold uppercase tracking-[0.28em] text-muted-foreground/70 mb-2">
-              Browse by topic
-            </p>
             <h2 className="font-serif font-bold text-[2rem] sm:text-[2.4rem] tracking-tight text-foreground">
               {t("title")}
             </h2>
@@ -186,7 +183,7 @@ export default function BrowseByTopic() {
                 hover:border-foreground/30 hover:-translate-y-[3px] hover:shadow-[0_6px_24px_rgba(0,0,0,0.06)]
                 transition-all duration-300"
             >
-              {/* Icon — moves up 3px on hover */}
+              {/* Icon   moves up 3px on hover */}
               <div className="text-muted-foreground group-hover:text-foreground group-hover:-translate-y-[3px] transition-all duration-300">
                 {icon}
               </div>

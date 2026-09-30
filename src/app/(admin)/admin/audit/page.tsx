@@ -72,7 +72,7 @@ export default async function AdminAuditLogPage() {
                         ? JSON.stringify(log.details)
                         : log.target_id
                           ? `ID: ${log.target_id}`
-                          : "—"}
+                          : " "}
                     </td>
                   </tr>
                 ))}

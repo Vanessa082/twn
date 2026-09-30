@@ -1,5 +1,5 @@
 # ──────────────────────────────────────────────────────────────────────────────
-# Supabase Keepalive — TWN
+# Supabase Keepalive   TWN
 #
 # Supabase free-tier projects are paused after 7 days of no database activity.
 # This workflow runs every 3 days and makes a lightweight, read-only request
@@ -24,7 +24,7 @@ name: Supabase Keepalive
 on:
   schedule:
     # Runs at 08:00 UTC every 3 days (day 1, 4, 7, 10, ...)
-    # Supabase pauses after 7 days — every 3 days gives us 2x safety margin.
+    # Supabase pauses after 7 days   every 3 days gives us 2x safety margin.
     - cron: "0 8 */3 * *"
 
   # Allow manual trigger from GitHub Actions UI

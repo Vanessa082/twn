@@ -1,7 +1,7 @@
 # Identity Module
 
 ## Purpose
-Resolves authenticated actors and enforces authorization policies across the TWN platform. Identity defines *who* a user is and *what* they are permitted to do — without coupling any business module directly to Clerk or any other authentication provider.
+Resolves authenticated actors and enforces authorization policies across the TWN platform. Identity defines *who* a user is and *what* they are permitted to do   without coupling any business module directly to Clerk or any other authentication provider.
 
 ## Owned Capabilities
 - Authenticated actor resolution
@@ -56,7 +56,7 @@ None in Phase 2.
 - Must not import from `@/modules/editorial`, `@/modules/community`, or `@/modules/notebook`
 
 ## Known Limitations
-- No reader identity — all public users are anonymous in Phase 2
-- No role hierarchy — identity is binary: admin or not admin
+- No reader identity   all public users are anonymous in Phase 2
+- No role hierarchy   identity is binary: admin or not admin
 - No fine-grained permissions per resource (e.g., per-article ownership)
 - Clerk is the only supported identity provider in Phase 2

@@ -45,7 +45,7 @@ const lowlight = createLowlight(common);
 
 // ── Code Block NodeView ───────────────────────────────────────────────────────
 // Renders a VS Code-style code block with:
-//   · Language label (top-left) — auto-detected by lowlight or manually set
+//   · Language label (top-left)   auto-detected by lowlight or manually set
 //   · Copy-to-clipboard button (top-right)
 //   · Real syntax-highlighted code via NodeViewContent
 // biome-ignore lint/suspicious/noExplicitAny: Tiptap NodeViewRendererProps
@@ -67,7 +67,7 @@ function CodeBlockNodeView({ node, updateAttributes, extension }: any) {
         style={{ background: "#1a1a1a" }}
         className="flex items-center justify-between px-4 py-2 rounded-t-xl border border-b-0 border-[#2d2d2d] select-none"
       >
-        {/* Language selector — click to change */}
+        {/* Language selector   click to change */}
         <select
           value={language}
           onChange={(e) => updateAttributes({ language: e.target.value })}
@@ -120,7 +120,7 @@ function CodeBlockNodeView({ node, updateAttributes, extension }: any) {
         </button>
       </div>
 
-      {/* Code content — lowlight injects syntax colour classes */}
+      {/* Code content   lowlight injects syntax colour classes */}
       <pre
         style={{
           background: "#1e1e1e",
@@ -152,7 +152,7 @@ function CodeBlockNodeView({ node, updateAttributes, extension }: any) {
 // ── Image Node View ─────────────────────────────────────────────────────────
 // A React wrapper rendered around every image node in the editor.
 // On hover, a red trash button appears in the top-right corner.
-// Clicking trash calls deleteNode() — removes ONLY that specific image.
+// Clicking trash calls deleteNode()   removes ONLY that specific image.
 // This is the pattern used by Notion, Ghost, and Substack.
 // biome-ignore lint/suspicious/noExplicitAny: Tiptap NodeViewRendererProps
 function ImageNodeView({ node, deleteNode }: any) {
@@ -164,7 +164,7 @@ function ImageNodeView({ node, deleteNode }: any) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Delete button — appears on hover, top-right corner */}
+      {/* Delete button   appears on hover, top-right corner */}
       {hovered && (
         <button
           type="button"
@@ -215,7 +215,7 @@ export default function TiptapEditor({
     extensions: [
       StarterKit.configure({
         heading: { levels: [2, 3] },
-        // Disable StarterKit's built-in codeBlock — CodeBlockLowlight replaces it
+        // Disable StarterKit's built-in codeBlock   CodeBlockLowlight replaces it
         codeBlock: false,
       }),
       CodeBlockLowlight.extend({
@@ -575,7 +575,7 @@ export default function TiptapEditor({
           )}
         </div>
 
-        {/* Table Quick Controls — Shown when focused inside a table */}
+        {/* Table Quick Controls   Shown when focused inside a table */}
         {editor.isActive("table") && (
           <div className="flex items-center gap-1 bg-muted px-2 py-1 rounded-md border border-border">
             <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mr-1 select-none">

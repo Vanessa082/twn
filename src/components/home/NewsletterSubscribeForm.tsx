@@ -7,7 +7,7 @@ import { useActionState, useEffect, useRef } from "react";
 const initialState = { success: false, error: null as string | null };
 
 /**
- * Isolated subscribe UI — only loaded when NEWSLETTER_ENABLED is true.
+ * Isolated subscribe UI   only loaded when NEWSLETTER_ENABLED is true.
  */
 export default function NewsletterSubscribeForm() {
   const [state, formAction, isPending] = useActionState(subscribeAction, initialState);

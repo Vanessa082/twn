@@ -48,7 +48,7 @@ export default async function ArticlePreviewPage({ params }: ArticlePreviewPageP
           <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold uppercase tracking-wider">
             <ShieldAlert className="h-4 w-4 shrink-0" />
             <span>
-              Admin Preview Mode — Status: <strong className="underline">{article.status}</strong>
+              Admin Preview Mode   Status: <strong className="underline">{article.status}</strong>
             </span>
           </div>
 

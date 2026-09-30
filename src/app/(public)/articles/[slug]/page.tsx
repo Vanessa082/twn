@@ -1,15 +1,17 @@
 import RelatedArticles from "@/components/article/RelatedArticles";
-import ArticleEngagement, { InlineActionBar } from "@/components/articles/ArticleEngagement";
+import { InlineActionBar } from "@/components/articles/ArticleEngagement";
 import MarginNotesList from "@/components/articles/MarginNotesList";
 import ReadingProgress from "@/components/articles/ReadingProgress";
 import NewsletterSection from "@/components/home/NewsletterSection";
 import ImageWithSkeleton from "@/components/ui/ImageWithSkeleton";
+import { getAboutData } from "@/lib/services/about";
 import { getArticleBySlug } from "@/lib/services/articles";
-import { getApprovedMarginNotesForArticle } from "@/modules/community";
 import { getRelatedArticles, getTagsForArticle } from "@/lib/services/tags";
+import { getApprovedMarginNotesForArticle } from "@/modules/community";
 import { Tag as TagIcon } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -50,10 +52,11 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
 
   if (!article) notFound();
 
-  const [marginNotes, tags, relatedArticles] = await Promise.all([
+  const [marginNotes, tags, relatedArticles, about] = await Promise.all([
     getApprovedMarginNotesForArticle(article.id),
     getTagsForArticle(article.id),
     getRelatedArticles(article.id, article.category),
+    getAboutData(),
   ]);
 
   const t = await getTranslations("articles");
@@ -85,8 +88,8 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
             </Link>
             <span className="text-border select-none">/</span>
             <Link
-              href="/articles"
-              className="text-xs font-bold uppercase tracking-widest text-muted-gold hover:text-foreground transition-colors"
+              href={`/articles?category=${article.category}`}
+              className="text-[11px] font-semibold uppercase tracking-[0.22em] text-ink-accent hover:text-foreground transition-colors"
             >
               {article.category}
             </Link>
@@ -97,7 +100,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
             {article.title}
           </h1>
 
-          {/* Excerpt / Subtitle — Medium style directly under title */}
+          {/* Excerpt / Subtitle   Medium style directly under title */}
           {article.excerpt && (
             <p className="text-xl sm:text-2xl font-serif text-muted-foreground leading-relaxed text-left mb-6">
               {article.excerpt}
@@ -106,14 +109,25 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
 
           {/* Author Meta Row */}
           <div className="flex items-center gap-3.5 pt-2">
-            <div className="h-11 w-11 rounded-full bg-foreground/10 flex items-center justify-center shrink-0 text-sm font-black font-serif text-foreground/70 select-none">
-              V
-            </div>
+            <Link
+              href="/about"
+              className="relative size-11 shrink-0 overflow-hidden rounded-full bg-muted"
+            >
+              <Image
+                src={about.hero.image_url}
+                alt="Vanessa"
+                fill
+                sizes="44px"
+                className="object-cover object-top"
+              />
+            </Link>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-semibold text-foreground">Vanessa</p>
-                <span className="text-xs text-muted-gold font-medium">• Follow</span>
-              </div>
+              <Link
+                href="/about"
+                className="text-sm font-semibold text-foreground hover:opacity-70 transition-opacity"
+              >
+                Vanessa
+              </Link>
               <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
                 <span>{t("readingTime", { minutes: article.reading_time || 1 })}</span>
                 <span>·</span>
@@ -122,7 +136,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
             </div>
           </div>
 
-          {/* Inline Action Bar — Medium Top Action Bar */}
+          {/* Inline Action Bar   Medium Top Action Bar */}
           <InlineActionBar
             slug={article.slug}
             title={article.title}
@@ -130,7 +144,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
           />
         </div>
 
-        {/* ── Hero Cover Image — Sits below header & action bar ──────────── */}
+        {/* ── Hero Cover Image   Sits below header & action bar ──────────── */}
         {article.cover_image && (
           <div className="w-full max-w-[680px] mx-auto mb-10 px-4 sm:px-6">
             <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-muted border border-border/40 shadow-sm">
@@ -204,6 +218,38 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
             </span>
             <div className="flex-1 h-px bg-border" />
           </div>
+
+          <aside
+            aria-label="About the author"
+            className="mt-12 grid grid-cols-[4.5rem_1fr] items-start gap-5 border-y border-border py-8 sm:grid-cols-[5.5rem_1fr] sm:gap-7"
+          >
+            <div className="relative aspect-[4/5] w-full overflow-hidden bg-muted">
+              <Image
+                src={about.hero.image_url}
+                alt=""
+                fill
+                sizes="88px"
+                className="object-cover object-top"
+              />
+            </div>
+            <div>
+              <p className="text-[10px] font-sans font-semibold uppercase tracking-[0.28em] text-muted-foreground">
+                Written by
+              </p>
+              <p className="mt-2 font-serif text-xl font-bold text-foreground">
+                {about.hero.title}
+              </p>
+              <p className="mt-2 font-quote text-lg italic leading-snug text-foreground/75">
+                &ldquo;{about.hero.lead}&rdquo;
+              </p>
+              <Link
+                href="/about"
+                className="mt-4 inline-block text-[11px] font-sans font-semibold uppercase tracking-[0.2em] text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+              >
+                More about Vanessa →
+              </Link>
+            </div>
+          </aside>
         </div>
 
         {/* ── Margin Reflections Section ────────────────────────────────── */}

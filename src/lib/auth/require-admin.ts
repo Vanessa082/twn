@@ -50,7 +50,7 @@ export async function requireAdmin(): Promise<{ userId: string }> {
       role !== "admin"
     ) {
       console.warn(
-        "[requireAdmin] ADMIN_USER_IDS unset — allowing any signed-in user in development only."
+        "[requireAdmin] ADMIN_USER_IDS unset   allowing any signed-in user in development only."
       );
     }
 

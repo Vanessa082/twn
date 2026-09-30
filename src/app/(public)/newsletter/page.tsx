@@ -1,10 +1,10 @@
 /**
- * /newsletter — Dedicated newsletter subscription page.
+ * /newsletter   Dedicated newsletter subscription page.
  *
  * ─── NEWSLETTER_ENABLED flag ──────────────────────────────────────────────────
  * When false, the subscription form is replaced with a professional
  * "Coming Soon" announcement. The page itself remains accessible and looks
- * intentional — it describes what the newsletter will be, builds anticipation,
+ * intentional   it describes what the newsletter will be, builds anticipation,
  * and tells visitors it is on its way.
  *
  * To activate:
@@ -60,7 +60,7 @@ export default async function NewsletterPage() {
             {t("description")}
           </p>
 
-          {/* Coming Soon badge — visible only while newsletter is disabled */}
+          {/* Coming Soon badge   visible only while newsletter is disabled */}
           {!NEWSLETTER_ENABLED && (
             <div className="mt-8 inline-flex items-center gap-2.5 px-5 py-3 rounded-full border border-border bg-card text-muted-foreground">
               <Clock className="h-4 w-4 text-[#AE8D64] shrink-0" />

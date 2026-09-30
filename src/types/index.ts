@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // Shared TypeScript types for The Notebook of a Tech Woman (TWN)
-// Single source of truth — import from here, never redefine elsewhere.
+// Single source of truth   import from here, never redefine elsewhere.
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ── Moderation ───────────────────────────────────────────────────────────────
@@ -21,8 +21,8 @@ export interface Notebook {
 }
 
 // ── Notebook Entry ────────────────────────────────────────────────────────────
-// Admin-authored sentences/paragraphs that power the hero animation and
-// Today's Page. Can optionally reference an article (source_article_id).
+// Admin-authored short-form notebook thoughts. Can optionally reference an
+// article for context; Today's Page itself is sourced directly from articles.
 export interface NotebookEntry {
   id: string;
   notebook_id: string; // References notebooks.id
@@ -30,7 +30,7 @@ export interface NotebookEntry {
   thought: string; // The actual sentence or paragraph
   slug: string | null; // For future /notes/[slug] route
   source_article_id: string | null; // Article this entry references (optional)
-  is_active: boolean; // Show in hero rotation?
+  is_active: boolean; // Available to public notebook/search surfaces?
   priority: number; // 0 = normal, higher = more prominent
   display_date: string | null; // ISO date string e.g. "2026-07-04"
   created_at: string;
@@ -54,10 +54,10 @@ export interface SharedPage {
 
 // ── Margin Note ───────────────────────────────────────────────────────────────
 // One short reflection (max 120 chars) left by a reader at the end of an
-// article. No replies, no likes, no threads — just a note in the margin.
+// article. No replies, no likes, no threads   just a note in the margin.
 export interface MarginNote {
   id: string;
-  article_id: string; // UUID — references articles.id (not slug)
+  article_id: string; // UUID   references articles.id (not slug)
   author_name: string;
   content: string; // Max 120 characters
   status: ModerationStatus;
@@ -229,3 +229,6 @@ export interface NavLink {
   label: string;
   href: string;
 }
+
+// ── About Page ────────────────────────────────────────────────────────────────
+export * from "./about";

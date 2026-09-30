@@ -1,15 +1,15 @@
 "use client";
 
 /**
- * CategoryCards — Reimagined as an editorial "Table of Contents" row list.
+ * CategoryCards   Reimagined as an editorial "Table of Contents" row list.
  *
  * Instead of cards or grids, this uses the premium publication pattern:
  * full-width rows with large numbers, bold category names, and subtle
- * descriptions — like a magazine's "What's Inside" section.
+ * descriptions   like a magazine's "What's Inside" section.
  *
  * Design references: The Guardian, Le Monde, Monocle, Framer editorial templates.
  *
- * On hover, the entire row inverts — a bold, confident interaction that
+ * On hover, the entire row inverts   a bold, confident interaction that
  * feels far more intentional than a shadow or color change.
  */
 

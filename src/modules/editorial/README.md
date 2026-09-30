@@ -1,7 +1,7 @@
 # Editorial Module
 
 ## Purpose
-Manages all authored content produced by TWN's editorial team. This module is responsible for the complete lifecycle of Articles, Collections, Tags, and Categories — from creation through scheduling, publication, and revision history.
+Manages all authored content produced by TWN's editorial team. This module is responsible for the complete lifecycle of Articles, Collections, Tags, and Categories   from creation through scheduling, publication, and revision history.
 
 ## Owned Capabilities
 - Article creation, editing, scheduling, and publication
@@ -15,7 +15,7 @@ Manages all authored content produced by TWN's editorial team. This module is re
 ## Owned Tables
 | Table | Aggregate Root | Notes |
 |---|---|---|
-| `articles` | Article | Full lifecycle — draft / scheduled / published |
+| `articles` | Article | Full lifecycle   draft / scheduled / published |
 | `article_revisions` | Article | Append-only snapshot log |
 | `article_tags` | Article | Join table for many-to-many tag relationship |
 | `collections` | Collection | Curated editorial series |
@@ -63,16 +63,16 @@ Manages all authored content produced by TWN's editorial team. This module is re
 - `MediaUploadPort` (Media): Cloudinary image upload for cover images
 
 ## Routes
-- `/articles` — public article listing
-- `/articles/[slug]` — public article detail
-- `/topics/[slug]` — public tag-filtered article listing
-- `/collections` — public collection listing
-- `/collections/[slug]` — public collection detail
-- `/admin/articles` — admin article management
-- `/admin/articles/[id]` — admin article editor
-- `/admin/articles/[id]/preview` — admin article preview
-- `/admin/tags` — admin tag management
-- `/admin/collections` — admin collection management
+- `/articles`   public article listing
+- `/articles/[slug]`   public article detail
+- `/topics/[slug]`   public tag-filtered article listing
+- `/collections`   public collection listing
+- `/collections/[slug]`   public collection detail
+- `/admin/articles`   admin article management
+- `/admin/articles/[id]`   admin article editor
+- `/admin/articles/[id]/preview`   admin article preview
+- `/admin/tags`   admin tag management
+- `/admin/collections`   admin collection management
 
 ## Permissions
 - Public read: published articles, published collections, tags, categories
@@ -99,4 +99,4 @@ Manages all authored content produced by TWN's editorial team. This module is re
 ## Known Limitations
 - Article authorship is not tracked per-user (all articles belong to TWN's editorial identity)
 - Category list is seeded and cannot be created via the CMS without a database migration
-- Search uses client-side filtering over a pre-fetched index — no full-text PostgreSQL search yet
+- Search uses client-side filtering over a pre-fetched index   no full-text PostgreSQL search yet

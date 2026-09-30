@@ -1,9 +1,5 @@
 // Public application API
-export {
-  getAllActiveEntries,
-  getRandomEntry,
-  getTodaysEntry,
-} from "./application/get-homepage-entry";
+export { getAllActiveEntries, getRandomEntry } from "./application/get-homepage-entry";
 
 export {
   getAllEntriesAdmin,
@@ -13,6 +9,3 @@ export {
   updateEntryAdmin,
   deleteEntryAdmin,
 } from "./application/manage-entries";
-
-// Public domain constants
-export { FALLBACK_ENTRIES } from "./domain/notebook-entry";

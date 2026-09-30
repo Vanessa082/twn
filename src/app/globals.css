@@ -14,9 +14,14 @@
   --ink-accent: #ae8d64;
 
   /* ── Theme mappings (Light Mode) ─────────────────────────────────────────  */
-  /* Background: premium paper — not pure white, warmer */
+  /* Background: premium paper   not pure white, warmer */
   --background: #fcfbf8;
   --foreground: #111111;
+  /* A deeper sheet of the same paper, for alternating editorial bands */
+  --paper-deep: #f6f3ee;
+  /* The ink band: fixed dark surface for quotes, identical in both themes */
+  --ink-band: #111111;
+  --ink-band-foreground: #f7f5f0;
   /* Cards sit ON the paper, so they are pure white */
   --card: #ffffff;
   --card-foreground: #111111;
@@ -45,6 +50,9 @@
     /* Theme mappings (Dark Mode) */
     --background: #09090b;
     --foreground: #fafafa;
+    --paper-deep: #111113;
+    --ink-band: #18181b;
+    --ink-band-foreground: #f4f4f5;
     --card: #18181b;
     /* Zinc-900 */
     --card-foreground: #f4f4f5;
@@ -102,6 +110,9 @@
   --color-deep-navy: var(--deep-navy);
   --color-muted-gold: var(--muted-gold);
   --color-ink-accent: var(--ink-accent);
+  --color-paper-deep: var(--paper-deep);
+  --color-ink-band: var(--ink-band);
+  --color-ink-band-foreground: var(--ink-band-foreground);
 
   --font-serif: var(--font-serif);
   --font-sans: var(--font-sans);
@@ -112,8 +123,12 @@
   --radius-sm: calc(var(--radius) - 4px);
 }
 
-* {
-  border-color: var(--border);
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--border);
+  }
 }
 
 body {
@@ -121,20 +136,138 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
-  user-select: none;
-
 }
 
-/* Premium Typography Styles */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-serif), Georgia, serif;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+.twn-paper-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(15, 15, 15, 0.04) 0, transparent 28%),
+    radial-gradient(circle at 80% 30%, rgba(15, 15, 15, 0.03) 0, transparent 22%),
+    linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+  mix-blend-mode: multiply;
+  opacity: 0.9;
+}
+
+.twn-hero-atmosphere {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(174, 141, 100, 0.12), transparent 24%),
+    radial-gradient(circle at 70% 28%, rgba(17, 17, 17, 0.06), transparent 26%),
+    radial-gradient(circle at 52% 75%, rgba(174, 141, 100, 0.08), transparent 30%);
+  filter: blur(18px);
+  opacity: 0.9;
+  animation: twn-hero-breathe 16s ease-in-out infinite;
+}
+
+.twn-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.twn-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.twn-section-page {
+  position: relative;
+}
+
+.twn-section-page::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(17, 17, 17, 0.08) 18%,
+    rgba(17, 17, 17, 0.04) 52%,
+    transparent 100%
+  );
+}
+
+.twn-page-turn {
+  position: relative;
+  isolation: isolate;
+}
+
+.twn-page-turn::before {
+  content: "";
+  position: absolute;
+  inset: 1.25rem 0 auto 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(17, 17, 17, 0.08) 12%,
+    rgba(17, 17, 17, 0.05) 50%,
+    transparent 100%
+  );
+  z-index: 0;
+}
+
+.twn-page-turn::after {
+  content: "";
+  position: absolute;
+  left: clamp(1rem, 2vw, 2.5rem);
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(174, 141, 100, 0.18),
+    transparent
+  );
+  pointer-events: none;
+}
+
+@keyframes twn-hero-breathe {
+  0%,
+  100% {
+    transform: scale(1) translate3d(0, 0, 0);
+    opacity: 0.72;
+  }
+  50% {
+    transform: scale(1.06) translate3d(0, -8px, 0);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .twn-hero-atmosphere,
+  .twn-paper-grain,
+  .twn-notebook-drift,
+  .twn-ink-line,
+  .twn-reveal {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* Premium Typography Styles — in the base layer so utility classes can override them */
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-serif), Georgia, serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
 }
 
 /* Custom animations and micro-interactions */
@@ -238,7 +371,7 @@ h6 {
   animation-duration: var(--tw-animate-duration, 300ms);
 }
 
-/* Modifier classes — compose with .animate-in */
+/* Modifier classes   compose with .animate-in */
 .fade-in {
   animation-name: twn-fade-in;
 }
@@ -277,7 +410,7 @@ h6 {
   transform: translateY(0);
 }
 
-/* Stagger delays — apply to children so they cascade one by one */
+/* Stagger delays   apply to children so they cascade one by one */
 .reveal-stagger>* {
   opacity: 0;
   transform: translateY(20px);
@@ -612,7 +745,7 @@ h6 {
 }
 
 /* ── Page Transition Overlay ─────────────────────────────────────────────────
-   White sheet slides in, then out — like turning a notebook page.
+   White sheet slides in, then out   like turning a notebook page.
 */
 @keyframes twn-page-in {
   from {
@@ -960,7 +1093,7 @@ h6 {
   opacity: 0.9 !important;
 }
 
-/* Syntax Highlighting Colors — VS Code Dark palette */
+/* Syntax Highlighting Colors   VS Code Dark palette */
 .prose pre code,
 .tiptap pre code,
 .ProseMirror pre code {
@@ -1115,7 +1248,7 @@ pre code,
   border-radius: 0.75rem;
 }
 
-/* ── Table Styles — Editor & Reading View ──────────────────────────────── */
+/* ── Table Styles   Editor & Reading View ──────────────────────────────── */
 .article-content table,
 .prose table,
 .tiptap table,

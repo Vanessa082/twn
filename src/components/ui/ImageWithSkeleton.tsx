@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * ImageWithSkeleton — a premium image component that handles:
+ * ImageWithSkeleton   a premium image component that handles:
  *
  * 1. SKELETON LOADING: Shows a shimmer placeholder while the image loads.
  *    The user never sees a blank space or a broken image flash.
@@ -34,7 +34,7 @@ interface ImageWithSkeletonProps {
   sizes?: string;
   priority?: boolean;
   className?: string;
-  /** Cloudinary display width to request — used to optimize the URL */
+  /** Cloudinary display width to request   used to optimize the URL */
   cloudinaryWidth?: number;
 }
 
@@ -53,7 +53,7 @@ function optimizeImageUrl(src: string, width?: number): string {
     // We inject transformations: f_auto (best format), q_auto:good (smart quality), w_<n>
     const transforms = [
       "f_auto", // Auto-select best format (WebP, AVIF, etc.)
-      "q_auto:good", // Smart quality — balances file size and visual fidelity
+      "q_auto:good", // Smart quality   balances file size and visual fidelity
       width ? `w_${width}` : null,
       width ? "c_fill" : null, // Crop to exact width maintaining aspect ratio
     ]
@@ -64,12 +64,12 @@ function optimizeImageUrl(src: string, width?: number): string {
     return src.replace("/upload/", `/upload/${transforms}/`);
   }
 
-  // Handle Unsplash URLs — they accept standard query params
+  // Handle Unsplash URLs   they accept standard query params
   if (src.includes("images.unsplash.com")) {
     const url = new URL(src);
     url.searchParams.set("auto", "format"); // Auto format (WebP, etc.)
     url.searchParams.set("fit", "crop");
-    url.searchParams.set("q", "80"); // Quality 80 — good balance
+    url.searchParams.set("q", "80"); // Quality 80   good balance
     if (width) url.searchParams.set("w", String(width));
     return url.toString();
   }
@@ -95,7 +95,7 @@ export default function ImageWithSkeleton({
   // Optimize the URL before passing to Next.js Image
   const optimizedSrc = src ? optimizeImageUrl(src, cloudinaryWidth ?? width) : null;
 
-  // Error state — clean editorial placeholder instead of broken image icon
+  // Error state   clean editorial placeholder instead of broken image icon
   if (hasError || !optimizedSrc) {
     return (
       <div className="absolute inset-0 bg-neutral-100 dark:bg-neutral-900 flex flex-col items-center justify-center gap-2">
@@ -108,7 +108,7 @@ export default function ImageWithSkeleton({
 
   return (
     <>
-      {/* Shimmer skeleton — visible while image is loading */}
+      {/* Shimmer skeleton   visible while image is loading */}
       {isLoading && <div className="absolute inset-0 skeleton z-10" aria-hidden="true" />}
 
       <Image

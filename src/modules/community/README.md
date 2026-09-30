@@ -47,10 +47,10 @@ Manages reader-generated contributions to TWN. Community members can submit shor
 - `SubmissionProtectionPort` (Security): rate limiting, honeypot, and duplicate detection
 
 ## Routes
-- `/community` — public community reflections page
-- `/community/[slug]` — individual shared page detail
-- `/admin/community` — admin shared pages moderation queue
-- `/admin/community/margin-notes` — admin margin notes moderation queue
+- `/community`   public community reflections page
+- `/community/[slug]`   individual shared page detail
+- `/admin/community`   admin shared pages moderation queue
+- `/admin/community/margin-notes`   admin margin notes moderation queue
 
 ## Permissions
 - Public insert: anyone may submit a Shared Page or Margin Note (subject to submission protection)
@@ -75,6 +75,6 @@ Manages reader-generated contributions to TWN. Community members can submit shor
 - Must not bypass submission protection on public write paths
 
 ## Known Limitations
-- Anonymous submission only — no authenticated community member accounts yet
+- Anonymous submission only   no authenticated community member accounts yet
 - No self-service appeal flow for rejected submissions (admin must be contacted directly)
 - No notification system for contributors when their content is approved

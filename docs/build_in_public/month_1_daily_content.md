@@ -9,9 +9,9 @@
 
 ### Technical Concept to Master
 - **Concept**: Build-in-Public & Engineering Rigor.
-- **Plain Language**: Building software in public means documenting design choices, bugs, and architecture as you write them—turning code into educational evidence.
+- **Plain Language**: Building software in public means documenting design choices, bugs, and architecture as you write them turning code into educational evidence.
 - **TWN Code Reference**: `project.md` & `docs/architecture/roadmap_registry.md`.
-- **Blueprint Cross-Reference**: `Blueprint.md` Volume 1 — Vision (`Blueprint.md:L15`).
+- **Blueprint Cross-Reference**: `Blueprint.md` Volume 1   Vision (`Blueprint.md:L15`).
 - **External Technical Resource**: [Martin Fowler: Building in Public & Software Rigor](https://martinfowler.com/).
 
 ### LinkedIn Post Template
@@ -38,7 +38,7 @@ Follow along if you want to see what building real, production-ready software lo
 - **Visual**: Screen recording scrolling through `project.md` and the TWN homepage UI.
 - **Hook**: "Why am I documenting 6 months of building a production app in public?"
 - **Script**:
-  - *"If you want to master software engineering, don't just follow tutorials—build a real product and explain every decision."*
+  - *"If you want to master software engineering, don't just follow tutorials build a real product and explain every decision."*
   - *"This is TWN: The Notebook of a Tech Woman."*
   - *"Over the next 6 months, I'm taking you inside the codebase. We're covering Modular Monoliths, Playwright testing, security policies, and PostgreSQL database design."*
   - *"Follow to learn how real production software gets built!"*
@@ -49,9 +49,9 @@ Follow along if you want to see what building real, production-ready software lo
 
 ### Technical Concept to Master
 - **Concept**: Modular Monolith Architecture vs Microservices vs Flat Monolith.
-- **Plain Language**: A flat monolith puts all files in generic folders (`services/`, `components/`). Microservices split code across separate network servers (expensive, complex). A **Modular Monolith** organizes code by domain (`editorial`, `community`) inside ONE deployed app—getting the cleanliness of microservices without the operational headache.
+- **Plain Language**: A flat monolith puts all files in generic folders (`services/`, `components/`). Microservices split code across separate network servers (expensive, complex). A **Modular Monolith** organizes code by domain (`editorial`, `community`) inside ONE deployed app getting the cleanliness of microservices without the operational headache.
 - **TWN Code Reference**: `docs/architecture/adr/ADR-001-modular-monolith.md`.
-- **Blueprint Cross-Reference**: `Blueprint.md` Volume 7 — Technical Architecture (`Blueprint.md:L7523`).
+- **Blueprint Cross-Reference**: `Blueprint.md` Volume 7   Technical Architecture (`Blueprint.md:L7523`).
 - **External Technical Resource**: [Martin Fowler: Monolith First](https://martinfowler.com/bliki/MonolithFirst.html).
 
 ### LinkedIn Post Template
@@ -232,7 +232,7 @@ When every module shares the exact same taxonomy, onboarding a new developer (or
 
 ---
 
-## Day 7: Week 1 Recap — 3 Architectural Rules That Saved TWN
+## Day 7: Week 1 Recap   3 Architectural Rules That Saved TWN
 
 ### Technical Concept to Master
 - **Concept**: Architecture Verification & Code Governance.
@@ -249,7 +249,7 @@ Week 1 of building TWN in public is complete! Here are the 3 architectural rules
 
 We even wrote an automated test (`src/lib/architecture.test.ts`) that runs on every commit to verify that no module imports internal files from another module!
 
-Code quality isn't an accident—it's automated governance.
+Code quality isn't an accident it's automated governance.
 
 #BuildInPublic #SoftwareEngineering #NextJS #TypeScript #CodeQuality
 ```
@@ -315,7 +315,7 @@ Everything else inside the module is PRIVATE. This single pattern eliminated 80%
 
 ### LinkedIn Post Template
 ```text
-Don't just write architecture rules in a README—ENFORCE them in code!
+Don't just write architecture rules in a README ENFORCE them in code!
 
 In TWN, we wrote an automated architecture test (`src/lib/architecture.test.ts`) using Vitest and glob patterns.
 
@@ -435,7 +435,7 @@ When transitioning TWN from a monolithic `src/lib/services/` layout to clean mod
 3. Keep old imports active using re-exports until all call sites are migrated.
 4. Delete old files only when coverage is 100% verified.
 
-Refactoring isn't about rewriting everything from scratch—it's about controlled, incremental improvements.
+Refactoring isn't about rewriting everything from scratch it's about controlled, incremental improvements.
 
 #Refactoring #CleanCode #TypeScript #SoftwareEngineering #DevLife
 ```
@@ -567,7 +567,7 @@ Each module is independent, type-safe, and communicates via published contracts.
 ```text
 What is an "Aggregate Root" in Domain-Driven Design, and why does it matter?
 
-In TWN, an `Article` isn't just a database row—it's an Aggregate Root.
+In TWN, an `Article` isn't just a database row it's an Aggregate Root.
 
 An Article controls:
 - Content status (`draft` -> `scheduled` -> `published` -> `archived`)
@@ -587,7 +587,7 @@ This ensures domain invariants (e.g., "An article cannot be published without a 
 - **Hook**: "Why database rows shouldn't update themselves!"
 - **Script**:
   - *"In TWN, articles use the Aggregate Root pattern."*
-  - *"You can't just change status to published—you must call `article.publish()`."*
+  - *"You can't just change status to published you must call `article.publish()`."*
   - *"It enforces business rules before saving to DB!"*
 
 ---
@@ -702,7 +702,7 @@ Automated guardrails make clean architecture effortless for every developer on t
 
 ### LinkedIn Post Template
 ```text
-As a Tech Woman building a production editorial platform, my goal isn't just to write code that works—it's to understand EVERY layer of the software stack.
+As a Tech Woman building a production editorial platform, my goal isn't just to write code that works it's to understand EVERY layer of the software stack.
 
 In TWN's Engineering Constitution, we established a Learning Contract:
 - Understand requirement rationale before writing code.
@@ -718,7 +718,7 @@ Shortcut solutions build fragile products. Deep understanding builds long-term e
 - **Visual**: Vanessa working at desk with TWN architecture diagrams on screen.
 - **Hook**: "Why I refuse to copy-paste code without understanding it."
 - **Script**:
-  - *"Building TWN isn't just about finishing features—it's about mastering software engineering."*
+  - *"Building TWN isn't just about finishing features it's about mastering software engineering."*
   - *"Understand the architecture, verify with tests, build for the long term!"*
 
 ---
@@ -805,7 +805,7 @@ Documenting architectural decisions keeps the product scope sharp!
 ```text
 ADR-003 Deep Dive: Defaulting to React Server Components 🚀
 
-In TWN, performance isn't an afterthought—it's an architectural decision.
+In TWN, performance isn't an afterthought it's an architectural decision.
 
 Our ADR-003 policy states:
 1. Every page component in `src/app/` MUST be a Server Component.
@@ -880,7 +880,7 @@ In TWN Phase 2:
 
 By eliminating sign-up friction, reader engagement increases by over 3x!
 
-Security and spam prevention are handled via server-side moderation—not user friction.
+Security and spam prevention are handled via server-side moderation not user friction.
 
 #UXDesign #ProductStrategy #WebDev #BuildInPublic #NextJS
 ```
@@ -1009,7 +1009,7 @@ In Month 2, we will cover:
 - Append-only platform audit logging
 - Rate limiting and honeypot spam protection
 
-Security is not an add-on—it's a core transport requirement.
+Security is not an add-on it's a core transport requirement.
 
 #CyberSecurity #NextJS #ServerActions #WebSecurity #TypeScript
 ```
@@ -1045,7 +1045,7 @@ Drop your questions about Next.js 15, Clean Architecture, or Modular Monoliths b
 
 ### TikTok Video Script
 - **Visual**: Vanessa smiling at laptop showing TWN live homepage.
-- **Hook**: "30 Days of building my tech platform in public—here's what I learned!"
+- **Hook**: "30 Days of building my tech platform in public here's what I learned!"
 - **Script**:
   - *"30 days down, 5 months to go! Thank you for building TWN with me!"*
 

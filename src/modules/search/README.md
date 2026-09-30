@@ -33,7 +33,7 @@ searchPublicContent(query)
     ↓
 UnifiedSearchResult[]
     ↓
-SearchClient (client component — filter, tabs, badges)
+SearchClient (client component   filter, tabs, badges)
 ```
 
 ## Public Queries
@@ -50,7 +50,7 @@ SearchClient (client component — filter, tabs, badges)
 - `SharedPageSearchProvider` (Community)
 
 ## Routes
-- `/search` — public unified search page
+- `/search`   public unified search page
 
 ## Permissions
 - Public: no authentication required
@@ -67,7 +67,7 @@ None.
 - Must not own or access any database tables directly
 
 ## Known Limitations
-- Search uses simple substring matching at the application layer — no full-text PostgreSQL search or external search index
+- Search uses simple substring matching at the application layer   no full-text PostgreSQL search or external search index
 - Client-side filter tabs provide fast UX but the entire corpus is fetched server-side on each search page load
 - No search result ranking or relevance scoring
 - No search analytics or query tracking

@@ -1,4 +1,4 @@
-# CI — lint, type-check, unit tests, production build
+# CI   lint, type-check, unit tests, production build
 name: CI
 
 on:

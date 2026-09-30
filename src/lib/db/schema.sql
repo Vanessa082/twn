@@ -1,9 +1,9 @@
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- SQL DDL Schema for The Notebook of a Tech Woman (TWN)
 -- Copy and paste this ENTIRE file into the Supabase SQL Editor to initialize
--- your database. Safe to re-run — uses IF NOT EXISTS and ON CONFLICT.
+-- your database. Safe to re-run   uses IF NOT EXISTS and ON CONFLICT.
 --
--- MODULE OWNERSHIP SUMMARY (Milestone 9.2 — Database Architecture Alignment)
+-- MODULE OWNERSHIP SUMMARY (Milestone 9.2   Database Architecture Alignment)
 -- ┌──────────────────────┬──────────────┬──────────────────────────────────────┐
 -- │ Table                │ Module Owner │ Aggregate Root                       │
 -- ├──────────────────────┼──────────────┼──────────────────────────────────────┤
@@ -187,7 +187,7 @@ end $$;
 
 -- Seed the default notebook
 insert into public.notebooks (name, slug, description, is_default) values
-('The Notebook', 'the-notebook', 'The default notebook for TWN — thoughts, reflections, and lessons.', true)
+('The Notebook', 'the-notebook', 'The default notebook for TWN   thoughts, reflections, and lessons.', true)
 on conflict (slug) do nothing;
 
 -- Trigger: auto-update updated_at
@@ -345,13 +345,13 @@ for each row execute procedure public.handle_update_timestamp();
 -- DONE. All 7 tables created with RLS policies, indexes, and triggers.
 --
 -- Tables:
---   1. categories        — editorial categories (seeded)
---   2. articles           — blog posts with category, status, cover image
---   3. subscribers        — newsletter email signups
---   4. notebooks          — named collections of entries (seeded with default)
---   5. notebook_entries   — hero animation thoughts, Today's Page entries
---   6. shared_pages       — visitor-submitted community reflections
---   7. margin_notes       — short reader comments on articles
+--   1. categories          editorial categories (seeded)
+--   2. articles             blog posts with category, status, cover image
+--   3. subscribers          newsletter email signups
+--   4. notebooks            named collections of entries (seeded with default)
+--   5. notebook_entries     hero animation thoughts, Today's Page entries
+--   6. shared_pages         visitor-submitted community reflections
+--   7. margin_notes         short reader comments on articles
 --
 -- Next steps:
 --   1. Paste this SQL into Supabase SQL Editor and click "Run"
