@@ -153,6 +153,33 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
   }
 }
 
+export interface PublishedNoteRef {
+  slug: string;
+  updated_at: string;
+  published_at: string | null;
+}
+
+/**
+ * Slugs of every published note for the sitemap. Never falls back to seed
+ * content: an unreachable database must not advertise URLs that do not exist.
+ */
+export async function getPublishedNoteRefs(): Promise<PublishedNoteRef[]> {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("articles")
+      .select("slug, updated_at, published_at")
+      .eq("status", "published")
+      .lte("published_at", new Date().toISOString())
+      .order("published_at", { ascending: false })
+      .limit(5000);
+    if (error) return [];
+    return (data ?? []) as PublishedNoteRef[];
+  } catch {
+    return [];
+  }
+}
+
 /**
  * Toggles (increments or decrements) the likes_count of an article in the database.
  * Uses createAdminClient to bypass RLS.

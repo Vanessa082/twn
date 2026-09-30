@@ -1,13 +1,18 @@
 import WorkbenchSection from "@/components/home/WorkbenchSection";
 import { Eyebrow, TextLink } from "@/components/ui/SectionHeading";
+import { pageMetadata } from "@/lib/seo";
 import { getPublishedProjects } from "@/lib/services/projects";
+import { routes } from "@/lib/site";
 
 export const revalidate = 60;
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "The Workbench",
-  description: "Things Vanessa is building, breaking, testing and learning from.",
-};
+  description:
+    "Things Vanessa is building, breaking, testing and learning from, with honest notes on what worked.",
+  path: routes.workbench,
+  eyebrow: "Workbench",
+});
 
 export default async function WorkbenchPage() {
   const projects = await getPublishedProjects();
@@ -35,7 +40,7 @@ export default async function WorkbenchPage() {
               The workbench is quiet right now.
             </p>
             <div className="mt-8 flex justify-center">
-              <TextLink href="/articles">Read the notebook instead</TextLink>
+              <TextLink href="/notebook">Read the notebook instead</TextLink>
             </div>
           </div>
         )}

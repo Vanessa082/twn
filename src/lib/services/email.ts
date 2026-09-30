@@ -11,12 +11,12 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { env } from "@/lib/env";
+import { absoluteUrl, routes, site } from "@/lib/site";
 import { Resend } from "resend";
 
 const resend = new Resend(env.RESEND_API_KEY);
 
-/** Site URL   update this when a custom domain is purchased. */
-const SITE_URL = "https://twn-note.vercel.app";
+const SITE_URL = site.url;
 
 /**
  * Shared sender address used across all TWN transactional emails.
@@ -90,7 +90,7 @@ export async function sendWelcomeEmail(email: string): Promise<void> {
           <tr>
             <td style="padding:24px 40px;border-top:1px solid #F0F0EE;background:#F9F9F7;">
               <p style="margin:0;font-size:11px;color:#999999;font-family:'Arial',sans-serif;line-height:1.6;">
-                You're receiving this because you subscribed at twn-note.vercel.app.<br />
+                You're receiving this because you subscribed at ${SITE_URL.replace(/^https?:\/\//, "")}.<br />
                 To unsubscribe, reply with "unsubscribe" in the subject line.
               </p>
             </td>
@@ -131,7 +131,7 @@ export async function sendArticleNewsletterEmail(
   to: string,
   article: ArticleBroadcastPayload
 ): Promise<void> {
-  const articleUrl = `${SITE_URL}/articles/${article.slug}`;
+  const articleUrl = absoluteUrl(routes.note(article.slug));
   const readingTimeText = article.reading_time ? `${article.reading_time} min read` : "Quick read";
 
   try {
@@ -209,7 +209,7 @@ export async function sendArticleNewsletterEmail(
           <tr>
             <td style="padding:20px 40px;border-top:1px solid #F0F0EE;background:#F9F9F7;">
               <p style="margin:0;font-size:11px;color:#AAAAAA;font-family:'Arial',sans-serif;line-height:1.6;">
-                You're receiving this because you subscribed at <a href="${SITE_URL}" style="color:#AE8D64;text-decoration:none;">twn-note.vercel.app</a>.<br />
+                You're receiving this because you subscribed at <a href="${SITE_URL}" style="color:#AE8D64;text-decoration:none;">${SITE_URL.replace(/^https?:\/\//, "")}</a>.<br />
                 To unsubscribe, reply with "unsubscribe" in the subject line.
               </p>
             </td>

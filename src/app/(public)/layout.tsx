@@ -19,7 +19,9 @@ export default async function PublicLayout({
       <PageTransition />
 
       <Navbar />
-      <main className="flex-1 flex flex-col">{children}</main>
+      <main id="content" tabIndex={-1} className="flex flex-1 flex-col outline-none">
+        {children}
+      </main>
       <Footer
         contactEmail={settings.contact_email}
         location={settings.location}

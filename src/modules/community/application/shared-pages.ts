@@ -1,5 +1,4 @@
 import type { ModerationStatus, SharedPage } from "@/types";
-import { FALLBACK_SHARED_PAGES } from "../domain/community-content";
 import {
   type SharedPageRepository,
   SupabaseSharedPageRepository,
@@ -9,10 +8,9 @@ export async function getApprovedSharedPages(
   repository: SharedPageRepository = new SupabaseSharedPageRepository()
 ): Promise<SharedPage[]> {
   try {
-    const pages = await repository.findAllApproved();
-    return pages.length > 0 ? pages : FALLBACK_SHARED_PAGES;
+    return await repository.findAllApproved();
   } catch {
-    return FALLBACK_SHARED_PAGES;
+    return [];
   }
 }
 

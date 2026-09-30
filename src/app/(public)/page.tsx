@@ -1,17 +1,39 @@
 import ChapterStrip from "@/components/home/ChapterStrip";
-import FeaturedArticle from "@/components/home/FeaturedArticle";
 import FieldNotesSection from "@/components/home/FieldNotesSection";
 import FromTheNotebookSection from "@/components/home/FromTheNotebookSection";
 import Hero from "@/components/home/Hero";
 import VersionsOfMeSection from "@/components/home/VersionsOfMeSection";
 import WorkbenchSection from "@/components/home/WorkbenchSection";
+import { pageMetadata } from "@/lib/seo";
 import { getAboutData } from "@/lib/services/about";
 import { getLatestArticles } from "@/lib/services/articles";
 import { getPublishedFieldNotes } from "@/lib/services/field-notes";
 import { getHomepageSettings } from "@/lib/services/homepage-settings";
 import { getPublishedProjects } from "@/lib/services/projects";
+import { routes, site } from "@/lib/site";
 
 export const revalidate = 60; // ISR
+
+export const metadata = pageMetadata({
+  title: `${site.name} | ${site.shortName}`,
+  description: site.description,
+  path: routes.home,
+  absoluteTitle: true,
+});
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: site.name,
+  alternateName: site.shortName,
+  url: site.url,
+  author: { "@type": "Person", name: site.author },
+  potentialAction: {
+    "@type": "SearchAction",
+    target: { "@type": "EntryPoint", urlTemplate: `${site.url}/search?q={search_term_string}` },
+    "query-input": "required name=search_term_string",
+  },
+};
 
 /**
  * Every section is fed by the CMS and disappears when its source is empty:
@@ -45,6 +67,11 @@ export default async function HomePage() {
 
   return (
     <div className="flex min-h-screen flex-col">
+      <script
+        type="application/ld+json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: static JSON-LD built from trusted config
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
       <Hero
         eyebrow={settings.hero_eyebrow}
         title={settings.hero_title}

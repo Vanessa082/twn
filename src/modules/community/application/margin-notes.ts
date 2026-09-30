@@ -1,5 +1,4 @@
 import type { MarginNote, ModerationStatus } from "@/types";
-import { FALLBACK_MARGIN_NOTES } from "../domain/community-content";
 import {
   type MarginNoteRepository,
   SupabaseMarginNoteRepository,
@@ -11,10 +10,9 @@ export async function getApprovedMarginNotesForArticle(
 ): Promise<MarginNote[]> {
   if (!articleId) return [];
   try {
-    const notes = await repository.findApprovedForArticle(articleId);
-    return notes;
+    return await repository.findApprovedForArticle(articleId);
   } catch {
-    return FALLBACK_MARGIN_NOTES.map((n) => ({ ...n, article_id: articleId }));
+    return [];
   }
 }
 

@@ -29,7 +29,8 @@ export default function AdminError({
           CMS Operation Interrupted
         </h1>
         <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
-          {error.message || "An error occurred while communicating with backend administration services."}
+          {error.message ||
+            "An error occurred while communicating with backend administration services."}
         </p>
       </div>
 

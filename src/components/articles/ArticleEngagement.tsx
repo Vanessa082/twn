@@ -9,16 +9,11 @@ interface ArticleEngagementProps {
   initialLikesCount: number;
 }
 
-
 /**
  * InlineActionBar   Medium-style action bar that renders directly inside
  * the article content column (max-w-[680px]). No floating elements.
  */
-export function InlineActionBar({
-  slug,
-  title,
-  initialLikesCount,
-}: ArticleEngagementProps) {
+export function InlineActionBar({ slug, title, initialLikesCount }: ArticleEngagementProps) {
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -87,24 +82,29 @@ export function InlineActionBar({
         <button
           type="button"
           onClick={handleLike}
-          className={`flex items-center gap-2 hover:text-foreground transition-colors group ${liked ? "text-foreground font-bold" : ""
-            }`}
-          title="Clap for this story"
+          className={`flex items-center gap-2 hover:text-foreground transition-colors group ${
+            liked ? "text-foreground font-bold" : ""
+          }`}
+          aria-pressed={liked}
+          aria-label={`${liked ? "Remove your like" : "Like this note"} (${likeCount} likes)`}
         >
           <HeartIcon
             fill={liked ? "currentColor" : "none"}
-            className="h-5 w-5 transition-transform group-hover:scale-110"
-          />          <span className="tabular-nums text-xs">{likeCount}</span>
+            className="size-5 transition-transform group-hover:scale-110"
+          />{" "}
+          <span aria-hidden="true" className="tabular-nums text-xs">
+            {likeCount}
+          </span>
         </button>
 
         <button
           type="button"
           onClick={scrollToComments}
           className="flex items-center gap-2 hover:text-foreground transition-colors group"
-          title="View reflections / responses"
+          aria-label="Jump to reader reflections"
         >
-          <MessageCircle className="h-5 w-5 transition-transform group-hover:scale-110" />
-          <span className="text-xs">Responses</span>
+          <MessageCircle className="size-5 transition-transform group-hover:scale-110" />
+          <span className="hidden text-xs sm:inline">Reflections</span>
         </button>
       </div>
 
@@ -113,20 +113,22 @@ export function InlineActionBar({
         <button
           type="button"
           onClick={handleBookmark}
-          className={`hover:text-foreground transition-colors ${bookmarked ? "text-foreground" : ""
-            }`}
-          title={bookmarked ? "Saved" : "Save story"}
+          className={`hover:text-foreground transition-colors ${
+            bookmarked ? "text-foreground" : ""
+          }`}
+          aria-pressed={bookmarked}
+          aria-label={bookmarked ? "Saved on this device" : "Save this note on this device"}
         >
-          <Bookmark className={`h-5 w-5 ${bookmarked ? "fill-current" : ""}`} />
+          <Bookmark className={`size-5 ${bookmarked ? "fill-current" : ""}`} />
         </button>
 
         <button
           type="button"
           onClick={handleShare}
           className="hover:text-foreground transition-colors"
-          title="Share story"
+          aria-label={copied ? "Link copied" : "Share this note"}
         >
-          {copied ? <Check className="h-5 w-5 text-emerald-500" /> : <Share2 className="h-5 w-5" />}
+          {copied ? <Check className="size-5 text-foreground" /> : <Share2 className="size-5" />}
         </button>
       </div>
     </div>

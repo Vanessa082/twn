@@ -1,7 +1,10 @@
 import ArticleGrid from "@/components/articles/ArticleGrid";
 import { Eyebrow } from "@/components/ui/SectionHeading";
 import { getArticlesByCategory, getLatestArticles } from "@/lib/services/articles";
+import { routes } from "@/lib/site";
+import { articleCategoryEnum } from "@/lib/validation/schemas";
 import type { ArticleCategory } from "@/types";
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 
@@ -11,10 +14,26 @@ interface ArticlesPageProps {
 
 export const revalidate = 60; // ISR validation every minute
 
+function parseCategory(value: string | undefined): ArticleCategory | undefined {
+  const parsed = articleCategoryEnum.safeParse(value);
+  return parsed.success ? parsed.data : undefined;
+}
+
+export async function generateMetadata({ searchParams }: ArticlesPageProps): Promise<Metadata> {
+  const category = parseCategory((await searchParams).category);
+  const label = category ? category.charAt(0).toUpperCase() + category.slice(1) : null;
+  return {
+    title: label ? `${label} notes` : "The Notebook",
+    description: label
+      ? `Every note Vanessa has written on ${category}: essays and reflections from a life in tech.`
+      : "Every note in the notebook: essays and reflections on writing code, leading teams and building a life in technology.",
+    alternates: { canonical: category ? routes.notebookTopic(category) : routes.notebook },
+  };
+}
+
 export default async function ArticlesPage({ searchParams }: ArticlesPageProps) {
-  // 1. Resolve searchParams (required in Next.js 15)
   const resolvedParams = await searchParams;
-  const activeCategory = resolvedParams.category as ArticleCategory | undefined;
+  const activeCategory = parseCategory(resolvedParams.category);
 
   const t = await getTranslations("articles");
 
@@ -57,7 +76,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
             return (
               <Link
                 key={cat.label}
-                href={cat.value ? `/articles?category=${cat.value}` : "/articles"}
+                href={cat.value ? routes.notebookTopic(cat.value) : routes.notebook}
                 aria-current={isActive ? "page" : undefined}
                 data-active={isActive ? "true" : undefined}
                 className={`nav-ink-link text-[11px] font-sans font-semibold uppercase tracking-[0.2em] transition-colors ${
@@ -77,10 +96,10 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
           <div className="text-center py-20 border border-dashed border-border rounded-2xl max-w-md mx-auto">
             <p className="text-muted-foreground text-sm mb-4">{t("noArticles")}</p>
             <Link
-              href="/articles"
+              href="/notebook"
               className="text-xs font-semibold text-foreground underline underline-offset-4"
             >
-              Reset Filters
+              See every note
             </Link>
           </div>
         )}

@@ -4,15 +4,13 @@ import { describe, expect, it } from "vitest";
 /**
  * Pure state machine transition helper mirroring DB moderation logic for unit verification.
  */
-function transitionModerationState<T extends { status: ModerationStatus; published_at?: string | null }>(
-  item: T,
-  newStatus: ModerationStatus,
-  nowIso = new Date().toISOString()
-): T {
+function transitionModerationState<
+  T extends { status: ModerationStatus; published_at?: string | null },
+>(item: T, newStatus: ModerationStatus, nowIso = new Date().toISOString()): T {
   return {
     ...item,
     status: newStatus,
-    published_at: newStatus === "approved" ? nowIso : item.published_at ?? null,
+    published_at: newStatus === "approved" ? nowIso : (item.published_at ?? null),
   };
 }
 
@@ -42,13 +40,21 @@ describe("Moderation Lifecycle State Machine", () => {
   };
 
   it("transitions pending shared page to approved and sets published_at timestamp", () => {
-    const approved = transitionModerationState(initialSharedPage, "approved", "2026-07-24T12:00:00Z");
+    const approved = transitionModerationState(
+      initialSharedPage,
+      "approved",
+      "2026-07-24T12:00:00Z"
+    );
     expect(approved.status).toBe("approved");
     expect(approved.published_at).toBe("2026-07-24T12:00:00Z");
   });
 
   it("transitions pending shared page to rejected without setting published_at", () => {
-    const rejected = transitionModerationState(initialSharedPage, "rejected", "2026-07-24T12:00:00Z");
+    const rejected = transitionModerationState(
+      initialSharedPage,
+      "rejected",
+      "2026-07-24T12:00:00Z"
+    );
     expect(rejected.status).toBe("rejected");
     expect(rejected.published_at).toBeNull();
   });

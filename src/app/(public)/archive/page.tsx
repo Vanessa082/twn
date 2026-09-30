@@ -1,15 +1,20 @@
 import { Eyebrow } from "@/components/ui/SectionHeading";
+import { pageMetadata } from "@/lib/seo";
 import { getLatestArticles } from "@/lib/services/articles";
+import { routes } from "@/lib/site";
 import type { Article } from "@/types";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export const revalidate = 60;
 
-export const metadata = {
-  title: "Archive",
-  description: "Everything written, collected, and documented in The Notebook of a Tech Woman.",
-};
+export const metadata = pageMetadata({
+  title: "The Archive",
+  description:
+    "Every note in The Notebook of a Tech Woman, arranged by year and month so nothing written gets lost.",
+  path: routes.archive,
+  eyebrow: "Archive",
+});
 
 const CATEGORY_LABELS: Record<string, string> = {
   technology: "Technology",
@@ -177,7 +182,7 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
                           {monthGroup.items.map((article) => (
                             <li key={article.id} className="border-b border-border">
                               <Link
-                                href={`/articles/${article.slug}`}
+                                href={`/notebook/${article.slug}`}
                                 data-cursor="link"
                                 className="group grid grid-cols-[1fr_auto] items-baseline gap-x-6 gap-y-1 py-5 sm:grid-cols-[4.5rem_1fr_auto]"
                               >

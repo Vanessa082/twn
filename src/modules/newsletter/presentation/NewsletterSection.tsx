@@ -26,7 +26,7 @@ export default function NewsletterSection() {
               Get new notes in your inbox
             </h2>
             <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-              Receive new articles directly. No spam, unsubscribe anytime.
+              New notes, delivered when they are written. No spam, unsubscribe anytime.
             </p>
           </div>
 

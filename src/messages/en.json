@@ -1,7 +1,7 @@
 {
   "nav": {
     "home": "Home",
-    "articles": "Articles",
+    "articles": "Notebook",
     "notebook": "Notebook",
     "about": "About",
     "newsletter": "Newsletter",
@@ -13,7 +13,7 @@
     "hero": {
       "title": "The Notebook of a Tech Woman",
       "tagline": "Notes on technology, ideas, challenges, and the journey of becoming.",
-      "cta": "Read Articles",
+      "cta": "Open the notebook",
       "fallbackThought": "A notebook for women building the future."
     },
     "todaysPage": {
@@ -21,11 +21,11 @@
       "readMore": "Read more →"
     },
     "featured": {
-      "label": "Featured Article"
+      "label": "Featured note"
     },
     "latest": {
       "title": "Latest Notes",
-      "empty": "No articles published yet. Check back soon."
+      "empty": "No notes published yet. The first page is being written."
     },
     "categories": {
       "title": "Browse by Topic",
@@ -37,24 +37,24 @@
     },
     "newsletter": {
       "title": "Get new notes in your inbox",
-      "description": "Receive new articles directly. No spam, unsubscribe anytime.",
+      "description": "New notes, delivered when they are written. No spam, unsubscribe anytime.",
       "placeholder": "your@email.com",
       "cta": "Subscribe",
       "success": "You're subscribed! Welcome to the notebook.",
-      "error": "Something went wrong. Please try again."
+      "error": "We couldn't add you just now. Please try again in a moment."
     }
   },
   "articles": {
     "title": "The Notebook",
-    "description": "Essays, field notes and reflections on writing code, leading teams, and building a life in technology.",
+    "description": "Essays and reflections on writing code, leading teams and building a life in technology.",
     "readMore": "Read more",
     "readingTime": "{minutes} min read",
     "publishedOn": "Published {date}",
     "backToArticles": "← Back to the notebook",
-    "share": "Share this article",
-    "related": "Related Articles",
-    "noArticles": "No articles found.",
-    "filterBy": "Filter by topic"
+    "share": "Share this note",
+    "related": "More from the notebook",
+    "noArticles": "No notes in this chapter yet.",
+    "filterBy": "Filter by chapter"
   },
   "about": {
     "title": "About",
@@ -66,7 +66,7 @@
     "subscribe": "Subscribe",
     "placeholder": "your@email.com",
     "success": "You're in! Expect something thoughtful in your inbox soon.",
-    "error": "Something went wrong. Please try again."
+    "error": "We couldn't add you just now. Please try again in a moment."
   },
   "contact": {
     "title": "Contact",
@@ -76,18 +76,18 @@
     "messagePlaceholder": "Your message...",
     "submit": "Send Message",
     "success": "Message sent! I'll get back to you soon.",
-    "error": "Something went wrong. Please try again."
+    "error": "Your message didn't send. Check your connection and try again, or email directly."
   },
   "search": {
     "title": "Search",
-    "placeholder": "Search articles, thoughts, reflections, collections...",
+    "placeholder": "Search notes, field notes, projects and collections",
     "results": "{count} results for \"{query}\"",
     "noResults": "No results found for \"{query}\"",
-    "empty": "Type a keyword to search across articles, notebook thoughts, community pages, and collections.",
+    "empty": "Type a word to search every note, field note, project, collection and shared page.",
     "filterAll": "All",
-    "filterArticles": "Articles",
-    "filterNotebook": "Notebook Thoughts",
-    "filterSharedPages": "Community Pages",
+    "filterArticles": "Notes",
+    "filterNotebook": "Field notes",
+    "filterSharedPages": "Shared pages",
     "filterCollections": "Collections"
   },
   "footer": {
@@ -96,7 +96,7 @@
       "about": "About",
       "contact": "Contact",
       "newsletter": "Newsletter",
-      "articles": "Articles"
+      "articles": "Notebook"
     },
     "social": {
       "github": "GitHub",
@@ -105,10 +105,10 @@
     "copyright": "© {year} The Notebook of a Tech Woman. All rights reserved."
   },
   "common": {
-    "loading": "Loading...",
-    "error": "Something went wrong",
+    "loading": "Turning the page…",
+    "error": "This page smudged while loading.",
     "retry": "Try again",
-    "notFound": "Page not found",
-    "backHome": "Go back home"
+    "notFound": "This page isn't in the notebook",
+    "backHome": "Back to the first page"
   }
 }

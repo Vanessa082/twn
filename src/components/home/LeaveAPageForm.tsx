@@ -53,7 +53,10 @@ export default function LeaveAPageForm({ onSuccess }: LeaveAPageFormProps) {
           setTimeout(onSuccess, 3000);
         }
       } else {
-        setError(result.error || "Something went wrong. Please try again.");
+        setError(
+          result.error ||
+            "Your page didn't send. Your words are still here, so try again in a moment."
+        );
       }
     });
   };

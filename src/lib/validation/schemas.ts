@@ -13,7 +13,7 @@ const calendarDateSchema = z
   .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must use YYYY-MM-DD.")
   .refine((value) => !Number.isNaN(Date.parse(`${value}T00:00:00Z`)), "Date is invalid.");
 
-const safeHttpUrlSchema = z
+export const safeHttpUrlSchema = z
   .string()
   .trim()
   .url("Enter a valid URL.")

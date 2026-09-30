@@ -1,3 +1,4 @@
+import { logger } from "@/lib/observability/logger";
 import type { ArticleBroadcastPayload } from "@/lib/services/email";
 import { sendArticleNewsletterEmail } from "@/lib/services/email";
 import {
@@ -15,7 +16,6 @@ export async function broadcastNewArticle(
   try {
     const emails = await repository.findAllEmailsAdmin();
     if (emails.length === 0) {
-      console.log("[broadcastNewArticle] No subscribers to notify.");
       return { sent: 0, failed: 0 };
     }
 
@@ -28,11 +28,13 @@ export async function broadcastNewArticle(
       }
     }
 
-    console.log(
-      `[broadcastNewArticle] Broadcast complete. Sent: ${sent}, Failed: ${failed}, Total: ${emails.length}`
+    logger.info(
+      "newsletter.broadcast.completed",
+      { sent, failed, total: emails.length },
+      "newsletter"
     );
   } catch (err) {
-    console.error("[broadcastNewArticle] Unexpected error:", err);
+    logger.error("newsletter.broadcast.failed", err, {}, "newsletter");
   }
 
   return { sent, failed };

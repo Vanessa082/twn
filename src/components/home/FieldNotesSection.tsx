@@ -29,8 +29,9 @@ export default function FieldNotesSection({ notes }: FieldNotesSectionProps) {
   return (
     <section
       ref={ref}
+      id="field-notes"
       aria-labelledby="field-notes-heading"
-      className={`twn-reveal ${inView ? "is-visible" : ""} border-b border-border bg-background py-20 sm:py-28`}
+      className={`twn-reveal ${inView ? "is-visible" : ""} scroll-mt-24 border-b border-border bg-background py-20 sm:py-28`}
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-10 lg:px-20">
         <SectionHeading
@@ -40,7 +41,11 @@ export default function FieldNotesSection({ notes }: FieldNotesSectionProps) {
 
         <ol className={`grid ${COLUMNS[Math.min(notes.length, 3)]} gap-x-10 gap-y-14`}>
           {notes.map((note) => (
-            <li key={note.id} className="flex flex-col border-t border-foreground/80 pt-6">
+            <li
+              key={note.id}
+              id={`field-note-${note.id}`}
+              className="flex scroll-mt-28 flex-col border-t border-foreground/80 pt-6"
+            >
               <div className="flex items-baseline justify-between gap-4 text-[10px] font-sans font-semibold uppercase tracking-[0.22em]">
                 <span className="text-ink-accent">No. {note.note_number}</span>
                 <span className="text-muted-foreground">{note.tag}</span>

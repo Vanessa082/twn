@@ -39,7 +39,7 @@ export default function FeaturedArticle({ article, volume }: FeaturedArticleProp
     transition: "transform 1.4s cubic-bezier(0.16,1,0.3,1)",
   };
 
-  const href = `/articles/${article.slug}`;
+  const href = `/notebook/${article.slug}`;
 
   return (
     <section

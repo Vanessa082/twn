@@ -63,7 +63,7 @@ describe("Today's Page", () => {
     );
 
     expect(markup).toContain(article.excerpt);
-    expect(markup).toContain(`/articles/${article.slug}`);
+    expect(markup).toContain(`/notebook/${article.slug}`);
     expect(markup).toContain("Read the full note");
   });
 });

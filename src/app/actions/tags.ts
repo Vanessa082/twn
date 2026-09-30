@@ -2,8 +2,8 @@
 
 import { toAdminActionError } from "@/lib/auth/admin-errors";
 import { canManageArticles } from "@/lib/auth/policies";
-import { recordAuditLog } from "@/platform/audit/audit-log";
 import { createTagAdmin, deleteTagAdmin, setArticleTagsAdmin } from "@/lib/services/tags";
+import { recordAuditLog } from "@/platform/audit/audit-log";
 import { revalidatePath } from "next/cache";
 
 export async function createTagAction(name: string) {
@@ -67,7 +67,7 @@ export async function setArticleTagsAction(articleId: string, tagIds: string[]) 
     });
 
     revalidatePath(`/admin/articles/${articleId}`);
-    revalidatePath("/articles");
+    revalidatePath("/notebook");
     return { success: true, error: null };
   } catch (error: unknown) {
     return {

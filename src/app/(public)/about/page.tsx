@@ -1,17 +1,22 @@
 import StillFiguringItOutSection from "@/components/about/StillFiguringItOutSection";
 import FramedPortrait from "@/components/ui/FramedPortrait";
 import SectionHeading, { Eyebrow, TextLink } from "@/components/ui/SectionHeading";
+import { pageMetadata } from "@/lib/seo";
 import { getAboutData } from "@/lib/services/about";
+import { routes } from "@/lib/site";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
 export const revalidate = 60; // ISR validation
 
-export const metadata = {
-  title: "About",
+export const metadata = pageMetadata({
+  title: "About Vanessa",
   description:
-    "I'm Vanessa — developer, writer, educator and builder. This is where I document the becoming.",
-};
+    "I'm Vanessa: developer, writer, educator and builder. This is where I document the becoming.",
+  path: routes.about,
+  type: "profile",
+  eyebrow: "About",
+});
 
 const container = "mx-auto max-w-7xl px-5 sm:px-10 lg:px-20";
 
@@ -71,7 +76,7 @@ export default async function AboutPage() {
 
                 <div className="mt-10 flex flex-wrap items-center gap-8">
                   <Link
-                    href="/articles"
+                    href="/notebook"
                     data-cursor="link"
                     className="inline-flex h-11 items-center justify-center rounded-[4px] bg-foreground px-6 text-[11px] font-sans font-semibold uppercase tracking-[0.18em] text-background transition-opacity duration-300 hover:opacity-85"
                   >

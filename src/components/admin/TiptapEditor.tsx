@@ -1,7 +1,7 @@
 "use client";
 
+import { safeHttpUrlSchema } from "@/lib/validation/schemas";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import { Table } from "@tiptap/extension-table";
@@ -39,6 +39,7 @@ import {
   Unlink,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { FigureImage, MAX_ALT_LENGTH, MAX_CAPTION_LENGTH } from "./editor/FigureImage";
 
 // ── Lowlight instance with all common languages ───────────────────────────────
 const lowlight = createLowlight(common);
@@ -85,10 +86,30 @@ function CodeBlockNodeView({ node, updateAttributes, extension }: any) {
           }}
         >
           {[
-            "plaintext", "javascript", "typescript", "python", "bash",
-            "shell", "css", "html", "json", "markdown", "sql", "rust",
-            "go", "java", "c", "cpp", "csharp", "php", "ruby", "swift",
-            "kotlin", "yaml", "xml", "graphql",
+            "plaintext",
+            "javascript",
+            "typescript",
+            "python",
+            "bash",
+            "shell",
+            "css",
+            "html",
+            "json",
+            "markdown",
+            "sql",
+            "rust",
+            "go",
+            "java",
+            "c",
+            "cpp",
+            "csharp",
+            "php",
+            "ruby",
+            "swift",
+            "kotlin",
+            "yaml",
+            "xml",
+            "graphql",
           ].map((lang) => (
             <option key={lang} value={lang} style={{ background: "#1a1a1a", color: "#ccc" }}>
               {lang}
@@ -98,7 +119,13 @@ function CodeBlockNodeView({ node, updateAttributes, extension }: any) {
 
         {/* Mac window dots */}
         <span
-          style={{ display: "flex", gap: "6px", position: "absolute", left: "50%", transform: "translateX(-50%)" }}
+          style={{
+            display: "flex",
+            gap: "6px",
+            position: "absolute",
+            left: "50%",
+            transform: "translateX(-50%)",
+          }}
         >
           <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#ff5f56" }} />
           <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#ffbd2e" }} />
@@ -149,56 +176,6 @@ function CodeBlockNodeView({ node, updateAttributes, extension }: any) {
   );
 }
 
-// ── Image Node View ─────────────────────────────────────────────────────────
-// A React wrapper rendered around every image node in the editor.
-// On hover, a red trash button appears in the top-right corner.
-// Clicking trash calls deleteNode()   removes ONLY that specific image.
-// This is the pattern used by Notion, Ghost, and Substack.
-// biome-ignore lint/suspicious/noExplicitAny: Tiptap NodeViewRendererProps
-function ImageNodeView({ node, deleteNode }: any) {
-  const [hovered, setHovered] = useState(false);
-
-  return (
-    <NodeViewWrapper
-      className="relative my-6 group"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      {/* Delete button   appears on hover, top-right corner */}
-      {hovered && (
-        <button
-          type="button"
-          onClick={deleteNode}
-          aria-label="Remove image"
-          className="absolute top-2 right-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-destructive text-white shadow-lg transition-all hover:bg-destructive/90 hover:scale-110"
-        >
-          <Trash2 className="h-3.5 w-3.5" />
-        </button>
-      )}
-      <img
-        src={node.attrs.src}
-        alt={node.attrs.alt || ""}
-        className={`rounded-lg w-full border shadow-md transition-all duration-150 ${
-          hovered ? "border-destructive/50 opacity-95" : "border-border"
-        }`}
-      />
-      {/* Helper hint */}
-      {hovered && (
-        <p className="text-center text-[10px] text-muted-foreground mt-1 select-none">
-          Click <span className="text-destructive font-bold">✕</span> to remove this image
-        </p>
-      )}
-    </NodeViewWrapper>
-  );
-}
-
-// ── Custom Image Extension with NodeView ─────────────────────────────────────
-const ImageWithDelete = Image.extend({
-  addNodeView() {
-    return ReactNodeViewRenderer(ImageNodeView);
-  },
-});
-
 // ── Editor Props ─────────────────────────────────────────────────────────────
 interface TiptapEditorProps {
   content: string;
@@ -230,10 +207,7 @@ export default function TiptapEditor({
             "text-ink-accent font-semibold underline underline-offset-4 decoration-ink-accent/40 hover:decoration-ink-accent transition-colors cursor-pointer",
         },
       }),
-      ImageWithDelete.configure({
-        inline: false,
-        allowBase64: false,
-      }),
+      FigureImage,
       Table.configure({ resizable: true }),
       TableRow,
       TableHeader,
@@ -274,6 +248,10 @@ export default function TiptapEditor({
 
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
+  const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
+  const [imageAlt, setImageAlt] = useState("");
+  const [imageCaption, setImageCaption] = useState("");
+  const [isDecorative, setIsDecorative] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
@@ -300,8 +278,42 @@ export default function TiptapEditor({
 
   const openImageModal = () => {
     setImageUrl("");
+    setUploadedUrl(null);
+    setImageAlt("");
+    setImageCaption("");
+    setIsDecorative(false);
     setUploadError(null);
     setIsImageModalOpen(true);
+  };
+
+  const insertImage = () => {
+    const src = uploadedUrl ?? imageUrl.trim();
+    if (!src) {
+      setUploadError("Upload an image or paste its web address first.");
+      return;
+    }
+    if (!uploadedUrl && !safeHttpUrlSchema.safeParse(src).success) {
+      setUploadError("Image addresses must start with http:// or https://.");
+      return;
+    }
+    const alt = imageAlt.trim();
+    if (!alt && !isDecorative) {
+      setUploadError("Describe the image for readers who can't see it, or mark it as decorative.");
+      return;
+    }
+    editor
+      .chain()
+      .focus()
+      .insertContent({
+        type: "image",
+        attrs: {
+          src,
+          alt: isDecorative ? "" : alt.slice(0, MAX_ALT_LENGTH),
+          caption: imageCaption.trim().slice(0, MAX_CAPTION_LENGTH) || null,
+        },
+      })
+      .run();
+    setIsImageModalOpen(false);
   };
 
   return (
@@ -457,7 +469,9 @@ export default function TiptapEditor({
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => setIsTableMenuOpen((v) => !v)}
             className={`p-2 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 ${
-              editor.isActive("table") ? "bg-muted-gold/20 text-foreground font-semibold shadow-sm border border-muted-gold/30" : ""
+              editor.isActive("table")
+                ? "bg-muted-gold/20 text-foreground font-semibold shadow-sm border border-muted-gold/30"
+                : ""
             }`}
             title="Table Actions"
           >
@@ -474,37 +488,46 @@ export default function TiptapEditor({
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => {
-                  editor.chain().focus().insertTable({ rows: 2, cols: 2, withHeaderRow: true }).run();
+                  editor
+                    .chain()
+                    .focus()
+                    .insertTable({ rows: 2, cols: 2, withHeaderRow: true })
+                    .run();
                   setIsTableMenuOpen(false);
                 }}
                 className="w-full text-left px-4 py-1.5 text-xs text-foreground hover:bg-muted transition-colors flex items-center gap-2"
               >
-                <TableIcon className="h-3.5 w-3.5 text-muted-gold" />
-                2 × 2 Table
+                <TableIcon className="h-3.5 w-3.5 text-muted-gold" />2 × 2 Table
               </button>
               <button
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => {
-                  editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+                  editor
+                    .chain()
+                    .focus()
+                    .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+                    .run();
                   setIsTableMenuOpen(false);
                 }}
                 className="w-full text-left px-4 py-1.5 text-xs text-foreground hover:bg-muted transition-colors flex items-center gap-2"
               >
-                <TableIcon className="h-3.5 w-3.5 text-muted-gold" />
-                3 × 3 Table
+                <TableIcon className="h-3.5 w-3.5 text-muted-gold" />3 × 3 Table
               </button>
               <button
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => {
-                  editor.chain().focus().insertTable({ rows: 4, cols: 4, withHeaderRow: true }).run();
+                  editor
+                    .chain()
+                    .focus()
+                    .insertTable({ rows: 4, cols: 4, withHeaderRow: true })
+                    .run();
                   setIsTableMenuOpen(false);
                 }}
                 className="w-full text-left px-4 py-1.5 text-xs text-foreground hover:bg-muted transition-colors flex items-center gap-2"
               >
-                <TableIcon className="h-3.5 w-3.5 text-muted-gold" />
-                4 × 4 Table
+                <TableIcon className="h-3.5 w-3.5 text-muted-gold" />4 × 4 Table
               </button>
 
               <div className="my-1 border-t border-border" />
@@ -515,7 +538,10 @@ export default function TiptapEditor({
               <button
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
-                onClick={() => { editor.chain().focus().addRowAfter().run(); setIsTableMenuOpen(false); }}
+                onClick={() => {
+                  editor.chain().focus().addRowAfter().run();
+                  setIsTableMenuOpen(false);
+                }}
                 className="w-full text-left px-4 py-1.5 text-xs text-foreground hover:bg-muted transition-colors"
               >
                 + Add row below
@@ -523,7 +549,10 @@ export default function TiptapEditor({
               <button
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
-                onClick={() => { editor.chain().focus().addRowBefore().run(); setIsTableMenuOpen(false); }}
+                onClick={() => {
+                  editor.chain().focus().addRowBefore().run();
+                  setIsTableMenuOpen(false);
+                }}
                 className="w-full text-left px-4 py-1.5 text-xs text-foreground hover:bg-muted transition-colors"
               >
                 + Add row above
@@ -531,7 +560,10 @@ export default function TiptapEditor({
               <button
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
-                onClick={() => { editor.chain().focus().addColumnAfter().run(); setIsTableMenuOpen(false); }}
+                onClick={() => {
+                  editor.chain().focus().addColumnAfter().run();
+                  setIsTableMenuOpen(false);
+                }}
                 className="w-full text-left px-4 py-1.5 text-xs text-foreground hover:bg-muted transition-colors"
               >
                 + Add column right
@@ -539,7 +571,10 @@ export default function TiptapEditor({
               <button
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
-                onClick={() => { editor.chain().focus().addColumnBefore().run(); setIsTableMenuOpen(false); }}
+                onClick={() => {
+                  editor.chain().focus().addColumnBefore().run();
+                  setIsTableMenuOpen(false);
+                }}
                 className="w-full text-left px-4 py-1.5 text-xs text-foreground hover:bg-muted transition-colors"
               >
                 + Add column left
@@ -550,7 +585,10 @@ export default function TiptapEditor({
               <button
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
-                onClick={() => { editor.chain().focus().deleteRow().run(); setIsTableMenuOpen(false); }}
+                onClick={() => {
+                  editor.chain().focus().deleteRow().run();
+                  setIsTableMenuOpen(false);
+                }}
                 className="w-full text-left px-4 py-1.5 text-xs text-destructive hover:bg-destructive/10 transition-colors"
               >
                 − Delete current row
@@ -558,7 +596,10 @@ export default function TiptapEditor({
               <button
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
-                onClick={() => { editor.chain().focus().deleteColumn().run(); setIsTableMenuOpen(false); }}
+                onClick={() => {
+                  editor.chain().focus().deleteColumn().run();
+                  setIsTableMenuOpen(false);
+                }}
                 className="w-full text-left px-4 py-1.5 text-xs text-destructive hover:bg-destructive/10 transition-colors"
               >
                 − Delete current column
@@ -566,7 +607,10 @@ export default function TiptapEditor({
               <button
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
-                onClick={() => { editor.chain().focus().deleteTable().run(); setIsTableMenuOpen(false); }}
+                onClick={() => {
+                  editor.chain().focus().deleteTable().run();
+                  setIsTableMenuOpen(false);
+                }}
                 className="w-full text-left px-4 py-2 text-xs font-semibold text-destructive hover:bg-destructive/10 transition-colors flex items-center gap-1.5"
               >
                 <Trash2 className="h-3.5 w-3.5" /> Delete Entire Table
@@ -775,14 +819,15 @@ export default function TiptapEditor({
                         const { uploadImageAction } = await import("@/app/actions/upload");
                         const res = await uploadImageAction(formData);
                         if (res.success && res.url) {
-                          editor.chain().focus().setImage({ src: res.url }).run();
-                          setIsImageModalOpen(false);
+                          setUploadedUrl(res.url);
+                          setImageUrl("");
                         } else {
-                          setUploadError(res.error || "Upload failed");
+                          setUploadError(res.error || "The image could not be uploaded.");
                         }
-                      } catch (err) {
-                        console.error("Upload error:", err);
-                        setUploadError("An error occurred during file upload.");
+                      } catch {
+                        setUploadError(
+                          "The upload was interrupted. Check your connection and try a smaller image."
+                        );
                       } finally {
                         setIsUploading(false);
                       }
@@ -794,10 +839,20 @@ export default function TiptapEditor({
                       <Loader2 className="h-6 w-6 text-muted-gold animate-spin mx-auto" />
                       <p className="text-xs text-muted-foreground">Uploading image...</p>
                     </div>
+                  ) : uploadedUrl ? (
+                    <div className="space-y-2">
+                      {/* biome-ignore lint/a11y/useAltText: decorative preview inside the upload control */}
+                      <img src={uploadedUrl} alt="" className="mx-auto max-h-32 rounded-md" />
+                      <p className="text-[10px] text-muted-foreground">
+                        Uploaded · click to replace
+                      </p>
+                    </div>
                   ) : (
                     <div className="space-y-1 py-2">
                       <ImageIcon className="h-6 w-6 text-muted-foreground mx-auto mb-1" />
-                      <p className="text-xs text-foreground font-medium">Click to select an image</p>
+                      <p className="text-xs text-foreground font-medium">
+                        Click to select an image
+                      </p>
                       <p className="text-[10px] text-muted-foreground">PNG, JPG, WebP · max 5 MB</p>
                     </div>
                   )}
@@ -827,10 +882,59 @@ export default function TiptapEditor({
                   id="modal-image-url"
                   type="text"
                   value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
+                  onChange={(e) => {
+                    setImageUrl(e.target.value);
+                    setUploadedUrl(null);
+                  }}
                   placeholder="https://example.com/image.jpg"
                   className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
                 />
+              </div>
+
+              <div className="space-y-3 border-t border-border pt-4">
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="modal-image-alt"
+                    className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                  >
+                    Image description (alt text)
+                  </label>
+                  <input
+                    id="modal-image-alt"
+                    type="text"
+                    value={imageAlt}
+                    maxLength={MAX_ALT_LENGTH}
+                    disabled={isDecorative}
+                    onChange={(e) => setImageAlt(e.target.value)}
+                    placeholder="What does the image show?"
+                    className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm disabled:opacity-50"
+                  />
+                  <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <input
+                      type="checkbox"
+                      checked={isDecorative}
+                      onChange={(e) => setIsDecorative(e.target.checked)}
+                    />
+                    Purely decorative (screen readers will skip it)
+                  </label>
+                </div>
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="modal-image-caption"
+                    className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                  >
+                    Caption (optional)
+                  </label>
+                  <input
+                    id="modal-image-caption"
+                    type="text"
+                    value={imageCaption}
+                    maxLength={MAX_CAPTION_LENGTH}
+                    onChange={(e) => setImageCaption(e.target.value)}
+                    placeholder="A label or credit shown under the image"
+                    className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
+                  />
+                </div>
               </div>
             </div>
 
@@ -838,15 +942,10 @@ export default function TiptapEditor({
               <button
                 type="button"
                 disabled={isUploading}
-                onClick={() => {
-                  if (imageUrl.trim()) {
-                    editor.chain().focus().setImage({ src: imageUrl.trim() }).run();
-                  }
-                  setIsImageModalOpen(false);
-                }}
+                onClick={insertImage}
                 className="px-4 h-10 rounded-lg text-xs font-semibold bg-foreground text-background hover:bg-foreground/90 transition-colors disabled:opacity-50"
               >
-                Insert Web Image
+                Insert image
               </button>
             </div>
           </div>

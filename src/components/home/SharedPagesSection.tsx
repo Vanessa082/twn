@@ -85,28 +85,26 @@ export default function SharedPagesSection({ initialPages }: SharedPagesSectionP
             <span className="text-[9px] font-sans font-bold uppercase tracking-[0.28em] text-muted-foreground/70">
               Pages from the Community
             </span>
-            <h2 className="font-serif font-bold text-foreground leading-[1.1] tracking-tight text-[2rem] sm:text-[2.4rem]">
+            <h1 className="font-serif font-bold text-foreground leading-[1.1] tracking-tight text-[2rem] sm:text-[2.4rem]">
               Voices
               <br />
               from our
               <br />
               community
-            </h2>
+            </h1>
             <p className="text-sm text-muted-foreground leading-[1.7] max-w-[280px]">
               Real reflections from women in technology.
             </p>
-            <Link
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                setIsModalOpen(true);
-              }}
-              data-cursor="link"
-              className="group inline-flex items-center gap-2 text-[10px] font-sans font-semibold uppercase tracking-[0.22em] text-foreground hover:opacity-60 transition-opacity mt-2"
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(true)}
+              aria-haspopup="dialog"
+              data-cursor="button"
+              className="group mt-2 inline-flex cursor-pointer items-center gap-2 self-start text-[10px] font-sans font-semibold uppercase tracking-[0.22em] text-foreground transition-opacity hover:opacity-60"
             >
               <span>Leave a Page</span>
-              <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
-            </Link>
+              <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
+            </button>
           </div>
 
           {/* ── RIGHT: carousel ── */}
@@ -114,24 +112,26 @@ export default function SharedPagesSection({ initialPages }: SharedPagesSectionP
             {/* Carousel arrows   top right */}
             <div className="flex justify-end gap-2 mb-5">
               <button
+                type="button"
                 onClick={() => scroll("left")}
                 aria-label="Previous pages"
                 data-cursor="button"
-                className="w-9 h-9 rounded-full border border-[#CCCCCC] flex items-center justify-center text-muted-foreground
+                className="size-9 rounded-full border border-[#CCCCCC] flex items-center justify-center text-muted-foreground
                   hover:bg-foreground hover:border-foreground hover:text-background
                   transition-all duration-200"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="size-4" />
               </button>
               <button
+                type="button"
                 onClick={() => scroll("right")}
                 aria-label="Next pages"
                 data-cursor="button"
-                className="w-9 h-9 rounded-full border border-[#CCCCCC] flex items-center justify-center text-muted-foreground
+                className="size-9 rounded-full border border-[#CCCCCC] flex items-center justify-center text-muted-foreground
                   hover:bg-foreground hover:border-foreground hover:text-background
                   transition-all duration-200"
               >
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="size-4" />
               </button>
             </div>
 
@@ -185,7 +185,7 @@ export default function SharedPagesSection({ initialPages }: SharedPagesSectionP
                     <div className="flex flex-col gap-2">
                       <div className="flex flex-col gap-0.5">
                         <span className="text-[13px] font-sans font-semibold text-foreground">
-                            {page.author_name}
+                          {page.author_name}
                         </span>
                         <span className="text-[11px] text-muted-foreground/70">
                           {formatDate(page.submitted_at)}

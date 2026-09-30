@@ -1,3 +1,5 @@
+import { pageMetadata } from "@/lib/seo";
+import { routes } from "@/lib/site";
 /**
  * /newsletter   Dedicated newsletter subscription page.
  *
@@ -19,10 +21,13 @@ import { NEWSLETTER_ENABLED } from "@/lib/feature-flags";
 import { Calendar, Clock, Heart, Sparkles } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
-export const metadata = {
-  title: "Newsletter",
-  description: "Subscribe to the newsletter and receive new notes directly in your inbox.",
-};
+export const metadata = pageMetadata({
+  title: "The Newsletter",
+  description:
+    "New notes from The Notebook of a Tech Woman, delivered to your inbox. Thoughtful, occasional, never spam.",
+  path: routes.newsletter,
+  eyebrow: "Newsletter",
+});
 
 export default async function NewsletterPage() {
   const t = await getTranslations("newsletter");
@@ -49,7 +54,7 @@ export default async function NewsletterPage() {
     <div className="flex flex-col min-h-screen bg-background transition-colors duration-300">
       {/* Editorial Intro */}
       <section className="py-16 sm:py-24 border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+        <div className="mx-auto max-w-4xl px-5 text-center sm:px-10">
           <span className="text-xs font-bold uppercase tracking-widest text-muted-gold mb-4 inline-block">
             Subscription
           </span>

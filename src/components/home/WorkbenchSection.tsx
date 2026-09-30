@@ -32,7 +32,10 @@ function ProjectEntry({ project, index }: { project: Project; index: number }) {
   ].filter((part): part is { label: string; text: string } => Boolean(part.text));
 
   return (
-    <li className="grid grid-cols-1 gap-6 border-b border-border py-10 md:grid-cols-12 md:gap-10 sm:py-12">
+    <li
+      id={`project-${project.id}`}
+      className="grid scroll-mt-28 grid-cols-1 gap-6 border-b border-border py-10 md:grid-cols-12 md:gap-10 sm:py-12"
+    >
       <div className="md:col-span-4">
         <span className="font-mono text-[11px] text-muted-foreground/70">
           {String(index + 1).padStart(2, "0")}

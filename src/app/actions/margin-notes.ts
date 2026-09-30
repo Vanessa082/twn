@@ -7,14 +7,14 @@ import {
   isBotSubmission,
   isDuplicateSubmission,
 } from "@/lib/security/submission-protection";
-import { recordAuditLog } from "@/platform/audit/audit-log";
+import { submitMarginNoteSchema } from "@/lib/validation/schemas";
 import {
   deleteMarginNoteAdmin,
   submitMarginNote,
   updateMarginNotePinAdmin,
   updateMarginNoteStatusAdmin,
 } from "@/modules/community";
-import { submitMarginNoteSchema } from "@/lib/validation/schemas";
+import { recordAuditLog } from "@/platform/audit/audit-log";
 import type { ModerationStatus } from "@/types";
 import { revalidatePath } from "next/cache";
 
@@ -51,7 +51,7 @@ export async function submitMarginNoteAction(
       validated.authorName,
       validated.content
     );
-    revalidatePath("/articles");
+    revalidatePath("/notebook");
     revalidatePath("/admin/content/margin-notes");
     return { success: true, data: note, error: null };
   } catch (error: unknown) {
@@ -88,7 +88,7 @@ export async function moderateMarginNoteAction(id: string, status: ModerationSta
       details: { author_name: note.author_name, status },
     });
 
-    revalidatePath("/articles");
+    revalidatePath("/notebook");
     revalidatePath("/admin/content/margin-notes");
     return { success: true, data: note, error: null };
   } catch (error: unknown) {
@@ -113,7 +113,7 @@ export async function pinMarginNoteAction(id: string, pinned: boolean) {
       targetId: note.id,
     });
 
-    revalidatePath("/articles");
+    revalidatePath("/notebook");
     revalidatePath("/admin/content/margin-notes");
     return { success: true, data: note, error: null };
   } catch (error: unknown) {
@@ -138,7 +138,7 @@ export async function deleteMarginNoteAction(id: string) {
       targetId: id,
     });
 
-    revalidatePath("/articles");
+    revalidatePath("/notebook");
     revalidatePath("/admin/content/margin-notes");
     return { success: true, error: null };
   } catch (error: unknown) {

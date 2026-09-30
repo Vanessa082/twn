@@ -43,8 +43,6 @@ export async function contactAction(_prevState: unknown, formData: FormData) {
   }
 
   try {
-    console.log(`[contactAction] Sending Message from ${name} (${email}) via Resend...`);
-
     // Call Resend REST API using native fetch
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",

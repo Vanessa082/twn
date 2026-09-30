@@ -3,11 +3,7 @@ import type { MarginNote, ModerationStatus } from "@/types";
 
 export interface MarginNoteRepository {
   findApprovedForArticle(articleId: string): Promise<MarginNote[]>;
-  insert(
-    articleId: string,
-    authorName: string,
-    content: string
-  ): Promise<MarginNote>;
+  insert(articleId: string, authorName: string, content: string): Promise<MarginNote>;
   findAllAdmin(): Promise<(MarginNote & { article_title?: string })[]>;
   updateStatus(id: string, status: ModerationStatus): Promise<MarginNote>;
   updatePin(id: string, pinned: boolean): Promise<MarginNote>;

@@ -43,7 +43,10 @@ export default function MarginNoteForm({ articleId }: MarginNoteFormProps) {
         setAuthorName("");
         setTimeout(() => setSuccess(false), 5000);
       } else {
-        setError(result.error || "Failed to submit reflection.");
+        setError(
+          result.error ||
+            "Your reflection didn't reach the notebook. Check your connection and try again."
+        );
       }
     });
   };
@@ -63,8 +66,7 @@ export default function MarginNoteForm({ articleId }: MarginNoteFormProps) {
       {success ? (
         <div className="p-4 border border-emerald-500/20 bg-emerald-500/5 text-emerald-600 rounded-lg flex items-start gap-2.5 animate-fade-in">
           <CheckCircle2 className="h-4 w-4 shrink-0 mt-0.5" />
-          <p className="text-xs leading-relaxed">
-            Thank you for your feedback          </p>
+          <p className="text-xs leading-relaxed">Thank you for your feedback </p>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-3">
@@ -89,8 +91,9 @@ export default function MarginNoteForm({ articleId }: MarginNoteFormProps) {
                 required
               />
               <span
-                className={`absolute right-3 bottom-3 text-[9px] font-bold ${charsLeft < 15 ? "text-red-500" : "text-muted-foreground/50"
-                  }`}
+                className={`absolute right-3 bottom-3 text-[9px] font-bold ${
+                  charsLeft < 15 ? "text-red-500" : "text-muted-foreground/50"
+                }`}
               >
                 {charsLeft}
               </span>

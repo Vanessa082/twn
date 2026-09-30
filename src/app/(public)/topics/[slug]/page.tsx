@@ -1,6 +1,8 @@
 import ArticleCard from "@/components/articles/ArticleCard";
+import { Eyebrow, TextLink } from "@/components/ui/SectionHeading";
+import { pageMetadata } from "@/lib/seo";
 import { getArticlesByTag, getTagBySlug } from "@/lib/services/tags";
-import { ArrowLeft, Tag as TagIcon } from "lucide-react";
+import { routes } from "@/lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -12,12 +14,14 @@ interface TopicPageProps {
 export async function generateMetadata({ params }: TopicPageProps): Promise<Metadata> {
   const { slug } = await params;
   const tag = await getTagBySlug(slug);
-  if (!tag) return { title: "Topic Not Found | TWN" };
+  if (!tag) return { title: "Topic not found", robots: { index: false } };
 
-  return {
-    title: `${tag.name} Articles | The Notebook of a Tech Woman`,
-    description: `Explore all articles tagged under ${tag.name} on The Notebook of a Tech Woman.`,
-  };
+  return pageMetadata({
+    title: `Notes on ${tag.name}`,
+    description: `Every note Vanessa has written about ${tag.name}, from The Notebook of a Tech Woman.`,
+    path: routes.topic(tag.slug),
+    eyebrow: "Topic",
+  });
 }
 
 export default async function TopicPage({ params }: TopicPageProps) {
@@ -31,49 +35,49 @@ export default async function TopicPage({ params }: TopicPageProps) {
   const articles = await getArticlesByTag(slug);
 
   return (
-    <main className="min-h-screen bg-background text-foreground py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto space-y-12">
-        {/* Navigation Back */}
-        <Link
-          href="/articles"
-          className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" /> Back to Articles
-        </Link>
+    <div className="bg-background pb-24 pt-16 sm:pt-24">
+      <div className="mx-auto max-w-7xl px-5 sm:px-10 lg:px-20">
+        <nav aria-label="Breadcrumb">
+          <Link
+            href={routes.notebook}
+            className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground transition-colors hover:text-foreground"
+          >
+            ← The Notebook
+          </Link>
+        </nav>
 
-        {/* Topic Header */}
-        <div className="border-b border-border pb-8 space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted-gold/10 text-muted-gold text-xs font-bold uppercase tracking-widest border border-muted-gold/20">
-            <TagIcon className="h-3.5 w-3.5" /> Topic
-          </div>
-          <h1 className="text-4xl sm:text-5xl font-serif font-black tracking-tight text-foreground">
+        <header className="mt-8 max-w-2xl border-b border-border pb-10">
+          <Eyebrow>Topic</Eyebrow>
+          <h1
+            className="mt-5 font-serif font-bold leading-[0.98] tracking-[-0.03em] text-foreground text-balance"
+            style={{ fontSize: "clamp(2.6rem, 6vw, 4.5rem)" }}
+          >
             {tag.name}
           </h1>
-          <p className="text-sm text-muted-foreground max-w-xl">
-            Articles and reflections tagged under{" "}
-            <span className="font-semibold text-foreground">{tag.name}</span>.
+          <p className="mt-5 font-serif text-[1.1rem] leading-[1.7] text-muted-foreground">
+            {articles.length > 0
+              ? `${articles.length} ${articles.length === 1 ? "note" : "notes"} about ${tag.name}.`
+              : `Nothing has been filed under ${tag.name} yet.`}
           </p>
-        </div>
+        </header>
 
-        {/* Article Grid */}
         {articles.length === 0 ? (
-          <div className="p-16 text-center border border-dashed border-border rounded-2xl space-y-3">
-            <TagIcon className="h-8 w-8 text-muted-foreground mx-auto" />
-            <p className="text-base font-serif font-semibold text-foreground">
-              No published articles under this topic yet.
+          <div className="py-20">
+            <p className="font-quote text-2xl italic text-muted-foreground">
+              This topic is waiting for its first note.
             </p>
-            <p className="text-xs text-muted-foreground">
-              Check back soon as new articles are tagged and published!
-            </p>
+            <div className="mt-8">
+              <TextLink href={routes.notebook}>Read every note instead</TextLink>
+            </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="mt-14 grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
             {articles.map((article) => (
               <ArticleCard key={article.id} article={article} />
             ))}
           </div>
         )}
       </div>
-    </main>
+    </div>
   );
 }

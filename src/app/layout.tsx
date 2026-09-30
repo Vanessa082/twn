@@ -13,7 +13,9 @@
  *  2. The generated HTML is streamed directly to the browser, offering rapid First Contentful Paint.
  */
 
-import type { Metadata } from "next";
+import { ogImageUrl } from "@/lib/seo";
+import { site } from "@/lib/site";
+import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { Cormorant_Garamond, Inter, Playfair_Display } from "next/font/google";
@@ -59,30 +61,43 @@ const cormorant = Cormorant_Garamond({
  * This is crucial for Search Engine Optimization and link previews on Slack, Twitter, and LinkedIn.
  */
 export const metadata: Metadata = {
+  metadataBase: new URL(site.url),
   title: {
-    default: "The Notebook of a Tech Woman | TWN",
-    template: "%s | The Notebook of a Tech Woman",
+    default: `${site.name} | ${site.shortName}`,
+    template: `%s | ${site.shortName}`,
   },
-  description:
-    "Notes on technology, ideas, challenges, and the journey of becoming. Reflections on leadership, learning, society, and life by a tech woman.",
-  metadataBase: new URL("https://twnotebook.com"),
+  description: site.description,
+  applicationName: site.name,
+  authors: [{ name: site.author, url: site.url }],
+  creator: site.author,
   openGraph: {
-    title: "The Notebook of a Tech Woman",
-    description: "Notes on technology, ideas, challenges, and the journey of becoming.",
-    url: "https://twnotebook.com",
-    siteName: "TWN",
-    locale: "en_US",
+    title: site.name,
+    description: site.description,
+    siteName: site.name,
+    locale: site.locale,
     type: "website",
+    images: [{ url: ogImageUrl(site.name), width: 1200, height: 630, alt: site.name }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "The Notebook of a Tech Woman",
-    description: "Notes on technology, ideas, challenges, and the journey of becoming.",
+    title: site.name,
+    description: site.description,
+    images: [ogImageUrl(site.name)],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
   },
+  formatDetection: { telephone: false },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+  ],
+  colorScheme: "light",
 };
 
 export default async function RootLayout({
@@ -108,8 +123,14 @@ export default async function RootLayout({
         className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-300"
         suppressHydrationWarning
       >
+        <a
+          href="#content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-foreground focus:px-4 focus:py-2 focus:text-xs focus:font-semibold focus:uppercase focus:tracking-[0.2em] focus:text-background"
+        >
+          Skip to content
+        </a>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <main className="flex-1 flex flex-col">{children}</main>
+          <div className="flex flex-1 flex-col">{children}</div>
         </NextIntlClientProvider>
       </body>
     </html>

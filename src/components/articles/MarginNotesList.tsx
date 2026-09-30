@@ -62,7 +62,7 @@ export default function MarginNotesList({ articleId, notes }: MarginNotesListPro
                   </p>
 
                   <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-                    <span className="font-semibold text-foreground">  {note.author_name}</span>
+                    <span className="font-semibold text-foreground"> {note.author_name}</span>
                     <span className="text-border select-none">·</span>
                     <span>{formatDate(note.published_at || note.submitted_at)}</span>
                   </div>

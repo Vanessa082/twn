@@ -230,9 +230,7 @@ export async function getCategories(): Promise<import("@/types").Category[]> {
     const supabase = await createClient();
     const { data, error } = await supabase.from("categories").select("id, name, slug");
     if (error || !data || data.length === 0) return FALLBACK;
-    return (data as Cat[]).sort(
-      (a, b) => ORDER.indexOf(a.slug) - ORDER.indexOf(b.slug)
-    );
+    return (data as Cat[]).sort((a, b) => ORDER.indexOf(a.slug) - ORDER.indexOf(b.slug));
   } catch {
     return FALLBACK;
   }

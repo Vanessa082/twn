@@ -11,8 +11,8 @@
  *   logger.error("cloudinary.upload.failed", { correlationId }, err);
  */
 
-import { classifyError } from "./errors";
 import { getCorrelationId } from "./correlation";
+import { classifyError } from "./errors";
 import { redactObject } from "./redact";
 
 type LogLevel = "info" | "warn" | "error";
@@ -34,7 +34,7 @@ function emit(entry: LogEntry): void {
   } else if (entry.level === "warn") {
     console.warn(line);
   } else {
-    console.log(line);
+    console.info(line);
   }
 }
 

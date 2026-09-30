@@ -25,6 +25,12 @@ const nextConfig: NextConfig = {
     // We use Biome for linting, not ESLint.
     ignoreDuringBuilds: true,
   },
+  productionBrowserSourceMaps: false,
+  poweredByHeader: false,
+  compiler: {
+    removeConsole:
+      process.env.NODE_ENV === "production" ? { exclude: ["error", "warn", "info"] } : false,
+  },
   /**
    * ── Server Actions Configuration ───────────────────────────────────────────
    * We increase the bodySizeLimit from the 1MB default to 5MB to allow
@@ -113,16 +119,15 @@ const nextConfig: NextConfig = {
    * A `permanent: true` (HTTP 301) redirect signals to search engines to transfer
    * all "link equity" (SEO ranking power) from the old URL to the new one.
    *
-   * Here we redirect /blog/:slug → /articles/:slug in case we ever migrated
-   * from a "blog" naming convention to the current "articles" naming.
+   * Writing lives under /notebook. The older /articles and /blog URLs are
+   * permanently redirected so shared links and search rankings carry over.
    */
   async redirects() {
     return [
-      {
-        source: "/blog/:slug",
-        destination: "/articles/:slug",
-        permanent: true, // HTTP 301
-      },
+      { source: "/articles", destination: "/notebook", permanent: true },
+      { source: "/articles/:slug", destination: "/notebook/:slug", permanent: true },
+      { source: "/blog", destination: "/notebook", permanent: true },
+      { source: "/blog/:slug", destination: "/notebook/:slug", permanent: true },
     ];
   },
 };

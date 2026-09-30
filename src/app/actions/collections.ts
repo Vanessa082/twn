@@ -2,7 +2,6 @@
 
 import { toAdminActionError } from "@/lib/auth/admin-errors";
 import { canManageArticles } from "@/lib/auth/policies";
-import { recordAuditLog } from "@/platform/audit/audit-log";
 import {
   type CreateCollectionInput,
   createCollectionAdmin,
@@ -10,6 +9,7 @@ import {
   setCollectionArticlesAdmin,
   updateCollectionAdmin,
 } from "@/lib/services/collections";
+import { recordAuditLog } from "@/platform/audit/audit-log";
 import { revalidatePath } from "next/cache";
 
 export async function createCollectionAction(input: CreateCollectionInput) {

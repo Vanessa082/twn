@@ -238,7 +238,7 @@ export default function SharedPagesModerator({ initialPages }: SharedPagesModera
               </p>
 
               <div className="pt-6 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
-                <span className="font-semibold text-foreground">  {readingPage.author_name}</span>
+                <span className="font-semibold text-foreground"> {readingPage.author_name}</span>
                 <span>Submitted at {new Date(readingPage.submitted_at).toLocaleDateString()}</span>
               </div>
             </div>

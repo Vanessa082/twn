@@ -2,6 +2,7 @@
 
 import { toAdminActionError } from "@/lib/auth/admin-errors";
 import { canManageArticles } from "@/lib/auth/policies";
+import { sanitizeNoteHtml } from "@/lib/security/sanitize-note-html";
 import {
   createArticleAdmin,
   deleteArticleAdmin,
@@ -20,6 +21,7 @@ export async function createArticleAction(input: CreateArticleInput) {
     const validated = createArticleSchema.parse(input);
     const articlePayload: CreateArticleInput = {
       ...validated,
+      content: sanitizeNoteHtml(validated.content),
       cover_image: validated.cover_image ?? null,
       published_at: validated.published_at ?? null,
     };
@@ -34,7 +36,7 @@ export async function createArticleAction(input: CreateArticleInput) {
     });
 
     revalidatePath("/");
-    revalidatePath("/articles");
+    revalidatePath("/notebook");
     revalidatePath("/admin/articles");
 
     if (article.status === "published") {
@@ -66,6 +68,7 @@ export async function updateArticleAction(id: string, input: UpdateArticleInput)
     const validated = updateArticleSchema.parse(input);
     const updatePayload: UpdateArticleInput = {
       ...validated,
+      ...(validated.content === undefined ? {} : { content: sanitizeNoteHtml(validated.content) }),
       cover_image:
         validated.cover_image === undefined ? undefined : (validated.cover_image ?? null),
     };
@@ -86,8 +89,8 @@ export async function updateArticleAction(id: string, input: UpdateArticleInput)
     });
 
     revalidatePath("/");
-    revalidatePath("/articles");
-    revalidatePath(`/articles/${article.slug}`);
+    revalidatePath("/notebook");
+    revalidatePath(`/notebook/${article.slug}`);
     revalidatePath("/admin/articles");
     return { success: true, data: article, error: null };
   } catch (error: unknown) {
@@ -124,7 +127,7 @@ export async function restoreRevisionAction(revisionId: string) {
     const restored = await updateArticleAdmin(revision.article_id, {
       title: revision.title,
       excerpt: revision.excerpt,
-      content: revision.content,
+      content: sanitizeNoteHtml(revision.content),
       cover_image: revision.cover_image,
       category: revision.category as UpdateArticleInput["category"],
       status: revision.status as UpdateArticleInput["status"],
@@ -139,8 +142,8 @@ export async function restoreRevisionAction(revisionId: string) {
     });
 
     revalidatePath("/");
-    revalidatePath("/articles");
-    revalidatePath(`/articles/${restored.slug}`);
+    revalidatePath("/notebook");
+    revalidatePath(`/notebook/${restored.slug}`);
     revalidatePath("/admin/articles");
     revalidatePath(`/admin/articles/${revision.article_id}/edit`);
     return { success: true, data: restored, error: null };
@@ -167,7 +170,7 @@ export async function deleteArticleAction(id: string) {
     });
 
     revalidatePath("/");
-    revalidatePath("/articles");
+    revalidatePath("/notebook");
     revalidatePath("/admin/articles");
     return { success: true, error: null };
   } catch (error: unknown) {
@@ -180,7 +183,7 @@ export async function toggleArticleLikeAction(slug: string, increment: boolean) 
   try {
     const { toggleArticleLike } = await import("@/lib/services/articles");
     const count = await toggleArticleLike(slug, increment);
-    revalidatePath(`/articles/${slug}`);
+    revalidatePath(`/notebook/${slug}`);
     return { success: true, count, error: null };
   } catch (error: unknown) {
     const err = error as Error;

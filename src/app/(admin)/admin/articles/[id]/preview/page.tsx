@@ -2,8 +2,8 @@ import RelatedArticles from "@/components/article/RelatedArticles";
 import { InlineActionBar } from "@/components/articles/ArticleEngagement";
 import NewsletterSection from "@/components/home/NewsletterSection";
 import { getArticleByIdAdmin } from "@/lib/services/articles";
-import { getApprovedMarginNotesForArticle } from "@/modules/community";
 import { getRelatedArticles, getTagsForArticle } from "@/lib/services/tags";
+import { getApprovedMarginNotesForArticle } from "@/modules/community";
 import { ArrowLeft, Edit2, ShieldAlert, Tag as TagIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -48,7 +48,7 @@ export default async function ArticlePreviewPage({ params }: ArticlePreviewPageP
           <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold uppercase tracking-wider">
             <ShieldAlert className="h-4 w-4 shrink-0" />
             <span>
-              Admin Preview Mode   Status: <strong className="underline">{article.status}</strong>
+              Admin Preview Mode Status: <strong className="underline">{article.status}</strong>
             </span>
           </div>
 

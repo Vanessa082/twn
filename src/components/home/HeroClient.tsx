@@ -164,7 +164,7 @@ export default function HeroClient({
                   </time>
                 </figcaption>
                 <Link
-                  href={`/articles/${todaysArticle.slug}`}
+                  href={`/notebook/${todaysArticle.slug}`}
                   data-cursor="link"
                   className="group mt-2 block"
                   aria-label={`Read ${todaysArticle.title}`}
@@ -202,8 +202,7 @@ export default function HeroClient({
             )}
             <div className="mt-10 flex flex-wrap items-center gap-8" style={rise(360)}>
               <Link
-                href={
-                  todaysArticle ? `/articles/${todaysArticle.slug}` : "/articles"}
+                href={todaysArticle ? `/notebook/${todaysArticle.slug}` : "/notebook"}
                 data-cursor="link"
                 className="group inline-flex h-11 items-center justify-center gap-2 rounded-[4px] bg-foreground px-6 text-[11px] font-sans font-semibold uppercase tracking-[0.18em] text-background transition-opacity duration-300 hover:opacity-85"
               >

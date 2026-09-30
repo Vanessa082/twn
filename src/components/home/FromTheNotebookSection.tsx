@@ -50,14 +50,14 @@ export default function FromTheNotebookSection({ articles }: FromTheNotebookSect
         <SectionHeading
           eyebrow="Recent essays"
           title={<span id="from-the-notebook-heading">From the notebook</span>}
-          action={{ label: "All notes", href: "/articles" }}
+          action={{ label: "All notes", href: "/notebook" }}
         />
 
         <div
           className={`grid grid-cols-1 gap-12 ${rest.length > 0 ? "lg:grid-cols-12 lg:gap-16" : ""}`}
         >
           <article className={rest.length > 0 ? "lg:col-span-7" : "max-w-3xl"}>
-            <Link href={`/articles/${lead.slug}`} data-cursor="link" className="group block">
+            <Link href={`/notebook/${lead.slug}`} data-cursor="link" className="group block">
               {lead.cover_image && (
                 <div className="relative mb-7 aspect-[3/2] overflow-hidden rounded-[4px] bg-muted">
                   <ImageWithSkeleton
@@ -89,7 +89,7 @@ export default function FromTheNotebookSection({ articles }: FromTheNotebookSect
               {rest.map((article) => (
                 <li key={article.id} className="border-b border-border">
                   <Link
-                    href={`/articles/${article.slug}`}
+                    href={`/notebook/${article.slug}`}
                     data-cursor="link"
                     className="group block py-7"
                   >

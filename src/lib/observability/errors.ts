@@ -1,12 +1,18 @@
 export class BusinessRuleError extends Error {
-  constructor(message: string, public readonly code = "BUSINESS_RULE_VIOLATION") {
+  constructor(
+    message: string,
+    public readonly code = "BUSINESS_RULE_VIOLATION"
+  ) {
     super(message);
     this.name = "BusinessRuleError";
   }
 }
 
 export class InfrastructureError extends Error {
-  constructor(message: string, public readonly originalError?: unknown) {
+  constructor(
+    message: string,
+    public readonly originalError?: unknown
+  ) {
     super(message);
     this.name = "InfrastructureError";
   }

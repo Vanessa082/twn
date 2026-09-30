@@ -1,4 +1,4 @@
-import type { MarginNote, SharedPage, ModerationStatus } from "@/types";
+import type { MarginNote, ModerationStatus, SharedPage } from "@/types";
 
 export type { MarginNote, SharedPage, ModerationStatus };
 

@@ -86,7 +86,7 @@ export default function VersionsOfMeSection({
               >
                 Meet {authorName}
               </Link>
-              <TextLink href="/articles">Read her notes</TextLink>
+              <TextLink href="/notebook">Read her notes</TextLink>
             </div>
           </div>
         </div>

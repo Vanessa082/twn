@@ -38,7 +38,7 @@ export default async function ChapterStrip() {
               className="border-b border-border sm:odd:border-r lg:border-r lg:last:border-r-0"
             >
               <Link
-                href={`/articles?category=${cat.slug}`}
+                href={`/notebook?category=${cat.slug}`}
                 data-cursor="link"
                 className="group flex h-full flex-col gap-3 px-1 py-7 transition-colors duration-300 hover:bg-paper-deep sm:px-6"
               >

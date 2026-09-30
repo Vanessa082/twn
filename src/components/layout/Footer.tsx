@@ -27,7 +27,7 @@ export default function Footer({ contactEmail, location, socialLinks }: FooterPr
   const currentYear = new Date().getFullYear();
 
   const exploreLinks = [
-    { label: "Notebook", href: "/articles" },
+    { label: "Notebook", href: "/notebook" },
     { label: "Workbench", href: "/workbench" },
     { label: "Archive", href: "/archive" },
     { label: "Collections", href: "/collections" },

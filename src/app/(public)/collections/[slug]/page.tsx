@@ -1,7 +1,8 @@
 import ArticleCard from "@/components/articles/ArticleCard";
 import ImageWithSkeleton from "@/components/ui/ImageWithSkeleton";
+import { Eyebrow } from "@/components/ui/SectionHeading";
+import { pageMetadata } from "@/lib/seo";
 import { getCollectionBySlug } from "@/lib/services/collections";
-import { ArrowLeft, BookOpen, Layers } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -13,12 +14,17 @@ interface CollectionDetailPageProps {
 export async function generateMetadata({ params }: CollectionDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
   const collection = await getCollectionBySlug(slug);
-  if (!collection) return { title: "Collection Not Found | TWN" };
+  if (!collection) return { title: "Collection not found", robots: { index: false } };
 
-  return {
-    title: `${collection.title} | The Notebook of a Tech Woman`,
-    description: collection.description || `Curated editorial collection on TWN.`,
-  };
+  return pageMetadata({
+    title: collection.title,
+    description:
+      collection.description ||
+      `${collection.title}: a curated reading path through The Notebook of a Tech Woman.`,
+    path: `/collections/${collection.slug}`,
+    image: collection.cover_image,
+    eyebrow: "Collection",
+  });
 }
 
 export const revalidate = 60;
@@ -32,75 +38,74 @@ export default async function CollectionDetailPage({ params }: CollectionDetailP
   }
 
   return (
-    <main className="min-h-screen bg-background text-foreground py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto space-y-12">
-        {/* Navigation Back */}
-        <Link
-          href="/collections"
-          className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" /> All Collections
-        </Link>
+    <div className="bg-background pb-24 pt-16 sm:pt-24">
+      <div className="mx-auto max-w-7xl px-5 sm:px-10 lg:px-20">
+        <nav aria-label="Breadcrumb">
+          <Link
+            href="/collections"
+            className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground transition-colors hover:text-foreground"
+          >
+            ← All collections
+          </Link>
+        </nav>
 
-        {/* Collection Banner */}
-        <div className="border-b border-border pb-10 space-y-6">
-          <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted-gold/10 text-muted-gold text-xs font-bold uppercase tracking-widest border border-muted-gold/20">
-              <Layers className="h-3.5 w-3.5" /> Series ({collection.items.length} Parts)
-            </div>
-            <h1 className="text-4xl sm:text-5xl font-serif font-black tracking-tight text-foreground">
+        <header className="mt-8 grid grid-cols-1 gap-10 border-b border-border pb-12 lg:grid-cols-12">
+          <div className="lg:col-span-7">
+            <Eyebrow>
+              Reading path · {collection.items.length}{" "}
+              {collection.items.length === 1 ? "part" : "parts"}
+            </Eyebrow>
+            <h1
+              className="mt-5 font-serif font-bold leading-[1] tracking-[-0.03em] text-foreground text-balance"
+              style={{ fontSize: "clamp(2.4rem, 5.5vw, 4.25rem)" }}
+            >
               {collection.title}
             </h1>
             {collection.description && (
-              <p className="text-base text-muted-foreground max-w-3xl leading-relaxed">
+              <p className="mt-5 max-w-xl font-serif text-[1.1rem] leading-[1.7] text-muted-foreground">
                 {collection.description}
               </p>
             )}
           </div>
-
           {collection.cover_image && (
-            <div className="relative aspect-[21/9] w-full bg-muted rounded-2xl overflow-hidden">
+            <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted lg:col-span-5">
               <ImageWithSkeleton
                 src={collection.cover_image}
-                alt={collection.title}
+                alt=""
                 fill
+                sizes="(max-width: 1024px) 100vw, 40vw"
                 className="object-cover"
               />
             </div>
           )}
-        </div>
+        </header>
 
-        {/* Article Series Steps */}
-        <div className="space-y-8">
-          <h2 className="text-lg font-serif font-bold text-foreground flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-muted-gold" /> Reading Path
-          </h2>
-
-          {collection.items.length === 0 ? (
-            <div className="p-12 text-center border border-dashed border-border rounded-xl">
-              <p className="text-sm text-muted-foreground">
-                This collection has no articles added yet.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {collection.items.map((item, idx) => (
-                <div
-                  key={item.article_id}
-                  className="flex flex-col sm:flex-row items-start gap-4 p-6 border border-border bg-card rounded-2xl relative overflow-hidden"
+        {collection.items.length === 0 ? (
+          <p className="py-20 font-quote text-2xl italic text-muted-foreground">
+            The first chapter of this path is still being written.
+          </p>
+        ) : (
+          <ol className="mt-4">
+            {collection.items.map((item, idx) => (
+              <li
+                key={item.article_id}
+                className="grid grid-cols-[3rem_1fr] gap-4 border-b border-border py-10 sm:grid-cols-[5rem_1fr] sm:gap-8"
+              >
+                <span
+                  className="font-serif text-3xl font-black text-foreground/20 sm:text-5xl"
+                  aria-hidden="true"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-foreground text-background font-bold text-sm flex items-center justify-center shrink-0">
-                    {idx + 1}
-                  </div>
-                  <div className="flex-1 w-full">
-                    <ArticleCard article={item.article} />
-                  </div>
+                  {String(idx + 1).padStart(2, "0")}
+                </span>
+                <div className="max-w-3xl">
+                  <span className="sr-only">Part {idx + 1}: </span>
+                  <ArticleCard article={item.article} />
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+              </li>
+            ))}
+          </ol>
+        )}
       </div>
-    </main>
+    </div>
   );
 }

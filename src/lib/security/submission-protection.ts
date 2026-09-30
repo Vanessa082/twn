@@ -25,7 +25,7 @@ export async function getClientIp(): Promise<string> {
     if (realIp) {
       return realIp.trim();
     }
-  } catch (err) {
+  } catch {
     // Graceful fallback if invoked outside request context
   }
   return "127.0.0.1";

@@ -1,6 +1,6 @@
 import { getAllArticlesAdmin } from "@/lib/services/articles";
-import { getAllEntriesAdmin } from "@/modules/notebook";
 import { listSubscribersAdmin } from "@/modules/newsletter";
+import { getAllEntriesAdmin } from "@/modules/notebook";
 import { ArrowLeft, BookOpen, ChevronRight, Sparkles, Users } from "lucide-react";
 import Link from "next/link";
 

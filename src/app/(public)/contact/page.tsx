@@ -23,7 +23,7 @@ export default function ContactPage() {
 
   return (
     <div className="py-16 sm:py-24 bg-background transition-colors duration-300 min-h-screen">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6">
+      <div className="mx-auto max-w-2xl px-5 sm:px-10">
         {/* Header */}
         <div className="text-center mb-12">
           <span className="text-xs font-bold uppercase tracking-widest text-muted-gold mb-4 inline-block">

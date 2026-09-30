@@ -1,14 +1,24 @@
 "use client";
 
 import { createArticleAction, updateArticleAction } from "@/app/actions/articles";
-import { uploadImageAction } from "@/app/actions/upload";
 import { setArticleTagsAction } from "@/app/actions/tags";
+import { uploadImageAction } from "@/app/actions/upload";
 import RevisionHistory from "@/components/admin/RevisionHistory";
 import SaveStatusIndicator, { type SaveStatus } from "@/components/admin/ui/SaveStatusIndicator";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import { createArticleSchema } from "@/lib/validation/schemas";
 import type { Article, ArticleCategory, ArticleRevision, ArticleStatus, Tag } from "@/types";
-import { ArrowLeft, Edit2, Eye, Globe, Image as ImageIcon, Loader2, Save, Tag as TagIcon, Upload, X } from "lucide-react";
+import {
+  ArrowLeft,
+  Edit2,
+  Eye,
+  Globe,
+  Loader2,
+  Save,
+  Tag as TagIcon,
+  Upload,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
@@ -305,9 +315,7 @@ export default function ArticleForm({
                 required
                 className="w-full p-4 rounded-lg border border-border bg-card text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm resize-none"
               />
-              <p className="text-right text-[10px] text-muted-foreground">
-                {excerpt.length}/500
-              </p>
+              <p className="text-right text-[10px] text-muted-foreground">{excerpt.length}/500</p>
             </div>
 
             {/* Content editor */}
@@ -392,10 +400,17 @@ export default function ArticleForm({
                 {/* Preview thumbnail */}
                 {coverImage && (
                   <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-border bg-muted mb-2">
-                    <img src={coverImage} alt="Cover preview" className="w-full h-full object-cover" />
+                    <img
+                      src={coverImage}
+                      alt="Cover preview"
+                      className="w-full h-full object-cover"
+                    />
                     <button
                       type="button"
-                      onClick={() => { setCoverImage(""); setCoverUploadError(null); }}
+                      onClick={() => {
+                        setCoverImage("");
+                        setCoverUploadError(null);
+                      }}
                       className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center text-foreground hover:bg-destructive hover:text-white transition-colors"
                       aria-label="Remove cover image"
                     >
@@ -437,9 +452,13 @@ export default function ArticleForm({
                     className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground text-xs font-semibold flex items-center justify-center gap-2 hover:bg-muted transition-colors disabled:opacity-50"
                   >
                     {isCoverUploading ? (
-                      <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Uploading...</>
+                      <>
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" /> Uploading...
+                      </>
                     ) : (
-                      <><Upload className="h-3.5 w-3.5" /> Upload from device</>
+                      <>
+                        <Upload className="h-3.5 w-3.5" /> Upload from device
+                      </>
                     )}
                   </button>
                 </div>
@@ -451,7 +470,9 @@ export default function ArticleForm({
                 {/* Divider */}
                 <div className="flex items-center gap-2">
                   <div className="flex-1 h-px bg-border" />
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">or</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                    or
+                  </span>
                   <div className="flex-1 h-px bg-border" />
                 </div>
 
