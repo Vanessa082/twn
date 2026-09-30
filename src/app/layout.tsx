@@ -13,6 +13,7 @@
  *  2. The generated HTML is streamed directly to the browser, offering rapid First Contentful Paint.
  */
 
+import QueryProvider from "@/components/providers/QueryProvider";
 import { ogImageUrl } from "@/lib/seo";
 import { site } from "@/lib/site";
 import type { Metadata, Viewport } from "next";
@@ -130,7 +131,9 @@ export default async function RootLayout({
           Skip to content
         </a>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <div className="flex flex-1 flex-col">{children}</div>
+          <QueryProvider>
+            <div className="flex flex-1 flex-col">{children}</div>
+          </QueryProvider>
         </NextIntlClientProvider>
       </body>
     </html>

@@ -1,15 +1,16 @@
 "use client";
 
+import { useRecentSearches } from "@/lib/client-store/reader-store";
 import { Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
-import { rememberSearch } from "./useNotebookSearch";
 
 /** Updates ?q= as the reader types so results stay server-rendered and shareable. */
 export default function SearchPageForm({ initialQuery }: { initialQuery: string }) {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
+  const { remember: rememberSearch } = useRecentSearches();
   const [value, setValue] = useState(initialQuery);
   const [isPending, startTransition] = useTransition();
   const first = useRef(true);
@@ -25,6 +26,7 @@ export default function SearchPageForm({ initialQuery }: { initialQuery: string 
       if (trimmed) next.set("q", trimmed);
       else next.delete("q");
       next.delete("type");
+      next.delete("page");
       startTransition(() => router.replace(`${pathname}?${next.toString()}`, { scroll: false }));
     }, 250);
     return () => clearTimeout(timer);

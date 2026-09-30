@@ -304,8 +304,10 @@ export const aboutDataSchema = z
               .strict()
           )
           .max(12),
-        image_url: assetUrlSchema,
+        image_url: z.union([z.literal(""), assetUrlSchema]),
+        image_alt: z.string().trim().max(250, "Portrait description is too long."),
         image_caption: z.string().trim().max(200),
+        image_location: z.string().trim().max(60, "Portrait location is too long."),
       })
       .strict(),
     short_version: z

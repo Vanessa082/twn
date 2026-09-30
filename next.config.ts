@@ -39,7 +39,8 @@ const nextConfig: NextConfig = {
   serverExternalPackages: [],
   experimental: {
     serverActions: {
-      bodySizeLimit: "5mb",
+      // 5 MB image limit plus multipart overhead; the upload action enforces the real cap.
+      bodySizeLimit: "6mb",
     },
   },
   /**

@@ -547,12 +547,14 @@ body {
   }
 }
 
-.twn-search-overlay {
+.twn-search-overlay,
+.twn-menu-enter {
   animation: twn-search-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .twn-search-overlay {
+  .twn-search-overlay,
+  .twn-menu-enter {
     animation: none;
   }
 }
@@ -562,9 +564,19 @@ body {
   margin: 2.5rem 0;
 }
 
-.twn-prose figure img {
+/* Every inline image shares one frame, whatever shape was uploaded. */
+.twn-prose img {
+  display: block;
   width: 100%;
-  border-radius: 0.5rem;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 0.25rem;
+  background: var(--muted);
+}
+
+.twn-prose > img {
+  margin: 2.5rem 0;
 }
 
 .twn-prose figcaption {
@@ -576,11 +588,6 @@ body {
   font-style: italic;
   line-height: 1.5;
   color: var(--muted-foreground);
-}
-
-.twn-prose img {
-  max-width: 100%;
-  height: auto;
 }
 
 .twn-prose table {

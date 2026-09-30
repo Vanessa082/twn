@@ -1,9 +1,16 @@
 import SearchPageForm from "@/components/search/SearchPageForm";
 import ImageWithSkeleton from "@/components/ui/ImageWithSkeleton";
+import Pagination from "@/components/ui/Pagination";
 import { Eyebrow } from "@/components/ui/SectionHeading";
+import { totalPagesFor, withPageParam } from "@/lib/pagination";
 import { getPopularSearches, getSearchIndex } from "@/lib/search/documents";
 import { SEARCH_DOC_TYPES, search } from "@/lib/search/engine";
-import { SEARCH_TYPE_LABELS, SEARCH_TYPE_SINGULAR, searchQuerySchema } from "@/lib/search/query";
+import {
+  SEARCH_RESULTS_PER_PAGE,
+  SEARCH_TYPE_LABELS,
+  SEARCH_TYPE_SINGULAR,
+  searchQuerySchema,
+} from "@/lib/search/query";
 import { pageMetadata } from "@/lib/seo";
 import { routes } from "@/lib/site";
 import type { Metadata } from "next";
@@ -19,7 +26,7 @@ function readParams(raw: Record<string, string | string[] | undefined>) {
     Object.entries(raw).map(([key, value]) => [key, Array.isArray(value) ? value[0] : value])
   );
   const parsed = searchQuerySchema.safeParse(flat);
-  return parsed.success ? parsed.data : { q: "", type: undefined, limit: undefined };
+  return parsed.success ? parsed.data : { q: "", type: undefined, limit: undefined, page: 1 };
 }
 
 export async function generateMetadata({ searchParams }: SearchPageProps): Promise<Metadata> {
@@ -41,10 +48,20 @@ function hrefFor(q: string, type?: string) {
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const { q, type } = readParams(await searchParams);
+  const { q, type, page: requestedPage } = readParams(await searchParams);
   const [index, popular] = await Promise.all([getSearchIndex(), getPopularSearches()]);
-  const response = q ? search(index, q, { type, limit: 50 }) : null;
+  const runSearch = (p: number) =>
+    search(index, q, {
+      type,
+      limit: SEARCH_RESULTS_PER_PAGE,
+      offset: (p - 1) * SEARCH_RESULTS_PER_PAGE,
+    });
+  let response = q ? runSearch(requestedPage) : null;
+  const totalPages = totalPagesFor(response?.total ?? 0, SEARCH_RESULTS_PER_PAGE);
+  const page = Math.min(requestedPage, totalPages);
+  if (response && page !== requestedPage) response = runSearch(page);
   const totalAll = response ? Object.values(response.counts).reduce((sum, n) => sum + n, 0) : 0;
+  const firstShown = (page - 1) * SEARCH_RESULTS_PER_PAGE + 1;
 
   return (
     <div className="bg-background pb-24 pt-14 sm:pt-20">
@@ -126,7 +143,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             <p aria-live="polite" className="mt-6 text-sm text-muted-foreground">
               {response.total === 0
                 ? "Nothing in the notebook matches that yet."
-                : `${response.total} ${response.total === 1 ? "result" : "results"}`}
+                : totalPages > 1
+                  ? `${firstShown}–${firstShown + response.results.length - 1} of ${response.total} results`
+                  : `${response.total} ${response.total === 1 ? "result" : "results"}`}
             </p>
 
             {response.total === 0 ? (
@@ -204,6 +223,13 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                 ))}
               </ol>
             )}
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              hrefForPage={(p) => withPageParam(hrefFor(q, type), p)}
+              label="search results"
+              className="mt-10"
+            />
           </>
         )}
       </div>

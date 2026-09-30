@@ -3,6 +3,7 @@
 import FramedPortrait from "@/components/ui/FramedPortrait";
 import { Eyebrow, TextLink } from "@/components/ui/SectionHeading";
 import { useInView } from "@/hooks/useInView";
+import type { AuthorPortrait } from "@/lib/about/portrait";
 import Link from "next/link";
 
 export interface VersionItem {
@@ -14,14 +15,14 @@ export interface VersionItem {
 interface VersionsOfMeSectionProps {
   versions: VersionItem[];
   authorName: string;
-  portraitUrl?: string;
+  portrait: AuthorPortrait | null;
   lead?: string;
 }
 
 export default function VersionsOfMeSection({
   versions,
   authorName,
-  portraitUrl,
+  portrait,
   lead,
 }: VersionsOfMeSectionProps) {
   const [ref, inView] = useInView<HTMLElement>();
@@ -36,18 +37,17 @@ export default function VersionsOfMeSection({
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-10 lg:px-20">
         <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-20">
-          {portraitUrl && (
+          {portrait && (
             <div className="lg:col-span-5 lg:sticky lg:top-28">
               <FramedPortrait
-                src={portraitUrl}
-                alt={`Portrait of ${authorName}`}
+                portrait={portrait}
                 sizes="(max-width: 1024px) 90vw, 40vw"
                 className="mx-auto max-w-[440px] lg:max-w-none"
               />
             </div>
           )}
 
-          <div className={portraitUrl ? "lg:col-span-7" : "lg:col-span-12"}>
+          <div className={portrait ? "lg:col-span-7" : "lg:col-span-12 lg:max-w-4xl"}>
             <Eyebrow>The woman behind the notebook</Eyebrow>
             <h2
               id="versions-heading"

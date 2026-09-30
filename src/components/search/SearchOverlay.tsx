@@ -1,6 +1,7 @@
 "use client";
 
 import ImageWithSkeleton from "@/components/ui/ImageWithSkeleton";
+import { useRecentSearches } from "@/lib/client-store/reader-store";
 import type { SearchDocType, SearchResultItem } from "@/lib/search/engine";
 import { SEARCH_TYPE_LABELS, SEARCH_TYPE_SINGULAR } from "@/lib/search/query";
 import { routes } from "@/lib/site";
@@ -9,12 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type KeyboardEvent, useEffect, useId, useRef, useState } from "react";
 import Highlight from "./Highlight";
-import {
-  clearRecentSearches,
-  readRecentSearches,
-  rememberSearch,
-  useNotebookSearch,
-} from "./useNotebookSearch";
+import { useNotebookSearch } from "./useNotebookSearch";
 
 interface SearchOverlayProps {
   onClose: () => void;
@@ -40,7 +36,7 @@ export default function SearchOverlay({ onClose }: SearchOverlayProps) {
   const listId = useId();
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(-1);
-  const [recent, setRecent] = useState<string[]>([]);
+  const { recent, remember: rememberSearch, clear: clearRecentSearches } = useRecentSearches();
   const { data, discovery, status } = useNotebookSearch(query);
 
   const trimmed = query.trim();
@@ -55,7 +51,6 @@ export default function SearchOverlay({ onClose }: SearchOverlayProps) {
   const options = [...notes, ...grouped.flatMap((group) => group.items)];
 
   useEffect(() => {
-    setRecent(readRecentSearches());
     inputRef.current?.focus();
     const root = document.documentElement;
     const previous = root.style.overflow;
@@ -71,7 +66,7 @@ export default function SearchOverlay({ onClose }: SearchOverlayProps) {
   };
 
   const goTo = (href: string, remember = trimmed) => {
-    if (remember) setRecent(rememberSearch(remember));
+    if (remember) rememberSearch(remember);
     onClose();
     router.push(href);
   };
@@ -243,7 +238,6 @@ export default function SearchOverlay({ onClose }: SearchOverlayProps) {
                     type="button"
                     onClick={() => {
                       clearRecentSearches();
-                      setRecent([]);
                     }}
                     className="cursor-pointer text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
                   >
@@ -312,7 +306,7 @@ export default function SearchOverlay({ onClose }: SearchOverlayProps) {
                           role="option"
                           aria-selected={isActive(item)}
                           href={item.url}
-                          onClick={() => trimmed && setRecent(rememberSearch(trimmed))}
+                          onClick={() => trimmed && rememberSearch(trimmed)}
                           onNavigate={onClose}
                           data-cursor="link"
                           className={`group block outline-none ${isActive(item) ? "ring-2 ring-foreground ring-offset-4 ring-offset-background" : ""}`}
@@ -355,7 +349,7 @@ export default function SearchOverlay({ onClose }: SearchOverlayProps) {
                           role="option"
                           aria-selected={isActive(item)}
                           href={item.url}
-                          onClick={() => setRecent(rememberSearch(trimmed))}
+                          onClick={() => rememberSearch(trimmed)}
                           onNavigate={onClose}
                           className={`group flex items-baseline justify-between gap-6 px-1 py-4 outline-none transition-colors hover:bg-muted/50 ${isActive(item) ? "bg-muted" : ""}`}
                         >

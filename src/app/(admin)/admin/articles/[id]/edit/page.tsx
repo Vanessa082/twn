@@ -1,4 +1,6 @@
 import ArticleForm from "@/components/admin/ArticleForm";
+import { getNoteAuthor } from "@/lib/about/portrait";
+import { getAboutData } from "@/lib/services/about";
 import { getArticleByIdAdmin } from "@/lib/services/articles";
 import { getRevisionsForArticle } from "@/lib/services/revisions";
 import { getAllTags, getTagsForArticle } from "@/lib/services/tags";
@@ -23,10 +25,11 @@ export default async function EditArticlePage({ params }: EditArticlePageProps) 
     notFound();
   }
 
-  const [allTags, initialTags, revisions] = await Promise.all([
+  const [allTags, initialTags, revisions, about] = await Promise.all([
     getAllTags(),
     getTagsForArticle(article.id),
     getRevisionsForArticle(article.id),
+    getAboutData(),
   ]);
 
   return (
@@ -37,6 +40,7 @@ export default async function EditArticlePage({ params }: EditArticlePageProps) 
         allTags={allTags}
         initialTags={initialTags}
         revisions={revisions}
+        author={getNoteAuthor(about.hero)}
       />
     </div>
   );

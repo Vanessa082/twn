@@ -1,4 +1,4 @@
-import AboutSectionsManager from "@/components/admin/AboutSectionsManager";
+import AboutEditor from "@/components/admin/about/AboutEditor";
 import { getAboutData } from "@/lib/services/about";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -27,7 +27,7 @@ export default async function AdminAboutPage() {
       </div>
 
       {/* Main CMS Manager */}
-      <AboutSectionsManager initialData={aboutData} />
+      <AboutEditor initialData={aboutData} />
     </div>
   );
 }

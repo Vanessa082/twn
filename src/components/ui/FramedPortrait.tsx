@@ -1,30 +1,35 @@
+import type { AuthorPortrait } from "@/lib/about/portrait";
+import { optimizeImageUrl } from "@/lib/media/images";
 import Image from "next/image";
 
 interface FramedPortraitProps {
-  src: string;
-  alt: string;
+  portrait: AuthorPortrait;
   sizes: string;
   priority?: boolean;
-  caption?: string;
+  /** Show the caption and location beneath the photograph. */
+  showCaption?: boolean;
   className?: string;
 }
 
 /**
- * Editorial portrait: a quiet paper mat with a thin inset frame drawn over the photograph.
+ * Editorial portrait: a quiet paper mat with a thin inset frame drawn over the
+ * photograph. Always 4:5, whatever shape the original upload was.
  */
 export default function FramedPortrait({
-  src,
-  alt,
+  portrait,
   sizes,
   priority = false,
-  caption,
+  showCaption = false,
   className = "",
 }: FramedPortraitProps) {
+  const { src, alt, caption, location } = portrait;
+  const hasCaption = showCaption && (caption || location);
+
   return (
     <figure className={className}>
       <div className="relative aspect-[4/5] w-full overflow-hidden bg-paper-deep">
         <Image
-          src={src}
+          src={optimizeImageUrl(src, { width: 1000 })}
           alt={alt}
           fill
           priority={priority}
@@ -36,12 +41,14 @@ export default function FramedPortrait({
           aria-hidden="true"
         />
       </div>
-      {caption && (
+      {hasCaption && (
         <figcaption className="mt-4 flex items-center justify-between gap-4 text-[11px] text-muted-foreground">
-          <span className="font-quote text-[15px] italic">{caption}</span>
-          <span className="font-sans font-semibold uppercase tracking-[0.2em] text-muted-foreground/70">
-            Yaoundé
-          </span>
+          {caption && <span className="font-quote text-[15px] italic">{caption}</span>}
+          {location && (
+            <span className="ml-auto shrink-0 font-sans font-semibold uppercase tracking-[0.2em] text-muted-foreground/70">
+              {location}
+            </span>
+          )}
         </figcaption>
       )}
     </figure>

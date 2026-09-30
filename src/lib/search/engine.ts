@@ -54,6 +54,8 @@ export interface SearchResponse {
 interface SearchOptions {
   type?: SearchDocType | null;
   limit?: number;
+  /** Results to skip, for paging through a ranked list. */
+  offset?: number;
   now?: number;
 }
 
@@ -321,6 +323,7 @@ export function search(
 ): SearchResponse {
   const query = rawQuery.trim().slice(0, 120);
   const limit = Math.max(1, Math.min(options.limit ?? 20, 50));
+  const offset = Math.max(0, Math.floor(options.offset ?? 0));
   const now = options.now ?? Date.now();
   const words = tokenize(query);
   const empty: SearchResponse = {
@@ -406,7 +409,7 @@ export function search(
     correctedQuery: corrected ? correctedWords.join(" ") : null,
     total: filtered.length,
     counts,
-    results: filtered.slice(0, limit).map(({ item, score }) => {
+    results: filtered.slice(offset, offset + limit).map(({ item, score }) => {
       const { body: _body, keywords: _keywords, ...publicDoc } = item.doc;
       return { ...publicDoc, score: Math.round(score * 100) / 100 };
     }),

@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/db/server";
+import { pageRange, totalPagesFor } from "@/lib/pagination";
 import { calculateReadingTime } from "@/lib/utils/reading-time";
-import type { Article, ArticleCategory } from "@/types";
+import type { Article, ArticleCategory, PaginatedResult } from "@/types";
 import { FALLBACK_ARTICLES } from "./fallback-articles";
 
 // ── Database Row Type ────────────────────────────────────────────────────────
@@ -85,41 +86,50 @@ export async function getLatestArticles(limit = 10): Promise<Article[]> {
   }
 }
 
-/**
- * Fetches published articles in a specific category.
- */
-export async function getArticlesByCategory(
-  category: ArticleCategory,
-  limit = 10
-): Promise<Article[]> {
-  if (!category) return [];
-  const safeLimit = Math.max(1, Math.min(limit, 100));
+interface NotesPageQuery {
+  page: number;
+  pageSize: number;
+  category?: ArticleCategory;
+}
+
+/** One page of published notes, newest first, with the total for pagination. */
+export async function getPublishedNotesPage({
+  page,
+  pageSize,
+  category,
+}: NotesPageQuery): Promise<PaginatedResult<Article>> {
+  const size = Math.max(1, Math.min(pageSize, 48));
+  const { from, to } = pageRange(page, size);
+  const build = (items: Article[], total: number): PaginatedResult<Article> => ({
+    items,
+    total,
+    page,
+    pageSize: size,
+    totalPages: totalPagesFor(total, size),
+  });
 
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase
+    let query = supabase
       .from("articles")
-      .select("*")
+      .select("*", { count: "exact" })
       .eq("status", "published")
-      .eq("category", category)
-      .lte("published_at", new Date().toISOString())
+      .lte("published_at", new Date().toISOString());
+    if (category) query = query.eq("category", category);
+    const { data, error, count } = await query
       .order("published_at", { ascending: false })
-      .limit(safeLimit);
+      .range(from, to);
 
-    if (error) {
-      // Only fall back when DB is genuinely unreachable
-      console.warn(
-        "[getArticlesByCategory] Database error, falling back to local seed:",
-        error.message
-      );
-      return FALLBACK_ARTICLES.filter((a) => a.category === category).slice(0, safeLimit);
-    }
-
-    // Return real data   empty array when category has no published articles yet
-    return data ? (data as DatabaseArticleRow[]).map(mapToArticle) : [];
+    // Asking past the last page is an error in PostgREST; report it as empty.
+    if (error?.code === "PGRST103") return build([], count ?? 0);
+    if (error) throw error;
+    return build(((data ?? []) as DatabaseArticleRow[]).map(mapToArticle), count ?? 0);
   } catch (error) {
-    console.warn("[getArticlesByCategory] Service error, falling back to local seed:", error);
-    return FALLBACK_ARTICLES.filter((a) => a.category === category).slice(0, safeLimit);
+    console.warn("[getPublishedNotesPage] Falling back to local seed:", error);
+    const seed = category
+      ? FALLBACK_ARTICLES.filter((a) => a.category === category)
+      : FALLBACK_ARTICLES;
+    return build(seed.slice(from, to + 1), seed.length);
   }
 }
 

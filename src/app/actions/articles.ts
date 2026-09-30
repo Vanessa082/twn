@@ -180,6 +180,14 @@ export async function deleteArticleAction(id: string) {
 }
 
 export async function toggleArticleLikeAction(slug: string, increment: boolean) {
+  if (
+    typeof slug !== "string" ||
+    !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) ||
+    slug.length > 200 ||
+    typeof increment !== "boolean"
+  ) {
+    return { success: false, count: 0, error: "That note could not be found." };
+  }
   try {
     const { toggleArticleLike } = await import("@/lib/services/articles");
     const count = await toggleArticleLike(slug, increment);

@@ -25,8 +25,10 @@
         "sub": "Digital products, open knowledge, communities"
       }
     ],
-    "image_url": "/images/vanessa.jpg",
-    "image_caption": "Vanessa — Technologist, Writer, Educator"
+    "image_url": "https://res.cloudinary.com/ddty327dg/image/upload/v1790773865/twn/portrait/jmjsgjgb9btmqnulbnez.png",
+    "image_alt": "",
+    "image_caption": "Vanessa — Technologist, Writer, Educator",
+    "image_location": "Yaoundé"
   },
   "short_version": {
     "heading": "A young Cameroonian technologist finding her place in public.",
@@ -90,6 +92,7 @@
     "heading": "From writing on the internet to helping preserve knowledge on it.",
     "lead": "I work around Wikipedia, Wikidata and Wikimedia — documenting stories, notable figures, and community histories that might otherwise disappear from the open web. In 2026, I co-founded the Wiki Alliance for Open Knowledge Cameroon.",
     "quote": "If something isn't documented with reliable care, finding it later becomes much harder than it should ever be.",
+    "closing": "That commitment to preserving knowledge shapes TWN. If we don’t document our own technical experiences, who will?",
     "topics": [
       "Wikipedia Documentation",
       "Wikidata Knowledge Graph",
@@ -97,8 +100,7 @@
       "African Knowledge Sourcing",
       "Open Source Mentorship",
       "Digital Archiving"
-    ],
-    "closing": "That commitment to preserving knowledge shapes TWN. If we don’t document our own technical experiences, who will?"
+    ]
   },
   "manifesto": {
     "quote": "There are plenty of polished stories about people who have already made it. I wanted somewhere to document the middle.",
@@ -209,5 +211,6 @@
     "still_figuring_out": true,
     "closing": true,
     "identity_stages": true
-  }
+  },
+  "updated_at": "2026-09-30T13:11:41.331Z"
 }

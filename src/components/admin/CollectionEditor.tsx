@@ -1,6 +1,7 @@
 "use client";
 
 import { setCollectionArticlesAction, updateCollectionAction } from "@/app/actions/collections";
+import ImageUploadField from "@/components/admin/media/ImageUploadField";
 import { ToastContainer, useToast } from "@/components/admin/ui/Toast";
 import type { ArticleCard, CollectionWithArticles } from "@/types";
 import { ArrowDown, ArrowLeft, ArrowUp, Globe, Loader2, Plus, Save, Trash2 } from "lucide-react";
@@ -246,22 +247,14 @@ export default function CollectionEditor({ collection, availableArticles }: Coll
               />
             </div>
 
-            <div className="space-y-2">
-              <label
-                htmlFor="edit-col-cover"
-                className="text-xs font-semibold text-muted-foreground"
-              >
-                Cover Image URL
-              </label>
-              <input
-                id="edit-col-cover"
-                type="text"
-                value={coverImage}
-                onChange={(e) => setCoverImage(e.target.value)}
-                placeholder="https://..."
-                className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-              />
-            </div>
+            <ImageUploadField
+              label="Cover image"
+              value={coverImage}
+              onChange={setCoverImage}
+              purpose="cover"
+              description="Shown on the collection card and page. Leave empty for a text-only card."
+              allowUrl
+            />
 
             <div className="flex items-center gap-3 pt-2">
               <input

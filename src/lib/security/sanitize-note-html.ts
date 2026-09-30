@@ -1,3 +1,4 @@
+import { optimizeImageUrl } from "@/lib/media/images";
 import sanitizeHtml from "sanitize-html";
 
 /**
@@ -62,7 +63,13 @@ const OPTIONS: sanitizeHtml.IOptions = {
   transformTags: {
     img: (tagName, attribs) => ({
       tagName,
-      attribs: { ...attribs, alt: attribs.alt ?? "", loading: "lazy", decoding: "async" },
+      attribs: {
+        ...attribs,
+        src: optimizeImageUrl(attribs.src ?? "", { width: 2000, crop: "limit" }),
+        alt: attribs.alt ?? "",
+        loading: "lazy",
+        decoding: "async",
+      },
     }),
     a: (tagName, attribs) => {
       const external = /^https?:\/\//i.test(attribs.href ?? "");

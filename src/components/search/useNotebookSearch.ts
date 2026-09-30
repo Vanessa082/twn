@@ -1,7 +1,8 @@
 "use client";
 
 import type { SearchResponse, SearchResultItem } from "@/lib/search/engine";
-import { useEffect, useRef, useState } from "react";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 
 export interface SearchDiscovery {
   popular: string[];
@@ -10,89 +11,58 @@ export interface SearchDiscovery {
 
 type Status = "idle" | "loading" | "ready" | "error";
 
-const RECENT_KEY = "twn:recent-searches";
-const MAX_RECENT = 5;
+export const searchKeys = {
+  discovery: ["search", "discovery"] as const,
+  query: (q: string) => ["search", "query", q] as const,
+};
 
-export function readRecentSearches(): string[] {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(RECENT_KEY) ?? "[]");
-    return Array.isArray(parsed)
-      ? parsed.filter((item): item is string => typeof item === "string").slice(0, MAX_RECENT)
-      : [];
-  } catch {
-    return [];
-  }
+async function getJson<T>(url: string, signal: AbortSignal): Promise<T> {
+  const res = await fetch(url, { signal });
+  if (!res.ok) throw new Error(`Search failed (${res.status})`);
+  return res.json() as Promise<T>;
 }
 
-export function rememberSearch(query: string): string[] {
-  const clean = query.trim().slice(0, 120);
-  if (clean.length < 2) return readRecentSearches();
-  const next = [
-    clean,
-    ...readRecentSearches().filter((q) => q.toLowerCase() !== clean.toLowerCase()),
-  ].slice(0, MAX_RECENT);
-  try {
-    localStorage.setItem(RECENT_KEY, JSON.stringify(next));
-  } catch {
-    // Private mode or full storage: recent searches are a nicety, not a requirement.
-  }
-  return next;
+function useDebouncedValue<T>(value: T, delayMs: number): T {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(value), delayMs);
+    return () => clearTimeout(timer);
+  }, [value, delayMs]);
+  return debounced;
 }
 
-export function clearRecentSearches() {
-  try {
-    localStorage.removeItem(RECENT_KEY);
-  } catch {}
-}
-
-/** Debounced, abortable live search against /api/search. */
+/**
+ * Live search against /api/search. TanStack Query caches each query (so
+ * backspacing is instant), cancels superseded requests, and keeps the last
+ * results on screen while the next ones load.
+ */
 export function useNotebookSearch(query: string, debounceMs = 160) {
-  const [data, setData] = useState<SearchResponse | null>(null);
-  const [discovery, setDiscovery] = useState<SearchDiscovery | null>(null);
-  const [status, setStatus] = useState<Status>("idle");
-  const controller = useRef<AbortController | null>(null);
+  const trimmed = query.trim();
+  const debounced = useDebouncedValue(trimmed, debounceMs);
 
-  useEffect(() => {
-    const ac = new AbortController();
-    fetch("/api/search", { signal: ac.signal })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((json: SearchDiscovery | null) => json && setDiscovery(json))
-      .catch(() => {});
-    return () => ac.abort();
-  }, []);
+  const discovery = useQuery({
+    queryKey: searchKeys.discovery,
+    queryFn: ({ signal }) => getJson<SearchDiscovery>("/api/search", signal),
+    staleTime: 5 * 60 * 1000,
+  });
 
-  useEffect(() => {
-    const trimmed = query.trim();
-    controller.current?.abort();
-    if (!trimmed) {
-      setData(null);
-      setStatus("idle");
-      return;
-    }
+  const results = useQuery({
+    queryKey: searchKeys.query(debounced),
+    queryFn: ({ signal }) =>
+      getJson<SearchResponse>(`/api/search?q=${encodeURIComponent(debounced)}&limit=12`, signal),
+    enabled: debounced.length > 0,
+    placeholderData: keepPreviousData,
+    staleTime: 60 * 1000,
+  });
 
-    setStatus("loading");
-    const ac = new AbortController();
-    controller.current = ac;
-    const timer = setTimeout(() => {
-      fetch(`/api/search?q=${encodeURIComponent(trimmed)}&limit=12`, { signal: ac.signal })
-        .then((res) => {
-          if (!res.ok) throw new Error(String(res.status));
-          return res.json() as Promise<SearchResponse>;
-        })
-        .then((json) => {
-          setData(json);
-          setStatus("ready");
-        })
-        .catch((error: unknown) => {
-          if ((error as Error).name !== "AbortError") setStatus("error");
-        });
-    }, debounceMs);
+  let status: Status = "ready";
+  if (!trimmed) status = "idle";
+  else if (results.isError) status = "error";
+  else if (trimmed !== debounced || results.isFetching) status = "loading";
 
-    return () => {
-      clearTimeout(timer);
-      ac.abort();
-    };
-  }, [query, debounceMs]);
-
-  return { data, discovery, status };
+  return {
+    data: trimmed ? (results.data ?? null) : null,
+    discovery: discovery.data ?? null,
+    status,
+  };
 }

@@ -1,5 +1,6 @@
 import { createAdminClient, createClient } from "@/lib/db/server";
-import type { Tag } from "@/types";
+import { pageRange, totalPagesFor } from "@/lib/pagination";
+import type { ArticleCard, PaginatedResult, Tag } from "@/types";
 
 function slugify(name: string): string {
   return name
@@ -55,44 +56,59 @@ export async function getTagsForArticle(articleId: string): Promise<Tag[]> {
   }
 }
 
-/** Fetch published articles for a given tag slug. */
-export async function getArticlesByTag(
+/** One page of published notes filed under a tag, newest first. */
+export async function getNotesByTagPage(
   tagSlug: string,
-  limit = 20
-): Promise<import("@/types").ArticleCard[]> {
+  { page, pageSize }: { page: number; pageSize: number }
+): Promise<PaginatedResult<ArticleCard>> {
+  const size = Math.max(1, Math.min(pageSize, 48));
+  const empty: PaginatedResult<ArticleCard> = {
+    items: [],
+    total: 0,
+    page,
+    pageSize: size,
+    totalPages: 1,
+  };
+
   try {
     const supabase = await createClient();
-
-    // First resolve the tag
     const { data: tag } = await supabase.from("tags").select("id").eq("slug", tagSlug).single();
+    if (!tag) return empty;
 
-    if (!tag) return [];
-
-    // Then get article IDs via the join table
     const { data: joins, error: joinError } = await supabase
       .from("article_tags")
       .select("article_id")
       .eq("tag_id", tag.id)
-      .limit(limit);
+      .limit(1000);
+    if (joinError || !joins?.length) return empty;
 
-    if (joinError || !joins?.length) return [];
-
-    // biome-ignore lint/suspicious/noExplicitAny: Supabase return typing
-    const articleIds = joins.map((r: any) => r.article_id);
-
-    const { data: articles, error: artError } = await supabase
+    const { from, to } = pageRange(page, size);
+    const { data, error, count } = await supabase
       .from("articles")
       .select(
-        "id, title, slug, excerpt, cover_image, category, status, published_at, created_at, updated_at, reading_time, likes_count, seo_title, seo_description, og_image, canonical_url"
+        "id, title, slug, excerpt, cover_image, category, status, published_at, created_at, updated_at, reading_time, likes_count, seo_title, seo_description, og_image, canonical_url",
+        { count: "exact" }
       )
-      .in("id", articleIds)
+      .in(
+        "id",
+        joins.map((row: { article_id: string }) => row.article_id)
+      )
       .eq("status", "published")
-      .order("published_at", { ascending: false });
+      .lte("published_at", new Date().toISOString())
+      .order("published_at", { ascending: false })
+      .range(from, to);
 
-    if (artError) throw artError;
-    return (articles ?? []) as import("@/types").ArticleCard[];
+    const total = count ?? 0;
+    if (error && error.code !== "PGRST103") throw error;
+    return {
+      items: (data ?? []) as ArticleCard[],
+      total,
+      page,
+      pageSize: size,
+      totalPages: totalPagesFor(total, size),
+    };
   } catch {
-    return [];
+    return empty;
   }
 }
 

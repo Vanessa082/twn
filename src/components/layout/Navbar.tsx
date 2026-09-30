@@ -170,41 +170,42 @@ export default function Navbar() {
             </div>
           </div>
         </div>
-
-        {isOpen && (
-          <div
-            id="mobile-menu"
-            className="fixed inset-x-0 bottom-0 top-[72px] z-40 overflow-y-auto bg-background sm:top-[88px] lg:hidden"
-          >
-            <nav
-              aria-label="Mobile navigation"
-              className="mx-auto flex max-w-7xl flex-col px-5 pb-10 pt-8 sm:px-10"
-            >
-              {links.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setIsOpen(false)}
-                  aria-current={isActive(link.href) ? "page" : undefined}
-                  className={`block border-b border-border py-4 font-serif text-2xl font-black tracking-tight transition-colors hover:text-foreground ${
-                    isActive(link.href) ? "text-foreground" : "text-muted-foreground"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-              <button
-                type="button"
-                onClick={openSearch}
-                className="mt-6 flex cursor-pointer items-center gap-2 py-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground"
-              >
-                <Search className="size-4" aria-hidden="true" />
-                Search the notebook
-              </button>
-            </nav>
-          </div>
-        )}
       </header>
+
+      {/* Must stay outside <header>: its backdrop-filter would become the containing block for `fixed`. */}
+      {isOpen && (
+        <div
+          id="mobile-menu"
+          className="twn-menu-enter fixed inset-x-0 bottom-0 top-[72px] z-40 overflow-y-auto overscroll-contain bg-background sm:top-[88px] lg:hidden"
+        >
+          <nav
+            aria-label="Mobile navigation"
+            className="mx-auto flex max-w-7xl flex-col px-5 pb-10 pt-8 sm:px-10"
+          >
+            {links.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                aria-current={isActive(link.href) ? "page" : undefined}
+                className={`block border-b border-border py-4 font-serif text-2xl font-black tracking-tight transition-colors hover:text-foreground ${
+                  isActive(link.href) ? "text-foreground" : "text-muted-foreground"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+            <button
+              type="button"
+              onClick={openSearch}
+              className="mt-6 flex cursor-pointer items-center gap-2 py-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground"
+            >
+              <Search className="size-4" aria-hidden="true" />
+              Search the notebook
+            </button>
+          </nav>
+        </div>
+      )}
 
       {isSearchOpen && <SearchOverlay onClose={closeSearch} />}
     </>

@@ -4,6 +4,7 @@ import FromTheNotebookSection from "@/components/home/FromTheNotebookSection";
 import Hero from "@/components/home/Hero";
 import VersionsOfMeSection from "@/components/home/VersionsOfMeSection";
 import WorkbenchSection from "@/components/home/WorkbenchSection";
+import { getAuthorPortrait } from "@/lib/about/portrait";
 import { pageMetadata } from "@/lib/seo";
 import { getAboutData } from "@/lib/services/about";
 import { getLatestArticles } from "@/lib/services/articles";
@@ -101,7 +102,7 @@ export default async function HomePage() {
         <VersionsOfMeSection
           versions={about.identity_stages ?? []}
           authorName={authorName}
-          portraitUrl={about.hero.image_url}
+          portrait={getAuthorPortrait(about.hero)}
           lead={about.hero.lead}
         />
       )}

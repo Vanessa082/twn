@@ -1,6 +1,7 @@
 import StillFiguringItOutSection from "@/components/about/StillFiguringItOutSection";
 import FramedPortrait from "@/components/ui/FramedPortrait";
 import SectionHeading, { Eyebrow, TextLink } from "@/components/ui/SectionHeading";
+import { getAuthorPortrait } from "@/lib/about/portrait";
 import { pageMetadata } from "@/lib/seo";
 import { getAboutData } from "@/lib/services/about";
 import { routes } from "@/lib/site";
@@ -34,6 +35,7 @@ export default async function AboutPage() {
     still_figuring_out,
     section_visibility,
   } = data;
+  const portrait = getAuthorPortrait(hero);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -42,18 +44,19 @@ export default async function AboutPage() {
         <section className="border-b border-border py-16 sm:py-24">
           <div className={container}>
             <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-20">
-              <div className="lg:col-span-5">
-                <FramedPortrait
-                  src={hero.image_url}
-                  alt={`Portrait of ${hero.title}`}
-                  sizes="(max-width: 1024px) 90vw, 40vw"
-                  caption={hero.image_caption}
-                  priority
-                  className="mx-auto max-w-[460px] lg:max-w-none"
-                />
-              </div>
+              {portrait && (
+                <div className="lg:col-span-5">
+                  <FramedPortrait
+                    portrait={portrait}
+                    sizes="(max-width: 1024px) 90vw, 40vw"
+                    showCaption
+                    priority
+                    className="mx-auto max-w-[460px] lg:max-w-none"
+                  />
+                </div>
+              )}
 
-              <div className="lg:col-span-7">
+              <div className={portrait ? "lg:col-span-7" : "lg:col-span-12 lg:max-w-4xl"}>
                 <Eyebrow>{hero.tagline}</Eyebrow>
                 <h1
                   className="mt-5 font-serif font-bold leading-[0.95] tracking-[-0.03em] text-foreground"

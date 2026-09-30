@@ -1,6 +1,6 @@
 "use client";
 
-import { safeHttpUrlSchema } from "@/lib/validation/schemas";
+import ImageUploadField from "@/components/admin/media/ImageUploadField";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -29,7 +29,6 @@ import {
   Link2,
   List,
   ListOrdered,
-  Loader2,
   Minus,
   Quote,
   Strikethrough,
@@ -247,13 +246,11 @@ export default function TiptapEditor({
   }, []);
 
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
-  const [imageUrl, setImageUrl] = useState("");
-  const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
+  const [imageSrc, setImageSrc] = useState("");
   const [imageAlt, setImageAlt] = useState("");
   const [imageCaption, setImageCaption] = useState("");
   const [isDecorative, setIsDecorative] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
 
   // Keep editor content in sync with external content resets
   useEffect(() => {
@@ -277,28 +274,23 @@ export default function TiptapEditor({
   };
 
   const openImageModal = () => {
-    setImageUrl("");
-    setUploadedUrl(null);
+    setImageSrc("");
     setImageAlt("");
     setImageCaption("");
     setIsDecorative(false);
-    setUploadError(null);
+    setImageError(null);
     setIsImageModalOpen(true);
   };
 
   const insertImage = () => {
-    const src = uploadedUrl ?? imageUrl.trim();
+    const src = imageSrc.trim();
     if (!src) {
-      setUploadError("Upload an image or paste its web address first.");
-      return;
-    }
-    if (!uploadedUrl && !safeHttpUrlSchema.safeParse(src).success) {
-      setUploadError("Image addresses must start with http:// or https://.");
+      setImageError("Upload an image or paste its web address first.");
       return;
     }
     const alt = imageAlt.trim();
     if (!alt && !isDecorative) {
-      setUploadError("Describe the image for readers who can't see it, or mark it as decorative.");
+      setImageError("Describe the image for readers who can't see it, or mark it as decorative.");
       return;
     }
     editor
@@ -781,7 +773,7 @@ export default function TiptapEditor({
       {/* Image Modal */}
       {isImageModalOpen && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card border border-border rounded-xl shadow-xl w-full max-w-md p-6 space-y-4 animate-in fade-in duration-200">
+          <div className="bg-card border border-border rounded-xl shadow-xl w-full max-w-md max-h-[90dvh] overflow-y-auto p-6 space-y-4 animate-in fade-in duration-200">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="font-bold text-sm text-foreground">Insert Image</h3>
               <button
@@ -794,102 +786,18 @@ export default function TiptapEditor({
             </div>
 
             <div className="space-y-4">
-              {/* Device upload */}
-              <div className="space-y-2">
-                <label
-                  htmlFor="modal-image-upload"
-                  className="text-xs font-bold uppercase tracking-wider text-muted-foreground block"
-                >
-                  Upload from device
-                </label>
-                <div className="border-2 border-dashed border-border hover:border-muted-gold rounded-xl p-6 transition-colors text-center relative cursor-pointer">
-                  <input
-                    id="modal-image-upload"
-                    type="file"
-                    accept="image/*"
-                    disabled={isUploading}
-                    onChange={async (e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      setIsUploading(true);
-                      setUploadError(null);
-                      const formData = new FormData();
-                      formData.append("file", file);
-                      try {
-                        const { uploadImageAction } = await import("@/app/actions/upload");
-                        const res = await uploadImageAction(formData);
-                        if (res.success && res.url) {
-                          setUploadedUrl(res.url);
-                          setImageUrl("");
-                        } else {
-                          setUploadError(res.error || "The image could not be uploaded.");
-                        }
-                      } catch {
-                        setUploadError(
-                          "The upload was interrupted. Check your connection and try a smaller image."
-                        );
-                      } finally {
-                        setIsUploading(false);
-                      }
-                    }}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  />
-                  {isUploading ? (
-                    <div className="space-y-2 py-2">
-                      <Loader2 className="h-6 w-6 text-muted-gold animate-spin mx-auto" />
-                      <p className="text-xs text-muted-foreground">Uploading image...</p>
-                    </div>
-                  ) : uploadedUrl ? (
-                    <div className="space-y-2">
-                      {/* biome-ignore lint/a11y/useAltText: decorative preview inside the upload control */}
-                      <img src={uploadedUrl} alt="" className="mx-auto max-h-32 rounded-md" />
-                      <p className="text-[10px] text-muted-foreground">
-                        Uploaded · click to replace
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-1 py-2">
-                      <ImageIcon className="h-6 w-6 text-muted-foreground mx-auto mb-1" />
-                      <p className="text-xs text-foreground font-medium">
-                        Click to select an image
-                      </p>
-                      <p className="text-[10px] text-muted-foreground">PNG, JPG, WebP · max 5 MB</p>
-                    </div>
-                  )}
-                </div>
-                {uploadError && (
-                  <p className="text-xs text-destructive mt-1 font-semibold">{uploadError}</p>
-                )}
-              </div>
-
-              <div className="relative flex py-1 items-center">
-                <div className="flex-grow border-t border-border" />
-                <span className="flex-shrink mx-4 text-muted-foreground text-[10px] font-bold uppercase tracking-wider">
-                  or
-                </span>
-                <div className="flex-grow border-t border-border" />
-              </div>
-
-              {/* URL Input */}
-              <div className="space-y-2">
-                <label
-                  htmlFor="modal-image-url"
-                  className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
-                >
-                  Image Web URL
-                </label>
-                <input
-                  id="modal-image-url"
-                  type="text"
-                  value={imageUrl}
-                  onChange={(e) => {
-                    setImageUrl(e.target.value);
-                    setUploadedUrl(null);
-                  }}
-                  placeholder="https://example.com/image.jpg"
-                  className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
-                />
-              </div>
+              <ImageUploadField
+                label="Image"
+                description="Every image in a note is shown at the same 16:9 shape."
+                purpose="inline"
+                aspectClassName="aspect-video"
+                value={imageSrc}
+                onChange={(url) => {
+                  setImageSrc(url);
+                  setImageError(null);
+                }}
+                allowUrl
+              />
 
               <div className="space-y-3 border-t border-border pt-4">
                 <div className="space-y-1.5">
@@ -938,10 +846,15 @@ export default function TiptapEditor({
               </div>
             </div>
 
+            {imageError && (
+              <p role="alert" className="text-xs font-semibold text-destructive">
+                {imageError}
+              </p>
+            )}
             <div className="flex justify-end gap-3 pt-2">
               <button
                 type="button"
-                disabled={isUploading}
+                disabled={!imageSrc}
                 onClick={insertImage}
                 className="px-4 h-10 rounded-lg text-xs font-semibold bg-foreground text-background hover:bg-foreground/90 transition-colors disabled:opacity-50"
               >

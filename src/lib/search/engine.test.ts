@@ -106,4 +106,11 @@ describe("search engine", () => {
     const res = search(index, "lea", { now: NOW });
     expect(res.suggestions.some((s) => s.startsWith("lead"))).toBe(true);
   });
+
+  it("pages through the ranked list without changing the total", () => {
+    const all = search(index, "community", { now: NOW, limit: 50 });
+    const second = search(index, "community", { now: NOW, limit: 1, offset: 1 });
+    expect(second.total).toBe(all.total);
+    expect(second.results.map((r) => r.id)).toEqual(all.results.slice(1, 2).map((r) => r.id));
+  });
 });

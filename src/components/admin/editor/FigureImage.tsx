@@ -28,7 +28,7 @@ function ImageFigureView({ node, updateAttributes, deleteNode, selected }: NodeV
         <Trash2 className="size-3.5" />
       </button>
 
-      <img src={node.attrs.src} alt={alt} className="w-full rounded-lg border border-border" />
+      <img src={node.attrs.src} alt={alt} className="aspect-video w-full rounded-lg border border-border object-cover" />
 
       <div contentEditable={false} className="mt-3 space-y-2">
         <label className="block">

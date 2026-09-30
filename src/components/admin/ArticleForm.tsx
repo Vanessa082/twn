@@ -2,26 +2,20 @@
 
 import { createArticleAction, updateArticleAction } from "@/app/actions/articles";
 import { setArticleTagsAction } from "@/app/actions/tags";
-import { uploadImageAction } from "@/app/actions/upload";
 import RevisionHistory from "@/components/admin/RevisionHistory";
+import ImageUploadField from "@/components/admin/media/ImageUploadField";
 import SaveStatusIndicator, { type SaveStatus } from "@/components/admin/ui/SaveStatusIndicator";
+import NoteArticle from "@/components/notes/NoteArticle";
+import { readingTimeLabel } from "@/components/notes/note-format";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
+import type { NoteAuthor } from "@/lib/about/portrait";
+import { calculateReadingTime } from "@/lib/utils/reading-time";
 import { createArticleSchema } from "@/lib/validation/schemas";
 import type { Article, ArticleCategory, ArticleRevision, ArticleStatus, Tag } from "@/types";
-import {
-  ArrowLeft,
-  Edit2,
-  Eye,
-  Globe,
-  Loader2,
-  Save,
-  Tag as TagIcon,
-  Upload,
-  X,
-} from "lucide-react";
+import { ArrowLeft, Edit2, Eye, Globe, Loader2, Save, Tag as TagIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import SeoPreview from "./SeoPreview";
 import TagPicker from "./TagPicker";
 import TiptapEditor from "./TiptapEditor";
@@ -31,6 +25,7 @@ interface ArticleFormProps {
   allTags?: Tag[];
   initialTags?: Tag[];
   revisions?: ArticleRevision[];
+  author: NoteAuthor;
 }
 
 export default function ArticleForm({
@@ -38,6 +33,7 @@ export default function ArticleForm({
   allTags = [],
   initialTags = [],
   revisions = [],
+  author,
 }: ArticleFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -49,9 +45,6 @@ export default function ArticleForm({
   const [excerpt, setExcerpt] = useState(initialData?.excerpt || "");
   const [content, setContent] = useState(initialData?.content || "");
   const [coverImage, setCoverImage] = useState(initialData?.cover_image || "");
-  const [isCoverUploading, setIsCoverUploading] = useState(false);
-  const [coverUploadError, setCoverUploadError] = useState<string | null>(null);
-  const coverFileRef = useRef<HTMLInputElement>(null);
   const [category, setCategory] = useState<ArticleCategory>(initialData?.category || "technology");
   const [status, setStatus] = useState<ArticleStatus>(initialData?.status || "draft");
   const [publishedAt, setPublishedAt] = useState(
@@ -245,28 +238,20 @@ export default function ArticleForm({
 
       {/* Main Workspace (Preview vs Editor split) */}
       {previewMode ? (
-        /* Preview Mode Mock */
-        <div className="border border-border rounded-xl bg-card p-6 sm:p-10 space-y-6 max-w-3xl mx-auto">
-          <div className="space-y-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-muted-gold">
-              {category}
-            </span>
-            <h1 className="text-3xl sm:text-4xl font-serif font-black text-foreground">
-              {title || "Untitled Article"}
-            </h1>
-            <p className="text-muted-foreground italic border-l-2 border-muted-gold pl-4 text-sm">
-              {excerpt || "Excerpt goes here..."}
-            </p>
-          </div>
-          {coverImage && (
-            <div className="aspect-video w-full relative rounded-lg overflow-hidden bg-muted">
-              <img src={coverImage} alt="Cover Preview" className="object-cover w-full h-full" />
-            </div>
-          )}
-          <div
-            className="prose prose-sm dark:prose-invert text-foreground/90 max-w-none pt-6 border-t border-border"
-            // biome-ignore lint/security/noDangerouslySetInnerHtml: Preview renders admin-authored HTML content, not user input
-            dangerouslySetInnerHTML={{ __html: content || "<p>Content goes here...</p>" }}
+        <div className="overflow-hidden rounded-xl border border-border bg-background">
+          <NoteArticle
+            note={{
+              title: title || "Untitled note",
+              excerpt,
+              category,
+              cover_image: coverImage || null,
+              published_at: publishedAt ? new Date(publishedAt).toISOString() : null,
+            }}
+            bodyHtml={content || "<p>Start writing to see your note here.</p>"}
+            readingTime={readingTimeLabel(calculateReadingTime(content))}
+            author={author}
+            topics={selectedTags}
+            dateFallback="Not yet published"
           />
         </div>
       ) : (
@@ -391,101 +376,15 @@ export default function ArticleForm({
                 />
               </div>
 
-              {/* Cover Image   upload OR paste URL */}
-              <div className="space-y-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
-                  Cover Image
-                </span>
-
-                {/* Preview thumbnail */}
-                {coverImage && (
-                  <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-border bg-muted mb-2">
-                    <img
-                      src={coverImage}
-                      alt="Cover preview"
-                      className="w-full h-full object-cover"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setCoverImage("");
-                        setCoverUploadError(null);
-                      }}
-                      className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center text-foreground hover:bg-destructive hover:text-white transition-colors"
-                      aria-label="Remove cover image"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </div>
-                )}
-
-                {/* Upload from device */}
-                <div className="relative">
-                  <input
-                    ref={coverFileRef}
-                    id="cover-image-upload"
-                    type="file"
-                    accept="image/*"
-                    className="sr-only"
-                    disabled={isCoverUploading}
-                    onChange={async (e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      setIsCoverUploading(true);
-                      setCoverUploadError(null);
-                      const formData = new FormData();
-                      formData.append("file", file);
-                      const res = await uploadImageAction(formData);
-                      if (res.success && res.url) {
-                        setCoverImage(res.url);
-                      } else {
-                        setCoverUploadError(res.error || "Upload failed");
-                      }
-                      setIsCoverUploading(false);
-                      if (coverFileRef.current) coverFileRef.current.value = "";
-                    }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => coverFileRef.current?.click()}
-                    disabled={isCoverUploading}
-                    className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground text-xs font-semibold flex items-center justify-center gap-2 hover:bg-muted transition-colors disabled:opacity-50"
-                  >
-                    {isCoverUploading ? (
-                      <>
-                        <Loader2 className="h-3.5 w-3.5 animate-spin" /> Uploading...
-                      </>
-                    ) : (
-                      <>
-                        <Upload className="h-3.5 w-3.5" /> Upload from device
-                      </>
-                    )}
-                  </button>
-                </div>
-
-                {coverUploadError && (
-                  <p className="text-xs text-destructive font-semibold">{coverUploadError}</p>
-                )}
-
-                {/* Divider */}
-                <div className="flex items-center gap-2">
-                  <div className="flex-1 h-px bg-border" />
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    or
-                  </span>
-                  <div className="flex-1 h-px bg-border" />
-                </div>
-
-                {/* URL input */}
-                <input
-                  id="article-cover"
-                  type="text"
-                  value={coverImage}
-                  onChange={(e) => setCoverImage(e.target.value)}
-                  placeholder="Paste image URL..."
-                  className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
-                />
-              </div>
+              <ImageUploadField
+                label="Cover image"
+                description="Required to publish. Shown at 16:9 on the note and in lists."
+                purpose="cover"
+                aspectClassName="aspect-video"
+                value={coverImage}
+                onChange={setCoverImage}
+                allowUrl
+              />
 
               {/* Status */}
               <div className="space-y-2">

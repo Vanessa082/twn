@@ -60,8 +60,11 @@ export interface AboutData {
     lead: string;
     story: string[];
     roles: AboutRoleItem[];
+    /** Empty when no portrait is published. */
     image_url: string;
+    image_alt: string;
     image_caption: string;
+    image_location: string;
   };
   timeline: AboutTimelineItem[];
   projects: AboutProjectItem[];
