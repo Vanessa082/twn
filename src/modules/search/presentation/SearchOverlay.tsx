@@ -1,14 +1,15 @@
 "use client";
 
+import { TwnLogo } from "@/brand";
 import ImageWithSkeleton from "@/components/ui/ImageWithSkeleton";
 import { useRecentSearches } from "@/lib/client-store/reader-store";
-import type { SearchDocType, SearchResultItem } from "../application/engine";
-import { SEARCH_TYPE_LABELS, SEARCH_TYPE_SINGULAR } from "../application/query";
 import { routes } from "@/lib/site";
 import { ArrowRight, Clock, Search, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type KeyboardEvent, useEffect, useId, useRef, useState } from "react";
+import type { SearchDocType, SearchResultItem } from "../application/engine";
+import { SEARCH_TYPE_LABELS, SEARCH_TYPE_SINGULAR } from "../application/query";
 import Highlight from "./Highlight";
 import { useNotebookSearch } from "./useNotebookSearch";
 
@@ -131,9 +132,7 @@ export default function SearchOverlay({ onClose }: SearchOverlayProps) {
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-10 lg:px-20">
         <div className="flex h-[72px] items-center justify-between border-b border-border sm:h-[88px]">
-          <span className="font-serif text-2xl font-black tracking-[0.12em] text-foreground">
-            TWN
-          </span>
+          <TwnLogo descriptor={false} />
           <button
             type="button"
             onClick={onClose}

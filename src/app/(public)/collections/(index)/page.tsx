@@ -1,8 +1,9 @@
+import { TwnMark } from "@/brand";
 import ImageWithSkeleton from "@/components/ui/ImageWithSkeleton";
 import { Eyebrow, TextLink } from "@/components/ui/SectionHeading";
 import { pageMetadata } from "@/lib/seo";
-import { getPublicCollections } from "@/modules/editorial";
 import { routes } from "@/lib/site";
+import { getPublicCollections } from "@/modules/editorial";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -59,8 +60,8 @@ export default async function PublicCollectionsPage() {
                         className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                       />
                     ) : (
-                      <span className="absolute inset-0 grid place-items-center font-serif text-3xl font-black tracking-[0.12em] text-foreground/10">
-                        TWN
+                      <span className="absolute inset-0 grid place-items-center">
+                        <TwnMark title="TWN" className="text-3xl opacity-15" />
                       </span>
                     )}
                   </div>

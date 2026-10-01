@@ -1,9 +1,10 @@
-
-import { SearchPageForm } from "@/modules/search/ui";
+import { TwnMark } from "@/brand";
 import ImageWithSkeleton from "@/components/ui/ImageWithSkeleton";
 import Pagination from "@/components/ui/Pagination";
 import { Eyebrow } from "@/components/ui/SectionHeading";
 import { totalPagesFor, withPageParam } from "@/lib/pagination";
+import { pageMetadata } from "@/lib/seo";
+import { routes } from "@/lib/site";
 import { getPopularSearches, getSearchIndex } from "@/modules/search";
 import { SEARCH_DOC_TYPES, search } from "@/modules/search";
 import {
@@ -12,8 +13,7 @@ import {
   SEARCH_TYPE_SINGULAR,
   searchQuerySchema,
 } from "@/modules/search";
-import { pageMetadata } from "@/lib/seo";
-import { routes } from "@/lib/site";
+import { SearchPageForm } from "@/modules/search/ui";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -189,8 +189,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                             className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                           />
                         ) : (
-                          <span className="absolute inset-0 grid place-items-center font-serif text-lg font-black tracking-[0.12em] text-foreground/15">
-                            TWN
+                          <span className="absolute inset-0 grid place-items-center">
+                            <TwnMark title="TWN" className="text-lg opacity-20" />
                           </span>
                         )}
                       </div>

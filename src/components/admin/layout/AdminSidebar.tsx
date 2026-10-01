@@ -1,5 +1,6 @@
 "use client";
 
+import { TwnMark } from "@/brand";
 import {
   BookOpen,
   FileText,
@@ -40,12 +41,9 @@ export default function AdminSidebar() {
   return (
     <aside className="w-64 border-r border-border bg-card hidden md:flex flex-col h-screen fixed left-0 top-0 z-40">
       <div className="h-16 flex items-center px-6 border-b border-border">
-        <Link
-          href="/admin"
-          className="font-serif font-bold text-xl tracking-wide flex items-center gap-2"
-        >
-          TWN{" "}
-          <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-muted-gold bg-muted-gold/5 border border-muted-gold/20 px-2 py-0.5 rounded">
+        <Link href="/admin" className="flex items-center gap-2.5 text-foreground">
+          <TwnMark className="text-xl" />
+          <span className="rounded border border-muted-gold/20 bg-muted-gold/5 px-2 py-0.5 text-[10px] font-sans font-bold uppercase tracking-wider text-muted-gold">
             Admin
           </span>
         </Link>

@@ -90,6 +90,16 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large" },
   },
+  icons: {
+    icon: [
+      { url: "/brand/twn-mark.svg", type: "image/svg+xml", sizes: "any" },
+      { url: "/icon/32", sizes: "32x32", type: "image/png" },
+      { url: "/icon/192", sizes: "192x192", type: "image/png" },
+      { url: "/icon/512", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-icon", sizes: "180x180", type: "image/png" }],
+    other: [{ rel: "mask-icon", url: "/brand/twn-mark-mono.svg", color: "#111111" }],
+  },
   formatDetection: { telephone: false },
 };
 

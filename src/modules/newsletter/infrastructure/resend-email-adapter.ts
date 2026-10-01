@@ -54,7 +54,8 @@ export async function sendWelcomeEmail(email: string): Promise<void> {
           <!-- Header -->
           <tr>
             <td style="padding:40px 40px 24px;border-bottom:1px solid #F0F0EE;">
-              <p style="margin:0;font-size:11px;font-family:'Arial',sans-serif;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#AE8D64;">The Notebook of a Tech Woman</p>
+              <img src="${SITE_URL}/icon/192" width="40" height="40" alt="TWN" style="display:block;border:0;border-radius:8px;" />
+              <p style="margin:12px 0 0;font-size:11px;font-family:'Arial',sans-serif;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#AE8D64;">The Notebook of a Tech Woman</p>
               <h1 style="margin:12px 0 0;font-size:28px;font-weight:700;color:#1A1A1A;line-height:1.3;">
                 Welcome to TWN ✦
               </h1>
@@ -143,7 +144,8 @@ export async function sendNoteNewsletterEmail(
           <!-- Header -->
           <tr>
             <td style="padding:32px 40px 20px;border-bottom:1px solid #F0F0EE;">
-              <p style="margin:0;font-size:10px;font-family:'Arial',sans-serif;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#AE8D64;">The Notebook of a Tech Woman</p>
+              <img src="${SITE_URL}/icon/192" width="36" height="36" alt="TWN" style="display:block;border:0;border-radius:8px;" />
+              <p style="margin:12px 0 0;font-size:10px;font-family:'Arial',sans-serif;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#AE8D64;">The Notebook of a Tech Woman</p>
               <p style="margin:8px 0 0;font-size:11px;font-family:'Arial',sans-serif;color:#AAAAAA;letter-spacing:0.05em;">A new page has been added</p>
             </td>
           </tr>

@@ -5,6 +5,7 @@
  * Pure editorial: tiny uppercase links, serif logo, search that opens an overlay.
  */
 
+import { TwnLogo } from "@/brand";
 import { routes } from "@/lib/site";
 import { Menu, Search, X } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -12,7 +13,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
-const loadSearchOverlay = () => import("@/modules/search/ui").then((mod) => ({ default: mod.SearchOverlay }));
+const loadSearchOverlay = () =>
+  import("@/modules/search/ui").then((mod) => ({ default: mod.SearchOverlay }));
 const SearchOverlay = dynamic(loadSearchOverlay, { ssr: false });
 
 const links = [
@@ -93,27 +95,7 @@ export default function Navbar() {
       <header className={headerClass}>
         <div className="twn-nav-enter mx-auto h-full max-w-7xl px-5 sm:px-10 lg:px-20">
           <div className="relative flex h-full items-center justify-between">
-            <Link
-              href={routes.home}
-              className="group flex items-center gap-3"
-              data-cursor="link"
-              aria-label="The Notebook of a Tech Woman, home"
-            >
-              <span className="font-serif text-[1.75rem] font-black leading-none tracking-[0.12em] text-foreground transition-opacity duration-300 group-hover:opacity-70 sm:text-[2rem]">
-                TWN
-              </span>
-              <span
-                aria-hidden="true"
-                className="hidden flex-col border-l border-border pl-3 text-left leading-[1.4] sm:flex"
-              >
-                <span className="font-sans text-[8px] font-bold uppercase tracking-[0.28em] text-muted-foreground transition-colors group-hover:text-foreground">
-                  The Notebook
-                </span>
-                <span className="font-sans text-[8px] font-bold uppercase tracking-[0.28em] text-muted-foreground/70 transition-colors group-hover:text-muted-foreground">
-                  of a Tech Woman
-                </span>
-              </span>
-            </Link>
+            <TwnLogo href={routes.home} />
 
             <nav
               className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 lg:flex"

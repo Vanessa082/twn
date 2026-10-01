@@ -5,6 +5,7 @@
  * under the current volume (season) of the notebook.
  */
 
+import { TwnMark } from "@/brand";
 import ImageWithSkeleton from "@/components/ui/ImageWithSkeleton";
 import { Eyebrow, TextLink } from "@/components/ui/SectionHeading";
 import { useInView } from "@/hooks/useInView";
@@ -81,9 +82,7 @@ export default function FeaturedNote({ note, volume }: FeaturedNoteProps) {
               </div>
             ) : (
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="font-serif text-7xl font-black tracking-widest text-foreground/10">
-                  TWN
-                </span>
+                <TwnMark title="TWN" className="text-7xl opacity-15" />
               </div>
             )}
           </Link>

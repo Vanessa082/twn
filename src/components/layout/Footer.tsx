@@ -7,6 +7,7 @@
  * so a Resend/email failure cannot take down every page via the root layout.
  */
 
+import { TwnLogo } from "@/brand";
 import { NEWSLETTER_ENABLED } from "@/lib/feature-flags";
 import type { SocialLink } from "@/modules/site/contracts";
 import { Clock } from "lucide-react";
@@ -15,8 +16,7 @@ import Link from "next/link";
 
 const FooterSubscribeForm = NEWSLETTER_ENABLED
   ? dynamic(
-      () =>
-        import("@/modules/newsletter/ui").then((mod) => ({ default: mod.FooterSubscribeForm })),
+      () => import("@/modules/newsletter/ui").then((mod) => ({ default: mod.FooterSubscribeForm })),
       { ssr: false }
     )
   : null;
@@ -50,16 +50,7 @@ export default function Footer({ contactEmail, location, socialLinks }: FooterPr
       <div className="mx-auto max-w-7xl px-5 py-14 sm:px-10 lg:px-20">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10 pb-12 border-b border-border">
           <div className="flex flex-col gap-4">
-            <Link href="/" className="flex flex-col gap-1 w-fit group">
-              <span className="font-serif text-[26px] font-black tracking-[0.12em] text-foreground group-hover:opacity-75 transition-opacity leading-none">
-                TWN
-              </span>
-              <span className="text-[8px] font-bold uppercase tracking-[0.22em] text-muted-foreground/70 leading-tight">
-                The Notebook
-                <br />
-                of a Tech Woman
-              </span>
-            </Link>
+            <TwnLogo href="/" descriptor="below" compact />
             <p className="text-xs text-muted-foreground leading-relaxed max-w-[220px] mt-1 font-sans">
               Written, built &amp; kept by Vanessa. Some things are worth remembering.
             </p>
