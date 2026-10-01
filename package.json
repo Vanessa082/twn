@@ -52,8 +52,9 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/sanitize-html": "^2.16.2",
+    "postcss": "8.5.23",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "3.2.4"
+    "vitest": "4.1.11"
   }
 }
