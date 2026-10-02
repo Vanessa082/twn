@@ -1,5 +1,5 @@
-import type { MarginNote, ModerationStatus, SharedPage } from "./types";
 import { describe, expect, it } from "vitest";
+import type { MarginNote, ModerationStatus, SharedPage } from "./types";
 
 /**
  * Pure state machine transition helper mirroring DB moderation logic for unit verification.

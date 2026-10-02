@@ -1,5 +1,5 @@
-import type { Project, ProjectInput, ProjectsAdminResult } from "../domain/project";
 import type { ProjectRepository } from "../domain/ports";
+import type { Project, ProjectInput, ProjectsAdminResult } from "../domain/project";
 
 export async function getPublishedProjects(
   repository: ProjectRepository,

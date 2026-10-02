@@ -1,9 +1,9 @@
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
 import { Eyebrow, TextLink } from "@/components/ui/SectionHeading";
+import { routes } from "@/lib/site";
 import { getLatestNotes } from "@/modules/editorial";
 import { getHomepageSettings } from "@/modules/site";
-import { routes } from "@/lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
 

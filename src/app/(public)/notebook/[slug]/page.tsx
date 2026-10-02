@@ -1,13 +1,17 @@
-
-
-import { NewsletterSection } from "@/modules/newsletter/ui";
-import { MarginNotesList } from "@/modules/community/ui";
-import { InlineActionBar, NoteLayout, ReadingProgress, RelatedNotes, chapterLabel } from "@/modules/editorial/ui";
 import { sanitizeNoteHtml } from "@/lib/security/sanitize-note-html";
 import { pageMetadata } from "@/lib/seo";
 import { absoluteUrl, routes, site } from "@/lib/site";
 import { getApprovedMarginNotesForNote } from "@/modules/community";
+import { MarginNotesList } from "@/modules/community/ui";
 import { getNoteBySlug, getRelatedNotes, getTagsForNote } from "@/modules/editorial";
+import {
+  InlineActionBar,
+  NoteLayout,
+  ReadingProgress,
+  RelatedNotes,
+  chapterLabel,
+} from "@/modules/editorial/ui";
+import { NewsletterSection } from "@/modules/newsletter/ui";
 import { getAboutData, getNoteAuthor } from "@/modules/site";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";

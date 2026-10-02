@@ -1,9 +1,12 @@
-
-
-import { InlineActionBar, NoteLayout, RelatedNotes, readingTimeLabel } from "@/modules/editorial/ui";
 import { sanitizeNoteHtml } from "@/lib/security/sanitize-note-html";
 import { routes } from "@/lib/site";
 import { getNoteByIdAdmin, getRelatedNotes, getTagsForNote } from "@/modules/editorial";
+import {
+  InlineActionBar,
+  NoteLayout,
+  RelatedNotes,
+  readingTimeLabel,
+} from "@/modules/editorial/ui";
 import { getAboutData, getNoteAuthor } from "@/modules/site";
 import { ArrowLeft, Edit2, Eye } from "lucide-react";
 import type { Metadata } from "next";

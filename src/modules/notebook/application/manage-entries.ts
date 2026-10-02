@@ -1,5 +1,5 @@
-import type { Notebook, NotebookEntry } from "../domain/types";
 import type { NotebookRepository } from "../domain/ports";
+import type { Notebook, NotebookEntry } from "../domain/types";
 
 export async function getAllEntriesAdmin(repository: NotebookRepository): Promise<NotebookEntry[]> {
   return repository.findAllAdmin();

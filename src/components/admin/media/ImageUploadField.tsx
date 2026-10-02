@@ -1,13 +1,13 @@
 "use client";
 
-import { uploadImageAction } from "@/modules/media/actions";
+import { safeHttpUrlSchema } from "@/lib/validation/schemas";
 import {
   IMAGE_ACCEPT,
   IMAGE_LIMITS_HINT,
   type ImageUploadPurpose,
   validateImageFile,
 } from "@/modules/media";
-import { safeHttpUrlSchema } from "@/lib/validation/schemas";
+import { uploadImageAction } from "@/modules/media/actions";
 import { ImageIcon, Loader2, Trash2, Upload } from "lucide-react";
 import { type DragEvent, useId, useRef, useState } from "react";
 

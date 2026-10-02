@@ -1,7 +1,7 @@
 import { createAdminClient } from "@/lib/db/server";
 import { generateSlug } from "@/lib/utils/slug";
-import type { CreateNoteInput, Note, UpdateNoteInput } from "../domain/types";
 import type { NoteAdminRepository } from "../domain/ports";
+import type { CreateNoteInput, Note, UpdateNoteInput } from "../domain/types";
 import { type DatabaseNoteRow, mapToNote } from "./map-note";
 import { NOTES_TABLE } from "./tables";
 

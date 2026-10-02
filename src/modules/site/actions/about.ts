@@ -3,8 +3,8 @@
 import { aboutDataSchema } from "@/lib/validation/schemas";
 import { canAccessAdmin, toAdminActionError } from "@/modules/identity";
 import { updateAboutData } from "@/modules/site";
-import { recordAuditLog } from "@/platform/audit/audit-log";
 import type { AboutData } from "@/modules/site";
+import { recordAuditLog } from "@/platform/audit/audit-log";
 import { revalidatePath } from "next/cache";
 
 export async function updateAboutAction(data: AboutData) {

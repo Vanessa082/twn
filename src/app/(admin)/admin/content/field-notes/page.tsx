@@ -1,5 +1,5 @@
-import { FieldNotesManager } from "@/modules/editorial/admin-ui";
 import { getAllFieldNotesAdmin } from "@/modules/editorial";
+import { FieldNotesManager } from "@/modules/editorial/admin-ui";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 

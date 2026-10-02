@@ -74,7 +74,9 @@ describe("FieldNotesSection", () => {
   });
 
   it("renders the notes supplied by the CMS, paragraph by paragraph", () => {
-    const markup = renderToStaticMarkup(React.createElement(FieldNotesSection, { notes: [fieldNote] }));
+    const markup = renderToStaticMarkup(
+      React.createElement(FieldNotesSection, { notes: [fieldNote] })
+    );
     expect(markup).toContain("A note managed in the admin");
     expect(markup).toContain("<p>First paragraph from the CMS.</p>");
     expect(markup).toContain("<p>Second paragraph from the CMS.</p>");

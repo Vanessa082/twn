@@ -1,15 +1,20 @@
 "use client";
 
+import { useConfirm } from "@/components/admin/ui/ConfirmDialog";
+import MigrationNotice from "@/components/admin/ui/MigrationNotice";
+import { ToastContainer, useToast } from "@/components/admin/ui/Toast";
+import { projectSchema } from "@/lib/validation/schemas";
 import {
   createProjectAction,
   deleteProjectAction,
   updateProjectAction,
 } from "@/modules/workbench/actions";
-import { useConfirm } from "@/components/admin/ui/ConfirmDialog";
-import MigrationNotice from "@/components/admin/ui/MigrationNotice";
-import { ToastContainer, useToast } from "@/components/admin/ui/Toast";
-import { projectSchema } from "@/lib/validation/schemas";
-import { PROJECT_STATUSES, type Project, type ProjectInput, type ProjectStatus } from "@/modules/workbench/contracts";
+import {
+  PROJECT_STATUSES,
+  type Project,
+  type ProjectInput,
+  type ProjectStatus,
+} from "@/modules/workbench/contracts";
 import {
   AlertCircle,
   ArrowDown,

@@ -1,8 +1,8 @@
 "use client";
 
-import type { SearchResponse, SearchResultItem } from "../application/engine";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import type { SearchResponse, SearchResultItem } from "../application/engine";
 
 export interface SearchDiscovery {
   popular: string[];

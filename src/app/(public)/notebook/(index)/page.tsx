@@ -1,12 +1,11 @@
-
-import { NoteGrid } from "@/modules/editorial/ui";
 import Pagination from "@/components/ui/Pagination";
 import { Eyebrow } from "@/components/ui/SectionHeading";
 import { parsePageParam, withPageParam } from "@/lib/pagination";
-import { getPublishedNotesPage } from "@/modules/editorial";
 import { routes } from "@/lib/site";
 import { noteChapterEnum } from "@/lib/validation/schemas";
+import { getPublishedNotesPage } from "@/modules/editorial";
 import type { NoteChapter } from "@/modules/editorial";
+import { NoteGrid } from "@/modules/editorial/ui";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";

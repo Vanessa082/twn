@@ -29,7 +29,6 @@ async function getPublishedFieldNotes(limit = 3): Promise<FieldNote[]> {
 
 // ── Admin API ─────────────────────────────────────────────────────────────────
 
-
 async function getAllFieldNotesAdmin(): Promise<FieldNotesAdminResult> {
   const supabase = createAdminClient();
   const { data, error } = await supabase
@@ -52,10 +51,7 @@ async function createFieldNote(input: FieldNoteInput): Promise<FieldNote> {
   return data as FieldNote;
 }
 
-async function updateFieldNote(
-  id: string,
-  input: Partial<FieldNoteInput>
-): Promise<FieldNote> {
+async function updateFieldNote(id: string, input: Partial<FieldNoteInput>): Promise<FieldNote> {
   const supabase = createAdminClient();
   const payload: Partial<FieldNoteInput> & { published_at?: string | null } = { ...input };
 

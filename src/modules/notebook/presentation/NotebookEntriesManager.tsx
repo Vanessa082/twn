@@ -1,12 +1,12 @@
 "use client";
 
+import { createNotebookEntrySchema } from "@/lib/validation/schemas";
+import type { Note } from "@/modules/editorial/contracts";
 import {
   createEntryAction,
   deleteEntryAction,
   updateEntryAction,
 } from "@/modules/notebook/actions";
-import { createNotebookEntrySchema } from "@/lib/validation/schemas";
-import type { Note } from "@/modules/editorial/contracts";
 import type { Notebook, NotebookEntry } from "@/modules/notebook/contracts";
 import { AlertCircle, Calendar, Check, Edit2, Plus, Sparkles, Trash2, X } from "lucide-react";
 import { useState, useTransition } from "react";
@@ -400,9 +400,7 @@ export default function NotebookEntriesManager({
                       {matchedNote && (
                         <p className="text-[11px] text-muted-foreground">
                           Inspired by note:{" "}
-                          <span className="font-semibold text-foreground">
-                            {matchedNote.title}
-                          </span>
+                          <span className="font-semibold text-foreground">{matchedNote.title}</span>
                         </p>
                       )}
                     </div>

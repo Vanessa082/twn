@@ -1,5 +1,5 @@
-import { SharedPagesModerator } from "@/modules/community/admin-ui";
 import { getAllSharedPagesAdmin } from "@/modules/community";
+import { SharedPagesModerator } from "@/modules/community/admin-ui";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 

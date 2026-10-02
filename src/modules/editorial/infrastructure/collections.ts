@@ -1,6 +1,12 @@
 import { createAdminClient, createClient } from "@/lib/db/server";
 import type { CollectionRepository } from "../domain/ports";
-import type { Collection, CollectionItem, CollectionWithNotes, CreateCollectionInput, NoteCard } from "../domain/types";
+import type {
+  Collection,
+  CollectionItem,
+  CollectionWithNotes,
+  CreateCollectionInput,
+  NoteCard,
+} from "../domain/types";
 import { COLLECTION_NOTES_TABLE } from "./tables";
 
 function mapCollectionItems(items: unknown): CollectionItem[] {
@@ -231,4 +237,3 @@ export class SupabaseCollectionRepository implements CollectionRepository {
     return setCollectionNotesAdmin(collectionId, noteIdsInOrder);
   }
 }
-

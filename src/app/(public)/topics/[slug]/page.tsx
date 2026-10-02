@@ -1,11 +1,10 @@
-
-import { NoteCard } from "@/modules/editorial/ui";
 import Pagination from "@/components/ui/Pagination";
 import { Eyebrow, TextLink } from "@/components/ui/SectionHeading";
 import { parsePageParam, withPageParam } from "@/lib/pagination";
 import { pageMetadata } from "@/lib/seo";
-import { getNotesByTagPage, getTagBySlug } from "@/modules/editorial";
 import { routes } from "@/lib/site";
+import { getNotesByTagPage, getTagBySlug } from "@/modules/editorial";
+import { NoteCard } from "@/modules/editorial/ui";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";

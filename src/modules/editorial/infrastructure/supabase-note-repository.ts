@@ -1,8 +1,8 @@
 import { createAdminClient, createClient } from "@/lib/db/server";
 import { pageRange, totalPagesFor } from "@/lib/pagination";
 import type { PaginatedResult } from "@/types";
-import type { Note } from "../domain/types";
 import type { NoteRepository, NotesPageQuery, PublishedNoteRef } from "../domain/ports";
+import type { Note } from "../domain/types";
 import { FALLBACK_NOTES } from "./fallback-notes";
 import { type DatabaseNoteRow, mapToNote } from "./map-note";
 import { NOTES_TABLE } from "./tables";

@@ -1,9 +1,9 @@
 "use client";
 
-import { setCollectionNotesAction, updateCollectionAction } from "@/modules/editorial/actions";
 import ImageUploadField from "@/components/admin/media/ImageUploadField";
 import { ToastContainer, useToast } from "@/components/admin/ui/Toast";
-import type { NoteCard, CollectionWithNotes } from "@/modules/editorial/contracts";
+import { setCollectionNotesAction, updateCollectionAction } from "@/modules/editorial/actions";
+import type { CollectionWithNotes, NoteCard } from "@/modules/editorial/contracts";
 import { ArrowDown, ArrowLeft, ArrowUp, Globe, Loader2, Plus, Save, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
@@ -24,9 +24,7 @@ export default function CollectionEditor({ collection, availableNotes }: Collect
   const [isPending, startTransition] = useTransition();
   const { toasts, showSuccess, showError } = useToast();
 
-  const unselectedNotes = availableNotes.filter(
-    (a) => !items.some((item) => item.id === a.id)
-  );
+  const unselectedNotes = availableNotes.filter((a) => !items.some((item) => item.id === a.id));
 
   const handleAddNote = () => {
     if (!selectedNoteId) return;

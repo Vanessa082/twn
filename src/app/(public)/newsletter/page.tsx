@@ -1,6 +1,6 @@
-import { NewsletterSection } from "@/modules/newsletter/ui";
 import { pageMetadata } from "@/lib/seo";
 import { routes } from "@/lib/site";
+import { NewsletterSection } from "@/modules/newsletter/ui";
 /**
  * /newsletter   Dedicated newsletter subscription page.
  *

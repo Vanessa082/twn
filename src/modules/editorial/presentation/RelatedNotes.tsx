@@ -1,8 +1,7 @@
-
-import NoteCard from "./NoteCard";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { routes } from "@/lib/site";
 import type { NoteCard as NoteCardType } from "@/modules/editorial/contracts";
+import NoteCard from "./NoteCard";
 interface RelatedNotesProps {
   notes: NoteCardType[];
 }

@@ -1,7 +1,7 @@
 import { Eyebrow } from "@/components/ui/SectionHeading";
 import { pageMetadata } from "@/lib/seo";
-import { getLatestNotes } from "@/modules/editorial";
 import { routes } from "@/lib/site";
+import { getLatestNotes } from "@/modules/editorial";
 import type { Note } from "@/modules/editorial";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";

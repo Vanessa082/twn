@@ -2,10 +2,7 @@ import type { PaginatedResult } from "@/types";
 import type { NoteAdminRepository, NoteRepository, NotesPageQuery } from "../domain/ports";
 import type { CreateNoteInput, Note, UpdateNoteInput } from "../domain/types";
 
-export async function getLatestNotes(
-  limit: number,
-  repository: NoteRepository
-): Promise<Note[]> {
+export async function getLatestNotes(limit: number, repository: NoteRepository): Promise<Note[]> {
   return repository.findLatestPublished(limit);
 }
 

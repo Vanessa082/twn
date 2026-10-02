@@ -1,8 +1,8 @@
 "use client";
 
-import { createCollectionAction, deleteCollectionAction } from "@/modules/editorial/actions";
 import { useConfirm } from "@/components/admin/ui/ConfirmDialog";
 import { ToastContainer, useToast } from "@/components/admin/ui/Toast";
+import { createCollectionAction, deleteCollectionAction } from "@/modules/editorial/actions";
 import type { Collection } from "@/modules/editorial/contracts";
 import { Layers, Loader2, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";

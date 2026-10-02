@@ -12,9 +12,9 @@ import {
   submitSharedPage,
   updateSharedPageStatusAdmin,
 } from "@/modules/community";
+import type { ModerationStatus } from "@/modules/community";
 import { canModerateSharedPages, toAdminActionError } from "@/modules/identity";
 import { recordAuditLog } from "@/platform/audit/audit-log";
-import type { ModerationStatus } from "@/modules/community";
 import { revalidatePath } from "next/cache";
 
 function revalidateSharedPagePaths(slug?: string) {
@@ -39,7 +39,11 @@ export async function submitSharedPageAction(
     // 2. Rate Limiting (max 3 submissions per 10 min)
     const rateLimit = await enforceRateLimit("submit_shared_page", 3);
     if (!rateLimit.success) {
-      return { success: false, data: null, error: rateLimit.error! };
+      return {
+        success: false,
+        data: null,
+        error: rateLimit.error ?? "Please wait a moment and try again.",
+      };
     }
 
     // 3. Duplicate Suppression

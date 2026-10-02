@@ -6,17 +6,11 @@ export async function getAllTags(repository: TagRepository): Promise<Tag[]> {
   return repository.findAll();
 }
 
-export async function getTagBySlug(
-  slug: string,
-  repository: TagRepository
-): Promise<Tag | null> {
+export async function getTagBySlug(slug: string, repository: TagRepository): Promise<Tag | null> {
   return repository.findBySlug(slug);
 }
 
-export async function getTagsForNote(
-  noteId: string,
-  repository: TagRepository
-): Promise<Tag[]> {
+export async function getTagsForNote(noteId: string, repository: TagRepository): Promise<Tag[]> {
   return repository.findForNote(noteId);
 }
 

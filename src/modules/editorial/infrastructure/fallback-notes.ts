@@ -245,4 +245,3 @@ export const FALLBACK_NOTES: Note[] = [
     reading_time: 4,
   },
 ];
-

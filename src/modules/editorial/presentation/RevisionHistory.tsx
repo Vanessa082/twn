@@ -1,7 +1,7 @@
 "use client";
 
-import { restoreRevisionAction } from "@/modules/editorial/actions";
 import { ToastContainer, useToast } from "@/components/admin/ui/Toast";
+import { restoreRevisionAction } from "@/modules/editorial/actions";
 import type { NoteRevision } from "@/modules/editorial/contracts";
 import { Clock, RotateCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -36,7 +36,7 @@ function formatRelativeTime(isoDate: string): string {
  * Engineering note: each restore first saves the current state as a new revision
  * before overwriting, creating an implicit "undo" chain.
  */
-export default function RevisionHistory({ revisions, noteId }: RevisionHistoryProps) {
+export default function RevisionHistory({ revisions, noteId: _noteId }: RevisionHistoryProps) {
   const [isPending, startTransition] = useTransition();
   const { toasts, showSuccess, showError } = useToast();
   const router = useRouter();

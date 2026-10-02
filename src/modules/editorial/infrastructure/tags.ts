@@ -59,7 +59,6 @@ async function getTagsForNote(noteId: string): Promise<Tag[]> {
   }
 }
 
-
 /** One page of published notes filed under a tag, newest first. */
 async function getNotesByTagPage(
   tagSlug: string,
@@ -119,11 +118,7 @@ async function getNotesByTagPage(
 // ── Related notes ──────────────────────────────────────────────────────────
 
 /** Fetch related published notes for a given note, by shared tags then category fallback. */
-async function getRelatedNotes(
-  noteId: string,
-  category: string,
-  limit = 3
-): Promise<NoteCard[]> {
+async function getRelatedNotes(noteId: string, category: string, limit = 3): Promise<NoteCard[]> {
   try {
     const supabase = await createClient();
 
@@ -187,7 +182,6 @@ async function getRelatedNotes(
   }
 }
 
-
 // ── Admin mutations ───────────────────────────────────────────────────────────
 
 /** Create a new tag (auto-generates slug). */
@@ -227,7 +221,6 @@ async function setNoteTagsAdmin(noteId: string, tagIds: string[]): Promise<void>
     .insert(tagIds.map((tag_id) => ({ article_id: noteId, tag_id })));
   if (insertError) throw new Error(insertError.message);
 }
-
 
 // ── Categories ────────────────────────────────────────────────────────────────
 

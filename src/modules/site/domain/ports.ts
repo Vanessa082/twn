@@ -1,6 +1,6 @@
+import type { Note } from "@/modules/editorial/contracts";
 import type { AboutData } from "./about";
 import type { HomepageSettings, UpdateHomepageSettingsInput } from "./homepage";
-import type { Note } from "@/modules/editorial/contracts";
 
 export interface AboutSettingsRepository {
   get(): Promise<AboutData>;

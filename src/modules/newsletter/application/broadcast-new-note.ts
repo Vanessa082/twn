@@ -36,4 +36,3 @@ export async function broadcastNewNote(
 
   return { sent, failed };
 }
-

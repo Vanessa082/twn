@@ -7,8 +7,8 @@ import {
 } from "@/lib/validation/schemas";
 import { canManageNotebookEntries, toAdminActionError } from "@/modules/identity";
 import { createEntryAdmin, deleteEntryAdmin, updateEntryAdmin } from "@/modules/notebook";
-import { recordAuditLog } from "@/platform/audit/audit-log";
 import type { NotebookEntry } from "@/modules/notebook";
+import { recordAuditLog } from "@/platform/audit/audit-log";
 import { revalidatePath } from "next/cache";
 
 export async function createEntryAction(

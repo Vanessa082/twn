@@ -1,8 +1,8 @@
 "use client";
 
-import { createTagAction, deleteTagAction } from "@/modules/editorial/actions";
 import { useConfirm } from "@/components/admin/ui/ConfirmDialog";
 import { ToastContainer, useToast } from "@/components/admin/ui/Toast";
+import { createTagAction, deleteTagAction } from "@/modules/editorial/actions";
 import type { Tag } from "@/modules/editorial/contracts";
 import { Loader2, Plus, Tag as TagIcon, Trash2 } from "lucide-react";
 import { useState, useTransition } from "react";

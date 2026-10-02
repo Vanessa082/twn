@@ -5,8 +5,8 @@
  * settings; Today's Page promotes the latest published note.
  */
 
-import HeroClient from "./HeroClient";
 import type { Note } from "@/modules/editorial/contracts";
+import HeroClient from "./HeroClient";
 interface HeroProps {
   eyebrow: string;
   title: string;

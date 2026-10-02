@@ -1,5 +1,9 @@
 import { createAdminClient, createClient } from "@/lib/db/server";
-import type { HomepageSettings, HomepageSettingsAdminResult, UpdateHomepageSettingsInput } from "../domain/homepage";
+import type {
+  HomepageSettings,
+  HomepageSettingsAdminResult,
+  UpdateHomepageSettingsInput,
+} from "../domain/homepage";
 import type { HomepageSettingsRepository } from "../domain/ports";
 
 const DEFAULT_SETTINGS: Omit<HomepageSettings, "id" | "updated_at"> = {

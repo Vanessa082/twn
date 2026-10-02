@@ -1,6 +1,6 @@
-import { CollectionEditor } from "@/modules/editorial/admin-ui";
 import { getLatestNotes } from "@/modules/editorial";
 import { getCollectionByIdAdmin } from "@/modules/editorial";
+import { CollectionEditor } from "@/modules/editorial/admin-ui";
 import { notFound } from "next/navigation";
 
 interface EditCollectionPageProps {

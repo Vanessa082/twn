@@ -1,6 +1,6 @@
-import { HomepageSettingsForm, type FeaturableNote } from "@/modules/site/admin-ui";
 import { getAllNotesAdmin } from "@/modules/editorial";
 import { getHomepageSettingsAdmin } from "@/modules/site";
+import { type FeaturableNote, HomepageSettingsForm } from "@/modules/site/admin-ui";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
@@ -27,11 +27,7 @@ export default async function AdminHomepagePage() {
           Back to Dashboard
         </Link>
       </div>
-      <HomepageSettingsForm
-        initialSettings={settings}
-        notes={notes}
-        tableReady={tableReady}
-      />
+      <HomepageSettingsForm initialSettings={settings} notes={notes} tableReady={tableReady} />
     </div>
   );
 }

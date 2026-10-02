@@ -29,9 +29,6 @@ export async function updateFieldNote(
   return repository.update(id, input);
 }
 
-export async function deleteFieldNote(
-  id: string,
-  repository: FieldNoteRepository
-): Promise<void> {
+export async function deleteFieldNote(id: string, repository: FieldNoteRepository): Promise<void> {
   return repository.delete(id);
 }

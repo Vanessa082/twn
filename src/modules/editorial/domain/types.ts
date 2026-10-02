@@ -1,11 +1,6 @@
 export type NoteStatus = "draft" | "published" | "scheduled";
 
-export type NoteChapter =
-  | "technology"
-  | "leadership"
-  | "learning"
-  | "community"
-  | "reflections";
+export type NoteChapter = "technology" | "leadership" | "learning" | "community" | "reflections";
 
 export interface Note {
   id: string;

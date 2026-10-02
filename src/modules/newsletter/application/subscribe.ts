@@ -1,6 +1,6 @@
 import type { EmailDeliveryPort } from "../domain/email-port";
-import type { SubscribeResult } from "../domain/subscriber";
 import type { SubscriberRepository } from "../domain/ports";
+import type { SubscribeResult } from "../domain/subscriber";
 
 export async function subscribeToNewsletter(
   email: string,

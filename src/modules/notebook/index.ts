@@ -1,4 +1,3 @@
-import type { Notebook, NotebookEntry } from "./domain/types";
 import {
   getAllActiveEntries as loadActiveEntries,
   getRandomEntry as loadRandomEntry,
@@ -11,6 +10,7 @@ import {
   getAllNotebooksAdmin as loadNotebooksAdmin,
   updateEntryAdmin as updateThought,
 } from "./application/manage-entries";
+import type { Notebook, NotebookEntry } from "./domain/types";
 import { SupabaseNotebookRepository } from "./infrastructure/notebook-repository";
 
 function thoughts() {
@@ -55,4 +55,3 @@ export async function deleteEntryAdmin(id: string) {
 }
 
 export type { Notebook, NotebookEntry };
-

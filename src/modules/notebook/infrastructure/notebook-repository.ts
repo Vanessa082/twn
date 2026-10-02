@@ -1,6 +1,6 @@
 import { createAdminClient, createClient } from "@/lib/db/server";
-import type { Notebook, NotebookEntry } from "../domain/types";
 import type { NotebookRepository } from "../domain/ports";
+import type { Notebook, NotebookEntry } from "../domain/types";
 
 export type { NotebookRepository } from "../domain/ports";
 

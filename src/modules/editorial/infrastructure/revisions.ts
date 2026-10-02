@@ -80,7 +80,6 @@ async function getRevisionsForNote(noteId: string, limit = 10): Promise<NoteRevi
   return ((data ?? []) as RevisionRow[]).map(mapRevision);
 }
 
-
 async function getRevisionById(id: string): Promise<NoteRevision | null> {
   const adminSupabase = createAdminClient();
   const { data, error } = await adminSupabase
@@ -94,7 +93,10 @@ async function getRevisionById(id: string): Promise<NoteRevision | null> {
 
 export class SupabaseNoteRevisionRepository implements NoteRevisionRepository {
   createSnapshot(
-    note: Pick<Note, "id" | "title" | "excerpt" | "content" | "cover_image" | "category" | "status">,
+    note: Pick<
+      Note,
+      "id" | "title" | "excerpt" | "content" | "cover_image" | "category" | "status"
+    >,
     savedByClerkId?: string | null
   ) {
     return createRevision(note, savedByClerkId);

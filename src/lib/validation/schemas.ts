@@ -95,8 +95,8 @@ export const createNoteSchema = z
     content: z
       .string()
       .trim()
-    .min(20, "Note content must be at least 20 characters.")
-    .max(200_000, "Note content is too large."),
+      .min(20, "Note content must be at least 20 characters.")
+      .max(200_000, "Note content is too large."),
     category: noteChapterEnum.default("technology"),
     status: z.enum(["draft", "published", "scheduled"]).default("draft"),
     cover_image: safeHttpUrlSchema.nullable().optional(),

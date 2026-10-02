@@ -12,9 +12,9 @@ import {
   updateMarginNotePinAdmin,
   updateMarginNoteStatusAdmin,
 } from "@/modules/community";
+import type { ModerationStatus } from "@/modules/community";
 import { canModerateMarginNotes, toAdminActionError } from "@/modules/identity";
 import { recordAuditLog } from "@/platform/audit/audit-log";
-import type { ModerationStatus } from "@/modules/community";
 import { revalidatePath } from "next/cache";
 
 export async function submitMarginNoteAction(
@@ -32,7 +32,11 @@ export async function submitMarginNoteAction(
     // 2. Rate Limiting
     const rateLimit = await enforceRateLimit("submit_margin_note", 5);
     if (!rateLimit.success) {
-      return { success: false, data: null, error: rateLimit.error! };
+      return {
+        success: false,
+        data: null,
+        error: rateLimit.error ?? "Please wait a moment and try again.",
+      };
     }
 
     // 3. Duplicate Suppression

@@ -21,7 +21,7 @@ export async function contactAction(_prevState: unknown, formData: FormData) {
   // 1. Rate Limiting (max 3 contact submissions per 10 min)
   const rateLimit = await enforceRateLimit("contact_form", 3);
   if (!rateLimit.success) {
-    return { success: false, error: rateLimit.error! };
+    return { success: false, error: rateLimit.error ?? "Please wait a moment and try again." };
   }
 
   // 2. Validate inputs

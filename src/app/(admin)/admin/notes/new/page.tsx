@@ -1,5 +1,5 @@
-import { NoteForm } from "@/modules/editorial/admin-ui";
 import { getAllTags } from "@/modules/editorial";
+import { NoteForm } from "@/modules/editorial/admin-ui";
 import { getAboutData, getNoteAuthor } from "@/modules/site";
 
 export const metadata = {

@@ -1,18 +1,18 @@
 import {
-  deleteMarginNoteAdmin as removeMarginNote,
-  getAllMarginNotesAdmin as loadMarginNotesAdmin,
-  getApprovedMarginNotesForNote as loadApprovedMarginNotes,
   submitMarginNote as addMarginNote,
-  updateMarginNotePinAdmin as pinMarginNote,
+  getApprovedMarginNotesForNote as loadApprovedMarginNotes,
+  getAllMarginNotesAdmin as loadMarginNotesAdmin,
   updateMarginNoteStatusAdmin as moderateMarginNote,
+  updateMarginNotePinAdmin as pinMarginNote,
+  deleteMarginNoteAdmin as removeMarginNote,
 } from "./application/margin-notes";
 import {
-  deleteSharedPageAdmin as removeSharedPage,
-  getAllSharedPagesAdmin as loadSharedPagesAdmin,
-  getApprovedSharedPageBySlug as loadSharedPageBySlug,
-  getApprovedSharedPages as loadApprovedSharedPages,
   submitSharedPage as addSharedPage,
+  getApprovedSharedPages as loadApprovedSharedPages,
+  getApprovedSharedPageBySlug as loadSharedPageBySlug,
+  getAllSharedPagesAdmin as loadSharedPagesAdmin,
   updateSharedPageStatusAdmin as moderateSharedPage,
+  deleteSharedPageAdmin as removeSharedPage,
 } from "./application/shared-pages";
 import type { ModerationStatus } from "./domain/types";
 import { SupabaseMarginNoteRepository } from "./infrastructure/margin-note-repository";

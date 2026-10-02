@@ -10,10 +10,10 @@ import {
   updateNoteAdmin,
 } from "@/modules/editorial";
 import { createRevision, getRevisionById } from "@/modules/editorial";
+import type { CreateNoteInput, UpdateNoteInput } from "@/modules/editorial";
 import { canManageNotes, toAdminActionError } from "@/modules/identity";
 import { broadcastNewNote } from "@/modules/newsletter";
 import { recordAuditLog } from "@/platform/audit/audit-log";
-import type { CreateNoteInput, UpdateNoteInput } from "@/modules/editorial";
 import { revalidatePath } from "next/cache";
 
 export async function createNoteAction(input: CreateNoteInput) {

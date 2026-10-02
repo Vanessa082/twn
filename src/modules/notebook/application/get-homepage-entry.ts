@@ -1,5 +1,5 @@
-import type { NotebookEntry } from "../domain/types";
 import type { NotebookRepository } from "../domain/ports";
+import type { NotebookEntry } from "../domain/types";
 
 function pickRandom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];

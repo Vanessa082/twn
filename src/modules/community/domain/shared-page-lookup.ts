@@ -1,5 +1,5 @@
-import type { SharedPage } from "./types";
 import { buildSharedPageSlug, extractSharedPageIdHint, isUuid } from "./shared-page-slug";
+import type { SharedPage } from "./types";
 
 /** Resolve a shared page from a route param (UUID or public slug). */
 export function findSharedPageByParam(pages: SharedPage[], param: string): SharedPage | null {

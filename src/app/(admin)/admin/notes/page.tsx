@@ -1,5 +1,5 @@
-import { AdminNotesList } from "@/modules/editorial/admin-ui";
 import { getAllNotesAdmin } from "@/modules/editorial";
+import { AdminNotesList } from "@/modules/editorial/admin-ui";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 

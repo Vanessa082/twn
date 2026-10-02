@@ -1,14 +1,12 @@
-
-
-import { ChapterStrip, FieldNotesSection, FromTheNotebookSection } from "@/modules/editorial/ui";
-import { Hero, VersionsOfMeSection } from "@/modules/site/ui";
-import { WorkbenchSection } from "@/modules/workbench/ui";
 import { pageMetadata } from "@/lib/seo";
 import { routes, site } from "@/lib/site";
 import { getLatestNotes } from "@/modules/editorial";
 import { getPublishedFieldNotes } from "@/modules/editorial";
+import { ChapterStrip, FieldNotesSection, FromTheNotebookSection } from "@/modules/editorial/ui";
 import { getAboutData, getAuthorPortrait, getHomepageSettings } from "@/modules/site";
+import { Hero, VersionsOfMeSection } from "@/modules/site/ui";
 import { getPublishedProjects } from "@/modules/workbench";
+import { WorkbenchSection } from "@/modules/workbench/ui";
 
 export const revalidate = 60; // ISR
 

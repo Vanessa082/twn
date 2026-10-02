@@ -1,14 +1,23 @@
 "use client";
 
-import NoteLayout from "./NoteLayout";
-import { readingTimeLabel } from "./note-format";
-import { calculateReadingTime } from "../domain/reading-time";
-import { createNoteAction, setNoteTagsAction, updateNoteAction } from "@/modules/editorial/actions";
-import type { Note, NoteChapter, NoteRevision, NoteStatus, Tag } from "@/modules/editorial/contracts";
-import RevisionHistory from "./RevisionHistory";
 import ImageUploadField from "@/components/admin/media/ImageUploadField";
 import SaveStatusIndicator, { type SaveStatus } from "@/components/admin/ui/SaveStatusIndicator";
+import { createNoteAction, setNoteTagsAction, updateNoteAction } from "@/modules/editorial/actions";
+import type {
+  Note,
+  NoteChapter,
+  NoteRevision,
+  NoteStatus,
+  Tag,
+} from "@/modules/editorial/contracts";
+import { calculateReadingTime } from "../domain/reading-time";
+import NoteLayout from "./NoteLayout";
+import RevisionHistory from "./RevisionHistory";
+import { readingTimeLabel } from "./note-format";
 
+import SeoPreview from "@/components/admin/SeoPreview";
+import TagPicker from "@/components/admin/TagPicker";
+import TiptapEditor from "@/components/admin/TiptapEditor";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import { createNoteSchema } from "@/lib/validation/schemas";
 import type { NoteAuthor } from "@/modules/site/contracts";
@@ -16,9 +25,6 @@ import { ArrowLeft, Edit2, Eye, Globe, Loader2, Save, Tag as TagIcon } from "luc
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
-import SeoPreview from "@/components/admin/SeoPreview";
-import TagPicker from "@/components/admin/TagPicker";
-import TiptapEditor from "@/components/admin/TiptapEditor";
 
 interface NoteFormProps {
   initialData?: Note;

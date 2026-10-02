@@ -1,12 +1,12 @@
 "use client";
 
-import InkLine from "./InkLine";
-import NotebookSketch from "./NotebookSketch";
 import { TextLink } from "@/components/ui/SectionHeading";
 import type { Note } from "@/modules/editorial/contracts";
 import { ArrowRight, Dot } from "lucide-react";
 import Link from "next/link";
 import { type CSSProperties, useEffect, useRef, useState } from "react";
+import InkLine from "./InkLine";
+import NotebookSketch from "./NotebookSketch";
 
 interface HeroClientProps {
   eyebrow: string;

@@ -1,9 +1,9 @@
 import { generateSlug } from "@/lib/utils/slug";
-import type { SharedPage } from "./types";
 import { describe, expect, it } from "vitest";
 import { findSharedPageByParam } from "./shared-page-lookup";
 import { truncateSharedPagePreview } from "./shared-page-preview";
 import { buildSharedPageSlug, extractSharedPageIdHint, isUuid } from "./shared-page-slug";
+import type { SharedPage } from "./types";
 
 const samplePage: SharedPage = {
   id: "8f3d7a12-1111-4111-8111-abcdef012345",

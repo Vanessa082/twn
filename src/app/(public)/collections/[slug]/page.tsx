@@ -1,9 +1,8 @@
-
-import { NoteCard } from "@/modules/editorial/ui";
 import ImageWithSkeleton from "@/components/ui/ImageWithSkeleton";
 import { Eyebrow } from "@/components/ui/SectionHeading";
 import { pageMetadata } from "@/lib/seo";
 import { getCollectionBySlug } from "@/modules/editorial";
+import { NoteCard } from "@/modules/editorial/ui";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";

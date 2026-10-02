@@ -1,10 +1,10 @@
-import { NoteForm } from "@/modules/editorial/admin-ui";
 import {
   getAllTags,
   getNoteByIdAdmin,
   getRevisionsForNote,
   getTagsForNote,
 } from "@/modules/editorial";
+import { NoteForm } from "@/modules/editorial/admin-ui";
 import { getAboutData, getNoteAuthor } from "@/modules/site";
 import { notFound } from "next/navigation";
 

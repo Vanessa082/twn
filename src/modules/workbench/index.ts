@@ -1,8 +1,8 @@
 import {
   createProject as addProject,
-  deleteProject as removeProject,
   getAllProjectsAdmin as loadProjectsAdmin,
   getPublishedProjects as loadPublishedProjects,
+  deleteProject as removeProject,
   updateProject as saveProject,
 } from "./application/projects";
 import type { ProjectInput } from "./domain/project";

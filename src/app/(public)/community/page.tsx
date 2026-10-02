@@ -1,8 +1,7 @@
-
-import { SharedPagesSection } from "@/modules/community/ui";
 import { pageMetadata } from "@/lib/seo";
 import { routes } from "@/lib/site";
 import { getApprovedSharedPages } from "@/modules/community";
+import { SharedPagesSection } from "@/modules/community/ui";
 import type { Metadata } from "next";
 
 export const revalidate = 60;

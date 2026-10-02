@@ -33,9 +33,9 @@ describe("Validation Schemas", () => {
     });
 
     it("rejects unexpected fields and unsafe URLs", () => {
-      expect(
-        createNoteSchema.safeParse({ ...note, display_date: "2026-09-30" }).success
-      ).toBe(false);
+      expect(createNoteSchema.safeParse({ ...note, display_date: "2026-09-30" }).success).toBe(
+        false
+      );
       expect(
         createNoteSchema.safeParse({ ...note, canonical_url: "javascript:alert(1)" }).success
       ).toBe(false);
