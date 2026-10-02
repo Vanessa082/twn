@@ -1,7 +1,10 @@
 import { pageMetadata } from "@/lib/seo";
 import { routes } from "@/lib/site";
-import { buildSharedPageSlug } from "@/lib/utils/shared-page-slug";
-import { getApprovedSharedPageBySlug, getApprovedSharedPages } from "@/modules/community";
+import {
+  buildSharedPageSlug,
+  getApprovedSharedPageBySlug,
+  getApprovedSharedPages,
+} from "@/modules/community";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";

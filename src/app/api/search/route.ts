@@ -1,6 +1,6 @@
-import { getPopularSearches, getSearchIndex } from "@/lib/search/documents";
-import { search } from "@/lib/search/engine";
-import { searchQuerySchema } from "@/lib/search/query";
+import { getPopularSearches, getSearchIndex } from "@/modules/search";
+import { search } from "@/modules/search";
+import { searchQuerySchema } from "@/modules/search";
 import { NextResponse } from "next/server";
 
 const CACHE_HEADERS = { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300" };

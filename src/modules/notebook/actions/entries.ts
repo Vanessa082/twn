@@ -1,0 +1,93 @@
+"use server";
+
+import {
+  createNotebookEntrySchema,
+  entityIdSchema,
+  updateNotebookEntrySchema,
+} from "@/lib/validation/schemas";
+import { canManageNotebookEntries, toAdminActionError } from "@/modules/identity";
+import { createEntryAdmin, deleteEntryAdmin, updateEntryAdmin } from "@/modules/notebook";
+import type { NotebookEntry } from "@/modules/notebook";
+import { recordAuditLog } from "@/platform/audit/audit-log";
+import { revalidatePath } from "next/cache";
+
+export async function createEntryAction(
+  input: Omit<NotebookEntry, "id" | "created_at" | "updated_at">
+) {
+  try {
+    const { userId } = await canManageNotebookEntries();
+    const validated = createNotebookEntrySchema.parse(input);
+    const entry = await createEntryAdmin(validated);
+
+    await recordAuditLog({
+      userId,
+      action: "notebook_entry.created",
+      targetType: "notebook_entry",
+      targetId: entry.id,
+      details: { title: entry.title, thought: entry.thought },
+    });
+
+    revalidatePath("/");
+    revalidatePath("/admin/content/notebook");
+    return { success: true, data: entry, error: null };
+  } catch (error: unknown) {
+    console.error("[createEntryAction] Error:", toAdminActionError(error));
+    return {
+      success: false,
+      data: null,
+      error: toAdminActionError(error) || "Failed to create entry",
+    };
+  }
+}
+
+export async function updateEntryAction(
+  id: string,
+  input: Partial<Omit<NotebookEntry, "id" | "created_at" | "updated_at">>
+) {
+  try {
+    const { userId } = await canManageNotebookEntries();
+    const validatedId = entityIdSchema.parse(id);
+    const validated = updateNotebookEntrySchema.parse(input);
+    const entry = await updateEntryAdmin(validatedId, validated);
+
+    await recordAuditLog({
+      userId,
+      action: "notebook_entry.updated",
+      targetType: "notebook_entry",
+      targetId: entry.id,
+    });
+
+    revalidatePath("/");
+    revalidatePath("/admin/content/notebook");
+    return { success: true, data: entry, error: null };
+  } catch (error: unknown) {
+    console.error("[updateEntryAction] Error:", toAdminActionError(error));
+    return {
+      success: false,
+      data: null,
+      error: toAdminActionError(error) || "Failed to update entry",
+    };
+  }
+}
+
+export async function deleteEntryAction(id: string) {
+  try {
+    const { userId } = await canManageNotebookEntries();
+    const validatedId = entityIdSchema.parse(id);
+    await deleteEntryAdmin(validatedId);
+
+    await recordAuditLog({
+      userId,
+      action: "notebook_entry.deleted",
+      targetType: "notebook_entry",
+      targetId: validatedId,
+    });
+
+    revalidatePath("/");
+    revalidatePath("/admin/content/notebook");
+    return { success: true, error: null };
+  } catch (error: unknown) {
+    console.error("[deleteEntryAction] Error:", toAdminActionError(error));
+    return { success: false, error: toAdminActionError(error) || "Failed to delete entry" };
+  }
+}

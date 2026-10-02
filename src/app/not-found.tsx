@@ -1,9 +1,9 @@
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
 import { Eyebrow, TextLink } from "@/components/ui/SectionHeading";
-import { getLatestArticles } from "@/lib/services/articles";
-import { getHomepageSettings } from "@/lib/services/homepage-settings";
 import { routes } from "@/lib/site";
+import { getLatestNotes } from "@/modules/editorial";
+import { getHomepageSettings } from "@/modules/site";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
  * public layout, so it brings its own navigation and footer.
  */
 export default async function NotFound() {
-  const [settings, latest] = await Promise.all([getHomepageSettings(), getLatestArticles(3)]);
+  const [settings, latest] = await Promise.all([getHomepageSettings(), getLatestNotes(3)]);
 
   return (
     <>
@@ -35,7 +35,7 @@ export default async function NotFound() {
             </h1>
             <p className="mt-6 max-w-xl font-serif text-lg leading-relaxed text-muted-foreground sm:text-xl">
               The link may be mistyped, or the note has moved. Old{" "}
-              <span className="font-mono text-base">/articles</span> links now live under{" "}
+              <span className="font-mono text-base">/notes</span> links now live under{" "}
               <span className="font-mono text-base">/notebook</span>.
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">

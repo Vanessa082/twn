@@ -1,5 +1,6 @@
 "use client";
 
+import { TwnMark } from "@/brand";
 import { UserButton } from "@clerk/nextjs";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
@@ -14,7 +15,7 @@ export default function AdminHeader() {
   // Simple title generator from pathname
   const getPageTitle = () => {
     if (pathname === "/admin") return "Overview";
-    if (pathname?.startsWith("/admin/articles")) return "Articles";
+    if (pathname?.startsWith("/admin/notes")) return "Notes";
     if (pathname?.startsWith("/admin/content/notebook")) return "Notebook Entries";
     if (pathname?.startsWith("/admin/content/shared-pages")) return "Shared Pages";
     if (pathname?.startsWith("/admin/content/margin-notes")) return "Margin Notes";
@@ -61,9 +62,9 @@ export default function AdminHeader() {
           {/* Slide-in Menu (Sheet) */}
           <div className="relative w-3/4 max-w-sm h-full bg-card border-r border-border shadow-xl flex flex-col animate-in slide-in-from-left duration-300">
             <div className="h-16 flex items-center justify-between px-6 border-b border-border">
-              <span className="font-serif font-bold text-xl tracking-wide flex items-center gap-2">
-                TWN{" "}
-                <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-muted-gold bg-muted-gold/5 border border-muted-gold/20 px-2 py-0.5 rounded">
+              <span className="flex items-center gap-2.5 text-foreground">
+                <TwnMark className="text-xl" />
+                <span className="rounded border border-muted-gold/20 bg-muted-gold/5 px-2 py-0.5 text-[10px] font-sans font-bold uppercase tracking-wider text-muted-gold">
                   Admin
                 </span>
               </span>

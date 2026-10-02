@@ -1,8 +1,8 @@
 import { Eyebrow } from "@/components/ui/SectionHeading";
 import { pageMetadata } from "@/lib/seo";
-import { getLatestArticles } from "@/lib/services/articles";
 import { routes } from "@/lib/site";
-import type { Article } from "@/types";
+import { getLatestNotes } from "@/modules/editorial";
+import type { Note } from "@/modules/editorial";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
@@ -30,7 +30,7 @@ interface ArchivePageProps {
 
 interface MonthGroup {
   month: string;
-  items: Article[];
+  items: Note[];
 }
 
 interface YearGroup {
@@ -43,11 +43,11 @@ function formatDay(dateStr: string | null | undefined) {
   return new Date(dateStr).toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
 }
 
-function groupByYearAndMonth(articles: Article[]): YearGroup[] {
+function groupByYearAndMonth(notes: Note[]): YearGroup[] {
   const grouped: YearGroup[] = [];
 
-  for (const article of articles) {
-    const date = new Date(article.published_at ?? article.created_at);
+  for (const note of notes) {
+    const date = new Date(note.published_at ?? note.created_at);
     const year = date.getFullYear().toString();
     const month = date.toLocaleDateString("en-GB", { month: "long" });
 
@@ -63,7 +63,7 @@ function groupByYearAndMonth(articles: Article[]): YearGroup[] {
       yearGroup.months.push(monthGroup);
     }
 
-    monthGroup.items.push(article);
+    monthGroup.items.push(note);
   }
 
   return grouped.sort((a, b) => Number(b.year) - Number(a.year));
@@ -73,8 +73,8 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
   const { category } = await searchParams;
   const activeCategory = category && CATEGORY_LABELS[category] ? category : undefined;
 
-  const articles = await getLatestArticles(100);
-  const published = articles.filter(
+  const notes = await getLatestNotes(100);
+  const published = notes.filter(
     (a) => a.status === "published" && (!activeCategory || a.category === activeCategory)
   );
   const grouped = groupByYearAndMonth(published);
@@ -179,26 +179,26 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
                         </div>
 
                         <ul className="border-t border-border md:col-span-10">
-                          {monthGroup.items.map((article) => (
-                            <li key={article.id} className="border-b border-border">
+                          {monthGroup.items.map((note) => (
+                            <li key={note.id} className="border-b border-border">
                               <Link
-                                href={`/notebook/${article.slug}`}
+                                href={`/notebook/${note.slug}`}
                                 data-cursor="link"
                                 className="group grid grid-cols-[1fr_auto] items-baseline gap-x-6 gap-y-1 py-5 sm:grid-cols-[4.5rem_1fr_auto]"
                               >
                                 <span className="order-3 col-span-2 text-[11px] text-muted-foreground sm:order-none sm:col-span-1">
-                                  {formatDay(article.published_at)}
+                                  {formatDay(note.published_at)}
                                 </span>
                                 <span className="min-w-0">
                                   <span className="block font-serif text-lg font-bold text-foreground transition-opacity duration-300 group-hover:opacity-70 sm:text-xl">
-                                    {article.title}
+                                    {note.title}
                                   </span>
                                   <span className="mt-1 block text-[10px] font-sans font-semibold uppercase tracking-[0.2em] text-ink-accent">
-                                    {CATEGORY_LABELS[article.category] ?? article.category}
-                                    {article.reading_time ? (
+                                    {CATEGORY_LABELS[note.category] ?? note.category}
+                                    {note.reading_time ? (
                                       <span className="text-muted-foreground">
                                         {" "}
-                                        · {article.reading_time} min
+                                        · {note.reading_time} min
                                       </span>
                                     ) : null}
                                   </span>

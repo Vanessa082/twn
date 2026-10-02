@@ -1,17 +1,17 @@
-import NotebookEntriesManager from "@/components/admin/NotebookEntriesManager";
-import { getAllArticlesAdmin } from "@/lib/services/articles";
+import { getAllNotesAdmin } from "@/modules/editorial";
 import { getAllEntriesAdmin, getAllNotebooksAdmin } from "@/modules/notebook";
+import { NotebookEntriesManager } from "@/modules/notebook/admin-ui";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminNotebookEntriesPage() {
-  // Fetch entries, notebooks, and articles in parallel on the server
-  const [entries, notebooks, articles] = await Promise.all([
+  // Fetch entries, notebooks, and notes in parallel on the server
+  const [entries, notebooks, notes] = await Promise.all([
     getAllEntriesAdmin(),
     getAllNotebooksAdmin(),
-    getAllArticlesAdmin(),
+    getAllNotesAdmin(),
   ]);
 
   return (
@@ -28,7 +28,7 @@ export default async function AdminNotebookEntriesPage() {
       </div>
 
       {/* Main Manager Component */}
-      <NotebookEntriesManager initialEntries={entries} notebooks={notebooks} articles={articles} />
+      <NotebookEntriesManager initialEntries={entries} notebooks={notebooks} notes={notes} />
     </div>
   );
 }

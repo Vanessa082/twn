@@ -1,5 +1,6 @@
 import { pageMetadata } from "@/lib/seo";
 import { routes } from "@/lib/site";
+import { NewsletterSection } from "@/modules/newsletter/ui";
 /**
  * /newsletter   Dedicated newsletter subscription page.
  *
@@ -11,12 +12,11 @@ import { routes } from "@/lib/site";
  *
  * To activate:
  *   1. Purchase a domain and verify it in Resend (resend.com/domains)
- *   2. Update FROM_ADDRESS + SITE_URL in src/lib/services/email.ts
+ *   2. Update FROM_ADDRESS + SITE_URL in src/modules/newsletter/infrastructure/resend-email-adapter.ts
  *   3. Set NEWSLETTER_ENABLED = true in src/lib/feature-flags.ts
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
-import NewsletterSection from "@/components/home/NewsletterSection";
 import { NEWSLETTER_ENABLED } from "@/lib/feature-flags";
 import { Calendar, Clock, Heart, Sparkles } from "lucide-react";
 import { getTranslations } from "next-intl/server";

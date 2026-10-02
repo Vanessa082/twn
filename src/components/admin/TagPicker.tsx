@@ -1,7 +1,7 @@
 "use client";
 
-import { createTagAction } from "@/app/actions/tags";
-import type { Tag } from "@/types";
+import { createTagAction } from "@/modules/editorial/actions";
+import type { Tag } from "@/modules/editorial/contracts";
 import { Loader2, Plus, Tag as TagIcon, X } from "lucide-react";
 import { useEffect, useRef, useState, useTransition } from "react";
 

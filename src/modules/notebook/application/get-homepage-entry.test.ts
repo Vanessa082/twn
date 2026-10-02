@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import type { NotebookRepository } from "../infrastructure/notebook-repository";
+import type { NotebookRepository } from "../domain/ports";
 import { getAllActiveEntries } from "./get-homepage-entry";
 
 describe("homepage notebook entries", () => {

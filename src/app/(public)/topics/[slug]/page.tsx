@@ -1,10 +1,10 @@
-import ArticleCard from "@/components/articles/ArticleCard";
 import Pagination from "@/components/ui/Pagination";
 import { Eyebrow, TextLink } from "@/components/ui/SectionHeading";
 import { parsePageParam, withPageParam } from "@/lib/pagination";
 import { pageMetadata } from "@/lib/seo";
-import { getNotesByTagPage, getTagBySlug } from "@/lib/services/tags";
 import { routes } from "@/lib/site";
+import { getNotesByTagPage, getTagBySlug } from "@/modules/editorial";
+import { NoteCard } from "@/modules/editorial/ui";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -82,8 +82,8 @@ export default async function TopicPage({ params, searchParams }: TopicPageProps
         ) : (
           <>
             <div className="mt-14 grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-              {result.items.map((article) => (
-                <ArticleCard key={article.id} article={article} />
+              {result.items.map((note) => (
+                <NoteCard key={note.id} note={note} />
               ))}
             </div>
             <Pagination

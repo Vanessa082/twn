@@ -3,7 +3,7 @@ import Navbar from "@/components/layout/Navbar";
 import CustomCursor from "@/components/ui/CustomCursor";
 import PageTransition from "@/components/ui/PageTransition";
 import ReadingLine from "@/components/ui/ReadingLine";
-import { getHomepageSettings } from "@/lib/services/homepage-settings";
+import { getHomepageSettings } from "@/modules/site";
 
 export default async function PublicLayout({
   children,

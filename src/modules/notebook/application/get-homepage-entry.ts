@@ -1,19 +1,12 @@
-import type { NotebookEntry } from "@/types";
-import {
-  type NotebookRepository,
-  SupabaseNotebookRepository,
-} from "../infrastructure/notebook-repository";
+import type { NotebookRepository } from "../domain/ports";
+import type { NotebookEntry } from "../domain/types";
 
 function pickRandom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-/**
- * Returns all active notebook entries ordered by priority then date.
- * Empty editorial systems stay empty: no fabricated fallback thoughts.
- */
 export async function getAllActiveEntries(
-  repository: NotebookRepository = new SupabaseNotebookRepository()
+  repository: NotebookRepository
 ): Promise<NotebookEntry[]> {
   try {
     return await repository.findAllActive();
@@ -23,12 +16,8 @@ export async function getAllActiveEntries(
   }
 }
 
-/**
- * Returns one randomly selected active entry.
- * Becomes the opening thought when the page loads.
- */
 export async function getRandomEntry(
-  repository?: NotebookRepository
+  repository: NotebookRepository
 ): Promise<NotebookEntry | null> {
   const entries = await getAllActiveEntries(repository);
   if (entries.length === 0) return null;

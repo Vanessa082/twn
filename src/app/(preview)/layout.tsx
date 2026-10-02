@@ -1,7 +1,7 @@
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
-import { requireAdmin } from "@/lib/auth/require-admin";
-import { getHomepageSettings } from "@/lib/services/homepage-settings";
+import { requireAdmin } from "@/modules/identity";
+import { getHomepageSettings } from "@/modules/site";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";

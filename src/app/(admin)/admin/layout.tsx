@@ -1,6 +1,6 @@
 import AdminHeader from "@/components/admin/layout/AdminHeader";
 import AdminSidebar from "@/components/admin/layout/AdminSidebar";
-import { requireAdmin } from "@/lib/auth/require-admin";
+import { requireAdmin } from "@/modules/identity";
 import { ClerkProvider } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 

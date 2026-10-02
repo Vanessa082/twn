@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 test.describe("TWN Core Workflow & Moderation Boundary E2E", () => {
   test("visitor can browse public pages and search content", async ({ page }) => {
@@ -7,7 +7,7 @@ test.describe("TWN Core Workflow & Moderation Boundary E2E", () => {
     await expect(page.locator("body")).toBeVisible();
 
     // 2. Visit Articles Listing Page
-    await page.goto("/articles", { waitUntil: "domcontentloaded" });
+    await page.goto("/notes", { waitUntil: "domcontentloaded" });
     await expect(page.locator("body")).toBeVisible();
 
     // 3. Visit Topics Page
@@ -21,7 +21,9 @@ test.describe("TWN Core Workflow & Moderation Boundary E2E", () => {
     // 5. Visit Search Page and perform search query
     await page.goto("/search", { waitUntil: "domcontentloaded" });
     await expect(page.locator("body")).toBeVisible();
-    const searchInput = page.locator('input[type="search"], input[name="q"], input[placeholder*="Search"]');
+    const searchInput = page.locator(
+      'input[type="search"], input[name="q"], input[placeholder*="Search"]'
+    );
     if (await searchInput.isVisible()) {
       await searchInput.fill("tech");
       await page.keyboard.press("Enter");
@@ -37,7 +39,9 @@ test.describe("TWN Core Workflow & Moderation Boundary E2E", () => {
     await expect(visitorPage.locator("body")).toBeVisible();
 
     // 2. Verify community section content is present
-    const voicesHeading = visitorPage.locator("text=/Voices from our community|Leave a Page/i").first();
+    const voicesHeading = visitorPage
+      .locator("text=/Voices from our community|Leave a Page/i")
+      .first();
     await expect(voicesHeading).toBeVisible();
 
     await visitorContext.close();

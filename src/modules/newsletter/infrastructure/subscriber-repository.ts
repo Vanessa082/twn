@@ -1,11 +1,6 @@
 import { createAdminClient, createClient } from "@/lib/db/server";
+import type { SubscriberRepository } from "../domain/ports";
 import type { NewSubscriber, Subscriber } from "../domain/subscriber";
-
-export interface SubscriberRepository {
-  insert(subscriber: NewSubscriber): Promise<{ success: boolean; error: string | null }>;
-  findAllAdmin(): Promise<Subscriber[]>;
-  findAllEmailsAdmin(): Promise<string[]>;
-}
 
 export class SupabaseSubscriberRepository implements SubscriberRepository {
   async insert(subscriber: NewSubscriber): Promise<{ success: boolean; error: string | null }> {

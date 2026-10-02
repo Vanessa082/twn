@@ -7,3 +7,8 @@ allowBuilds:
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
+overrides:
+  '@tiptap/core@<3.30.5': ^3.30.5
+  nanoid@<3.3.18: ^3.3.18
+  postcss@<8.5.23: ^8.5.23
+  sharp@<0.35.4: ^0.35.4

@@ -5,7 +5,8 @@
  * from the image CDN, and falls back to the TWN monogram if the file is gone.
  */
 
-import { optimizeImageUrl } from "@/lib/media/images";
+import { TwnMark } from "@/brand";
+import { optimizeImageUrl } from "@/modules/media";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -41,9 +42,7 @@ export default function ImageWithSkeleton({
   if (hasError || !optimizedSrc) {
     return (
       <div className="absolute inset-0 bg-neutral-100 dark:bg-neutral-900 flex flex-col items-center justify-center gap-2">
-        <span className="font-serif font-black text-5xl tracking-widest text-foreground/10">
-          TWN
-        </span>
+        <TwnMark title="TWN" className="text-5xl opacity-15" />
       </div>
     );
   }

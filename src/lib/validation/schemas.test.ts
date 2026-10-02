@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  createArticleSchema,
+  createNoteSchema,
   entityIdSchema,
   fieldNoteSchema,
   homepageSettingsSchema,
@@ -11,12 +11,12 @@ import {
 } from "./schemas";
 
 describe("Validation Schemas", () => {
-  describe("createArticleSchema", () => {
-    const article = {
-      title: "A complete article",
-      slug: "a-complete-article",
-      excerpt: "A required introduction for Today’s Page and article lists.",
-      content: "This is enough article content to pass validation.",
+  describe("createNoteSchema", () => {
+    const note = {
+      title: "A complete note",
+      slug: "a-complete-note",
+      excerpt: "A required introduction for Today’s Page and note lists.",
+      content: "This is enough note content to pass validation.",
       category: "technology",
       status: "published",
       cover_image: "https://example.com/cover.jpg",
@@ -27,17 +27,17 @@ describe("Validation Schemas", () => {
       canonical_url: null,
     };
 
-    it("requires an editorial excerpt for every article", () => {
-      expect(createArticleSchema.safeParse({ ...article, excerpt: "" }).success).toBe(false);
-      expect(createArticleSchema.safeParse(article).success).toBe(true);
+    it("requires an editorial excerpt for every note", () => {
+      expect(createNoteSchema.safeParse({ ...note, excerpt: "" }).success).toBe(false);
+      expect(createNoteSchema.safeParse(note).success).toBe(true);
     });
 
     it("rejects unexpected fields and unsafe URLs", () => {
+      expect(createNoteSchema.safeParse({ ...note, display_date: "2026-09-30" }).success).toBe(
+        false
+      );
       expect(
-        createArticleSchema.safeParse({ ...article, display_date: "2026-09-30" }).success
-      ).toBe(false);
-      expect(
-        createArticleSchema.safeParse({ ...article, canonical_url: "javascript:alert(1)" }).success
+        createNoteSchema.safeParse({ ...note, canonical_url: "javascript:alert(1)" }).success
       ).toBe(false);
     });
   });
@@ -45,7 +45,7 @@ describe("Validation Schemas", () => {
   describe("submitMarginNoteSchema", () => {
     it("validates correct margin note", () => {
       const valid = submitMarginNoteSchema.safeParse({
-        articleId: "123e4567-e89b-12d3-a456-426614174000",
+        noteId: "123e4567-e89b-12d3-a456-426614174000",
         authorName: "Vanessa",
         content: "This is a thoughtful margin note on engineering architecture.",
       });
@@ -54,7 +54,7 @@ describe("Validation Schemas", () => {
 
     it("rejects short content or author", () => {
       const invalid = submitMarginNoteSchema.safeParse({
-        articleId: "invalid-uuid",
+        noteId: "invalid-uuid",
         authorName: "A",
         content: "Hi",
       });
@@ -152,7 +152,7 @@ describe("Validation Schemas", () => {
       social_links: [{ label: "GitHub", url: "https://github.com/Vanessa082" }],
     };
 
-    it("treats an empty featured article as automatic", () => {
+    it("treats an empty featured note as automatic", () => {
       const parsed = homepageSettingsSchema.parse(base);
       expect(parsed.featured_article_id).toBeNull();
       expect(parsed.contact_email).toBeNull();

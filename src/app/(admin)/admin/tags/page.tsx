@@ -1,5 +1,5 @@
-import TagsManager from "@/components/admin/TagsManager";
-import { getAllTags } from "@/lib/services/tags";
+import { getAllTags } from "@/modules/editorial";
+import { TagsManager } from "@/modules/editorial/admin-ui";
 
 export const metadata = {
   title: "Tags Management | Admin Dashboard",

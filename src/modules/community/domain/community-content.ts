@@ -1,11 +1,11 @@
-import type { MarginNote, ModerationStatus, SharedPage } from "@/types";
+import type { MarginNote, ModerationStatus, SharedPage } from "./types";
 
 export type { MarginNote, SharedPage, ModerationStatus };
 
 export const FALLBACK_MARGIN_NOTES: MarginNote[] = [
   {
     id: "mn1",
-    article_id: "default-article",
+    article_id: "default-note",
     author_name: "Amy",
     content: "This paragraph resonates so deeply. Confidence is built in the daily, quiet work.",
     status: "approved",
@@ -16,7 +16,7 @@ export const FALLBACK_MARGIN_NOTES: MarginNote[] = [
   },
   {
     id: "mn2",
-    article_id: "default-article",
+    article_id: "default-note",
     author_name: "Jess",
     content:
       "The part about 'designing for scale' is exactly what we struggle with in early startups.",

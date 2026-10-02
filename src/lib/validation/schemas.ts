@@ -1,4 +1,4 @@
-import { PROJECT_STATUSES } from "@/types/cms";
+import { PROJECT_STATUSES } from "@/modules/workbench/contracts";
 import { z } from "zod";
 
 /**
@@ -26,7 +26,7 @@ export const safeHttpUrlSchema = z
 // ── 1. Margin Notes (Reader Comments) ────────────────────────────────────────
 
 export const submitMarginNoteSchema = z.object({
-  articleId: z.string().uuid("Invalid article ID format."),
+  noteId: z.string().uuid("Invalid note ID format."),
   authorName: z
     .string()
     .trim()
@@ -61,9 +61,9 @@ export const submitSharedPageSchema = z.object({
     }, "Shared thoughts must not exceed 300 words to maintain notebook layout."),
 });
 
-// ── 3. Articles (CMS) ─────────────────────────────────────────────────────────
+// ── 3. Notes (CMS) ─────────────────────────────────────────────────────────
 
-export const articleCategoryEnum = z.enum([
+export const noteChapterEnum = z.enum([
   "technology",
   "leadership",
   "learning",
@@ -71,7 +71,7 @@ export const articleCategoryEnum = z.enum([
   "reflections",
 ]);
 
-export const createArticleSchema = z
+export const createNoteSchema = z
   .object({
     title: z
       .string()
@@ -95,9 +95,9 @@ export const createArticleSchema = z
     content: z
       .string()
       .trim()
-      .min(20, "Article content must be at least 20 characters.")
-      .max(200_000, "Article content is too large."),
-    category: articleCategoryEnum.default("technology"),
+      .min(20, "Note content must be at least 20 characters.")
+      .max(200_000, "Note content is too large."),
+    category: noteChapterEnum.default("technology"),
     status: z.enum(["draft", "published", "scheduled"]).default("draft"),
     cover_image: safeHttpUrlSchema.nullable().optional(),
     published_at: z
@@ -123,7 +123,7 @@ export const createArticleSchema = z
   })
   .strict();
 
-export const updateArticleSchema = createArticleSchema.partial();
+export const updateNoteSchema = createNoteSchema.partial();
 
 // ── 4. Notebook Entries ──────────────────────────────────────────────────────
 

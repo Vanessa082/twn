@@ -30,7 +30,7 @@ export default async function AdminAuditLogPage() {
           <ShieldCheck className="h-10 w-10 text-muted-foreground/50 mx-auto mb-3" />
           <h3 className="font-serif font-bold text-lg text-foreground mb-1">No Audit Logs Yet</h3>
           <p className="text-xs text-muted-foreground max-w-md mx-auto">
-            Administrative actions such as creating articles, publishing, and moderating community
+            Administrative actions such as creating notes, publishing, and moderating community
             submissions will be automatically recorded here.
           </p>
         </div>

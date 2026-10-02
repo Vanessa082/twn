@@ -1,21 +1,19 @@
-import HomepageSettingsForm, {
-  type FeaturableArticle,
-} from "@/components/admin/HomepageSettingsForm";
-import { getAllArticlesAdmin } from "@/lib/services/articles";
-import { getHomepageSettingsAdmin } from "@/lib/services/homepage-settings";
+import { getAllNotesAdmin } from "@/modules/editorial";
+import { getHomepageSettingsAdmin } from "@/modules/site";
+import { type FeaturableNote, HomepageSettingsForm } from "@/modules/site/admin-ui";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminHomepagePage() {
-  const [{ settings, tableReady }, allArticles] = await Promise.all([
+  const [{ settings, tableReady }, allNotes] = await Promise.all([
     getHomepageSettingsAdmin(),
-    getAllArticlesAdmin(),
+    getAllNotesAdmin(),
   ]);
 
-  const articles: FeaturableArticle[] = allArticles
-    .filter((article) => article.status === "published")
+  const notes: FeaturableNote[] = allNotes
+    .filter((note) => note.status === "published")
     .map(({ id, title, published_at }) => ({ id, title, published_at }));
 
   return (
@@ -29,11 +27,7 @@ export default async function AdminHomepagePage() {
           Back to Dashboard
         </Link>
       </div>
-      <HomepageSettingsForm
-        initialSettings={settings}
-        articles={articles}
-        tableReady={tableReady}
-      />
+      <HomepageSettingsForm initialSettings={settings} notes={notes} tableReady={tableReady} />
     </div>
   );
 }

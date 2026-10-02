@@ -11,7 +11,7 @@ interface SaveStatusIndicatorProps {
 /**
  * SaveStatusIndicator
  *
- * A small badge shown in the article editor toolbar that gives the author
+ * A small badge shown in the note editor toolbar that gives the author
  * continuous feedback on whether their work is saved.
  *
  * States:

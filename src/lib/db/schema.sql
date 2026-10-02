@@ -8,7 +8,7 @@
 -- │ Table                │ Module Owner │ Aggregate Root                       │
 -- ├──────────────────────┼──────────────┼──────────────────────────────────────┤
 -- │ categories           │ Editorial    │ Category                             │
--- │ articles             │ Editorial    │ Article                              │
+-- │ articles             │ Editorial    │ Note (page of writing)               │
 -- │ article_tags         │ Editorial    │ Article (join)                       │
 -- │ article_revisions    │ Editorial    │ Article (snapshot log)               │
 -- │ tags                 │ Editorial    │ Tag                                  │
@@ -68,12 +68,13 @@ insert into public.categories (name, slug) values
 on conflict (slug) do nothing;
 
 
--- ── 2. Articles Table ────────────────────────────────────────────────────────
+-- ── 2. Notes Table (physical name: articles) ─────────────────────────────────
 -- Module Owner : Editorial
--- Aggregate Root: Article
+-- Aggregate Root: Note
 -- RLS           : Public read (SELECT) for status='published' and published_at <= now().
 --                 Admin write via service role (bypasses RLS).
--- Notes         : Controls article_tags and article_revisions as child entities.
+-- Domain        : A Note is a page of writing in the notebook. The table is still
+--                 called articles because live foreign keys point at it.
 
 create table if not exists public.articles (
     id uuid default uuid_generate_v4() primary key,

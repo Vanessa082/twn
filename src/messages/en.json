@@ -44,16 +44,16 @@
       "error": "We couldn't add you just now. Please try again in a moment."
     }
   },
-  "articles": {
+  "notes": {
     "title": "The Notebook",
     "description": "Essays and reflections on writing code, leading teams and building a life in technology.",
     "readMore": "Read more",
     "readingTime": "{minutes} min read",
     "publishedOn": "Published {date}",
-    "backToArticles": "← Back to the notebook",
+    "backToNotes": "← Back to the notebook",
     "share": "Share this note",
     "related": "More from the notebook",
-    "noArticles": "No notes in this chapter yet.",
+    "noNotes": "No notes in this chapter yet.",
     "filterBy": "Filter by chapter"
   },
   "about": {

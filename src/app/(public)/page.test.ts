@@ -1,16 +1,16 @@
+import { FieldNotesSection } from "@/modules/editorial/ui";
+import { HeroClient } from "@/modules/site/ui";
+import { WorkbenchSection } from "@/modules/workbench/ui";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import FieldNotesSection from "@/components/home/FieldNotesSection";
-import HeroClient from "@/components/home/HeroClient";
-import WorkbenchSection from "@/components/home/WorkbenchSection";
-import type { Article } from "@/types";
-import type { FieldNote, Project } from "@/types/cms";
-
+import type { Note } from "@/modules/editorial";
+import type { FieldNote } from "@/modules/editorial";
+import type { Project } from "@/modules/workbench";
 const timestamps = { created_at: "2026-09-01T00:00:00Z", updated_at: "2026-09-01T00:00:00Z" };
 
-const note: FieldNote = {
+const fieldNote: FieldNote = {
   id: "note-1",
   note_number: "001",
   tag: "Craft",
@@ -37,12 +37,12 @@ const project: Project = {
   ...timestamps,
 };
 
-const article: Article = {
-  id: "article-1",
-  title: "An article worth reading",
-  slug: "an-article-worth-reading",
-  excerpt: "This required excerpt introduces the latest article to readers.",
-  content: "<p>The full article.</p>",
+const note: Note = {
+  id: "note-1",
+  title: "An note worth reading",
+  slug: "an-note-worth-reading",
+  excerpt: "This required excerpt introduces the latest note to readers.",
+  content: "<p>The full note.</p>",
   cover_image: null,
   category: "technology",
   status: "published",
@@ -51,19 +51,19 @@ const article: Article = {
 };
 
 describe("Today's Page", () => {
-  it("promotes the latest article through its required excerpt", () => {
+  it("promotes the latest note through its required excerpt", () => {
     const markup = renderToStaticMarkup(
       React.createElement(HeroClient, {
         eyebrow: "The Notebook of a Tech Woman",
         title: "Notes from becoming.",
         topics: ["Technology"],
         authorName: "Vanessa",
-        todaysArticle: article,
+        todaysNote: note,
       })
     );
 
-    expect(markup).toContain(article.excerpt);
-    expect(markup).toContain(`/notebook/${article.slug}`);
+    expect(markup).toContain(note.excerpt);
+    expect(markup).toContain(`/notebook/${note.slug}`);
     expect(markup).toContain("Read the full note");
   });
 });
@@ -74,7 +74,9 @@ describe("FieldNotesSection", () => {
   });
 
   it("renders the notes supplied by the CMS, paragraph by paragraph", () => {
-    const markup = renderToStaticMarkup(React.createElement(FieldNotesSection, { notes: [note] }));
+    const markup = renderToStaticMarkup(
+      React.createElement(FieldNotesSection, { notes: [fieldNote] })
+    );
     expect(markup).toContain("A note managed in the admin");
     expect(markup).toContain("<p>First paragraph from the CMS.</p>");
     expect(markup).toContain("<p>Second paragraph from the CMS.</p>");

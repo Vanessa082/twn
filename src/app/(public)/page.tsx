@@ -1,17 +1,11 @@
-import ChapterStrip from "@/components/home/ChapterStrip";
-import FieldNotesSection from "@/components/home/FieldNotesSection";
-import FromTheNotebookSection from "@/components/home/FromTheNotebookSection";
-import Hero from "@/components/home/Hero";
-import VersionsOfMeSection from "@/components/home/VersionsOfMeSection";
-import WorkbenchSection from "@/components/home/WorkbenchSection";
-import { getAuthorPortrait } from "@/lib/about/portrait";
 import { pageMetadata } from "@/lib/seo";
-import { getAboutData } from "@/lib/services/about";
-import { getLatestArticles } from "@/lib/services/articles";
-import { getPublishedFieldNotes } from "@/lib/services/field-notes";
-import { getHomepageSettings } from "@/lib/services/homepage-settings";
-import { getPublishedProjects } from "@/lib/services/projects";
 import { routes, site } from "@/lib/site";
+import { getCategories, getLatestNotes, getPublishedFieldNotes } from "@/modules/editorial";
+import { ChapterStrip, FieldNotesSection, FromTheNotebookSection } from "@/modules/editorial/ui";
+import { getAboutData, getAuthorPortrait, getHomepageSettings } from "@/modules/site";
+import { Hero, VersionsOfMeSection } from "@/modules/site/ui";
+import { getPublishedProjects } from "@/modules/workbench";
+import { WorkbenchSection } from "@/modules/workbench/ui";
 
 export const revalidate = 60; // ISR
 
@@ -39,29 +33,28 @@ const websiteJsonLd = {
 /**
  * Every section is fed by the CMS and disappears when its source is empty:
  *   Hero, volume, featured note → Admin → Homepage
- *   From the notebook           → Admin → Articles
+ *   From the notebook           → Admin → Notes
  *   Field notes                 → Admin → Field Notes
  *   Workbench                   → Admin → Workbench
  *   Versions of me              → Admin → About Page → Voice & Versions
- *   Today's page (hero margin)  → latest published article's required excerpt
+ *   Today's page (hero margin)  → latest published note's required excerpt
  *   The notebook continues      → Admin → Tags (categories)
  */
 export default async function HomePage() {
-  const [settings, articles, fieldNotes, projects, about] = await Promise.all([
+  const [settings, notes, fieldNotes, projects, about, categories] = await Promise.all([
     getHomepageSettings(),
-    getLatestArticles(6),
+    getLatestNotes(6),
     getPublishedFieldNotes(3),
     getPublishedProjects(3),
     getAboutData(),
+    getCategories(),
   ]);
 
-  const todaysArticle = articles[0] ?? null;
+  const todaysNote = notes[0] ?? null;
   const featured =
-    settings.featured_article ??
-    articles.find((article) => article.id !== todaysArticle?.id) ??
-    null;
-  const recent = articles
-    .filter((article) => article.id !== todaysArticle?.id && article.id !== featured?.id)
+    settings.featured_note ?? notes.find((note) => note.id !== todaysNote?.id) ?? null;
+  const recent = notes
+    .filter((note) => note.id !== todaysNote?.id && note.id !== featured?.id)
     .slice(0, 4);
   const authorName = about.hero.title;
   const showVersions = about.section_visibility.identity_stages !== false;
@@ -78,12 +71,12 @@ export default async function HomePage() {
         title={settings.hero_title}
         topics={settings.hero_topics}
         authorName={authorName}
-        todaysArticle={todaysArticle}
+        todaysNote={todaysNote}
       />
 
       {/* {featured && (
-        <FeaturedArticle
-          article={featured}
+        <FeaturedNote
+          note={featured}
           volume={{
             label: settings.volume_label,
             season: settings.volume_season,
@@ -92,7 +85,7 @@ export default async function HomePage() {
         />
       )} */}
 
-      <FromTheNotebookSection articles={recent} />
+      <FromTheNotebookSection notes={recent} />
 
       <FieldNotesSection notes={fieldNotes} />
 
@@ -107,7 +100,7 @@ export default async function HomePage() {
         />
       )}
 
-      <ChapterStrip />
+      <ChapterStrip categories={categories} />
     </div>
   );
 }

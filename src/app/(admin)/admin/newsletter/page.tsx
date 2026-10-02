@@ -1,5 +1,5 @@
-import AdminNewsletterList from "@/components/admin/AdminNewsletterList";
 import { listSubscribersAdmin } from "@/modules/newsletter";
+import { AdminNewsletterList } from "@/modules/newsletter/admin-ui";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 

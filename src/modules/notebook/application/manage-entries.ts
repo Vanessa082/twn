@@ -1,30 +1,21 @@
-import type { Notebook, NotebookEntry } from "@/types";
-import {
-  type NotebookRepository,
-  SupabaseNotebookRepository,
-} from "../infrastructure/notebook-repository";
+import type { NotebookRepository } from "../domain/ports";
+import type { Notebook, NotebookEntry } from "../domain/types";
 
-export async function getAllEntriesAdmin(
-  repository: NotebookRepository = new SupabaseNotebookRepository()
-): Promise<NotebookEntry[]> {
+export async function getAllEntriesAdmin(repository: NotebookRepository): Promise<NotebookEntry[]> {
   return repository.findAllAdmin();
 }
 
-export async function getAllNotebooksAdmin(
-  repository: NotebookRepository = new SupabaseNotebookRepository()
-): Promise<Notebook[]> {
+export async function getAllNotebooksAdmin(repository: NotebookRepository): Promise<Notebook[]> {
   return repository.findAllNotebooks();
 }
 
-export async function getDefaultNotebookIdAdmin(
-  repository: NotebookRepository = new SupabaseNotebookRepository()
-): Promise<string> {
+export async function getDefaultNotebookIdAdmin(repository: NotebookRepository): Promise<string> {
   return repository.getDefaultNotebookId();
 }
 
 export async function createEntryAdmin(
   input: Omit<NotebookEntry, "id" | "created_at" | "updated_at">,
-  repository: NotebookRepository = new SupabaseNotebookRepository()
+  repository: NotebookRepository
 ): Promise<NotebookEntry> {
   return repository.create(input);
 }
@@ -32,14 +23,14 @@ export async function createEntryAdmin(
 export async function updateEntryAdmin(
   id: string,
   input: Partial<Omit<NotebookEntry, "id" | "created_at" | "updated_at">>,
-  repository: NotebookRepository = new SupabaseNotebookRepository()
+  repository: NotebookRepository
 ): Promise<NotebookEntry> {
   return repository.update(id, input);
 }
 
 export async function deleteEntryAdmin(
   id: string,
-  repository: NotebookRepository = new SupabaseNotebookRepository()
+  repository: NotebookRepository
 ): Promise<boolean> {
   return repository.delete(id);
 }

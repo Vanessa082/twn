@@ -1,6 +1,6 @@
-import CollectionEditor from "@/components/admin/CollectionEditor";
-import { getLatestArticles } from "@/lib/services/articles";
-import { getCollectionByIdAdmin } from "@/lib/services/collections";
+import { getLatestNotes } from "@/modules/editorial";
+import { getCollectionByIdAdmin } from "@/modules/editorial";
+import { CollectionEditor } from "@/modules/editorial/admin-ui";
 import { notFound } from "next/navigation";
 
 interface EditCollectionPageProps {
@@ -16,14 +16,14 @@ export const dynamic = "force-dynamic";
 export default async function EditCollectionPage({ params }: EditCollectionPageProps) {
   const { id } = await params;
 
-  const [collection, availableArticles] = await Promise.all([
+  const [collection, availableNotes] = await Promise.all([
     getCollectionByIdAdmin(id),
-    getLatestArticles(50),
+    getLatestNotes(50),
   ]);
 
   if (!collection) {
     notFound();
   }
 
-  return <CollectionEditor collection={collection} availableArticles={availableArticles} />;
+  return <CollectionEditor collection={collection} availableNotes={availableNotes} />;
 }

@@ -49,7 +49,7 @@ const lowlight = createLowlight(common);
 //   · Copy-to-clipboard button (top-right)
 //   · Real syntax-highlighted code via NodeViewContent
 // biome-ignore lint/suspicious/noExplicitAny: Tiptap NodeViewRendererProps
-function CodeBlockNodeView({ node, updateAttributes, extension }: any) {
+function CodeBlockNodeView({ node, updateAttributes, extension: _extension }: any) {
   const [copied, setCopied] = useState(false);
   const language = node.attrs.language || "plaintext";
 
@@ -185,7 +185,7 @@ interface TiptapEditorProps {
 export default function TiptapEditor({
   content,
   onChange,
-  placeholder = "Start writing your article...",
+  placeholder = "Start writing your note...",
 }: TiptapEditorProps) {
   const editor = useEditor({
     extensions: [

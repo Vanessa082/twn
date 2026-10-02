@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { notesStoreResponds } from "@/modules/editorial";
 import { type NextRequest, NextResponse } from "next/server";
 
 /**
@@ -10,7 +10,7 @@ import { type NextRequest, NextResponse } from "next/server";
  *   - GitHub Actions keepalive workflow
  *   - Internal diagnostic tools
  *
- * Makes a single, read-only `SELECT 1` query to verify database connectivity.
+ * Asks Editorial whether the notes store answers. This route does not name Editorial's table.
  * Creates NO records. Uses negligible bandwidth (~100 bytes per call).
  */
 export async function GET(_req: NextRequest) {
@@ -26,34 +26,9 @@ export async function GET(_req: NextRequest) {
   };
 
   try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-    if (!supabaseUrl || !supabaseAnonKey) {
-      status.database = "error";
-      status.ok = false;
-      status.latency_ms = Date.now() - start;
-      return NextResponse.json(status, {
-        status: 503,
-        headers: {
-          "Cache-Control": "no-store, no-cache, must-revalidate",
-          "X-Health-Check": "twn-api",
-        },
-      });
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-    // Lightweight read-only ping   does not create any records
-    const { error } = await supabase.from("articles").select("id").limit(1).single();
-
-    // PGRST116 = "no rows found"   that's still a healthy DB response
-    if (error && error.code !== "PGRST116") {
-      status.database = "error";
-      status.ok = false;
-    } else {
-      status.database = "ok";
-    }
+    const reachable = await notesStoreResponds();
+    status.database = reachable ? "ok" : "error";
+    status.ok = reachable;
   } catch {
     status.database = "error";
     status.ok = false;
