@@ -1,7 +1,6 @@
 import { pageMetadata } from "@/lib/seo";
 import { routes, site } from "@/lib/site";
-import { getLatestNotes } from "@/modules/editorial";
-import { getPublishedFieldNotes } from "@/modules/editorial";
+import { getCategories, getLatestNotes, getPublishedFieldNotes } from "@/modules/editorial";
 import { ChapterStrip, FieldNotesSection, FromTheNotebookSection } from "@/modules/editorial/ui";
 import { getAboutData, getAuthorPortrait, getHomepageSettings } from "@/modules/site";
 import { Hero, VersionsOfMeSection } from "@/modules/site/ui";
@@ -42,12 +41,13 @@ const websiteJsonLd = {
  *   The notebook continues      → Admin → Tags (categories)
  */
 export default async function HomePage() {
-  const [settings, notes, fieldNotes, projects, about] = await Promise.all([
+  const [settings, notes, fieldNotes, projects, about, categories] = await Promise.all([
     getHomepageSettings(),
     getLatestNotes(6),
     getPublishedFieldNotes(3),
     getPublishedProjects(3),
     getAboutData(),
+    getCategories(),
   ]);
 
   const todaysNote = notes[0] ?? null;
@@ -100,7 +100,7 @@ export default async function HomePage() {
         />
       )}
 
-      <ChapterStrip />
+      <ChapterStrip categories={categories} />
     </div>
   );
 }

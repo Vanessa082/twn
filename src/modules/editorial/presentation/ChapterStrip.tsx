@@ -2,16 +2,18 @@
  * ChapterStrip — Server Component
  *
  * Editorial chapter navigation at the bottom of the homepage.
- * Data comes from the `categories` table, with seeded fallbacks.
+ * Categories come from the `categories` table, with seeded fallbacks.
  */
 
 import { Eyebrow, TextLink } from "@/components/ui/SectionHeading";
-import { getCategories } from "@/modules/editorial";
+import type { Category } from "@/modules/editorial/contracts";
 import Link from "next/link";
 
-export default async function ChapterStrip() {
-  const categories = await getCategories();
+interface ChapterStripProps {
+  categories: Category[];
+}
 
+export default function ChapterStrip({ categories }: ChapterStripProps) {
   if (categories.length === 0) return null;
 
   return (
