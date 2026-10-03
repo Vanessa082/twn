@@ -3,12 +3,14 @@ import { pageMetadata } from "@/lib/seo";
 import { absoluteUrl, routes, site } from "@/lib/site";
 import { getApprovedMarginNotesForNote } from "@/modules/community";
 import { MarginNotesList } from "@/modules/community/ui";
-import { getNoteBySlug, getRelatedNotes, getTagsForNote } from "@/modules/editorial";
+import { getNoteBySlug, getNoteConnections, getTagsForNote } from "@/modules/editorial";
 import {
   InlineActionBar,
   NoteLayout,
   ReadingProgress,
   RelatedNotes,
+  SeriesBanner,
+  SeriesNavigation,
   chapterLabel,
 } from "@/modules/editorial/ui";
 import { NewsletterSection } from "@/modules/newsletter/ui";
@@ -53,10 +55,10 @@ export default async function NotePage({ params }: NotePageProps) {
   const note = await getNote(slug);
   if (!note) notFound();
 
-  const [marginNotes, tags, relatedNotes, about, t] = await Promise.all([
+  const [marginNotes, tags, connections, about, t] = await Promise.all([
     getApprovedMarginNotesForNote(note.id),
     getTagsForNote(note.id),
-    getRelatedNotes(note.id, note.category),
+    getNoteConnections(note),
     getAboutData(),
     getTranslations("notes"),
   ]);
@@ -116,7 +118,12 @@ export default async function NotePage({ params }: NotePageProps) {
         readingTime={t("readingTime", { minutes: note.reading_time || 1 })}
         author={getNoteAuthor(about.hero)}
         topics={tags}
-        beforeBody={actionBar}
+        beforeBody={
+          <>
+            {connections.series && <SeriesBanner series={connections.series} />}
+            {actionBar}
+          </>
+        }
         afterBody={actionBar}
       >
         <div id="comments" className="scroll-mt-28 pb-20 pt-12">
@@ -124,7 +131,8 @@ export default async function NotePage({ params }: NotePageProps) {
         </div>
       </NoteLayout>
 
-      <RelatedNotes notes={relatedNotes} />
+      {connections.series && <SeriesNavigation series={connections.series} />}
+      <RelatedNotes notes={connections.related} />
       <NewsletterSection />
     </div>
   );

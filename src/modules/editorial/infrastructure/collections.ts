@@ -1,21 +1,98 @@
 import { createAdminClient, createClient } from "@/lib/db/server";
 import type { CollectionRepository } from "../domain/ports";
+import type { SeriesRecord } from "../domain/series";
 import type {
   Collection,
   CollectionItem,
+  CollectionKind,
   CollectionWithNotes,
   CreateCollectionInput,
-  NoteCard,
+  SaveCollectionEntriesInput,
 } from "../domain/types";
-import { COLLECTION_NOTES_TABLE } from "./tables";
+import { type DatabaseNoteRow, toNoteCard } from "./map-note";
+import { COLLECTION_NOTES_TABLE, NOTES_TABLE, NOTE_CARD_COLUMNS } from "./tables";
 
-function mapCollectionItems(items: unknown): CollectionItem[] {
-  // biome-ignore lint/suspicious/noExplicitAny: Supabase relation typing
-  return ((items ?? []) as any[]).map((row) => ({
-    note_id: row.article_id as string,
-    position: row.position as number,
-    note: row.notes as NoteCard,
-  }));
+const ENTRY_COLUMNS = `article_id, position, label, ${NOTES_TABLE}(${NOTE_CARD_COLUMNS})`;
+const ONE_SERIES_CONSTRAINT = "collection_articles_one_series_per_note";
+const MIGRATION_HINT =
+  "Series need a database update. Run src/lib/db/migration_series.sql in the Supabase SQL Editor, then try again.";
+
+interface EntryRow {
+  article_id: string;
+  position: number;
+  label: string | null;
+  articles: DatabaseNoteRow | null;
+}
+
+interface PostgrestLikeError {
+  code?: string;
+  message: string;
+  details?: string | null;
+}
+
+function toCollection(row: Record<string, unknown>): Collection {
+  return {
+    ...(row as unknown as Collection),
+    kind: (row.kind as CollectionKind | undefined) ?? "collection",
+  };
+}
+
+function entryRows(data: unknown): EntryRow[] {
+  return (data ?? []) as EntryRow[];
+}
+
+/** Entries whose note the caller cannot see (drafts under RLS) are dropped. */
+function mapCollectionItems(rows: EntryRow[]): CollectionItem[] {
+  return rows.flatMap((row) =>
+    row.articles
+      ? [
+          {
+            note_id: row.article_id,
+            position: row.position,
+            label: row.label,
+            note: toNoteCard(row.articles),
+          },
+        ]
+      : []
+  );
+}
+
+function isMissingMigration(error: PostgrestLikeError): boolean {
+  return (
+    error.code === "PGRST202" ||
+    error.code === "42703" ||
+    /save_collection_entries|column .*(kind|label)/.test(error.message)
+  );
+}
+
+/** Turns the one-series-per-note violation into a message naming the note and its series. */
+async function explainSaveError(error: PostgrestLikeError, collectionId: string): Promise<Error> {
+  if (isMissingMigration(error)) return new Error(MIGRATION_HINT);
+  if (error.code !== "23505" || !error.message.includes(ONE_SERIES_CONSTRAINT)) {
+    return new Error(error.message);
+  }
+
+  const noteId = error.details?.match(/\(article_id\)=\(([0-9a-f-]{36})\)/i)?.[1];
+  if (!noteId) return new Error("A note can only belong to one series.");
+
+  const adminSupabase = createAdminClient();
+  const { data } = await adminSupabase
+    .from(COLLECTION_NOTES_TABLE)
+    .select(`collections(title), ${NOTES_TABLE}(title)`)
+    .eq("article_id", noteId)
+    .eq("collection_kind", "series")
+    .neq("collection_id", collectionId)
+    .maybeSingle();
+  const row = data as unknown as {
+    collections: { title: string } | null;
+    articles: { title: string } | null;
+  } | null;
+
+  const note = row?.articles?.title ? `"${row.articles.title}"` : "One of these notes";
+  const series = row?.collections?.title ? `"${row.collections.title}"` : "another series";
+  return new Error(
+    `${note} is already part of ${series}. A note can only belong to one series, so remove it there first.`
+  );
 }
 
 function slugify(title: string): string {
@@ -39,7 +116,7 @@ async function getPublicCollections(): Promise<Collection[]> {
       .eq("is_published", true)
       .order("created_at", { ascending: false });
     if (error) throw error;
-    return (data ?? []) as Collection[];
+    return (data ?? []).map(toCollection);
   } catch {
     return [];
   }
@@ -61,17 +138,58 @@ async function getCollectionBySlug(slug: string): Promise<CollectionWithNotes | 
 
     const { data: items, error: itemError } = await supabase
       .from(COLLECTION_NOTES_TABLE)
-      .select(
-        "article_id, position, articles(id, title, slug, excerpt, cover_image, category, status, published_at, created_at, updated_at, reading_time, likes_count, seo_title, seo_description, og_image, canonical_url)"
-      )
+      .select(ENTRY_COLUMNS)
       .eq("collection_id", collection.id)
       .order("position", { ascending: true });
 
     if (itemError) throw itemError;
 
     return {
-      ...(collection as Collection),
-      items: mapCollectionItems(items),
+      ...toCollection(collection),
+      items: mapCollectionItems(entryRows(items)),
+    };
+  } catch {
+    return null;
+  }
+}
+
+/** The published series a note belongs to, with every entry in order. */
+async function getSeriesForNote(noteId: string): Promise<SeriesRecord | null> {
+  try {
+    const supabase = await createClient();
+    const { data: membership, error } = await supabase
+      .from(COLLECTION_NOTES_TABLE)
+      .select("collection_id, collections(title, slug, is_published)")
+      .eq("article_id", noteId)
+      .eq("collection_kind", "series")
+      .maybeSingle();
+    if (error || !membership) return null;
+
+    const series = (
+      membership as unknown as {
+        collections: { title: string; slug: string; is_published: boolean } | null;
+      }
+    ).collections;
+    if (!series?.is_published) return null;
+
+    const { data: rows, error: rowsError } = await supabase
+      .from(COLLECTION_NOTES_TABLE)
+      .select(ENTRY_COLUMNS)
+      .eq("collection_id", membership.collection_id)
+      .order("position", { ascending: true });
+    if (rowsError) return null;
+
+    const now = Date.now();
+    return {
+      title: series.title,
+      slug: series.slug,
+      entries: entryRows(rows).map((row) => {
+        const note = row.articles ? toNoteCard(row.articles) : null;
+        const visible =
+          note?.status === "published" &&
+          (!note.published_at || Date.parse(note.published_at) <= now);
+        return { noteId: row.article_id, label: row.label, note: visible ? note : null };
+      }),
     };
   } catch {
     return null;
@@ -89,7 +207,7 @@ async function getAllCollectionsAdmin(): Promise<Collection[]> {
       .select("*")
       .order("created_at", { ascending: false });
     if (error) throw error;
-    return (data ?? []) as Collection[];
+    return (data ?? []).map(toCollection);
   } catch {
     return [];
   }
@@ -107,17 +225,16 @@ async function getCollectionByIdAdmin(id: string): Promise<CollectionWithNotes |
 
     if (error || !collection) return null;
 
-    const { data: items } = await adminSupabase
+    const { data: items, error: itemError } = await adminSupabase
       .from(COLLECTION_NOTES_TABLE)
-      .select(
-        "article_id, position, articles(id, title, slug, excerpt, cover_image, category, status, published_at, created_at, updated_at, reading_time, likes_count, seo_title, seo_description, og_image, canonical_url)"
-      )
+      .select(ENTRY_COLUMNS)
       .eq("collection_id", id)
       .order("position", { ascending: true });
+    if (itemError) throw itemError;
 
     return {
-      ...(collection as Collection),
-      items: mapCollectionItems(items),
+      ...toCollection(collection),
+      items: mapCollectionItems(entryRows(items)),
     };
   } catch {
     return null;
@@ -143,7 +260,7 @@ async function createCollectionAdmin(input: CreateCollectionInput): Promise<Coll
     .single();
 
   if (error) throw new Error(error.message);
-  return data as Collection;
+  return toCollection(data);
 }
 
 async function updateCollectionAdmin(
@@ -170,7 +287,7 @@ async function updateCollectionAdmin(
     .single();
 
   if (error) throw new Error(error.message);
-  return data as Collection;
+  return toCollection(data);
 }
 
 async function deleteCollectionAdmin(id: string): Promise<void> {
@@ -179,29 +296,18 @@ async function deleteCollectionAdmin(id: string): Promise<void> {
   if (error) throw new Error(error.message);
 }
 
-/** Sync ordered notes into a collection. */
-async function setCollectionNotesAdmin(
+/** Replace a collection's kind and ordered entries atomically (see migration_series.sql). */
+async function saveCollectionEntriesAdmin(
   collectionId: string,
-  noteIdsInOrder: string[]
+  { kind, entries }: SaveCollectionEntriesInput
 ): Promise<void> {
   const adminSupabase = createAdminClient();
-
-  const { error: deleteError } = await adminSupabase
-    .from(COLLECTION_NOTES_TABLE)
-    .delete()
-    .eq("collection_id", collectionId);
-  if (deleteError) throw new Error(deleteError.message);
-
-  if (noteIdsInOrder.length === 0) return;
-
-  const rows = noteIdsInOrder.map((noteId, idx) => ({
-    collection_id: collectionId,
-    article_id: noteId,
-    position: idx + 1,
-  }));
-
-  const { error: insertError } = await adminSupabase.from(COLLECTION_NOTES_TABLE).insert(rows);
-  if (insertError) throw new Error(insertError.message);
+  const { error } = await adminSupabase.rpc("save_collection_entries", {
+    p_collection_id: collectionId,
+    p_kind: kind,
+    p_entries: entries.map((entry) => ({ note_id: entry.note_id, label: entry.label })),
+  });
+  if (error) throw await explainSaveError(error, collectionId);
 }
 
 export class SupabaseCollectionRepository implements CollectionRepository {
@@ -233,7 +339,11 @@ export class SupabaseCollectionRepository implements CollectionRepository {
     return deleteCollectionAdmin(id);
   }
 
-  setNotes(collectionId: string, noteIdsInOrder: string[]) {
-    return setCollectionNotesAdmin(collectionId, noteIdsInOrder);
+  saveEntries(collectionId: string, input: SaveCollectionEntriesInput) {
+    return saveCollectionEntriesAdmin(collectionId, input);
+  }
+
+  findSeriesForNote(noteId: string) {
+    return getSeriesForNote(noteId);
   }
 }

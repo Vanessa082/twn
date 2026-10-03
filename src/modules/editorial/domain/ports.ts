@@ -1,4 +1,6 @@
 import type { PaginatedResult } from "@/types";
+import type { RelatedCandidate } from "./related-notes";
+import type { SeriesRecord } from "./series";
 import type {
   Category,
   Collection,
@@ -12,9 +14,18 @@ import type {
   NoteCard,
   NoteChapter,
   NoteRevision,
+  SaveCollectionEntriesInput,
   Tag,
   UpdateNoteInput,
 } from "./types";
+
+export interface RelatedCandidatePool {
+  tagNames: Record<string, string>;
+  tagFrequency: Record<string, number>;
+  publishedTotal: number;
+  candidates: RelatedCandidate[];
+}
+
 export interface NotesPageQuery {
   page: number;
   pageSize: number;
@@ -67,7 +78,8 @@ export interface TagRepository {
     tagSlug: string,
     query: { page: number; pageSize: number }
   ): Promise<PaginatedResult<NoteCard>>;
-  findRelatedNotes(noteId: string, category: string, limit?: number): Promise<NoteCard[]>;
+  /** Published notes worth scoring as related to this one, plus the tag statistics to score them. */
+  findRelatedCandidates(noteId: string, category: string): Promise<RelatedCandidatePool>;
   create(name: string): Promise<Tag>;
   delete(id: string): Promise<void>;
   setNoteTags(noteId: string, tagIds: string[]): Promise<void>;
@@ -82,7 +94,10 @@ export interface CollectionRepository {
   create(input: CreateCollectionInput): Promise<Collection>;
   update(id: string, input: Partial<CreateCollectionInput>): Promise<Collection>;
   delete(id: string): Promise<void>;
-  setNotes(collectionId: string, noteIdsInOrder: string[]): Promise<void>;
+  /** Replaces kind and ordered entries in one transaction. */
+  saveEntries(collectionId: string, input: SaveCollectionEntriesInput): Promise<void>;
+  /** The published series containing this note, with entries readers can see. */
+  findSeriesForNote(noteId: string): Promise<SeriesRecord | null>;
 }
 
 export interface FieldNoteRepository {

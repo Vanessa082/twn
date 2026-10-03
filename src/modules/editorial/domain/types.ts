@@ -53,6 +53,9 @@ export interface NoteRevision {
   created_at: string;
 }
 
+/** A series is read in order and a note belongs to at most one; a collection is a loose, curated set. */
+export type CollectionKind = "collection" | "series";
+
 export interface Collection {
   id: string;
   title: string;
@@ -60,6 +63,7 @@ export interface Collection {
   description: string | null;
   cover_image: string | null;
   is_published: boolean;
+  kind: CollectionKind;
   created_at: string;
   updated_at: string;
 }
@@ -67,11 +71,56 @@ export interface Collection {
 export interface CollectionItem {
   note_id: string;
   position: number;
+  /** Free text such as "Part 1" or "Day 42". Null falls back to "Part N". */
+  label: string | null;
   note: NoteCard;
 }
 
 export interface CollectionWithNotes extends Collection {
   items: CollectionItem[];
+}
+
+export interface CollectionEntryInput {
+  note_id: string;
+  label: string | null;
+}
+
+export interface SaveCollectionEntriesInput {
+  kind: CollectionKind;
+  entries: CollectionEntryInput[];
+}
+
+export interface SeriesEntry {
+  label: string;
+  note: NoteCard;
+}
+
+export interface SeriesNavigation {
+  series: { title: string; slug: string };
+  /** Label of the note being read, e.g. "Part 3" or "Day 42". */
+  currentLabel: string;
+  /** 1-based position among entries readers can see. */
+  position: number;
+  total: number;
+  previous: SeriesEntry | null;
+  next: SeriesEntry | null;
+  /** Every visible entry in order, so related notes can tell series siblings apart. */
+  entries: SeriesEntry[];
+}
+
+export type RelatedReason =
+  | { kind: "tags"; tags: string[] }
+  | { kind: "series"; title: string }
+  | { kind: "chapter"; category: string };
+
+export interface RelatedNote {
+  note: NoteCard;
+  reason: RelatedReason;
+}
+
+export interface NoteConnections {
+  series: SeriesNavigation | null;
+  related: RelatedNote[];
 }
 
 export interface CreateCollectionInput {

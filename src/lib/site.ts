@@ -22,6 +22,8 @@ export const routes = {
   note: (slug: string) => `/notebook/${encodeURIComponent(slug)}`,
   notebookTopic: (category: string) => `/notebook?category=${encodeURIComponent(category)}`,
   topic: (slug: string) => `/topics/${encodeURIComponent(slug)}`,
+  collections: "/collections",
+  collection: (slug: string) => `/collections/${encodeURIComponent(slug)}`,
   fieldNotes: "/#field-notes",
   workbench: "/workbench",
   archive: "/archive",

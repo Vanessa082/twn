@@ -1,10 +1,12 @@
 import { sanitizeNoteHtml } from "@/lib/security/sanitize-note-html";
 import { routes } from "@/lib/site";
-import { getNoteByIdAdmin, getRelatedNotes, getTagsForNote } from "@/modules/editorial";
+import { getNoteByIdAdmin, getNoteConnections, getTagsForNote } from "@/modules/editorial";
 import {
   InlineActionBar,
   NoteLayout,
   RelatedNotes,
+  SeriesBanner,
+  SeriesNavigation,
   readingTimeLabel,
 } from "@/modules/editorial/ui";
 import { getAboutData, getNoteAuthor } from "@/modules/site";
@@ -33,8 +35,8 @@ export default async function NotePreviewPage({ params }: NotePreviewPageProps) 
   const note = await getNoteByIdAdmin(id);
   if (!note) notFound();
 
-  const [relatedNotes, tags, about] = await Promise.all([
-    getRelatedNotes(note.id, note.category, 3),
+  const [connections, tags, about] = await Promise.all([
+    getNoteConnections(note),
     getTagsForNote(note.id),
     getAboutData(),
   ]);
@@ -89,7 +91,12 @@ export default async function NotePreviewPage({ params }: NotePreviewPageProps) 
         author={getNoteAuthor(about.hero)}
         topics={tags}
         dateFallback="Not yet published"
-        beforeBody={actionBar}
+        beforeBody={
+          <>
+            {connections.series && <SeriesBanner series={connections.series} />}
+            {actionBar}
+          </>
+        }
         afterBody={actionBar}
       >
         <div className="pb-20 pt-12">
@@ -99,7 +106,8 @@ export default async function NotePreviewPage({ params }: NotePreviewPageProps) 
         </div>
       </NoteLayout>
 
-      <RelatedNotes notes={relatedNotes} />
+      {connections.series && <SeriesNavigation series={connections.series} />}
+      <RelatedNotes notes={connections.related} />
     </>
   );
 }

@@ -22,15 +22,6 @@ export async function getNotesByTagPage(
   return repository.findNotesByTagPage(tagSlug, query);
 }
 
-export async function getRelatedNotes(
-  noteId: string,
-  category: string,
-  limit: number,
-  repository: TagRepository
-): Promise<NoteCard[]> {
-  return repository.findRelatedNotes(noteId, category, limit);
-}
-
 export async function createTagAdmin(name: string, repository: TagRepository): Promise<Tag> {
   return repository.create(name);
 }

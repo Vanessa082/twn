@@ -10,7 +10,7 @@ export {
   createCollectionAction,
   updateCollectionAction,
   deleteCollectionAction,
-  setCollectionNotesAction,
+  saveCollectionEntriesAction,
 } from "./actions/collections";
 export {
   createFieldNoteAction,
