@@ -1,9 +1,10 @@
 import { createAdminClient, createClient } from "@/lib/db/server";
 import { pageRange, totalPagesFor } from "@/lib/pagination";
 import type { PaginatedResult } from "@/types";
-import type { TagRepository } from "../domain/ports";
+import type { RelatedCandidatePool, TagRepository } from "../domain/ports";
 import type { Category, NoteCard, Tag } from "../domain/types";
-import { NOTES_TABLE, NOTE_TAGS_TABLE } from "./tables";
+import { type DatabaseNoteRow, toNoteCard } from "./map-note";
+import { NOTES_TABLE, NOTE_CARD_COLUMNS, NOTE_TAGS_TABLE } from "./tables";
 
 function slugify(name: string): string {
   return name
@@ -88,10 +89,7 @@ async function getNotesByTagPage(
     const { from, to } = pageRange(page, size);
     const { data, error, count } = await supabase
       .from(NOTES_TABLE)
-      .select(
-        "id, title, slug, excerpt, cover_image, category, status, published_at, created_at, updated_at, reading_time, likes_count, seo_title, seo_description, og_image, canonical_url",
-        { count: "exact" }
-      )
+      .select(NOTE_CARD_COLUMNS, { count: "exact" })
       .in(
         "id",
         joins.map((row: { article_id: string }) => row.article_id)
@@ -104,7 +102,7 @@ async function getNotesByTagPage(
     const total = count ?? 0;
     if (error && error.code !== "PGRST103") throw error;
     return {
-      items: (data ?? []) as NoteCard[],
+      items: ((data ?? []) as DatabaseNoteRow[]).map(toNoteCard),
       total,
       page,
       pageSize: size,
@@ -117,68 +115,110 @@ async function getNotesByTagPage(
 
 // ── Related notes ──────────────────────────────────────────────────────────
 
-/** Fetch related published notes for a given note, by shared tags then category fallback. */
-async function getRelatedNotes(noteId: string, category: string, limit = 3): Promise<NoteCard[]> {
+const SHARED_TAG_ROW_LIMIT = 500;
+const CHAPTER_CANDIDATE_LIMIT = 12;
+
+interface TagJoinRow {
+  article_id: string;
+  tag_id: string;
+}
+
+const EMPTY_POOL: RelatedCandidatePool = {
+  tagNames: {},
+  tagFrequency: {},
+  publishedTotal: 0,
+  candidates: [],
+};
+
+/**
+ * Candidates for "You may also like": published notes sharing a tag with this
+ * one, plus recent notes from the same chapter. Scoring happens in the domain.
+ */
+async function getRelatedCandidates(
+  noteId: string,
+  category: string
+): Promise<RelatedCandidatePool> {
   try {
     const supabase = await createClient();
+    const now = new Date().toISOString();
 
-    // 1. Get this note's tag IDs
-    const { data: tagRows } = await supabase
-      .from(NOTE_TAGS_TABLE)
-      .select("tag_id")
-      .eq("article_id", noteId);
-
-    // biome-ignore lint/suspicious/noExplicitAny: Supabase return typing
-    const tagIds = tagRows?.map((r: any) => r.tag_id) ?? [];
-
-    let relatedIds: string[] = [];
-
-    if (tagIds.length > 0) {
-      // 2. Find other notes that share any tag
-      const { data: sharedTagNotes } = await supabase
-        .from(NOTE_TAGS_TABLE)
-        .select("article_id")
-        .in("tag_id", tagIds)
-        .neq("article_id", noteId)
-        .limit(limit * 3); // over-fetch so we can de-duplicate
-
-      // biome-ignore lint/suspicious/noExplicitAny: Supabase return typing
-      const mappedIds = sharedTagNotes?.map((r: any) => r.article_id as string) ?? [];
-      relatedIds = Array.from(new Set(mappedIds)).slice(0, limit);
-    }
-
-    // 3. Fallback: fill remaining slots from same category
-    const needed = limit - relatedIds.length;
-    if (needed > 0) {
-      const { data: chapterNotes } = await supabase
+    const [ownTagsResult, chapterResult, totalResult] = await Promise.all([
+      supabase.from(NOTE_TAGS_TABLE).select("tag_id, tags(id, name)").eq("article_id", noteId),
+      supabase
         .from(NOTES_TABLE)
         .select("id")
         .eq("category", category)
         .eq("status", "published")
+        .lte("published_at", now)
         .neq("id", noteId)
-        .not("id", "in", `(${relatedIds.join(",") || "00000000-0000-0000-0000-000000000000"})`)
-        .limit(needed);
+        .order("published_at", { ascending: false })
+        .limit(CHAPTER_CANDIDATE_LIMIT),
+      supabase
+        .from(NOTES_TABLE)
+        .select("id", { count: "exact", head: true })
+        .eq("status", "published")
+        .lte("published_at", now),
+    ]);
 
-      // biome-ignore lint/suspicious/noExplicitAny: Supabase return typing
-      const catIds = chapterNotes?.map((a: any) => a.id as string) ?? [];
-      relatedIds = [...relatedIds, ...catIds];
+    const tagNames: Record<string, string> = {};
+    for (const row of (ownTagsResult.data ?? []) as unknown as {
+      tag_id: string;
+      tags: { name: string } | null;
+    }[]) {
+      if (row.tags?.name) tagNames[row.tag_id] = row.tags.name;
+    }
+    const tagIds = Object.keys(tagNames);
+
+    let sharedRows: TagJoinRow[] = [];
+    if (tagIds.length > 0) {
+      const { data } = await supabase
+        .from(NOTE_TAGS_TABLE)
+        .select("article_id, tag_id")
+        .in("tag_id", tagIds)
+        .limit(SHARED_TAG_ROW_LIMIT);
+      sharedRows = (data ?? []) as TagJoinRow[];
     }
 
-    if (relatedIds.length === 0) return [];
+    const chapterIds = ((chapterResult.data ?? []) as { id: string }[]).map((row) => row.id);
+    const candidateIds = [
+      ...new Set([...sharedRows.map((row) => row.article_id), ...chapterIds]),
+    ].filter((id) => id !== noteId);
+    if (candidateIds.length === 0) {
+      return { ...EMPTY_POOL, tagNames, publishedTotal: totalResult.count ?? 0 };
+    }
 
-    const { data: notes } = await supabase
+    const { data: cards, error } = await supabase
       .from(NOTES_TABLE)
-      .select(
-        "id, title, slug, excerpt, cover_image, category, status, published_at, created_at, updated_at, reading_time, likes_count, seo_title, seo_description, og_image, canonical_url"
-      )
-      .in("id", relatedIds)
+      .select(NOTE_CARD_COLUMNS)
+      .in("id", candidateIds)
       .eq("status", "published")
-      .order("published_at", { ascending: false })
-      .limit(limit);
+      .lte("published_at", now);
+    if (error) throw error;
 
-    return (notes ?? []) as NoteCard[];
+    const notes = ((cards ?? []) as DatabaseNoteRow[]).map(toNoteCard);
+    const published = new Set(notes.map((note) => note.id));
+    published.add(noteId);
+
+    const tagFrequency: Record<string, number> = {};
+    const sharedByNote = new Map<string, string[]>();
+    for (const row of sharedRows) {
+      if (!published.has(row.article_id)) continue;
+      tagFrequency[row.tag_id] = (tagFrequency[row.tag_id] ?? 0) + 1;
+      if (row.article_id === noteId) continue;
+      sharedByNote.set(row.article_id, [...(sharedByNote.get(row.article_id) ?? []), row.tag_id]);
+    }
+
+    return {
+      tagNames,
+      tagFrequency,
+      publishedTotal: totalResult.count ?? published.size,
+      candidates: notes.map((note) => ({
+        note,
+        sharedTagIds: sharedByNote.get(note.id) ?? [],
+      })),
+    };
   } catch {
-    return [];
+    return EMPTY_POOL;
   }
 }
 
@@ -265,8 +305,8 @@ export class SupabaseTagRepository implements TagRepository {
     return getNotesByTagPage(tagSlug, query);
   }
 
-  findRelatedNotes(noteId: string, category: string, limit = 3) {
-    return getRelatedNotes(noteId, category, limit);
+  findRelatedCandidates(noteId: string, category: string) {
+    return getRelatedCandidates(noteId, category);
   }
 
   create(name: string) {

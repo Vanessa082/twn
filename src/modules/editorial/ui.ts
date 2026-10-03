@@ -3,6 +3,8 @@ export { default as NoteGrid } from "./presentation/NoteGrid";
 export { default as NoteLayout } from "./presentation/NoteLayout";
 export { default as NoteBody } from "./presentation/NoteBody";
 export { default as RelatedNotes } from "./presentation/RelatedNotes";
+export { default as SeriesBanner } from "./presentation/SeriesBanner";
+export { default as SeriesNavigation } from "./presentation/SeriesNavigation";
 export { default as ReadingProgress } from "./presentation/ReadingProgress";
 export { InlineActionBar } from "./presentation/NoteEngagement";
 export { default as AuthorAvatar } from "./presentation/AuthorAvatar";

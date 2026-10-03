@@ -1,3 +1,5 @@
+import type { RelatedReason } from "@/modules/editorial/contracts";
+
 export function formatNoteDate(dateString: string | null | undefined): string {
   if (!dateString) return "";
   const date = new Date(dateString);
@@ -7,6 +9,17 @@ export function formatNoteDate(dateString: string | null | undefined): string {
 
 export function chapterLabel(category: string): string {
   return category.charAt(0).toUpperCase() + category.slice(1);
+}
+
+export function relatedReasonLabel(reason: RelatedReason): string {
+  switch (reason.kind) {
+    case "tags":
+      return `Also tagged ${reason.tags.join(" & ")}`;
+    case "series":
+      return `Also in ${reason.title}`;
+    case "chapter":
+      return `More in ${chapterLabel(reason.category)}`;
+  }
 }
 
 export function readingTimeLabel(minutes: number | null | undefined): string {

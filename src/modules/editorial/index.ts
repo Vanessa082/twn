@@ -6,8 +6,9 @@ import {
   getPublicCollections as loadPublicCollections,
   deleteCollectionAdmin as removeCollection,
   updateCollectionAdmin as saveCollection,
-  setCollectionNotesAdmin as saveCollectionNotes,
+  saveCollectionEntriesAdmin as saveCollectionEntries,
 } from "./application/collections";
+import { getNoteConnections as loadNoteConnections } from "./application/connections";
 import {
   createFieldNote as addFieldNote,
   getAllFieldNotesAdmin as loadFieldNotesAdmin,
@@ -40,7 +41,6 @@ import {
   getAllTags as loadAllTags,
   getCategories as loadCategories,
   getNotesByTagPage as loadNotesByTagPage,
-  getRelatedNotes as loadRelatedNotes,
   getTagBySlug as loadTagBySlug,
   getTagsForNote as loadTagsForNote,
   deleteTagAdmin as removeTag,
@@ -52,6 +52,7 @@ import type {
   CreateNoteInput,
   FieldNoteInput,
   Note,
+  SaveCollectionEntriesInput,
   UpdateNoteInput,
 } from "./domain/types";
 import { SupabaseCollectionRepository } from "./infrastructure/collections";
@@ -156,8 +157,9 @@ export async function getNotesByTagPage(
   return loadNotesByTagPage(tagSlug, query, tags());
 }
 
-export async function getRelatedNotes(noteId: string, category: string, limit = 3) {
-  return loadRelatedNotes(noteId, category, limit, tags());
+/** Series position (previous/next) and "You may also like" for a note. */
+export async function getNoteConnections(note: { id: string; category: string }, limit = 3) {
+  return loadNoteConnections(note, { tags: tags(), collections: collections() }, limit);
 }
 
 export async function createTagAdmin(name: string) {
@@ -204,8 +206,11 @@ export async function deleteCollectionAdmin(id: string) {
   return removeCollection(id, collections());
 }
 
-export async function setCollectionNotesAdmin(collectionId: string, noteIdsInOrder: string[]) {
-  return saveCollectionNotes(collectionId, noteIdsInOrder, collections());
+export async function saveCollectionEntriesAdmin(
+  collectionId: string,
+  input: SaveCollectionEntriesInput
+) {
+  return saveCollectionEntries(collectionId, input, collections());
 }
 
 export async function createRevision(
@@ -244,10 +249,13 @@ export async function deleteFieldNote(id: string) {
 }
 
 export { calculateReadingTime } from "./domain/reading-time";
+export { entryLabel } from "./domain/series";
 export type {
   Category,
   Collection,
+  CollectionEntryInput,
   CollectionItem,
+  CollectionKind,
   CollectionWithNotes,
   CreateCollectionInput,
   CreateNoteInput,
@@ -257,8 +265,14 @@ export type {
   Note,
   NoteCard,
   NoteChapter,
+  NoteConnections,
   NoteRevision,
   NoteStatus,
+  RelatedNote,
+  RelatedReason,
+  SaveCollectionEntriesInput,
+  SeriesEntry,
+  SeriesNavigation,
   Tag,
   UpdateNoteInput,
 } from "./domain/types";

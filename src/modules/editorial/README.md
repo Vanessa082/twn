@@ -34,12 +34,23 @@ repository maps those physical names to the domain name **Note**.
 Import only from `@/modules/editorial`.
 
 Commands: `createNoteAdmin`, `updateNoteAdmin`, `deleteNoteAdmin`,
-`setNoteTagsAdmin`, `createCollectionAdmin`, `setCollectionNotesAdmin`,
+`setNoteTagsAdmin`, `createCollectionAdmin`, `saveCollectionEntriesAdmin`,
 field-note writes.
 
 Queries: `getLatestNotes`, `getNoteBySlug`, `getPublishedNotesPage`,
-`getRelatedNotes`, `getTagsForNote`, `getPublicCollections`,
+`getNoteConnections`, `getTagsForNote`, `getPublicCollections`,
 `getPublishedFieldNotes`.
+
+## Series and related notes
+A collection is either a `collection` (a curated set) or a `series` (read in
+order). Entries carry an optional label ("Day 42"), falling back to "Part N".
+The database enforces one series per note (`migration_series.sql`).
+
+`getNoteConnections` returns the note's place in its series (previous/next,
+skipping drafts) and "You may also like": published notes scored by shared
+tags weighted by rarity, same series, same chapter, and a small recency boost.
+Unrelated notes are never used as filler. Scoring lives in
+`domain/related-notes.ts` and has no database dependency.
 
 Older `*Article*` names are deprecated aliases so existing admin screens keep
 compiling while they are renamed.

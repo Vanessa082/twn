@@ -1,7 +1,7 @@
 import ImageWithSkeleton from "@/components/ui/ImageWithSkeleton";
 import { Eyebrow } from "@/components/ui/SectionHeading";
 import { pageMetadata } from "@/lib/seo";
-import { getCollectionBySlug } from "@/modules/editorial";
+import { entryLabel, getCollectionBySlug } from "@/modules/editorial";
 import { NoteCard } from "@/modules/editorial/ui";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -37,6 +37,8 @@ export default async function CollectionDetailPage({ params }: CollectionDetailP
     notFound();
   }
 
+  const isSeries = collection.kind === "series";
+
   return (
     <div className="bg-background pb-24 pt-16 sm:pt-24">
       <div className="mx-auto max-w-7xl px-5 sm:px-10 lg:px-20">
@@ -52,8 +54,14 @@ export default async function CollectionDetailPage({ params }: CollectionDetailP
         <header className="mt-8 grid grid-cols-1 gap-10 border-b border-border pb-12 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <Eyebrow>
-              Reading path · {collection.items.length}{" "}
-              {collection.items.length === 1 ? "part" : "parts"}
+              {isSeries ? "Series" : "Reading path"} · {collection.items.length}{" "}
+              {isSeries
+                ? collection.items.length === 1
+                  ? "entry"
+                  : "entries"
+                : collection.items.length === 1
+                  ? "part"
+                  : "parts"}
             </Eyebrow>
             <h1
               className="mt-5 font-serif font-bold leading-[1] tracking-[-0.03em] text-foreground text-balance"
@@ -86,23 +94,32 @@ export default async function CollectionDetailPage({ params }: CollectionDetailP
           </p>
         ) : (
           <ol className="mt-4">
-            {collection.items.map((item, idx) => (
-              <li
-                key={item.note_id}
-                className="grid grid-cols-[3rem_1fr] gap-4 border-b border-border py-10 sm:grid-cols-[5rem_1fr] sm:gap-8"
-              >
-                <span
-                  className="font-serif text-3xl font-black text-foreground/20 sm:text-5xl"
-                  aria-hidden="true"
+            {collection.items.map((item, idx) => {
+              const label = entryLabel(item.label, idx + 1);
+              return (
+                <li
+                  key={item.note_id}
+                  className="grid grid-cols-[3rem_1fr] gap-4 border-b border-border py-10 sm:grid-cols-[5rem_1fr] sm:gap-8"
                 >
-                  {String(idx + 1).padStart(2, "0")}
-                </span>
-                <div className="max-w-3xl">
-                  <span className="sr-only">Part {idx + 1}: </span>
-                  <NoteCard note={item.note} />
-                </div>
-              </li>
-            ))}
+                  <span
+                    className="font-serif text-3xl font-black text-foreground/20 sm:text-5xl"
+                    aria-hidden="true"
+                  >
+                    {String(idx + 1).padStart(2, "0")}
+                  </span>
+                  <div className="max-w-3xl">
+                    {item.label ? (
+                      <p className="mb-3 font-sans text-[10px] font-semibold uppercase tracking-[0.28em] text-muted-foreground">
+                        {label}
+                      </p>
+                    ) : (
+                      <span className="sr-only">{label}: </span>
+                    )}
+                    <NoteCard note={item.note} />
+                  </div>
+                </li>
+              );
+            })}
           </ol>
         )}
       </div>

@@ -8,6 +8,8 @@ import Link from "next/link";
 
 interface NoteCardProps {
   note: Note | NoteCardType;
+  /** Why this card is shown, e.g. "Also tagged Supabase". */
+  reason?: string;
 }
 
 function formatDate(dateString: string | null) {
@@ -24,7 +26,7 @@ function formatDate(dateString: string | null) {
  * click (image, excerpt, "Read more") opens the note while assistive tech
  * hears a single, descriptive link instead of three duplicates.
  */
-export default function NoteCard({ note }: NoteCardProps) {
+export default function NoteCard({ note, reason }: NoteCardProps) {
   const t = useTranslations("notes");
   const href = routes.note(note.slug);
 
@@ -68,6 +70,8 @@ export default function NoteCard({ note }: NoteCardProps) {
           <p className="line-clamp-3 text-sm leading-relaxed text-muted-foreground">
             {note.excerpt}
           </p>
+
+          {reason && <p className="font-quote text-sm italic text-foreground/60">{reason}</p>}
         </div>
 
         <div className="mt-auto flex w-full items-center justify-between pt-4 text-xs text-muted-foreground">

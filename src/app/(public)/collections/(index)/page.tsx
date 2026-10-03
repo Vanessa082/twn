@@ -66,7 +66,7 @@ export default async function PublicCollectionsPage() {
                     )}
                   </div>
                   <p className="mt-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-ink-accent">
-                    Reading path
+                    {col.kind === "series" ? "Series" : "Reading path"}
                   </p>
                   <h2 className="mt-2 font-serif text-xl font-bold leading-snug text-foreground text-balance transition-opacity group-hover:opacity-70 sm:text-2xl">
                     {col.title}
@@ -77,7 +77,7 @@ export default async function PublicCollectionsPage() {
                     </p>
                   )}
                   <span className="mt-4 inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground">
-                    Follow the path{" "}
+                    {col.kind === "series" ? "Start reading" : "Follow the path"}{" "}
                     <span className="transition-transform group-hover:translate-x-1">→</span>
                   </span>
                 </Link>

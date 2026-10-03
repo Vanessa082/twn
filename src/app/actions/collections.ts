@@ -2,5 +2,5 @@ export {
   createCollectionAction,
   updateCollectionAction,
   deleteCollectionAction,
-  setCollectionNotesAction,
+  saveCollectionEntriesAction,
 } from "@/modules/editorial/actions";

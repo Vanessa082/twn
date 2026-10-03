@@ -1,10 +1,17 @@
 "use server";
 
 import {
+  collectionEntriesSchema,
+  collectionSchema,
+  entityIdSchema,
+  updateCollectionSchema,
+} from "@/lib/validation/schemas";
+import {
   type CreateCollectionInput,
+  type SaveCollectionEntriesInput,
   createCollectionAdmin,
   deleteCollectionAdmin,
-  setCollectionNotesAdmin,
+  saveCollectionEntriesAdmin,
   updateCollectionAdmin,
 } from "@/modules/editorial";
 import { canManageNotes, toAdminActionError } from "@/modules/identity";
@@ -14,7 +21,7 @@ import { revalidatePath } from "next/cache";
 export async function createCollectionAction(input: CreateCollectionInput) {
   try {
     const { userId } = await canManageNotes();
-    const collection = await createCollectionAdmin(input);
+    const collection = await createCollectionAdmin(collectionSchema.parse(input));
 
     await recordAuditLog({
       userId,
@@ -39,7 +46,10 @@ export async function createCollectionAction(input: CreateCollectionInput) {
 export async function updateCollectionAction(id: string, input: Partial<CreateCollectionInput>) {
   try {
     const { userId } = await canManageNotes();
-    const collection = await updateCollectionAdmin(id, input);
+    const collection = await updateCollectionAdmin(
+      entityIdSchema.parse(id),
+      updateCollectionSchema.parse(input)
+    );
 
     await recordAuditLog({
       userId,
@@ -53,6 +63,7 @@ export async function updateCollectionAction(id: string, input: Partial<CreateCo
     revalidatePath(`/admin/collections/${id}`);
     revalidatePath("/collections");
     revalidatePath(`/collections/${collection.slug}`);
+    revalidatePath("/notebook/[slug]", "page");
     return { success: true, data: collection, error: null };
   } catch (error: unknown) {
     return {
@@ -66,7 +77,7 @@ export async function updateCollectionAction(id: string, input: Partial<CreateCo
 export async function deleteCollectionAction(id: string) {
   try {
     const { userId } = await canManageNotes();
-    await deleteCollectionAdmin(id);
+    await deleteCollectionAdmin(entityIdSchema.parse(id));
 
     await recordAuditLog({
       userId,
@@ -76,7 +87,8 @@ export async function deleteCollectionAction(id: string) {
     });
 
     revalidatePath("/admin/collections");
-    revalidatePath("/collections");
+    revalidatePath("/collections", "layout");
+    revalidatePath("/notebook/[slug]", "page");
     return { success: true, error: null };
   } catch (error: unknown) {
     return {
@@ -86,26 +98,32 @@ export async function deleteCollectionAction(id: string) {
   }
 }
 
-export async function setCollectionNotesAction(collectionId: string, noteIdsInOrder: string[]) {
+export async function saveCollectionEntriesAction(
+  collectionId: string,
+  input: SaveCollectionEntriesInput
+) {
   try {
     const { userId } = await canManageNotes();
-    await setCollectionNotesAdmin(collectionId, noteIdsInOrder);
+    const id = entityIdSchema.parse(collectionId);
+    const parsed = collectionEntriesSchema.parse(input);
+    await saveCollectionEntriesAdmin(id, parsed);
 
     await recordAuditLog({
       userId,
       action: "collection.items_updated",
       targetType: "note",
-      targetId: collectionId,
-      details: { article_count: noteIdsInOrder.length },
+      targetId: id,
+      details: { kind: parsed.kind, article_count: parsed.entries.length },
     });
 
-    revalidatePath(`/admin/collections/${collectionId}`);
-    revalidatePath("/collections");
+    revalidatePath(`/admin/collections/${id}`);
+    revalidatePath("/collections", "layout");
+    revalidatePath("/notebook/[slug]", "page");
     return { success: true, error: null };
   } catch (error: unknown) {
     return {
       success: false,
-      error: toAdminActionError(error) || "Failed to update collection notes",
+      error: toAdminActionError(error) || "Failed to save collection notes",
     };
   }
 }

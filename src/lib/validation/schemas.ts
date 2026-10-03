@@ -236,6 +236,65 @@ export const fieldNoteSchema = z
 
 export const updateFieldNoteSchema = fieldNoteSchema.partial();
 
+// ── 6b. Collections & Series ─────────────────────────────────────────────────
+
+export const collectionSchema = z
+  .object({
+    title: z
+      .string()
+      .trim()
+      .min(2, "Title is required.")
+      .max(255, "Title cannot exceed 255 characters."),
+    slug: z
+      .string()
+      .trim()
+      .max(255, "Slug cannot exceed 255 characters.")
+      .regex(/^([a-z0-9]+(-[a-z0-9]+)*)?$/, "Slugs use lowercase letters, numbers and dashes.")
+      .optional(),
+    description: z
+      .string()
+      .trim()
+      .max(1000, "Description cannot exceed 1000 characters.")
+      .nullable()
+      .optional(),
+    cover_image: safeHttpUrlSchema.nullable().optional(),
+    is_published: z.boolean().optional(),
+  })
+  .strict();
+
+export const updateCollectionSchema = collectionSchema.partial();
+
+export const COLLECTION_ENTRY_LABEL_MAX = 60;
+export const COLLECTION_ENTRIES_MAX = 500;
+
+export const collectionEntriesSchema = z
+  .object({
+    kind: z.enum(["collection", "series"]),
+    entries: z
+      .array(
+        z
+          .object({
+            note_id: entityIdSchema,
+            label: z
+              .string()
+              .trim()
+              .max(
+                COLLECTION_ENTRY_LABEL_MAX,
+                `Labels cannot exceed ${COLLECTION_ENTRY_LABEL_MAX} characters.`
+              )
+              .nullable()
+              .transform((label) => label || null),
+          })
+          .strict()
+      )
+      .max(COLLECTION_ENTRIES_MAX, `A collection can hold up to ${COLLECTION_ENTRIES_MAX} notes.`)
+      .refine(
+        (entries) => new Set(entries.map((entry) => entry.note_id)).size === entries.length,
+        "Each note can appear only once."
+      ),
+  })
+  .strict();
+
 // ── 7. Homepage & Site Settings ──────────────────────────────────────────────
 
 export const homepageSettingsSchema = z

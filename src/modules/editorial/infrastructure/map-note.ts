@@ -1,5 +1,5 @@
 import { calculateReadingTime } from "../domain/reading-time";
-import type { Note, NoteChapter } from "../domain/types";
+import type { Note, NoteCard, NoteChapter } from "../domain/types";
 export interface DatabaseNoteRow {
   id: string;
   title: string;
@@ -40,4 +40,10 @@ export function mapToNote(row: DatabaseNoteRow): Note {
     og_image: row.og_image,
     canonical_url: row.canonical_url,
   };
+}
+
+/** A note without its body, with reading time computed from the body. */
+export function toNoteCard(row: DatabaseNoteRow): NoteCard {
+  const { content: _content, ...card } = mapToNote(row);
+  return card;
 }

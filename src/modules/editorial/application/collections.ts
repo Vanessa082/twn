@@ -1,5 +1,10 @@
 import type { CollectionRepository } from "../domain/ports";
-import type { Collection, CollectionWithNotes, CreateCollectionInput } from "../domain/types";
+import type {
+  Collection,
+  CollectionWithNotes,
+  CreateCollectionInput,
+  SaveCollectionEntriesInput,
+} from "../domain/types";
 
 export async function getPublicCollections(
   repository: CollectionRepository
@@ -49,10 +54,10 @@ export async function deleteCollectionAdmin(
   return repository.delete(id);
 }
 
-export async function setCollectionNotesAdmin(
+export async function saveCollectionEntriesAdmin(
   collectionId: string,
-  noteIdsInOrder: string[],
+  input: SaveCollectionEntriesInput,
   repository: CollectionRepository
 ): Promise<void> {
-  return repository.setNotes(collectionId, noteIdsInOrder);
+  return repository.saveEntries(collectionId, input);
 }
